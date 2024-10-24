@@ -7,6 +7,7 @@ const productosRoutes = require('./routes/productos');
 const stockRoutes = require('./routes/stock');
 const adminRoutes = require('./routes/admin');
 const tiktokRoutes = require('./routes/tiktoks');
+const suscriptoresRoutes = require('./routes/suscriptores');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -28,6 +29,7 @@ app.use('/api/productos', productosRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tiktoks', tiktokRoutes);
+app.use('/api/suscriptores', suscriptoresRoutes);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
