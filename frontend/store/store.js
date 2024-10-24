@@ -10,8 +10,6 @@ const useStore = create((set) => ({
   error: null,
   productAdded: false,
   filteredProducts: [],
-  message: "",
-  email: "",
   tiktokLinks: [],
 
   fetchProducts: async () => {
