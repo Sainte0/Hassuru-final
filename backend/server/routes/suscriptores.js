@@ -10,7 +10,8 @@ router.post("/", (req, res) => {
     return res.status(400).json({ mensaje: "Email es requerido" });
   }
 
-  const filePath = path.join(process.cwd(), "suscriptores.json");
+  // Ruta hacia el archivo en la carpeta del backend
+  const filePath = path.join(__dirname, "suscriptores.json");
 
   fs.readFile(filePath, "utf-8", (err, data) => {
     if (err) {
