@@ -15,8 +15,8 @@ export default function Detail({ product }) {
   const handleCompraClick = () => {
     if (selectedTalla || customTalla) {
       const message = selectedTalla
-        ? `Hola, quiero comprar la zapatilla ${product.nombre} en el talle ${selectedTalla}`
-        : `Hola, quiero encargar estas zapatillas ${product.nombre} en talle ${customTalla}`;
+        ? `Hola, quiero comprar esta prenda ${product.nombre} en el talle ${selectedTalla}`
+        : `Hola, quiero encargar esta prenda ${product.nombre} en talle ${customTalla}`;
 
       const whatsappUrl = `https://api.whatsapp.com/send?phone=3512591212&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
