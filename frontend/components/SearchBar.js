@@ -12,7 +12,7 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const fetchProducts = async (searchQuery) => {
     try {
-      const res = await fetch(`https://web-production-780d.up.railway.app//api/nombre/${searchQuery}?limit=10`);
+      const res = await fetch(`https://web-production-780d.up.railway.app/api/nombre/${searchQuery}?limit=10`);
       const data = await res.json();
 
       if (res.ok) {
