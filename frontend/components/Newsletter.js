@@ -7,7 +7,7 @@ export default function Newsletter() {
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://web-production-73e61.up.railway.app/api/admin/suscribirse", {
+    const response = await fetch("https://web-production-73e61.up.railway.app/api/suscriptores", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
