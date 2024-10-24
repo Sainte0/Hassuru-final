@@ -20,7 +20,7 @@ export default function Categoria() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://hassuru-production.up.railway.app/api/productos/categoria/${categoria}`);
+      const response = await fetch(`https://web-production-780d.up.railway.app//api/productos/categoria/${categoria}`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }
