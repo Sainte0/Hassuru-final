@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import WhatsButton from "./Whatsbutton";
-import useStore from "../store/store";
+import { toast } from 'react-hot-toast';
 
 export default function Newsletter() {
-  const { handleSubscribe } = useStore();
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
 
-  const onSubmit = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
-    handleSubscribe(email);
-    setEmail("");
+    const response = await fetch("https://web-production-73e61.up.railway.app/api/suscribirse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+    if (response.ok) {
+      toast.success("¡Gracias por suscribirte!")
+      setEmail("");
+    } else {
+      toast.error("Error al suscribirte. Intenta nuevamente.")
+    }
   };
+
   return (
     <div className="container p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">
       <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center md:space-y-0">
@@ -19,7 +29,7 @@ export default function Newsletter() {
           <h1 className="mb-4 text-lg font-bold text-left">
             Suscríbete a nuestra Newsletter
           </h1>
-          <form onSubmit={onSubmit} className="flex flex-col md:flex-row">
+          <form onSubmit={handleSubscribe} className="flex flex-col md:flex-row">
             <input
               type="email"
               value={email}
@@ -35,7 +45,6 @@ export default function Newsletter() {
               Suscribirse
             </button>
           </form>
-          {message && <p className="mt-2 text-left text-gray-700">{message}</p>}
         </div>
         <div className="w-full md:w-1/4">
           <WhatsButton />

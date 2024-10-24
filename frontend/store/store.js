@@ -118,29 +118,6 @@ const useStore = create((set) => ({
   clearError: () => set({ error: null }),
   setFilteredProducts: (filtered) => set({ filteredProducts: filtered }),
 
-  handleSubscribe: async (email) => {
-    set({ loading: true, message: "" });
-    try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/suscribirse`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      if (response.ok) {
-        set({ message: "¡Gracias por suscribirte!" });
-      } else {
-        set({ message: "Error al suscribirte. Intenta nuevamente." });
-      }
-    } catch (error) {
-      set({ message: "Error al suscribirte. Intenta nuevamente." });
-      console.error("Error al suscribirte:", error);
-    } finally {
-      set({ loading: false });
-    }
-  },
-
   fetchTikTokLinks: async () => {
     set({ loading: true });
     try {

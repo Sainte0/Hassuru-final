@@ -99,7 +99,7 @@ const ProductRow = ({
   const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
     if (confirmDelete) {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos${id}`, {
+      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
