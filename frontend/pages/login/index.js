@@ -11,7 +11,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const response = await fetch(`https://web-production-780d.up.railway.app/api/admin/login`, {
+    const response = await fetch(`https://web-production-73e61.up.railway.app/api/admin/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
