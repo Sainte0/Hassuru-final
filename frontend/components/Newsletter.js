@@ -21,6 +21,7 @@ export default function Newsletter() {
       toast.error("Error al suscribirte. Intenta nuevamente.")
     }
   };
+  
 
   return (
     <div className="container p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">

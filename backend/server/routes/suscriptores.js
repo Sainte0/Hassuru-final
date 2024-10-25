@@ -44,6 +44,29 @@ router.post("/", (req, res) => {
   });
 });
 
+router.get("/", (req, res) => {
+  const filePath = path.join(__dirname, "suscriptores.json");
+
+  fs.readFile(filePath, "utf-8", (err, data) => {
+    if (err) {
+      console.error("Error al leer el archivo:", err);
+      return res.status(500).json({ mensaje: "Error al leer el archivo" });
+    }
+
+    let suscriptores = [];
+
+    try {
+      suscriptores = JSON.parse(data || "[]");
+    } catch (parseError) {
+      console.error("Error al parsear el archivo:", parseError);
+      return res.status(500).json({ mensaje: "Error al procesar el archivo" });
+    }
+
+    res.status(200).json(suscriptores);
+  });
+});
+
+
 router.all("/", (req, res) => {
   res.setHeader("Allow", ["POST"]);
   res.status(405).send(`Método ${req.method} no permitido`);
