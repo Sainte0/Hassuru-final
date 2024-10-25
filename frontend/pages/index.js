@@ -18,8 +18,10 @@ const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetc
   }, []);
 
   useEffect(() => {
-    fetchTikTokLinks();
-  }, []);
+    if (!tiktokLinks.length) {
+      fetchTikTokLinks();
+    }
+  }, [tiktokLinks]);
 
   if (loading) return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D"/></div>;
   if (error) return <div>Error: {error}</div>;
