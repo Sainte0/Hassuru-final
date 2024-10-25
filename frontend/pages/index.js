@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Carousell from "../../frontend/components/Carousell";
 import Image from "next/image";
 import Link from "next/link";
@@ -62,7 +62,7 @@ const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetc
       <div className="container grid grid-cols-1 gap-4 px-2 mx-auto mt-8 lg:px-24 md:grid-cols-3">
       {tiktokLinks[0]?.link && (
           <iframe
-            src={tiktokLinks[0].link}
+            src={tiktokLinks[0]?.link}
             width="100%"
             height="750"
             style={{ border: "none" }}
@@ -72,7 +72,7 @@ const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetc
         )}
         {tiktokLinks[1]?.link && (
           <iframe
-            src={tiktokLinks[1].link}
+            src={tiktokLinks[1]?.link}
             width="100%"
             height="750"
             style={{ border: "none" }}
@@ -82,7 +82,7 @@ const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetc
         )}
         {tiktokLinks[2]?.link && (
           <iframe
-            src={tiktokLinks[2].link}
+            src={tiktokLinks[2]?.link}
             width="100%"
             height="750"
             style={{ border: "none" }}
