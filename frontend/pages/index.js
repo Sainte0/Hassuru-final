@@ -7,7 +7,7 @@ import useStore from "../store/store";
 import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
-const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, tiktokLinks } = useStore();
+const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
 
   useEffect(() => {
     fetchProducts();
@@ -15,6 +15,10 @@ const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, tikt
 
   useEffect(() => {
     fetchDolarBlue();
+  }, []);
+
+  useEffect(() => {
+    fetchTikTokLinks();
   }, []);
 
   if (loading) return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D"/></div>;
