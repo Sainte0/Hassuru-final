@@ -1,10 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // Establece móvil para pantallas menores a 768px
+    };
+
+    handleResize(); // Verifica el tamaño de pantalla en el montaje
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const navigation = [
     { name: "Zapatillas", href: "/productos/categoria/zapatillas" },
     { name: "Ropa", href: "/productos/categoria/ropa" },
@@ -18,14 +30,17 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="relative p-2 bg-red-800 shadow-md">
-        <div className="container flex justify-center mx-auto">
-          <Link href="/">
-            <Image src="/logo.png" alt="Logo" width={100} height={100} />
-          </Link>
+      <nav className="relative p-12 shadow-md">
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            src={isMobile ? "/logo.png" : "/banner-3.png"}
+            alt="Background"
+            layout="fill"
+            objectFit="cover"
+            quality={100}
+          />
         </div>
       </nav>
-
       <nav className="relative p-2 bg-white shadow-md">
         <div className="container flex items-center mx-auto">
           <div className="justify-start flex-grow hidden xl:flex xl:items-center xl:space-x-6">
@@ -42,11 +57,9 @@ export default function Navbar() {
               ))}
             </ul>
           </div>
-
           <div className="hidden ml-auto xl:block">
             <SearchBar onSearch={(query) => console.log(query)} isHamburgerOpen={false} />
           </div>
-
           <button
             onClick={toggleMenu}
             className="ml-auto text-black focus:outline-none xl:hidden"
@@ -67,7 +80,6 @@ export default function Navbar() {
             </svg>
           </button>
         </div>
-
         {isOpen && (
           <div className="mt-8 xl:hidden">
             <ul className="space-y-4">
