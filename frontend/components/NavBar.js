@@ -9,10 +9,10 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Establece móvil para pantallas menores a 768px
+      setIsMobile(window.innerWidth < 768);
     };
 
-    handleResize(); // Verifica el tamaño de pantalla en el montaje
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -32,13 +32,15 @@ export default function Navbar() {
     <>
       <nav className="relative p-12 shadow-md">
         <div className="absolute inset-0 w-full h-full">
-          <Image
-            src={isMobile ? "/logo.png" : "/banner-3.png"}
-            alt="Background"
-            layout="fill"
-            objectFit="cover"
-            quality={100}
-          />
+          <Link href={"/"}>
+            <Image
+              src={isMobile ? "/logo.png" : "/banner-3.png"}
+              alt="Background"
+              layout="fill"
+              objectFit="cover"
+              quality={100}
+            />
+          </Link>
         </div>
       </nav>
       <nav className="relative p-2 bg-white shadow-md">
