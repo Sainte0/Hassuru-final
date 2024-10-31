@@ -6,6 +6,13 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const productos = await Producto.find();
+
+    const jsonResponse = JSON.stringify(productos);
+    const responseSize = Buffer.byteLength(jsonResponse, 'utf8');
+    const responseSizeKB = (responseSize / 1024).toFixed(2);
+
+    console.log(`Tamaño de la respuesta: ${responseSizeKB} KB (${responseSize} bytes)`);
+
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });
