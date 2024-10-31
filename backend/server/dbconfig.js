@@ -17,7 +17,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 
 app.use(cors({
-  origin: "https://hassuru-final.vercel.app",
+  origin: ["https://www.hassuru.ar/", "https://hassuru.ar/", "www.hassuru.ar/" ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true, 
   allowedHeaders: ['Content-Type', 'Authorization'],
