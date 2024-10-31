@@ -14,10 +14,10 @@ export default function AdminDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProducts = async (page = 1, limit = 10) => {
+  const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos?page=${page}&limit=${limit}`, {
+      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
@@ -26,9 +26,8 @@ export default function AdminDashboard() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      setProductos(data.data);
-      setEditableProducts(data.data);
-      setTotalPages(data.totalPages);
+      setProductos(data);
+      setEditableProducts(data);
     } catch (error) {
       console.error(error);
     } finally {
