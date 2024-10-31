@@ -3,6 +3,7 @@ import ProductRow from "./ProductRow";
 import { MdFilterAltOff } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
+import Pagination from "./Pagination";
 import useStore from "../store/store";
 
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
@@ -11,9 +12,16 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
+
+  useEffect(() => {
+    fetchProducts(currentPage);  
+  }, [fetchProducts, currentPage]);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -22,7 +30,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    fetchProducts();
+    fetchProducts(1);
+    setCurrentPage(1);
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
@@ -108,6 +117,13 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={(page) => setCurrentPage(page)}
+      />
+      
       <AddProductModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}

@@ -5,10 +5,27 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const productos = await Producto.find();
-    res.status(200).json(productos);
+    const page = parseInt(req.query.page) || 1; // Página actual, valor por defecto: 1
+    const limit = parseInt(req.query.limit) || 10; // Cantidad de productos por página, valor por defecto: 10
+
+    const skipIndex = (page - 1) * limit;
+
+    // Obtener productos con paginación
+    const productos = await Producto.find()
+      .skip(skipIndex)
+      .limit(limit);
+
+    // Contar el total de productos
+    const totalProductos = await Producto.countDocuments();
+
+    res.json({
+      data: productos,
+      total: totalProductos,
+      currentPage: page,
+      totalPages: Math.ceil(totalProductos / limit),
+    });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ message: 'Error al obtener productos', error });
   }
 });
 

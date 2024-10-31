@@ -12,10 +12,10 @@ const useStore = create((set) => ({
   filteredProducts: [],
   tiktokLinks: [],
 
-  fetchProducts: async () => {
+  fetchProducts: async (page = 1, limit = 10) => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos?page=${page}&limit=${limit}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -25,7 +25,11 @@ const useStore = create((set) => ({
         throw new Error('Error al cargar los productos');
       }
       const data = await response.json();
-      set({ products: data });
+      set({
+        products: data.data,          
+        totalPages: data.totalPages,   
+        currentPage: page
+      });
     } catch (error) {
       set({ error: error.message });
       console.error('Error al cargar los productos:', error);
