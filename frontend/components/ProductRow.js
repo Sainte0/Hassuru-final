@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { IoAddCircleOutline } from "react-icons/io5";
-import { toast } from 'react-hot-toast';
+import { toast } from "react-hot-toast";
 import useStore from "../store/store";
 import Image from "next/image";
 
-const URL = process.env.NEXT_PUBLIC_URL;
+const URL1 = process.env.NEXT_PUBLIC_URL;
 
 const ProductRow = ({
   producto,
@@ -17,7 +17,6 @@ const ProductRow = ({
   fetchProducts,
   setSelectedProduct,
 }) => {
-
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
   const [newColor, setNewColor] = useState("");
@@ -41,7 +40,9 @@ const ProductRow = ({
       setNewTalla("");
       setNewStock(0);
     } else {
-      alert("Por favor ingresa un nombre de talla válido y un stock mayor a 0.");
+      alert(
+        "Por favor ingresa un nombre de talla válido y un stock mayor a 0."
+      );
     }
   };
   const handleDeleteTalla = (talla) => {
@@ -51,7 +52,9 @@ const ProductRow = ({
   };
   const handleColorChange = (e, colorId) => {
     const updatedProducts = [...editableProducts];
-    const colorIndex = updatedProducts[index].colores.findIndex(c => c._id === colorId);
+    const colorIndex = updatedProducts[index].colores.findIndex(
+      (c) => c._id === colorId
+    );
     if (colorIndex !== -1) {
       updatedProducts[index].colores[colorIndex].color = e.target.value;
       setEditableProducts(updatedProducts);
@@ -69,7 +72,9 @@ const ProductRow = ({
   };
   const handleDeleteColor = (colorId) => {
     const updatedProducts = [...editableProducts];
-    updatedProducts[index].colores = updatedProducts[index].colores.filter(c => c._id !== colorId);
+    updatedProducts[index].colores = updatedProducts[index].colores.filter(
+      (c) => c._id !== colorId
+    );
     setEditableProducts(updatedProducts);
   };
 
@@ -79,62 +84,66 @@ const ProductRow = ({
       categoria: producto.categoria,
     };
     const formData = new FormData();
-    Object.keys(updatedProduct).forEach(key => {
-      if (key !== 'image') {
+    Object.keys(updatedProduct).forEach((key) => {
+      if (key !== "image") {
         formData.append(key, updatedProduct[key]);
       }
     });
-    const responseData = await fetch(`${URL}/api/productos/${producto._id}`, {
-      method: 'PUT',
+    const responseData = await fetch(`${URL1}/api/productos/${producto._id}`, {
+      method: "PUT",
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(updatedProduct),
     });
     if (responseData.ok) {
-      toast.success('Producto actualizado con éxito');
+      toast.success("Producto actualizado con éxito");
       if (newImage) {
         const imageFormData = new FormData();
-        imageFormData.append('image', newImage);
-        const imageResponse = await fetch(`${URL}/api/productos/${producto._id}/image`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          },
-          body: imageFormData,
-        });
+        imageFormData.append("image", newImage);
+        const imageResponse = await fetch(
+          `${URL1}/api/productos/${producto._id}/image`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: imageFormData,
+          }
+        );
         if (imageResponse.ok) {
-          toast.success('Imagen actualizada con éxito');
+          toast.success("Imagen actualizada con éxito");
         } else {
-          toast.error('Error al actualizar la imagen');
-          console.error('Error al actualizar la imagen');
+          toast.error("Error al actualizar la imagen");
+          console.error("Error al actualizar la imagen");
         }
       }
       fetchProducts();
       setSelectedProduct(null);
     } else {
-      toast.error('Error al actualizar el producto');
-      console.error('Error al actualizar el producto');
+      toast.error("Error al actualizar el producto");
+      console.error("Error al actualizar el producto");
     }
   };
 
-
   const handleProductDelete = async (id) => {
-    const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
+    const confirmDelete = window.confirm(
+      "¿Estás seguro que quieres eliminar este producto?"
+    );
     if (confirmDelete) {
       const response = await fetch(`${URL}/api/productos/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       if (response.ok) {
-        toast.success('Producto eliminado con éxito');
+        toast.success("Producto eliminado con éxito");
         fetchProducts();
       } else {
-        toast.error('Error al eliminar el producto');
-        console.error('Error al eliminar el producto');
+        toast.error("Error al eliminar el producto");
+        console.error("Error al eliminar el producto");
       }
     }
   };
@@ -270,7 +279,10 @@ const ProductRow = ({
         {selectedProduct === producto._id ? (
           <div>
             {Object.entries(producto.tallas).map(([talla, cantidad]) => (
-              <div key={talla} className="flex flex-col items-center mb-1 sm:flex-row">
+              <div
+                key={talla}
+                className="flex flex-col items-center mb-1 sm:flex-row"
+              >
                 <input
                   type="text"
                   value={talla}
@@ -339,7 +351,7 @@ const ProductRow = ({
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <div>
-            {producto.colores.map(color => (
+            {producto.colores.map((color) => (
               <div key={color._id} className="flex items-center mb-1">
                 <input
                   type="text"
@@ -373,7 +385,7 @@ const ProductRow = ({
           </div>
         ) : (
           <div>
-            {producto.colores.map(color => (
+            {producto.colores.map((color) => (
               <div key={color._id}>{color.color}</div>
             ))}
           </div>
@@ -411,8 +423,10 @@ const ProductRow = ({
             />
             Destacado
           </label>
+        ) : producto.destacado ? (
+          "Sí"
         ) : (
-          producto.destacado ? "Sí" : "No"
+          "No"
         )}
       </td>
       <td className="px-2 py-2 border">
@@ -426,8 +440,10 @@ const ProductRow = ({
             />
             Destacado Zapatillas
           </label>
+        ) : producto.destacado_zapatillas ? (
+          "Sí"
         ) : (
-          producto.destacado_zapatillas ? "Sí" : "No"
+          "No"
         )}
       </td>
       <td className="px-2 py-2 border">
@@ -441,8 +457,10 @@ const ProductRow = ({
             />
             Encargo
           </label>
+        ) : producto.encargo ? (
+          "Sí"
         ) : (
-          producto.encargo ? "Sí" : "No"
+          "No"
         )}
       </td>
       <td className="px-2 py-2 text-center border">
