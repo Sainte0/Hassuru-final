@@ -402,7 +402,7 @@ const ProductRow = ({
           <Image
             width={300}
             height={300}
-            src={newImage || producto?.image}            
+            src={newImage ? URL.createObjectURL(newImage) : producto?.image}            
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />
