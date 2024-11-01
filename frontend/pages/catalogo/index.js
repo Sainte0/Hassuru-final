@@ -1,5 +1,5 @@
 import React from "react";
-import Catalogo from "../../../frontend/components/Catalogo";
+import Catalogo from "../../../components/Catalogo";
 
 export default function catalogo() {
   return (

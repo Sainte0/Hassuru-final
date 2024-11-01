@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Pagination from "../../../frontend/components/Pagination";
+import Pagination from "../../../components/Pagination";
 
 export default function Suscriptores() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -7,8 +7,8 @@ export default function Suscriptores() {
   const emailsPerPage = 39;
   const indexOfLastEmail = currentPage * emailsPerPage;
   const indexOfFirstEmail = indexOfLastEmail - emailsPerPage;
-  const currentEmails = suscriptores.slice(indexOfFirstEmail, indexOfLastEmail); 
-  const totalPages = Math.ceil(suscriptores.length / emailsPerPage); 
+  const currentEmails = suscriptores.slice(indexOfFirstEmail, indexOfLastEmail);
+  const totalPages = Math.ceil(suscriptores.length / emailsPerPage);
 
   const obtenerSuscriptores = async () => {
     try {
@@ -28,7 +28,6 @@ export default function Suscriptores() {
     }
   };
 
-  
   useEffect(() => {
     obtenerSuscriptores();
   }, []);
@@ -52,7 +51,7 @@ export default function Suscriptores() {
           <p className="text-gray-500">No hay suscriptores.</p>
         )}
       </div>
-      {suscriptores.length > emailsPerPage && ( 
+      {suscriptores.length > emailsPerPage && (
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}

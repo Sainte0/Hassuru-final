@@ -1,10 +1,9 @@
-import { useAuth } from "../../../frontend/hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import ProductList from "../../../frontend/components/ProductList";
-import TiktokLinksAdmin from "../../../frontend/components/TiktokLinksAdmin";
-import Sidebar from "../../../frontend/components/Sidebar";
-import { API_URL } from "@/config";
+import ProductList from "../../../components/ProductList";
+import TiktokLinksAdmin from "../../../components/TiktokLinksAdmin";
+import Sidebar from "../../../components/Sidebar";
 
 export default function AdminDashboard() {
   useAuth();
@@ -47,7 +46,6 @@ export default function AdminDashboard() {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
-    
       if (!response.ok) {
         throw new Error("Error al cargar los productos filtrados por categoría");
       }
@@ -73,9 +71,7 @@ export default function AdminDashboard() {
       />
       <div className="flex-1 w-full p-4 md:p-10">
         <h2 className="mb-6 text-2xl font-semibold text-black">Bienvenido al Dashboard</h2>
-
         <TiktokLinksAdmin />
-
         {loading ? (
           <p>Cargando productos...</p>
         ) : (

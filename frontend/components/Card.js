@@ -12,7 +12,6 @@ export default function Card({ currentProducts }) {
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-
     if (hasTallas) {
       return { message: "Entrega inmediata", color: "text-green-500" };
     } else if (product.encargo) {

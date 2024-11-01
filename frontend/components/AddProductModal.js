@@ -18,7 +18,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
   });
 
   const { addProduct, productAdded } = useStore();
-
   const [tallaInput, setTallaInput] = useState('');
   const [cantidadTalla, setCantidadTalla] = useState('');
   const [colorInput, setColorInput] = useState('');
@@ -38,9 +37,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     const newValue = type === 'checkbox' ? checked : value;
-
     if (name === 'precio') {
       const price = value ? parseFloat(value) : '';
       setProduct((prev) => ({
@@ -60,7 +57,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     if (file) {
       setProduct((prev) => ({
         ...prev,
-        image: file, 
+        image: file,
       }));
     }
   };
@@ -107,11 +104,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
     formData.append("marca", product.marca);
     formData.append("categoria", product.categoria);
     formData.append("precio", parseFloat(product.precio));
-    
-    // Convertir tallas y colores a formato JSON
     formData.append("tallas", JSON.stringify(product.tallas));
     formData.append("colores", JSON.stringify(product.colores));
-    
     formData.append("image", product.image);
     formData.append("destacado", product.destacado);
     formData.append("encargo", product.encargo);

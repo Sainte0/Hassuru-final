@@ -15,7 +15,7 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ['res.cloudinary.com'], // Agrega aquí el dominio de Cloudinary
+    domains: ['res.cloudinary.com'],
   },
 };
 

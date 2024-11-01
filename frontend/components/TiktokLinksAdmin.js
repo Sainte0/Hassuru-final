@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { API_URL } from "@/config";
 
 const TiktokLinksAdmin = () => {
   const [tiktoks, setTiktoks] = useState([]);
@@ -48,11 +47,9 @@ const TiktokLinksAdmin = () => {
         },
         body: JSON.stringify({ link: newLink }),
       });
-
       if (!response.ok) {
         throw new Error("Error al actualizar el enlace de TikTok");
       }
-
       const updatedTiktok = await response.json();
       const updatedTiktoks = tiktoks.map((tiktok) =>
         tiktok._id === id ? updatedTiktok : tiktok

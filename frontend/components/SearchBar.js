@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { API_URL } from "@/config";
 
 export default function SearchBar({ isHamburgerOpen }) {
   const [query, setQuery] = useState("");
@@ -14,7 +13,6 @@ export default function SearchBar({ isHamburgerOpen }) {
     try {
       const res = await fetch(`http://localhost:5000/api/nombre/${searchQuery}?limit=10`);
       const data = await res.json();
-
       if (res.ok) {
         setFilteredProducts(data);
       } else {
@@ -77,13 +75,12 @@ export default function SearchBar({ isHamburgerOpen }) {
           onBlur={handleBlur}
           onKeyPress={handleKeyPress}
           placeholder="Buscar..."
-          className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg ${
-            isHamburgerOpen
+          className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg ${isHamburgerOpen
               ? "w-64 opacity-100"
               : isFocused
-              ? "w-64 opacity-100"
-              : "w-0 opacity-0 p-0"
-          }`}
+                ? "w-64 opacity-100"
+                : "w-0 opacity-0 p-0"
+            }`}
         />
         <button
           type="button"

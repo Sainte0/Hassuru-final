@@ -1,7 +1,6 @@
 import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from "next/router";
-import { API_URL } from "@/config";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,7 +9,6 @@ export default function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const response = await fetch(`http://localhost:5000/api/admin/login`, {
       method: "POST",
       headers: {
@@ -18,9 +16,7 @@ export default function Login() {
       },
       body: JSON.stringify({ email, password }),
     });
-
     const data = await response.json();
-
     if (response.ok) {
       localStorage.setItem("token", data.token);
       toast.success("Inicio de sesión exitoso!");

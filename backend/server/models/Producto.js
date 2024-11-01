@@ -35,7 +35,7 @@ const ProductoSchema = new mongoose.Schema({
     },
   ],
   image: {
-    type: String, 
+    type: String,
     required: false,
   },
   encargo: {

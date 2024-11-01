@@ -4,7 +4,6 @@ import { IoAddCircleOutline } from "react-icons/io5";
 import { toast } from 'react-hot-toast';
 import useStore from "../store/store";
 import Image from "next/image";
-import { API_URL } from "@/config";
 
 const ProductRow = ({
   producto,
@@ -74,61 +73,47 @@ const ProductRow = ({
 
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
-        ...producto,
-        categoria: producto.categoria,
+      ...producto,
+      categoria: producto.categoria,
     };
-
-    // Crear un FormData para la actualización de la imagen
     const formData = new FormData();
-  
-    // Agregar los datos del producto al FormData
     Object.keys(updatedProduct).forEach(key => {
-        if (key !== 'image') { // Excluir la imagen para esta solicitud
-            formData.append(key, updatedProduct[key]);
-        }
+      if (key !== 'image') {
+        formData.append(key, updatedProduct[key]);
+      }
     });
-
-    // Actualizar primero los datos del producto (sin imagen)
     const responseData = await fetch(`http://localhost:5000/api/productos/${producto._id}`, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedProduct),
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updatedProduct),
     });
-
     if (responseData.ok) {
-        toast.success('Producto actualizado con éxito');
-
-        // Si hay una nueva imagen, proceder a actualizar la imagen
-        if (newImage) {
-            // Crear un nuevo FormData solo para la imagen
-            const imageFormData = new FormData();
-            imageFormData.append('image', newImage);
-
-            const imageResponse = await fetch(`http://localhost:5000/api/productos/${producto._id}/image`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-                body: imageFormData,
-            });
-
-            if (imageResponse.ok) {
-                toast.success('Imagen actualizada con éxito');
-            } else {
-                toast.error('Error al actualizar la imagen');
-                console.error('Error al actualizar la imagen');
-            }
+      toast.success('Producto actualizado con éxito');
+      if (newImage) {
+        const imageFormData = new FormData();
+        imageFormData.append('image', newImage);
+        const imageResponse = await fetch(`http://localhost:5000/api/productos/${producto._id}/image`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: imageFormData,
+        });
+        if (imageResponse.ok) {
+          toast.success('Imagen actualizada con éxito');
+        } else {
+          toast.error('Error al actualizar la imagen');
+          console.error('Error al actualizar la imagen');
         }
-
-        // Volver a obtener los productos y restablecer el producto seleccionado
-        fetchProducts();
-        setSelectedProduct(null);
+      }
+      fetchProducts();
+      setSelectedProduct(null);
     } else {
-        toast.error('Error al actualizar el producto');
-        console.error('Error al actualizar el producto');
+      toast.error('Error al actualizar el producto');
+      console.error('Error al actualizar el producto');
     }
   };
 
@@ -155,14 +140,11 @@ const ProductRow = ({
   const handleProductChange = (e, field, index) => {
     const updatedProducts = [...editableProducts];
     const newValue = e.target.value;
-
     if (!updatedProducts[index]) {
       console.error(`Producto en el índice ${index} no existe.`);
       return;
     }
-
     updatedProducts[index][field] = newValue;
-
     setEditableProducts(updatedProducts);
   };
 
@@ -170,10 +152,8 @@ const ProductRow = ({
     const file = e.target.files[0];
     if (file) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = URL.createObjectURL(file); // Crear una URL de vista previa del archivo
+      updatedProducts[index].image = URL.createObjectURL(file);
       setEditableProducts(updatedProducts);
-  
-      // Guardar el archivo en sí para cuando necesites subirlo
       setNewImage(file);
     }
   };
@@ -402,7 +382,7 @@ const ProductRow = ({
           <Image
             width={300}
             height={300}
-            src={newImage ? URL.createObjectURL(newImage) : producto?.image}            
+            src={newImage ? URL.createObjectURL(newImage) : producto?.image}
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />
