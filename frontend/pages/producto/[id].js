@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Detail from "../../../components/Detail";
+import Detail from "../../components/Detail";
 import { useRouter } from "next/router";
 import useStore from "../../store/store";
 import { BounceLoader } from 'react-spinners';
