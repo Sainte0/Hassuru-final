@@ -141,12 +141,16 @@ const ProductRow = ({
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-  
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setNewImage(e.target.result);
+    }
+    reader.readAsDataURL(file);
+
     if (file) {
       const updatedProducts = [...editableProducts];
       updatedProducts[index].image = file;
       setEditableProducts(updatedProducts);
-      setNewImage(file);
     }
   };
 
@@ -374,7 +378,7 @@ const ProductRow = ({
           <Image
             width={300}
             height={300}
-            src={producto.image}
+            src={newImage || producto.image}            
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />
