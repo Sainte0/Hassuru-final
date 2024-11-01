@@ -132,7 +132,7 @@ const ProductRow = ({
       "¿Estás seguro que quieres eliminar este producto?"
     );
     if (confirmDelete) {
-      const response = await fetch(`${URL}/api/productos/${id}`, {
+      const response = await fetch(`${URL1}/api/productos/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
