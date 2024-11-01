@@ -1,6 +1,8 @@
 import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
-import { API_URL } from "@/config";
+// import { API_URL } from "@/config";
+
+// const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const useStore = create((set) => ({
   products: [],
@@ -15,7 +17,7 @@ const useStore = create((set) => ({
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`http://localhost:5000/api/productos`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -34,10 +36,10 @@ const useStore = create((set) => ({
     }
   },
 
-  addProduct: async (productoAEnviar) => {
+  addProduct: async (productoAEnviar, imagenFile) => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`http://localhost:5000/api/productos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,6 +52,28 @@ const useStore = create((set) => ({
         console.error('Error en la respuesta del servidor:', errorData);
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
         return;
+      }
+
+      const nuevoProducto = await response.json();
+
+      // Segundo paso: añadir la imagen al producto
+      if (imagenFile) {
+        const formData = new FormData();
+        formData.append('image', imagenFile);
+
+        const imagenResponse = await fetch(`http://localhost:5000/api/productos/${nuevoProducto._id}/imagen`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: formData,
+        });
+
+        if (!imagenResponse.ok) {
+          const imagenErrorData = await imagenResponse.json();
+          toast.error(`Error al subir la imagen: ${imagenErrorData.message || 'Error desconocido'}`);
+          return;
+        }
       }
 
       toast.success('Producto agregado con éxito');
@@ -65,10 +89,66 @@ const useStore = create((set) => ({
     }
   },
 
+  updateProduct: async (productoAActualizar, imagenFile) => {
+    set({ loading: true });
+    try {
+      // Paso 1: Actualizar el producto
+      const response = await fetch(`http://localhost:5000/api/productos/${productoAActualizar._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(productoAActualizar), // Aquí envías el producto actualizado
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error en la respuesta del servidor:', errorData);
+        toast.error(`Error al actualizar el producto: ${errorData.message || 'Error desconocido'}`);
+        return;
+      }
+  
+      const productoActualizado = await response.json();
+      console.log('Producto actualizado:', productoActualizado);
+  
+      // Paso 2: Si hay una nueva imagen, subirla
+      if (imagenFile) {
+        const formData = new FormData();
+        formData.append('image', imagenFile);
+  
+        const imagenResponse = await fetch(`http://localhost:5000/api/productos/${productoActualizado._id}/imagen`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: formData,
+        });
+  
+        if (!imagenResponse.ok) {
+          const imagenErrorData = await imagenResponse.json();
+          toast.error(`Error al subir la imagen: ${imagenErrorData.message || 'Error desconocido'}`);
+          return;
+        }
+      }
+  
+      toast.success('Producto actualizado con éxito');
+      set({ productUpdated: true });
+      await useStore.getState().fetchProducts();
+  
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al actualizar el producto:', error);
+      toast.error('Error al actualizar el producto');
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   fetchProductsByCategory: async (categoria) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/categoria/${categoria}`);
+      const response = await fetch(`http://localhost:5000/api/productos/categoria/${categoria}`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }
@@ -84,7 +164,7 @@ const useStore = create((set) => ({
   fetchProductById: async (id) => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${id}`);
+      const response = await fetch(`http://localhost:5000/api/productos/${id}`);
       if (!response.ok) {
         throw new Error('Error al obtener el producto');
       }
@@ -119,7 +199,7 @@ const useStore = create((set) => ({
   fetchTikTokLinks: async () => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/tiktoks`, {
+      const response = await fetch(`http://localhost:5000/api/tiktoks`, {
         method: 'GET',
       });
       if (!response.ok) {

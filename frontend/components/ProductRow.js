@@ -71,21 +71,31 @@ const ProductRow = ({
     updatedProducts[index].colores = updatedProducts[index].colores.filter(c => c._id !== colorId);
     setEditableProducts(updatedProducts);
   };
+
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
       ...producto,
       categoria: producto.categoria,
     };
-
-    const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}`, {
+  
+    const formData = new FormData();
+  
+    Object.keys(updatedProduct).forEach(key => {
+      formData.append(key, updatedProduct[key]);
+    });
+  
+    if (newImage) {
+      formData.append('image', newImage);
+    }
+  
+    const response = await fetch(`http://localhost:5000/api/productos/${producto._id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
-      body: JSON.stringify(updatedProduct),
+      body: formData,
     });
-
+  
     if (response.ok) {
       toast.success('Producto actualizado con éxito');
       fetchProducts();
@@ -99,7 +109,7 @@ const ProductRow = ({
   const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
     if (confirmDelete) {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${id}`, {
+      const response = await fetch(`http://localhost:5000/api/productos/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -118,34 +128,25 @@ const ProductRow = ({
   const handleProductChange = (e, field, index) => {
     const updatedProducts = [...editableProducts];
     const newValue = e.target.value;
+
     if (!updatedProducts[index]) {
       console.error(`Producto en el índice ${index} no existe.`);
       return;
     }
-    if (field === 'precio') {
-      updatedProducts[index][field] = newValue;
-    } else if (field === 'categoria') {
-      updatedProducts[index][field] = newValue;
-    } else {
-      if (!updatedProducts[index][field]) {
-        updatedProducts[index][field] = '';
-      }
-      updatedProducts[index][field] = newValue;
-    }
+
+    updatedProducts[index][field] = newValue;
+
     setEditableProducts(updatedProducts);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
+  
+    if (file) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = { base64: reader.result };
+      updatedProducts[index].image = file;
       setEditableProducts(updatedProducts);
       setNewImage(file);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
     }
   };
 
@@ -369,11 +370,11 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-4 py-2 border">
-        {producto.image?.base64 && (
+        {producto.image && (
           <Image
-          width={300}
-          height={300}
-            src={producto.image.base64}
+            width={300}
+            height={300}
+            src={producto.image}
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />

@@ -12,7 +12,7 @@ export default function Suscriptores() {
 
   const obtenerSuscriptores = async () => {
     try {
-      const response = await fetch("https://web-production-73e61.up.railway.app/api/suscriptores", {
+      const response = await fetch("http://localhost:5000/api/suscriptores", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

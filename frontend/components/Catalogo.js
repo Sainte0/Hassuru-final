@@ -20,7 +20,7 @@ export default function Catalogo() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`);
+      const response = await fetch(`http://localhost:5000/api/productos`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }

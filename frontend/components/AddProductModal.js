@@ -11,7 +11,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     precio: '',
     tallas: {},
     colores: [],
-    image: { base64: '' },
+    image: null,
     encargo: false,
     destacado: false,
     destacado_zapatillas: false,
@@ -58,14 +58,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProduct((prev) => ({
-          ...prev,
-          image: { base64: reader.result },
-        }));
-      };
-      reader.readAsDataURL(file);
+      setProduct((prev) => ({
+        ...prev,
+        image: file, 
+      }));
     }
   };
 
@@ -105,20 +101,29 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const productoAEnviar = {
-      nombre: product.nombre,
-      descripcion: product.descripcion,
-      marca: product.marca,
-      categoria: product.categoria,
-      precio: parseFloat(product.precio),
-      tallas: product.tallas,
-      colores: product.colores,
-      image: { base64: product.image.base64 },
-      destacado: product.destacado,
-      encargo: product.encargo,
-      destacado_zapatillas: product.destacado_zapatillas,
-    };
-    await addProduct(productoAEnviar);
+    const formData = new FormData();
+    formData.append("nombre", product.nombre);
+    formData.append("descripcion", product.descripcion);
+    formData.append("marca", product.marca);
+    formData.append("categoria", product.categoria);
+    formData.append("precio", parseFloat(product.precio));
+    
+    // Convertir tallas y colores a formato JSON
+    formData.append("tallas", JSON.stringify(product.tallas));
+    formData.append("colores", JSON.stringify(product.colores));
+    
+    formData.append("image", product.image);
+    formData.append("destacado", product.destacado);
+    formData.append("encargo", product.encargo);
+    formData.append("destacado_zapatillas", product.destacado_zapatillas);
+
+    try {
+      await addProduct(formData);
+      toast.success("Producto agregado exitosamente!");
+      onClose();
+    } catch (error) {
+      toast.error("Error al agregar el producto.");
+    }
   };
 
   if (!isOpen) return null;

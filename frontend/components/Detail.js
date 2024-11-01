@@ -44,7 +44,7 @@ export default function Detail({ product }) {
         <Image
         width={300}
         height={300}
-          src={product.image?.base64}
+          src={product.image}
           alt={product.nombre}
           className="object-contain w-full h-auto max-h-[700px]"
         />
