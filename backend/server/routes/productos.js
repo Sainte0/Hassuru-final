@@ -1,18 +1,14 @@
 const authMiddleware = require('../middlewares/authMiddleware');
 const express = require('express');
 const Producto = require('../models/Producto');
+const cloudinary = require('../../cloudinaryConfig');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
     const productos = await Producto.find();
-
-    const jsonResponse = JSON.stringify(productos);
-    const responseSize = Buffer.byteLength(jsonResponse, 'utf8');
-    const responseSizeKB = (responseSize / 1024).toFixed(2);
-
-    console.log(`Tamaño de la respuesta: ${responseSizeKB} KB (${responseSize} bytes)`);
-
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -73,27 +69,84 @@ router.get('/categoria/:categoria', async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
-    if (typeof req.body.tallas !== 'object' || Array.isArray(req.body.tallas)) {
-      return res.status(400).json({ error: 'El campo tallas debe ser un objeto con tallas y su stock' });
-    }
-    const nuevoProducto = new Producto(req.body);
-    const productoGuardado = await nuevoProducto.save();
-    res.status(201).json(productoGuardado);
+      const { nombre, descripcion, precio, marca, categoria, tallas } = req.body;
+
+      if (!nombre || !precio || !marca || !categoria || !tallas) {
+          return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+      }
+
+      if (typeof tallas !== 'object' || Array.isArray(tallas)) {
+          return res.status(400).json({ error: 'El campo tallas debe ser un objeto con tallas y su stock' });
+      }
+
+      // Crear el producto sin imagen
+      const nuevoProducto = new Producto({
+          nombre,
+          descripcion,
+          precio,
+          marca,
+          categoria,
+          tallas,
+          image: '',
+      });
+
+      const productoGuardado = await nuevoProducto.save();
+      res.status(201).json(productoGuardado);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+      console.error('Error al crear el producto:', error);
+      res.status(400).json({ error: error.message });
   }
 });
 
-router.put('/:id', authMiddleware, async (req, res) => {
+router.post('/:id/imagen', upload.single('image'), async (req, res) => {
   try {
-    const productoActualizado = await Producto.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      const { id } = req.params;
+
+      if (!req.file) {
+          return res.status(400).json({ error: 'Se debe proporcionar una imagen.' });
+      }
+
+      const uploadResult = await cloudinary.uploader.upload(req.file.path);
+
+      const productoActualizado = await Producto.findByIdAndUpdate(
+          id,
+          { image: uploadResult.secure_url },
+          { new: true }
+      );
+
+      if (!productoActualizado) {
+          return res.status(404).json({ error: 'Producto no encontrado' });
+      }
+
+      res.status(200).json(productoActualizado);
+  } catch (error) {
+      console.error('Error al subir la imagen:', error);
+      res.status(400).json({ error: error.message });
+  }
+});
+
+
+router.put('/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedData = { ...req.body };
+
+    if (req.file) {
+      const uploadResult = await cloudinary.uploader.upload(req.file.path);
+      updatedData.image = uploadResult.secure_url;
+    }
+
+    const productoActualizado = await Producto.findByIdAndUpdate(id, updatedData, { new: true });
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
+
     res.status(200).json(productoActualizado);
   } catch (error) {
+    console.error('Error al actualizar el producto:', error);
     res.status(400).json({ error: error.message });
   }
 });
