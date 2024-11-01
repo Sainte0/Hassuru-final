@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import useStore from "../store/store";
 import Image from "next/image";
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 const ProductRow = ({
   producto,

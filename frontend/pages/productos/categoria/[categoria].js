@@ -5,7 +5,7 @@ import Filter from "../../../components/Filtro";
 import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 export default function Categoria() {
   const [products, setProducts] = useState([]);

@@ -2,7 +2,7 @@ import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from "next/router";
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 export default function Login() {
   const [email, setEmail] = useState("");

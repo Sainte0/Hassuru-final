@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination";
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 export default function Suscriptores() {
   const [currentPage, setCurrentPage] = useState(1);

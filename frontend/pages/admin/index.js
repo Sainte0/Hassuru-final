@@ -5,7 +5,7 @@ import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import Sidebar from "../../components/Sidebar";
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 export default function AdminDashboard() {
   useAuth();

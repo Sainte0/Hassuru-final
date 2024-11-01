@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 const TiktokLinksAdmin = () => {
   const [tiktoks, setTiktoks] = useState([]);

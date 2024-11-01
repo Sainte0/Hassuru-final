@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 const useStore = create((set) => ({
   products: [],

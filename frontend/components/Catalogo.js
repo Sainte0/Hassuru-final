@@ -5,7 +5,9 @@ import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
+
+console.log(URL)
 
 export default function Catalogo() {
   const router = useRouter();

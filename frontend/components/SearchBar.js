@@ -3,7 +3,7 @@ import { FaSearch } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const URL = process.env.URL;
+const URL = process.env.NEXT_PUBLIC_URL;
 
 export default function SearchBar({ isHamburgerOpen }) {
   const [query, setQuery] = useState("");
