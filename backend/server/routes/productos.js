@@ -66,7 +66,7 @@ router.get('/categoria/:categoria', async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { nombre, descripcion, precio, marca, categoria, tallas } = req.body;
     if (!nombre || !precio || !marca || !categoria || !tallas) {
@@ -92,7 +92,7 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, res) => {
+router.post('/:id/imagen', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!req.file) {
@@ -115,7 +115,7 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
 });
 
 
-router.put('/:id', authMiddleware, async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { image, ...updatedData } = req.body;
     const productoActualizado = await Producto.findByIdAndUpdate(req.params.id, updatedData, { new: true });
@@ -129,7 +129,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
 });
 
 
-router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res) => {
+router.put('/:id/image', upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
     if (!req.file) {
@@ -151,7 +151,7 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
   }
 });
 
-router.delete('/:id', authMiddleware, async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const productoEliminado = await Producto.findByIdAndDelete(req.params.id);
     if (!productoEliminado) {

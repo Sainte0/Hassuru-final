@@ -98,21 +98,23 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("nombre", product.nombre);
-    formData.append("descripcion", product.descripcion);
-    formData.append("marca", product.marca);
-    formData.append("categoria", product.categoria);
-    formData.append("precio", parseFloat(product.precio));
-    formData.append("tallas", JSON.stringify(product.tallas));
-    formData.append("colores", JSON.stringify(product.colores));
-    formData.append("image", product.image);
-    formData.append("destacado", product.destacado);
-    formData.append("encargo", product.encargo);
-    formData.append("destacado_zapatillas", product.destacado_zapatillas);
+    const productoAEnviar = {
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      marca: product.marca,
+      categoria: product.categoria,
+      precio: parseFloat(product.precio),
+      tallas: product.tallas,
+      colores: product.colores,
+      destacado: product.destacado,
+      encargo: product.encargo,
+      destacado_zapatillas: product.destacado_zapatillas,
+    };
+
+    const imageFile = product.image;
 
     try {
-      await addProduct(formData);
+      await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       onClose();
     } catch (error) {

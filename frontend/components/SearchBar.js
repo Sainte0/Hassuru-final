@@ -3,6 +3,8 @@ import { FaSearch } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
+const URL = process.env.NEXT_PUBLIC_URL;
+
 export default function SearchBar({ isHamburgerOpen }) {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -11,7 +13,7 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const fetchProducts = async (searchQuery) => {
     try {
-      const res = await fetch(`https://web-production-73e61.up.railway.app/api/nombre/${searchQuery}?limit=10`);
+      const res = await fetch(`${URL}/api/nombre/${searchQuery}?limit=10`);
       const data = await res.json();
       if (res.ok) {
         setFilteredProducts(data);

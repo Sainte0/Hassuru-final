@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import WhatsButton from "./Whatsbutton";
 import { toast } from 'react-hot-toast';
 
+const URL = process.env.NEXT_PUBLIC_URL;
+
 export default function Newsletter() {
   const [email, setEmail] = useState("");
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    const response = await fetch("https://web-production-73e61.up.railway.app/api/suscriptores", {
+    const response = await fetch(`${URL}/api/suscriptores`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

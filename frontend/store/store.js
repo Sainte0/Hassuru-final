@@ -1,6 +1,8 @@
 import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
 
+const URL = process.env.NEXT_PUBLIC_URL;
+
 const useStore = create((set) => ({
   products: [],
   product: null,
@@ -14,7 +16,7 @@ const useStore = create((set) => ({
   fetchProducts: async () => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`${URL}/api/productos`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -36,15 +38,18 @@ const useStore = create((set) => ({
   addProduct: async (productoAEnviar, imagenFile) => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`${URL}/api/productos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(productoAEnviar),
+        
       });
+      console.log(JSON.stringify(productoAEnviar));
       if (!response.ok) {
+
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
@@ -54,7 +59,7 @@ const useStore = create((set) => ({
       if (imagenFile) {
         const formData = new FormData();
         formData.append('image', imagenFile);
-        const imagenResponse = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${nuevoProducto._id}/imagen`, {
+        const imagenResponse = await fetch(`${URL}/api/productos/${nuevoProducto._id}/imagen`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -82,7 +87,7 @@ const useStore = create((set) => ({
   fetchProductsByCategory: async (categoria) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/categoria/${categoria}`);
+      const response = await fetch(`${URL}/api/productos/categoria/${categoria}`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }
@@ -98,7 +103,7 @@ const useStore = create((set) => ({
   fetchProductById: async (id) => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${id}`);
+      const response = await fetch(`${URL}/api/productos/${id}`);
       if (!response.ok) {
         throw new Error('Error al obtener el producto');
       }
@@ -133,7 +138,7 @@ const useStore = create((set) => ({
   fetchTikTokLinks: async () => {
     set({ loading: true });
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/tiktoks`, {
+      const response = await fetch(`${URL}/api/tiktoks`, {
         method: 'GET',
       });
       if (!response.ok) {

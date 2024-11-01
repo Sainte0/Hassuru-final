@@ -5,6 +5,8 @@ import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import Sidebar from "../../components/Sidebar";
 
+const URL = process.env.NEXT_PUBLIC_URL;
+
 export default function AdminDashboard() {
   useAuth();
   const router = useRouter();
@@ -16,7 +18,7 @@ export default function AdminDashboard() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
+      const response = await fetch(`${URL}/api/productos`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
@@ -41,7 +43,7 @@ export default function AdminDashboard() {
   const fetchProductsFiltered = async (categoria) => {
     setLoading(true);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/categoria/${categoria}`, {
+      const response = await fetch(`${URL}/api/productos/categoria/${categoria}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
