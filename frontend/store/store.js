@@ -45,8 +45,11 @@ const useStore = create((set) => ({
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify(productoAEnviar),
+        
       });
+      console.log(JSON.stringify(productoAEnviar));
       if (!response.ok) {
+
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
