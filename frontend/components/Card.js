@@ -12,7 +12,6 @@ export default function Card({ currentProducts }) {
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-
     if (hasTallas) {
       return { message: "Entrega inmediata", color: "text-green-500" };
     } else if (product.encargo) {
@@ -31,7 +30,7 @@ export default function Card({ currentProducts }) {
             <Link href={`/producto/${product._id}`} key={product.id}>
               <div key={product._id} className="flex flex-col justify-between h-full transition-transform transform hover:scale-105">
                 <Image
-                  src={product.image?.base64}
+                  src={product.image}
                   alt={product.nombre}
                   className="object-cover w-full mb-3 h-80"
                   width={300}

@@ -23,11 +23,9 @@ const isValidUrl = (string) => {
 
 router.put('/:id', authMiddleware, async (req, res) => {
   const { link } = req.body;
-
   if (!link || !isValidUrl(link)) {
     return res.status(400).json({ error: 'El enlace de TikTok no es válido.' });
   }
-
   try {
     const tiktokActualizado = await TiktokLink.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!tiktokActualizado) {
@@ -42,11 +40,9 @@ router.put('/:id', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   try {
     const tiktokCount = await TiktokLink.countDocuments();
-    
     if (tiktokCount >= 3) {
       return res.status(400).json({ error: 'Ya hay 3 enlaces de TikTok, no puedes agregar más.' });
     }
-
     const nuevoTiktok = new TiktokLink(req.body);
     const tiktokGuardado = await nuevoTiktok.save();
     res.status(201).json(tiktokGuardado);
@@ -54,8 +50,6 @@ router.post('/', authMiddleware, async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
-
 
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {

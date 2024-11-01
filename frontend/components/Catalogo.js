@@ -4,11 +4,10 @@ import Card from "./Card";
 import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
-import { API_URL } from "@/config";
 
 export default function Catalogo() {
   const router = useRouter();
-  const { search } = router.query; 
+  const { search } = router.query;
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +32,6 @@ export default function Catalogo() {
       setLoading(false);
     }
   };
-  
 
   useEffect(() => {
     fetchProducts();
@@ -50,7 +48,7 @@ export default function Catalogo() {
     } else {
       setFilteredProducts(products);
     }
-  }, [search, products]); // Dependencias para el efecto
+  }, [search, products]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

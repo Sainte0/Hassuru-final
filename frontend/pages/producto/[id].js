@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Detail from "../../../frontend/components/Detail";
+import Detail from "../../components/Detail";
 import { useRouter } from "next/router";
 import useStore from "../../store/store";
 import { BounceLoader } from 'react-spinners';
@@ -20,7 +20,6 @@ export default function DetailPage() {
         };
         fetchData();
     }, [id, fetchProductById]);
-
     if (loading) {
         return (
             <div className="flex items-center justify-center mt-[5%]">

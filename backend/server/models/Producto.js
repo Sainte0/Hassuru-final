@@ -35,10 +35,8 @@ const ProductoSchema = new mongoose.Schema({
     },
   ],
   image: {
-    base64: {
-      type: String,
-      required: true,
-    },
+    type: String,
+    required: false,
   },
   encargo: {
     type: Boolean,

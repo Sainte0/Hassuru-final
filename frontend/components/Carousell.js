@@ -59,7 +59,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                   <Image
                     width={300}
                     height={300}
-                    src={product.image?.base64}
+                    src={product.image}
                     alt={product.nombre}
                     className="object-cover w-full mb-3 h-80"
                   />

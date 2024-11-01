@@ -36,8 +36,8 @@ export default function Contact() {
         <div className="flex flex-col items-center justify-between gap-4 px-4 py-20 md:flex-row">
             <div className="w-full md:w-[49.5%] lg:h-[700px]">
                 <Image
-                width={300}
-                height={300}
+                    width={300}
+                    height={300}
                     src="/images/Explicacion.png"
                     alt="Explicación"
                     className="object-contain w-full h-full rounded-md shadow-xl lg:object-cover"

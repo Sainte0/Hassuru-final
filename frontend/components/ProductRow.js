@@ -4,7 +4,6 @@ import { IoAddCircleOutline } from "react-icons/io5";
 import { toast } from 'react-hot-toast';
 import useStore from "../store/store";
 import Image from "next/image";
-import { API_URL } from "@/config";
 
 const ProductRow = ({
   producto,
@@ -71,23 +70,45 @@ const ProductRow = ({
     updatedProducts[index].colores = updatedProducts[index].colores.filter(c => c._id !== colorId);
     setEditableProducts(updatedProducts);
   };
+
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
       ...producto,
       categoria: producto.categoria,
     };
-
-    const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}`, {
+    const formData = new FormData();
+    Object.keys(updatedProduct).forEach(key => {
+      if (key !== 'image') {
+        formData.append(key, updatedProduct[key]);
+      }
+    });
+    const responseData = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(updatedProduct),
     });
-
-    if (response.ok) {
+    if (responseData.ok) {
       toast.success('Producto actualizado con éxito');
+      if (newImage) {
+        const imageFormData = new FormData();
+        imageFormData.append('image', newImage);
+        const imageResponse = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}/image`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: imageFormData,
+        });
+        if (imageResponse.ok) {
+          toast.success('Imagen actualizada con éxito');
+        } else {
+          toast.error('Error al actualizar la imagen');
+          console.error('Error al actualizar la imagen');
+        }
+      }
       fetchProducts();
       setSelectedProduct(null);
     } else {
@@ -95,6 +116,7 @@ const ProductRow = ({
       console.error('Error al actualizar el producto');
     }
   };
+
 
   const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
@@ -122,30 +144,17 @@ const ProductRow = ({
       console.error(`Producto en el índice ${index} no existe.`);
       return;
     }
-    if (field === 'precio') {
-      updatedProducts[index][field] = newValue;
-    } else if (field === 'categoria') {
-      updatedProducts[index][field] = newValue;
-    } else {
-      if (!updatedProducts[index][field]) {
-        updatedProducts[index][field] = '';
-      }
-      updatedProducts[index][field] = newValue;
-    }
+    updatedProducts[index][field] = newValue;
     setEditableProducts(updatedProducts);
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
+    if (file) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = { base64: reader.result };
+      updatedProducts[index].image = URL.createObjectURL(file);
       setEditableProducts(updatedProducts);
       setNewImage(file);
-    };
-    if (file) {
-      reader.readAsDataURL(file);
     }
   };
 
@@ -369,11 +378,11 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-4 py-2 border">
-        {producto.image?.base64 && (
+        {(producto.image || newImage) && (
           <Image
-          width={300}
-          height={300}
-            src={producto.image.base64}
+            width={300}
+            height={300}
+            src={newImage ? URL.createObjectURL(newImage) : producto?.image}
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />

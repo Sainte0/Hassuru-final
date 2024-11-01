@@ -1,6 +1,5 @@
 import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
-import { API_URL } from "@/config";
 
 const useStore = create((set) => ({
   products: [],
@@ -34,7 +33,7 @@ const useStore = create((set) => ({
     }
   },
 
-  addProduct: async (productoAEnviar) => {
+  addProduct: async (productoAEnviar, imagenFile) => {
     set({ loading: true });
     try {
       const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`, {
@@ -51,11 +50,26 @@ const useStore = create((set) => ({
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
         return;
       }
-
+      const nuevoProducto = await response.json();
+      if (imagenFile) {
+        const formData = new FormData();
+        formData.append('image', imagenFile);
+        const imagenResponse = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${nuevoProducto._id}/imagen`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: formData,
+        });
+        if (!imagenResponse.ok) {
+          const imagenErrorData = await imagenResponse.json();
+          toast.error(`Error al subir la imagen: ${imagenErrorData.message || 'Error desconocido'}`);
+          return;
+        }
+      }
       toast.success('Producto agregado con éxito');
       set({ productAdded: true });
       await useStore.getState().fetchProducts();
-
     } catch (error) {
       set({ error: error.message });
       console.error('Error al agregar el producto:', error);

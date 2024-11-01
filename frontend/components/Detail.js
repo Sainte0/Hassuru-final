@@ -35,16 +35,16 @@ export default function Detail({ product }) {
   };
 
   const handleConsultarStockClick = () => {
-    setShowTallas(true); // Siempre abrir la sección de tallas al consultar stock
+    setShowTallas(true);
   };
 
   return (
     <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
       <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
         <Image
-        width={300}
-        height={300}
-          src={product.image?.base64}
+          width={300}
+          height={300}
+          src={product.image}
           alt={product.nombre}
           className="object-contain w-full h-auto max-h-[700px]"
         />
@@ -98,7 +98,6 @@ export default function Detail({ product }) {
             </div>
           )}
         </div>
-
         <div className="text-sm text-gray-600">
           {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
             <span className="text-green-500">Entrega inmediata</span>
@@ -106,7 +105,6 @@ export default function Detail({ product }) {
             <span className="text-red-500">Disponible en 20 días</span>
           )}
         </div>
-
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <span>✓</span>
           <p>Artículo verificado, 100% original.</p>
@@ -119,7 +117,6 @@ export default function Detail({ product }) {
             <p>No hay stock disponible. Pide tu talle.</p>
           )}
         </div>
-
         {selectedTalla && (
           <div className="mt-2 text-sm text-gray-600">
             Has seleccionado la talla: <span className="font-bold">{selectedTalla}</span>
@@ -131,7 +128,6 @@ export default function Detail({ product }) {
             </button>
           </div>
         )}
-
         <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
           <div className="p-4 text-sm text-center text-gray-600 border rounded-md">
             Envíos gratis a todo el país.
@@ -148,8 +144,6 @@ export default function Detail({ product }) {
             {selectedTalla || customTalla ? "Comprar" : "Consultar stock"}
           </button>
         </div>
-
-        {/* Métodos de Pago */}
         <div className="p-4 mt-6 bg-white border border-gray-300 rounded-md shadow-md">
           <h3 className="text-lg font-semibold text-gray-800">Medios de pago disponibles:</h3>
           <ul className="mt-2 space-y-2 text-gray-700">
@@ -175,7 +169,6 @@ export default function Detail({ product }) {
             </li>
           </ul>
         </div>
-
       </div>
     </div>
   );

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Card from "../../../../frontend/components/Card";
-import Filter from "../../../../frontend/components/Filtro";
-import Pagination from "../../../../frontend/components/Pagination";
+import Card from "../../../components/Card";
+import Filter from "../../../components/Filtro";
+import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
-import { API_URL } from "@/config";
 
 export default function Categoria() {
   const [products, setProducts] = useState([]);

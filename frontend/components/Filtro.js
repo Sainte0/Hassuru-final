@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { IoFilterOutline } from "react-icons/io5";
 
 export default function Filter({ products, setFilteredProducts }) {
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
@@ -12,8 +11,8 @@ export default function Filter({ products, setFilteredProducts }) {
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
   const [selectedMarca, setSelectedMarca] = useState("");
   const [marcas, setMarcas] = useState([]);
-  const [showFilters, setShowFilters] = useState(true); // Estado para mostrar/ocultar filtros
-  const [query, setQuery] = useState(""); // Estado para búsqueda
+  const [showFilters, setShowFilters] = useState(true);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const marcasSet = new Set();
@@ -107,9 +106,9 @@ export default function Filter({ products, setFilteredProducts }) {
         return true;
       });
     }
-    if (query) { // Asegúrate de que la búsqueda se aplique
+    if (query) {
       filtered = filtered.filter((product) =>
-        product.nombre.toLowerCase().includes(query.toLowerCase()) // Ajusta esto según cómo se llama la propiedad que contiene el texto a buscar
+        product.nombre.toLowerCase().includes(query.toLowerCase())
       );
     }
     setFilteredProducts(filtered);
@@ -123,7 +122,7 @@ export default function Filter({ products, setFilteredProducts }) {
     setPrecioMax("");
     setStockOnly(false);
     setSelectedDisponibilidad("");
-    setQuery(""); // Reiniciar la búsqueda
+    setQuery("");
     setFilteredProducts(products);
   };
 
@@ -184,8 +183,6 @@ export default function Filter({ products, setFilteredProducts }) {
               <button onClick={() => setSelectedMarca("")} className="text-red-500">X</button>
             </div>
           )}
-
-          {/* Mostrar el filtro de búsqueda solo si hay consulta */}
           {query && (
             <div className="flex items-center mb-2">
               <span className="mr-2 text-gray-600">Búsqueda: {query}</span>
@@ -202,7 +199,6 @@ export default function Filter({ products, setFilteredProducts }) {
         >
           {showFilters ? "Ocultar Filtros" : "Mostrar Filtros"}
         </button>
-
         {showFilters && (
           <>
             <div className="mb-4">
@@ -219,14 +215,13 @@ export default function Filter({ products, setFilteredProducts }) {
                       onChange={() => handleSelectMarca(marca)}
                       className="mr-1"
                     />
-                    <label htmlFor={`marca-${marca}`} className="cursor-pointer p-2 rounded bg-white">
+                    <label htmlFor={`marca-${marca}`} className="p-2 bg-white rounded cursor-pointer">
                       {marca}
                     </label>
                   </div>
                 ))}
               </div>
             </div>
-
             {tallasRopa.length > 0 && (
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
@@ -248,7 +243,6 @@ export default function Filter({ products, setFilteredProducts }) {
                 ))}
               </div>
             )}
-
             {tallasZapatilla.length > 0 && (
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Talla de Zapatillas</label>
@@ -268,7 +262,7 @@ export default function Filter({ products, setFilteredProducts }) {
                         />
                         <label
                           htmlFor={`tallaZapatilla-${talla}`}
-                          className="cursor-pointer text-gray-600 p-2 rounded bg-white"
+                          className="p-2 text-gray-600 bg-white rounded cursor-pointer"
                         >
                           {talla}
                         </label>
@@ -277,7 +271,6 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
             )}
-
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-700">Precio</label>
               <input
@@ -309,11 +302,8 @@ export default function Filter({ products, setFilteredProducts }) {
                 Reiniciar Filtros
               </button>
             </div>
-
           </>
-
         )}
-
         <div className="mt-4">
           <h4 className="mb-1 font-semibold">Disponibilidad</h4>
           <div className="flex flex-col">
@@ -346,7 +336,6 @@ export default function Filter({ products, setFilteredProducts }) {
             </button>
           </div>
         </div>
-
       </div>
     </main>
   );
