@@ -6,6 +6,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
 
+
 router.get('/', async (req, res) => {
   try {
     const productos = await Producto.find();
@@ -128,25 +129,46 @@ router.post('/:id/imagen', upload.single('image'), async (req, res) => {
 });
 
 
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
+    const { image, ...updatedData } = req.body;
 
-    const updatedData = { ...req.body };
+    const productoActualizado = await Producto.findByIdAndUpdate(req.params.id, updatedData, { new: true });
 
-    if (req.file) {
-      const uploadResult = await cloudinary.uploader.upload(req.file.path);
-      updatedData.image = uploadResult.secure_url;
-    }
-
-    const productoActualizado = await Producto.findByIdAndUpdate(id, updatedData, { new: true });
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
     res.status(200).json(productoActualizado);
   } catch (error) {
-    console.error('Error al actualizar el producto:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
+router.put('/:id/image', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'Se requiere una imagen para actualizar.' });
+    }
+
+    const uploadResult = await cloudinary.uploader.upload(req.file.path);
+
+    const productoActualizado = await Producto.findByIdAndUpdate(
+      id,
+      { image: uploadResult.secure_url },
+      { new: true }
+    );
+
+    if (!productoActualizado) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    res.status(200).json(productoActualizado);
+  } catch (error) {
+    console.error('Error al actualizar la imagen del producto:', error);
     res.status(400).json({ error: error.message });
   }
 });

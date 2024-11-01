@@ -74,37 +74,64 @@ const ProductRow = ({
 
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
-      ...producto,
-      categoria: producto.categoria,
+        ...producto,
+        categoria: producto.categoria,
     };
-  
+
+    // Crear un FormData para la actualización de la imagen
     const formData = new FormData();
   
+    // Agregar los datos del producto al FormData
     Object.keys(updatedProduct).forEach(key => {
-      formData.append(key, updatedProduct[key]);
+        if (key !== 'image') { // Excluir la imagen para esta solicitud
+            formData.append(key, updatedProduct[key]);
+        }
     });
-  
-    if (newImage) {
-      formData.append('image', newImage);
-    }
-  
-    const response = await fetch(`http://localhost:5000/api/productos/${producto._id}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: formData,
+
+    // Actualizar primero los datos del producto (sin imagen)
+    const responseData = await fetch(`http://localhost:5000/api/productos/${producto._id}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedProduct),
     });
-  
-    if (response.ok) {
-      toast.success('Producto actualizado con éxito');
-      fetchProducts();
-      setSelectedProduct(null);
+
+    if (responseData.ok) {
+        toast.success('Producto actualizado con éxito');
+
+        // Si hay una nueva imagen, proceder a actualizar la imagen
+        if (newImage) {
+            // Crear un nuevo FormData solo para la imagen
+            const imageFormData = new FormData();
+            imageFormData.append('image', newImage);
+
+            const imageResponse = await fetch(`http://localhost:5000/api/productos/${producto._id}/image`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+                body: imageFormData,
+            });
+
+            if (imageResponse.ok) {
+                toast.success('Imagen actualizada con éxito');
+            } else {
+                toast.error('Error al actualizar la imagen');
+                console.error('Error al actualizar la imagen');
+            }
+        }
+
+        // Volver a obtener los productos y restablecer el producto seleccionado
+        fetchProducts();
+        setSelectedProduct(null);
     } else {
-      toast.error('Error al actualizar el producto');
-      console.error('Error al actualizar el producto');
+        toast.error('Error al actualizar el producto');
+        console.error('Error al actualizar el producto');
     }
   };
+
 
   const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
@@ -141,16 +168,13 @@ const ProductRow = ({
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setNewImage(e.target.result);
-    }
-    reader.readAsDataURL(file);
-
     if (file) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = file;
+      updatedProducts[index].image = URL.createObjectURL(file); // Crear una URL de vista previa del archivo
       setEditableProducts(updatedProducts);
+  
+      // Guardar el archivo en sí para cuando necesites subirlo
+      setNewImage(file);
     }
   };
 
@@ -374,11 +398,11 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-4 py-2 border">
-        {producto.image && (
+        {(producto.image || newImage) && (
           <Image
             width={300}
             height={300}
-            src={newImage || producto.image}            
+            src={newImage || producto?.image}            
             alt={producto.nombre}
             className="object-cover w-16 h-16"
           />
