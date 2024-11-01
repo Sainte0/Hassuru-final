@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
+const URL = process.env.URL;
+
 const TiktokLinksAdmin = () => {
   const [tiktoks, setTiktoks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,7 +11,7 @@ const TiktokLinksAdmin = () => {
   const fetchTiktokLinks = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/tiktoks`);
+      const response = await fetch(`${URL}/api/tiktoks`);
       if (!response.ok) {
         throw new Error("Error al obtener los enlaces de TikTok");
       }
@@ -39,7 +41,7 @@ const TiktokLinksAdmin = () => {
   const handleUpdate = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/tiktoks/${id}`, {
+      const response = await fetch(`${URL}/api/tiktoks/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

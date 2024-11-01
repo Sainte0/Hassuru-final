@@ -5,6 +5,8 @@ import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
 
+const URL = process.env.URL;
+
 export default function Catalogo() {
   const router = useRouter();
   const { search } = router.query;
@@ -19,7 +21,7 @@ export default function Catalogo() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos`);
+      const response = await fetch(`${URL}/api/productos`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }

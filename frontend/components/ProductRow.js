@@ -5,6 +5,8 @@ import { toast } from 'react-hot-toast';
 import useStore from "../store/store";
 import Image from "next/image";
 
+const URL = process.env.URL;
+
 const ProductRow = ({
   producto,
   index,
@@ -82,7 +84,7 @@ const ProductRow = ({
         formData.append(key, updatedProduct[key]);
       }
     });
-    const responseData = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}`, {
+    const responseData = await fetch(`${URL}/api/productos/${producto._id}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -95,7 +97,7 @@ const ProductRow = ({
       if (newImage) {
         const imageFormData = new FormData();
         imageFormData.append('image', newImage);
-        const imageResponse = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${producto._id}/image`, {
+        const imageResponse = await fetch(`${URL}/api/productos/${producto._id}/image`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -121,7 +123,7 @@ const ProductRow = ({
   const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
     if (confirmDelete) {
-      const response = await fetch(`https://web-production-73e61.up.railway.app/api/productos/${id}`, {
+      const response = await fetch(`${URL}/api/productos/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

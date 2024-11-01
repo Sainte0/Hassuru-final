@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination";
 
+const URL = process.env.URL;
+
 export default function Suscriptores() {
   const [currentPage, setCurrentPage] = useState(1);
   const [suscriptores, setSuscriptores] = useState([]);
@@ -12,7 +14,7 @@ export default function Suscriptores() {
 
   const obtenerSuscriptores = async () => {
     try {
-      const response = await fetch("https://web-production-73e61.up.railway.app/api/suscriptores", {
+      const response = await fetch(`${URL}/api/suscriptores`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

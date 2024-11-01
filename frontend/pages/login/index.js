@@ -2,6 +2,8 @@ import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from "next/router";
 
+const URL = process.env.URL;
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,7 +11,7 @@ export default function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await fetch(`https://web-production-73e61.up.railway.app/api/admin/login`, {
+    const response = await fetch(`${URL}/api/admin/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
