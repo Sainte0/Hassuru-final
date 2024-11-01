@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Pagination from "../../../components/Pagination";
+import Pagination from "../../components/Pagination";
 
 export default function Suscriptores() {
   const [currentPage, setCurrentPage] = useState(1);
