@@ -14,6 +14,15 @@ export default function Filter({ products, setFilteredProducts }) {
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
 
+
+  // Verifica si está en móvil y oculta los filtros inicialmente
+  useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setShowFilters(false);
+    }
+  }, []);
+
   useEffect(() => {
     const marcasSet = new Set();
     products.forEach((product) => marcasSet.add(product.marca));
@@ -191,6 +200,7 @@ export default function Filter({ products, setFilteredProducts }) {
           )}
         </div>
       </div>
+
       <div>
 
         <button
@@ -304,37 +314,37 @@ export default function Filter({ products, setFilteredProducts }) {
             </div>
           </>
         )}
-        <div className="mt-4">
-          <h4 className="mb-1 font-semibold">Disponibilidad</h4>
-          <div className="flex flex-col">
-            <button
-              onClick={() => handleSelectDisponibilidad("Entrega inmediata")}
-              className={`p-2 rounded w-full ${selectedDisponibilidad === "Entrega inmediata"
-                ? "bg-gray-600 text-white"
-                : "bg-gray-300 text-black"
-                } hover:bg-green-500 mb-1`}
-            >
-              Entrega inmediata
-            </button>
-            <button
-              onClick={() => handleSelectDisponibilidad("Disponible en 3 días")}
-              className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 3 días"
-                ? "bg-gray-600 text-white"
-                : "bg-gray-300 text-black"
-                } hover:bg-yellow-500 mb-1`}
-            >
-              Disponible en 3 días
-            </button>
-            <button
-              onClick={() => handleSelectDisponibilidad("Disponible en 15 días")}
-              className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 15 días"
-                ? "bg-gray-600 text-white"
-                : "bg-gray-300 text-black"
-                } hover:bg-red-500`}
-            >
-              Disponible en 20 días
-            </button>
-          </div>
+      </div>
+      <div className="mt-4">
+        <h4 className="mb-1 font-semibold">Disponibilidad</h4>
+        <div className="flex flex-col">
+          <button
+            onClick={() => handleSelectDisponibilidad("Entrega inmediata")}
+            className={`p-2 rounded w-full ${selectedDisponibilidad === "Entrega inmediata"
+              ? "bg-gray-600 text-white"
+              : "bg-gray-300 text-black"
+              } hover:bg-green-500 mb-1`}
+          >
+            Entrega inmediata
+          </button>
+          <button
+            onClick={() => handleSelectDisponibilidad("Disponible en 3 días")}
+            className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 3 días"
+              ? "bg-gray-600 text-white"
+              : "bg-gray-300 text-black"
+              } hover:bg-yellow-500 mb-1`}
+          >
+            Disponible en 3 días
+          </button>
+          <button
+            onClick={() => handleSelectDisponibilidad("Disponible en 15 días")}
+            className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 15 días"
+              ? "bg-gray-600 text-white"
+              : "bg-gray-300 text-black"
+              } hover:bg-red-500`}
+          >
+            Disponible en 20 días
+          </button>
         </div>
       </div>
     </main>

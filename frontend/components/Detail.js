@@ -42,10 +42,12 @@ export default function Detail({ product }) {
     <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
       <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
         <Image
-          width={300}
-          height={300}
           src={product.image}
           alt={product.nombre}
+          layout="responsive"
+          width={500}  // Aumenta el tamaño para evitar pixelado en pantallas más grandes
+          height={500}
+          quality={90}  // Configura una calidad alta (90 es un buen punto de inicio)
           className="object-contain w-full h-auto max-h-[700px]"
         />
       </div>
