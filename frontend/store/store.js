@@ -151,6 +151,32 @@ const useStore = create((set) => ({
       set({ loading: false });
     }
   },
+
+  fetchLogin: async (email, password, router) => {
+    try {
+      const response = await fetch(`${URL}/api/admin/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        toast.success("Inicio de sesión exitoso!");
+        router.push("/admin");
+      } else if (response.status === 400) {
+        toast.error("Datos inválidos. Verifica tu email y contraseña.");
+      } else {
+        toast.error(data.error || "Error al iniciar sesión.");
+      }
+    } catch (error) {
+      toast.error("Error al intentar iniciar sesión.");
+      console.error(error);
+    }
+  },
 }));
 
 export default useStore;

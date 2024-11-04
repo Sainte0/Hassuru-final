@@ -1,33 +1,17 @@
 import { useState } from "react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useRouter } from "next/router";
-
-const URL = process.env.NEXT_PUBLIC_URL;
+import useStore from "@/store/store";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const fetchLogin = useStore((state) => state.fetchLogin);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await fetch(`${URL}/api/admin/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (response.ok) {
-      localStorage.setItem("token", data.token);
-      toast.success("Inicio de sesión exitoso!");
-      router.push("/admin");
-    } else if (response.status === 400) {
-      toast.error("Datos inválidos. Verifica tu email y contraseña.");
-    } else {
-      toast.error(data.error || "Error al iniciar sesión.");
-    }
+    await fetchLogin(email, password, router);
   };
 
   return (
