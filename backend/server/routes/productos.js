@@ -68,7 +68,7 @@ router.get('/categoria/:categoria', async (req, res) => {
 
 router.post('/', authMiddleware, async (req, res) => {
   try {
-    const { nombre, descripcion, precio, marca, categoria, tallas } = req.body;
+    const { nombre, descripcion, precio, marca, categoria, tallas, encargo, destacado, destacado_zapatillas } = req.body;
     if (!nombre || !precio || !marca || !categoria || !tallas) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
@@ -83,6 +83,9 @@ router.post('/', authMiddleware, async (req, res) => {
       categoria,
       tallas,
       image: '',
+      encargo,
+      destacado, 
+      destacado_zapatillas 
     });
     const productoGuardado = await nuevoProducto.save();
     res.status(201).json(productoGuardado);

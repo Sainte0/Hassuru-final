@@ -27,7 +27,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       onClose();
       window.location.reload();
     }
-  }, [onClose]);
+  }, [productAdded, onClose]);
 
   const categoriasDisponibles = [
     'ropa',
@@ -106,10 +106,12 @@ const AddProductModal = ({ isOpen, onClose }) => {
       precio: parseFloat(product.precio),
       tallas: product.tallas,
       colores: product.colores,
-      destacado: product.destacado,
       encargo: product.encargo,
+      destacado: product.destacado,
       destacado_zapatillas: product.destacado_zapatillas,
     };
+
+    console.log("Producto a enviar:", productoAEnviar);
 
     const imageFile = product.image;
 
