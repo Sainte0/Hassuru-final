@@ -10,8 +10,8 @@ const roboto = Roboto({
 export default function App({ Component, pageProps }) {
   return(
   <div className={roboto.className}>
+    <Toaster />
     <Layout>
-      <Toaster />
       <Component {...pageProps} />
     </Layout>
   </div>

@@ -8,13 +8,11 @@ export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mediaQuery.matches);
+    const handleResize = (e) => setIsMobile(e.matches);
+    mediaQuery.addEventListener("change", handleResize);
+    return () => mediaQuery.removeEventListener("change", handleResize);
   }, []);
 
   const navigation = [
@@ -24,15 +22,11 @@ export default function Navbar() {
     { name: "Encargos", href: "/encargos" },
   ];
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <>
       <nav className="relative p-12 shadow-md">
         <div className="absolute inset-0 w-full h-full">
-          <Link href={"/"}>
+          <Link href="/">
             <Image
               src={isMobile ? "/logo.png" : "/banner-3.png"}
               alt="Background"
@@ -47,8 +41,8 @@ export default function Navbar() {
         <div className="container flex items-center mx-auto">
           <div className="justify-start flex-grow hidden xl:flex xl:items-center xl:space-x-6">
             <ul className="flex flex-row space-x-6">
-              {navigation.map((menu, index) => (
-                <li key={index}>
+              {navigation.map((menu) => (
+                <li key={menu.name}>
                   <Link
                     href={menu.href}
                     className="px-4 py-2 text-lg font-medium text-black no-underline rounded-md hover:bg-black hover:text-white focus:outline-none"
@@ -63,7 +57,7 @@ export default function Navbar() {
             <SearchBar onSearch={(query) => console.log(query)} isHamburgerOpen={false} />
           </div>
           <button
-            onClick={toggleMenu}
+            onClick={() => setIsOpen(!isOpen)}
             className="ml-auto text-black focus:outline-none xl:hidden"
           >
             <svg
@@ -85,8 +79,8 @@ export default function Navbar() {
         {isOpen && (
           <div className="mt-8 xl:hidden">
             <ul className="space-y-4">
-              {navigation.map((menu, index) => (
-                <li key={index}>
+              {navigation.map((menu) => (
+                <li key={menu.name}>
                   <Link
                     href={menu.href}
                     className="block px-4 py-2 text-lg font-medium text-black no-underline rounded-md hover:bg-black hover:text-white"

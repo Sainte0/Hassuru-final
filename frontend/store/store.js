@@ -2,6 +2,7 @@ import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
 
 const URL = process.env.NEXT_PUBLIC_URL;
+const getToken = () => `Bearer ${localStorage.getItem('token')}`;
 
 const useStore = create((set) => ({
   products: [],
@@ -9,7 +10,6 @@ const useStore = create((set) => ({
   dolarBlue: null,
   loading: false,
   error: null,
-  productAdded: false,
   filteredProducts: [],
   tiktokLinks: [],
 
@@ -19,7 +19,7 @@ const useStore = create((set) => ({
       const response = await fetch(`${URL}/api/productos`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': getToken(),
         },
       });
       if (!response.ok) {
@@ -42,27 +42,28 @@ const useStore = create((set) => ({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': getToken(),
         },
         body: JSON.stringify(productoAEnviar),
-        
       });
-      console.log(JSON.stringify(productoAEnviar));
       if (!response.ok) {
-
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
         return;
       }
       const nuevoProducto = await response.json();
+      set((state) => ({
+        products: [...state.products, nuevoProducto],
+        productAdded: true,
+      }));
       if (imagenFile) {
         const formData = new FormData();
         formData.append('image', imagenFile);
         const imagenResponse = await fetch(`${URL}/api/productos/${nuevoProducto._id}/imagen`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': getToken(),
           },
           body: formData,
         });
@@ -73,8 +74,6 @@ const useStore = create((set) => ({
         }
       }
       toast.success('Producto agregado con éxito');
-      set({ productAdded: true });
-      await useStore.getState().fetchProducts();
     } catch (error) {
       set({ error: error.message });
       console.error('Error al agregar el producto:', error);
@@ -132,7 +131,6 @@ const useStore = create((set) => ({
     }
   },
 
-  clearError: () => set({ error: null }),
   setFilteredProducts: (filtered) => set({ filteredProducts: filtered }),
 
   fetchTikTokLinks: async () => {

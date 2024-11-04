@@ -11,28 +11,21 @@ export default function DetailPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        if (id) {
+          const fetchData = async () => {
             setLoading(true);
-            if (id) {
-                await fetchProductById(id);
-            }
+            await fetchProductById(id);
             setLoading(false);
-        };
-        fetchData();
-    }, [id, fetchProductById]);
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center mt-[5%]">
-                <BounceLoader color="#BE1A1D" />
-            </div>
-        );
-    }
+          };
+          fetchData();
+        }
+      }, [id, fetchProductById]);
 
-    if (!product) return <div>No se encontró el producto.</div>;
+  if (loading) return <div className="flex items-center justify-center mt-[5%]"><BounceLoader color="#BE1A1D" /></div>;
 
     return (
         <div>
-            <Detail product={product} />
+          {product ? <Detail product={product} /> : <div>No se encontró el producto.</div>}
         </div>
-    )
-}
+      );
+    }

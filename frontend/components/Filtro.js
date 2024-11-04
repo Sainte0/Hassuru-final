@@ -14,8 +14,6 @@ export default function Filter({ products, setFilteredProducts }) {
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
 
-
-  // Verifica si está en móvil y oculta los filtros inicialmente
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
@@ -155,6 +153,10 @@ export default function Filter({ products, setFilteredProducts }) {
 
   const handleSelectMarca = (marca) => {
     setSelectedMarca(marca);
+  };
+
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
   };
 
   return (

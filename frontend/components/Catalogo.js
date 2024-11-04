@@ -30,8 +30,8 @@ export default function Catalogo() {
       const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
-    } catch (error) {
-      setError(error.message);
+    } catch (er) {
+      setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
     }

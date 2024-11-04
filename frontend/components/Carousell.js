@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Carousell({ title, products, dolarBlue }) {
   const carouselRef = useRef(null);
-
+  console.log(products)
   useEffect(() => {
     const interval = setInterval(() => {
       carouselRef.current.scrollBy({
@@ -16,6 +16,13 @@ export default function Carousell({ title, products, dolarBlue }) {
     return () => clearInterval(interval);
   }, []);
 
+  const handleScroll = (direction) => {
+    carouselRef.current.scrollBy({
+      left: direction === 'left' ? -300 : 300,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
@@ -24,23 +31,13 @@ export default function Carousell({ title, products, dolarBlue }) {
           <div>
             <button
               className="p-2 text-black transform hover:scale-105"
-              onClick={() =>
-                carouselRef.current.scrollBy({
-                  left: -300,
-                  behavior: "smooth",
-                })
-              }
+              onClick={() => handleScroll("left")}
             >
               <FaChevronLeft />
             </button>
             <button
               className="p-2 text-black transform hover:scale-105"
-              onClick={() =>
-                carouselRef.current.scrollBy({
-                  left: 300,
-                  behavior: "smooth",
-                })
-              }
+              onClick={() => handleScroll("right")}
             >
               <FaChevronRight />
             </button>
@@ -66,8 +63,8 @@ export default function Carousell({ title, products, dolarBlue }) {
                   <h3 className="text-lg font-semibold">{product.nombre}</h3>
                   <div className="flex flex-col mt-2">
                     <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                    <p className="text-lg font-bold text-gray-800">$
-                      {(product.precio * dolarBlue).toFixed(2)} ARS
+                    <p className="text-lg font-bold text-gray-800">
+                      {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
                     </p>
                   </div>
                 </div>

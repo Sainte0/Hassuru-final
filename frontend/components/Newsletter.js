@@ -2,28 +2,29 @@ import React, { useState } from "react";
 import WhatsButton from "./Whatsbutton";
 import { toast } from 'react-hot-toast';
 
-const URL = process.env.NEXT_PUBLIC_URL;
-
 export default function Newsletter() {
   const [email, setEmail] = useState("");
 
   const handleSubscribe = async (e) => {
     e.preventDefault();
-    const response = await fetch(`${URL}/api/suscriptores`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email }),
-    });
-    if (response.ok) {
-      toast.success("¡Gracias por suscribirte!")
-      setEmail("");
-    } else {
-      toast.error("Error al suscribirte. Intenta nuevamente.")
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/suscriptores`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+      if (response.ok) {
+        toast.success("¡Gracias por suscribirte!");
+        setEmail("");
+      } else {
+        throw new Error("Error al suscribirte.");
+      }
+    } catch {
+      toast.error("Error al suscribirte. Intenta nuevamente.");
     }
   };
-
 
   return (
     <div className="container p-6 mx-auto mt-10 bg-white rounded-lg shadow-md">

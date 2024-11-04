@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { FaInstagram, FaTiktok } from "react-icons/fa";
 
 export default function Footer() {
@@ -13,12 +12,12 @@ export default function Footer() {
     <footer className="p-1 text-black bg-white border-t-2 border-black shadow-md">
       <div className="container flex flex-col items-center justify-between mx-auto space-y-4 rounded-sm md:flex-row md:space-y-0">
         <div className="flex space-x-6">
-          <Link href="https://www.instagram.com/hassuru.ar/?hl=es" aria-label="Instagram">
+          <a href="https://www.instagram.com/hassuru.ar/?hl=es" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
             <FaInstagram className="w-6 h-6 hover:text-gray-500" />
-          </Link>
-          <Link href="https://www.tiktok.com/@hassuru.ar" aria-label="Tiktok">
+          </a>
+          <a href="https://www.tiktok.com/@hassuru.ar" aria-label="Tiktok" target="_blank" rel="noopener noreferrer">
             <FaTiktok className="w-6 h-6 hover:text-gray-500" />
-          </Link>
+          </a>
         </div>
         <div className="text-sm text-center md:text-right">
           <p className='mt-4'>Email: hassuru.ar@gmail.com</p>
