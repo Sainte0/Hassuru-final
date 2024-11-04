@@ -5,8 +5,6 @@ import Filter from "../../../components/Filtro";
 import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
 
-const URL = process.env.NEXT_PUBLIC_URL;
-
 export default function Categoria() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +19,7 @@ export default function Categoria() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${URL}/api/productos/categoria/${categoria}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }

@@ -8,12 +8,12 @@ const roboto = Roboto({
   subsets: ['latin'],
 });
 export default function App({ Component, pageProps }) {
-  return(
-  <div className={roboto.className}>
-    <Toaster />
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
-  </div>
+  return (
+    <div className={roboto.className}>
+      <Toaster />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </div>
   )
 }

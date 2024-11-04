@@ -4,7 +4,7 @@ import Catalogo from "../../components/Catalogo";
 export default function catalogo() {
   return (
     <div>
-      <Catalogo/>
+      <Catalogo />
     </div>
   );
 }

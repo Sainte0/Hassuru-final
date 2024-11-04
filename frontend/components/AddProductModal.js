@@ -111,8 +111,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
       destacado_zapatillas: product.destacado_zapatillas,
     };
 
-    console.log("Producto a enviar:", productoAEnviar);
-
     const imageFile = product.image;
 
     try {

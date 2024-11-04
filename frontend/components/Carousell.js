@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Carousell({ title, products, dolarBlue }) {
   const carouselRef = useRef(null);
-  console.log(products)
+
   useEffect(() => {
     const interval = setInterval(() => {
       carouselRef.current.scrollBy({

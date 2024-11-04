@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import Pagination from "../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
 
-const URL = process.env.NEXT_PUBLIC_URL;
-
 export default function Suscriptores() {
   const [currentPage, setCurrentPage] = useState(1);
   const [suscriptores, setSuscriptores] = useState([]);
@@ -21,7 +19,7 @@ export default function Suscriptores() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${URL}/api/suscriptores`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/suscriptores`, {
         headers: { "Content-Type": "application/json" },
       });
       if (!response.ok) throw new Error("Error al obtener los suscriptores");

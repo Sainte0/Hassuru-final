@@ -84,8 +84,8 @@ router.post('/', authMiddleware, async (req, res) => {
       tallas,
       image: '',
       encargo,
-      destacado, 
-      destacado_zapatillas 
+      destacado,
+      destacado_zapatillas
     });
     const productoGuardado = await nuevoProducto.save();
     res.status(201).json(productoGuardado);

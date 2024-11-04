@@ -5,10 +5,6 @@ import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
 
-const URL = process.env.NEXT_PUBLIC_URL;
-
-console.log(URL)
-
 export default function Catalogo() {
   const router = useRouter();
   const { search } = router.query;
@@ -23,7 +19,7 @@ export default function Catalogo() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${URL}/api/productos`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
       if (!response.ok) {
         throw new Error("Error al cargar los productos");
       }
