@@ -126,7 +126,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full p-6 text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3">
+      <div className="w-full p-6 text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3 max-h-screen overflow-y-auto">
         <h2 className="mb-4 text-xl">Agregar Producto</h2>
         <form onSubmit={handleSubmit}>
           <input
