@@ -12,6 +12,7 @@ const Layout = ({ children }) => {
     <div className='flex flex-col min-h-screen'>
       {showLayout && <Navbar />}
       <main className='flex-grow'>{children}</main>
+      {showLayout &&
       <a
         href={`https://wa.me/${whatsappNumber}`}
         target="_blank"
@@ -20,6 +21,7 @@ const Layout = ({ children }) => {
       >
         <FaWhatsapp size={32} />
       </a>
+      }
       {showLayout && <Footer />}
     </div>
   );
