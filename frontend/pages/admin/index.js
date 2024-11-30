@@ -65,14 +65,24 @@ export default function AdminDashboard() {
     router.push("/login");
   };
 
- return (
+  return (
     <div className="flex w-full min-h-screen bg-gray-100">
-      <Sidebar handleLogout={handleLogout} fetchProducts={fetchProducts} />
+      <Sidebar fetchProducts={fetchProducts} />
       <div className="flex-1 w-full p-4 md:p-10">
-        <h2 className="mb-6 text-2xl font-semibold text-black">Bienvenido al Dashboard</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-black">Bienvenido al Dashboard</h2>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 transition duration-300 md:text-base"
+          >
+            Logout
+          </button>
+        </div>
         <TiktokLinksAdmin />
         {loading ? (
-          <div className="flex justify-center mt-[10%]"><BounceLoader color="#BE1A1D" /></div>
+          <div className="flex justify-center mt-[10%]">
+            <BounceLoader color="#BE1A1D" />
+          </div>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddProductModal from './AddProductModal';
 
-const Sidebar = ({ handleLogout, categoriasDisponibles }) => {
+const Sidebar = ({ categoriasDisponibles }) => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   return (
@@ -18,14 +18,6 @@ const Sidebar = ({ handleLogout, categoriasDisponibles }) => {
             </button>
           </li>
         </ul>
-      </div>
-      <div className="p-6">
-        <button
-          onClick={handleLogout}
-          className="block w-full px-4 py-2 text-left text-red-500 transition duration-300 rounded hover:bg-gray-700"
-        >
-          Logout
-        </button>
       </div>
       <AddProductModal
         isOpen={isModalOpen}

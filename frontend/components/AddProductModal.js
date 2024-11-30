@@ -242,39 +242,48 @@ const AddProductModal = ({ isOpen, onClose }) => {
             ))}
           </div>
           <div className="mb-4">
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-4">
               <input
                 type="checkbox"
                 name="encargo"
                 checked={product.encargo}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label htmlFor="encargo" className="ml-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="encargo"
+                className="ml-2 text-sm font-medium text-gray-900"
+              >
                 Encargo
               </label>
             </div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-4">
               <input
                 type="checkbox"
                 name="destacado"
                 checked={product.destacado}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label htmlFor="destacado" className="ml-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="destacado"
+                className="ml-2 text-sm font-medium text-gray-900"
+              >
                 Destacado
               </label>
             </div>
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-4">
               <input
                 type="checkbox"
                 name="destacado_zapatillas"
                 checked={product.destacado_zapatillas}
                 onChange={handleInputChange}
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <label htmlFor="destacado_zapatillas" className="ml-2 text-sm font-medium text-gray-900">
+              <label
+                htmlFor="destacado_zapatillas"
+                className="ml-2 text-sm font-medium text-gray-900"
+              >
                 Destacado Zapatillas
               </label>
             </div>
