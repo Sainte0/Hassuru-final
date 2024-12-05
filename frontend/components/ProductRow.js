@@ -163,7 +163,8 @@ const ProductRow = ({
     const file = e.target.files[0];
     if (file) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = URL.createObjectURL(file);
+      const urlObject = URL.createObjectURL(file);
+      updatedProducts[index].image = urlObject;
       setEditableProducts(updatedProducts);
       setNewImage(file);
     }

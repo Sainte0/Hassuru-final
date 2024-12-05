@@ -22,6 +22,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const [cantidadTalla, setCantidadTalla] = useState('');
   const [colorInput, setColorInput] = useState('');
 
+  const [imagePreview, setImagePreview] = useState(null);
+
   useEffect(() => {
     if (productAdded) {
       onClose();
@@ -59,6 +61,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
         ...prev,
         image: file,
       }));
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -184,6 +187,15 @@ const AddProductModal = ({ isOpen, onClose }) => {
             onChange={handleImageChange}
             className="w-full p-2 mb-4 border"
           />
+          {imagePreview && (
+            <div className="mb-4">
+              <img
+                src={imagePreview}
+                alt="Previsualización"
+                className="object-contain w-full h-40 border mb-2"
+              />
+            </div>
+          )}
           <div className="flex flex-col mb-4 sm:flex-row sm:space-x-2">
             <input
               type="text"

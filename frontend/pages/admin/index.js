@@ -60,6 +60,12 @@ export default function AdminDashboard() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (productos && productos.length > 0) {
+      console.log("Productos cargados: ", productos);
+    }
+  }, [productos]);
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/login");
@@ -87,6 +93,7 @@ export default function AdminDashboard() {
           <p className="text-red-500">{error}</p>
         ) : (
           <ProductList
+            key={editableProducts.map(producto => producto.id).join("-")}
             editableProducts={editableProducts}
             setEditableProducts={setEditableProducts}
             selectedProduct={selectedProduct}
