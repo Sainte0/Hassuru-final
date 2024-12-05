@@ -60,12 +60,6 @@ export default function AdminDashboard() {
     fetchProducts();
   }, []);
 
-  useEffect(() => {
-    if (productos && productos.length > 0) {
-      console.log("Productos cargados: ", productos);
-    }
-  }, [productos]);
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     router.push("/login");
@@ -79,7 +73,7 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-semibold text-black">Bienvenido al Dashboard</h2>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 transition duration-300 md:text-base"
+            className="px-4 py-2 text-sm font-medium text-white transition duration-300 bg-red-500 rounded hover:bg-red-600 md:text-base"
           >
             Logout
           </button>
