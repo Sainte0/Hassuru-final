@@ -20,12 +20,18 @@ const ProductRow = ({
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
   const [newColor, setNewColor] = useState("");
-  const { dolarBlue, fetchDolarBlue } = useStore();
+  const { dolarBlue, fetchDolarBlue, productAdded } = useStore();
   const [newImage, setNewImage] = useState(null);
-
+  
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
+
+  useEffect(() => {
+    if (productAdded) {
+      window.location.reload();
+    }
+  }, [productAdded]);
 
   const handleTallaChange = (e, talla) => {
     const updatedProducts = [...editableProducts];
@@ -114,6 +120,7 @@ const ProductRow = ({
         );
         if (imageResponse.ok) {
           toast.success("Imagen actualizada con éxito");
+          await fetchProducts();
         } else {
           toast.error("Error al actualizar la imagen");
           console.error("Error al actualizar la imagen");

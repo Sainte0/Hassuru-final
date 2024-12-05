@@ -22,12 +22,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const [cantidadTalla, setCantidadTalla] = useState('');
   const [colorInput, setColorInput] = useState('');
 
-  useEffect(() => {
-    if (productAdded) {
-      onClose();
-      window.location.reload();
-    }
-  }, [productAdded, onClose]);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const categoriasDisponibles = [
     'ropa',
@@ -59,6 +54,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
         ...prev,
         image: file,
       }));
+      setImagePreview(URL.createObjectURL(file));
     }
   };
 
@@ -126,7 +122,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full p-6 text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3 max-h-screen overflow-y-auto">
+      <div className="w-full max-h-screen p-6 overflow-y-auto text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3">
         <h2 className="mb-4 text-xl">Agregar Producto</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -184,6 +180,15 @@ const AddProductModal = ({ isOpen, onClose }) => {
             onChange={handleImageChange}
             className="w-full p-2 mb-4 border"
           />
+          {imagePreview && (
+            <div className="mb-4">
+              <img
+                src={imagePreview}
+                alt="Previsualización"
+                className="object-contain w-full h-40 mb-2 border"
+              />
+            </div>
+          )}
           <div className="flex flex-col mb-4 sm:flex-row sm:space-x-2">
             <input
               type="text"
