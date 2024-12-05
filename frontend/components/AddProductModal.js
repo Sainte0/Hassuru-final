@@ -24,13 +24,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
-  useEffect(() => {
-    if (productAdded) {
-      onClose();
-      window.location.reload();
-    }
-  }, [productAdded, onClose]);
-
   const categoriasDisponibles = [
     'ropa',
     'zapatillas',
@@ -129,7 +122,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full p-6 text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3 max-h-screen overflow-y-auto">
+      <div className="w-full max-h-screen p-6 overflow-y-auto text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3">
         <h2 className="mb-4 text-xl">Agregar Producto</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -192,7 +185,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
               <img
                 src={imagePreview}
                 alt="Previsualización"
-                className="object-contain w-full h-40 border mb-2"
+                className="object-contain w-full h-40 mb-2 border"
               />
             </div>
           )}

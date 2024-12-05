@@ -53,10 +53,6 @@ const useStore = create((set) => ({
         return;
       }
       const nuevoProducto = await response.json();
-      set((state) => ({
-        products: [...state.products, nuevoProducto],
-        productAdded: true,
-      }));
       if (imagenFile) {
         const formData = new FormData();
         formData.append('image', imagenFile);
@@ -73,6 +69,10 @@ const useStore = create((set) => ({
           return;
         }
       }
+      set((state) => ({
+        products: [...state.products, nuevoProducto],
+        productAdded: true,
+      }));
       toast.success('Producto agregado con éxito');
     } catch (error) {
       set({ error: error.message });
