@@ -21,7 +21,7 @@ export default function Footer() {
         </div>
         <div className="text-sm text-center md:text-right">
           <p className='mt-4'>Email: hassuru.ar@gmail.com</p>
-          <button className='text-green-700' onClick={handleSubmit}>Tel: 351 259 1212</button>
+          <button className='text-green-700' onClick={handleSubmit}>Tel: 351 259 5858</button>
         </div>
       </div>
       <div className="pb-4 mt-4 text-sm text-center">
