@@ -77,7 +77,7 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
+              onPageChange={(page) => setCurrentPage(page)}
               totalPages={totalPages}
             />
           </>
