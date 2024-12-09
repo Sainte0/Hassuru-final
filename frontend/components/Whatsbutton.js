@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function WhatsButton() {
-  const whatsappNumber = "3512591212";
+  const whatsappNumber = "3512595858";
   const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
   const handleClick = () => {

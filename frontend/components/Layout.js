@@ -6,7 +6,7 @@ import { FaWhatsapp } from 'react-icons/fa'
 const Layout = ({ children }) => {
   const router = useRouter();
   const showLayout = router.pathname !== '/login' && router.pathname !== '/admin';
-  const whatsappNumber = "3512591212"
+  const whatsappNumber = "3512595858"
 
   return (
     <div className='flex flex-col min-h-screen'>

@@ -4,7 +4,7 @@ import { FaInstagram, FaTiktok } from "react-icons/fa";
 export default function Footer() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    const url = 'https://api.whatsapp.com/send?phone=3512591212&text=';
+    const url = 'https://api.whatsapp.com/send?phone=3512595858&text=';
     window.open(url, "_blank");
   };
 

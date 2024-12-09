@@ -26,7 +26,7 @@ export default function Contact() {
         - Talle: ${talle}
         - Número de contacto: ${contacto}
         ${url ? `- URL de referencia: ${url}` : ""}`
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=3512591212&text=${encodeURIComponent(mensaje)}`;
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=3512595858&text=${encodeURIComponent(mensaje)}`;
         window.open(whatsappUrl, "_blank");
     };
 
