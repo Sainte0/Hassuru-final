@@ -18,7 +18,7 @@ export default function Navbar() {
   const navigation = [
     { name: "Zapatillas", href: "/productos/categoria/zapatillas" },
     { name: "Ropa", href: "/productos/categoria/ropa" },
-    { name: "Accesorios", href: "/productos/categoria/accesorios" },
+    { name: "Tecnología", href: "/productos/categoria/accesorios" },
     { name: "Encargos", href: "/encargos" },
   ];
 

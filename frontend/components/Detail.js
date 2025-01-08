@@ -161,10 +161,6 @@ export default function Detail({ product }) {
               <span className="text-green-500">✔️</span>
               <span className="ml-2">Efectivo (Córdoba & Buenos Aires)</span>
             </li>
-            <li className="flex items-center">
-              <span className="text-green-500">✔️</span>
-              <span className="ml-2">Tarjeta de crédito / débito (recargo sobre el total) hasta 6 y 12 cuotas fijas</span>
-            </li>
           </ul>
         </div>
       </div>

@@ -87,7 +87,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Destacado</th>
               <th className="px-4 py-2">Destacado Z</th>
-              <th className="px-4 py-2">Encargo</th>
+              <th className="px-4 py-2">Disponible</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>

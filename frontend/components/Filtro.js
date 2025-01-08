@@ -48,17 +48,18 @@ export default function Filter({ products, setFilteredProducts }) {
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
   }, [products]);
-
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-    if (hasTallas) {
-      return "Entrega inmediata";
-    } else if (product.encargo) {
-      return "Disponible en 15 días";
-    } else {
+  
+    if (hasTallas && product.encargo) {
       return "Disponible en 3 días";
+    } else if (hasTallas) {
+      return "Entrega inmediata";
+    } else {
+      return "Disponible en 20 días";
     }
   };
+  
 
   useEffect(() => {
     let filtered = products;
@@ -339,8 +340,8 @@ export default function Filter({ products, setFilteredProducts }) {
             Disponible en 3 días
           </button>
           <button
-            onClick={() => handleSelectDisponibilidad("Disponible en 15 días")}
-            className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 15 días"
+            onClick={() => handleSelectDisponibilidad("Disponible en 20 días")}
+            className={`p-2 rounded w-full ${selectedDisponibilidad === "Disponible en 20 días"
               ? "bg-gray-600 text-white"
               : "bg-gray-300 text-black"
               } hover:bg-red-500`}
