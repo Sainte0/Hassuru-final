@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 export default function Filter({ products, setFilteredProducts }) {
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
   const [selectedTallaZapatilla, setSelectedTallaZapatilla] = useState("");
+  const [selectedAccesorio, setSelectedAccesorio] = useState("");
   const [precioMin, setPrecioMin] = useState("");
   const [precioMax, setPrecioMax] = useState("");
   const [stockOnly, setStockOnly] = useState(false);
   const [selectedDisponibilidad, setSelectedDisponibilidad] = useState("");
   const [tallasRopa, setTallasRopa] = useState([]);
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
+  const [accesorios, setAccesorios] = useState([]);
   const [selectedMarca, setSelectedMarca] = useState("");
   const [marcas, setMarcas] = useState([]);
   const [showFilters, setShowFilters] = useState(true);
@@ -38,55 +40,59 @@ export default function Filter({ products, setFilteredProducts }) {
   useEffect(() => {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
+    const accesoriosSet = new Set();
     products.forEach((product) => {
-      if (product.categoria === "ropa" || product.categoria === "accesorios") {
+      if (product.categoria === "ropa") {
         Object.keys(product.tallas).forEach((talla) => tallasRopaSet.add(talla));
       } else if (product.categoria === "zapatillas") {
         Object.keys(product.tallas).forEach((talla) => tallasZapatillaSet.add(talla));
+      } else if (product.categoria === "accesorios") {
+        accesoriosSet.add(product.nombre);
       }
     });
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
+    setAccesorios(Array.from(accesoriosSet));
   }, [products]);
-  const getDisponibilidad = (product) => {
-    const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-
-    if (hasTallas && product.encargo) {
-      return "Disponible en 3 días";
-    } else if (hasTallas) {
-      return "Entrega inmediata";
-    } else {
-      return "Disponible en 20 días";
-    }
-  };
-
 
   useEffect(() => {
     let filtered = products;
+
     if (selectedTallaRopa) {
       filtered = filtered.filter(
         (product) =>
-          (product.categoria === "ropa" || product.categoria === "accesorios") &&
+          product.categoria === "ropa" &&
           product.tallas[selectedTallaRopa] !== undefined
       );
     }
+
     if (selectedTallaZapatilla) {
       filtered = filtered.filter(
         (product) =>
-          product.categoria === "zapatillas" && product.tallas[selectedTallaZapatilla]
+          product.categoria === "zapatillas" &&
+          product.tallas[selectedTallaZapatilla] !== undefined
       );
     }
+
+    if (selectedAccesorio) {
+      filtered = filtered.filter(
+        (product) => product.categoria === "accesorios" && product.nombre === selectedAccesorio
+      );
+    }
+
     if (stockOnly) {
       filtered = filtered.filter((product) =>
         Object.values(product.tallas).some((stock) => stock > 0)
       );
     }
+
     if (selectedDisponibilidad) {
       filtered = filtered.filter((product) => {
+        const disponibilidad = getDisponibilidad(product);
         if (selectedDisponibilidad === "Solo productos en stock") {
-          return Object.values(product.tallas).some((stock) => stock > 0) || getDisponibilidad(product) === "Entrega inmediata";
+          return Object.values(product.tallas).some((stock) => stock > 0) || disponibilidad === "Entrega inmediata";
         }
-        return getDisponibilidad(product) === selectedDisponibilidad;
+        return disponibilidad === selectedDisponibilidad;
       });
     }
 
@@ -94,37 +100,16 @@ export default function Filter({ products, setFilteredProducts }) {
   }, [
     selectedTallaRopa,
     selectedTallaZapatilla,
+    selectedAccesorio,
     stockOnly,
     selectedDisponibilidad,
     products,
   ]);
 
-  const handleSearch = () => {
-    let filtered = products;
-    if (precioMin || precioMax) {
-      filtered = filtered.filter((product) => {
-        const precio = product.precio;
-        if (precioMin && precioMax) {
-          return precio >= parseInt(precioMin) && precio <= parseInt(precioMax);
-        } else if (precioMin) {
-          return precio >= parseInt(precioMin);
-        } else if (precioMax) {
-          return precio <= parseInt(precioMax);
-        }
-        return true;
-      });
-    }
-    if (query) {
-      filtered = filtered.filter((product) =>
-        product.nombre.toLowerCase().includes(query.toLowerCase())
-      );
-    }
-    setFilteredProducts(filtered);
-  };
-
   const resetFilters = () => {
     setSelectedTallaRopa("");
     setSelectedTallaZapatilla("");
+    setSelectedAccesorio("");
     setSelectedMarca("");
     setPrecioMin("");
     setPrecioMax("");
@@ -137,13 +122,20 @@ export default function Filter({ products, setFilteredProducts }) {
   const handleSelectTallaRopa = (talla) => {
     setSelectedTallaRopa(talla);
     setSelectedTallaZapatilla("");
+    setSelectedAccesorio("");
   };
 
   const handleSelectTallaZapatilla = (talla) => {
     setSelectedTallaZapatilla(talla);
     setSelectedTallaRopa("");
+    setSelectedAccesorio("");
   };
 
+  const handleSelectAccesorio = (accesorio) => {
+    setSelectedAccesorio(accesorio);
+    setSelectedTallaRopa("");
+    setSelectedTallaZapatilla("");
+  };
   const handleSelectDisponibilidad = (opcion) => {
     if (selectedDisponibilidad === opcion) {
       setSelectedDisponibilidad("");
@@ -199,6 +191,12 @@ export default function Filter({ products, setFilteredProducts }) {
             <div className="flex items-center mb-2">
               <span className="mr-2 text-gray-600">Búsqueda: {query}</span>
               <button onClick={() => setQuery("")} className="text-red-500">X</button>
+            </div>
+          )}
+          {selectedAccesorio && (
+            <div className="flex items-center mb-2">
+              <span className="mr-2 text-gray-600">Accesorio: {selectedAccesorio}</span>
+              <button onClick={() => setSelectedAccesorio("")} className="text-red-500">X</button>
             </div>
           )}
         </div>
@@ -298,6 +296,30 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
             )}
+            <div> className="mb-4
+              <label className="block mb-1 font-medium text-gray-700">Accesorios</label>
+              <div className="overflow-auto max-h-32">
+                {accesorios.map((accesorio, index) => (
+                  <div key={index} className="mb-2 mr-2">
+                    <input
+                      type="radio"
+                      id={`accesorio-${accesorio}`}
+                      name="accesorio"
+                      value={accesorio}
+                      checked={selectedAccesorio === accesorio}
+                      onChange={() => handleSelectAccesorio(accesorio)}
+                      className="mr-1"
+                    />
+                    <label
+                      htmlFor={`accesorio-${accesorio}`}
+                      className="p-2 text-gray-600 bg-white rounded cursor-pointer"
+                    >
+                      {accesorio}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-700">Precio</label>
               <input

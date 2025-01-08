@@ -67,7 +67,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
             type="checkbox"
             id="encargoFilter"
             checked={encargoFilter}
-            onChange={() => setEncargoFilter(!encargoFilter)}
+            onChange={() => setEncargoFilter(!encargoFilter)} // Actualización correcta de encargoFilter
             className="w-4 h-4"
           />
           <label htmlFor="encargoFilter">Filtrar por Encargo</label>
