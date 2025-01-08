@@ -36,13 +36,12 @@ export default function Contact() {
         <div className="flex flex-col items-center justify-between gap-4 px-4 py-20 md:flex-row">
             <div className="w-full md:w-[49.5%] lg:h-[700px]">
                 <Image
-                    width={600}
-                    height={600}
-                    quality={90}
+                    width={300}
+                    height={300}
+                    quality={100}
                     src="/images/Explicacion.png"
                     alt="Explicación"
-                    className="rounded-md shadow-xl"
-                    style={{ width: "300px", height: "300px", objectFit: "cover" }}
+                    className="object-contain w-full h-full rounded-md shadow-xl lg:object-cover"
                 />
             </div>
 
