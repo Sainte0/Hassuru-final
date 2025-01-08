@@ -50,7 +50,7 @@ export default function Filter({ products, setFilteredProducts }) {
   }, [products]);
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-  
+
     if (hasTallas && product.encargo) {
       return "Disponible en 3 días";
     } else if (hasTallas) {
@@ -59,7 +59,7 @@ export default function Filter({ products, setFilteredProducts }) {
       return "Disponible en 20 días";
     }
   };
-  
+
 
   useEffect(() => {
     let filtered = products;
@@ -238,22 +238,27 @@ export default function Filter({ products, setFilteredProducts }) {
             {tallasRopa.length > 0 && (
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
-                {tallasRopa.map((talla, index) => (
-                  <div key={index} className="flex items-center mb-2">
-                    <input
-                      type="radio"
-                      id={`tallaRopa-${talla}`}
-                      name="tallaRopa"
-                      value={talla}
-                      checked={selectedTallaRopa === talla}
-                      onChange={() => handleSelectTallaRopa(talla)}
-                      className="mr-2"
-                    />
-                    <label htmlFor={`tallaRopa-${talla}`} className="text-gray-600 cursor-pointer">
-                      {talla}
-                    </label>
-                  </div>
-                ))}
+                {tallasRopa
+                  .sort((a, b) => {
+                    const tallaOrder = ["S", "M", "L", "XL", "OS"];
+                    return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
+                  })
+                  .map((talla, index) => (
+                    <div key={index} className="flex items-center mb-2">
+                      <input
+                        type="radio"
+                        id={`tallaRopa-${talla}`}
+                        name="tallaRopa"
+                        value={talla}
+                        checked={selectedTallaRopa === talla}
+                        onChange={() => handleSelectTallaRopa(talla)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`tallaRopa-${talla}`} className="text-gray-600 cursor-pointer">
+                        {talla}
+                      </label>
+                    </div>
+                  ))}
               </div>
             )}
             {tallasZapatilla.length > 0 && (
@@ -261,7 +266,16 @@ export default function Filter({ products, setFilteredProducts }) {
                 <label className="block mb-1 font-medium text-gray-700">Talla de Zapatillas</label>
                 <div className="overflow-auto max-h-32">
                   {tallasZapatilla
-                    .sort((a, b) => parseInt(a) - parseInt(b))
+                    .sort((a, b) => {
+                      // Extraemos el número y la parte decimal de las tallas
+                      const parseTalla = (talla) => {
+                        const parts = talla.split(" ");
+                        const numericPart = parseFloat(parts[0].replace(",", "."));
+                        return numericPart;
+                      };
+
+                      return parseTalla(a) - parseTalla(b);
+                    })
                     .map((talla, index) => (
                       <div key={index} className="mb-2 mr-2">
                         <input

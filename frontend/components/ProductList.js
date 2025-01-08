@@ -8,6 +8,7 @@ import useStore from "../store/store";
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState(""); // Nuevo estado
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -22,13 +23,20 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
+    setAvailabilityFilter("");
     fetchProducts();
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    return nameMatch && categoryMatch;
+    const availabilityMatch =
+      availabilityFilter === "disponible"
+        ? Object.entries(producto.tallas).some(([_, stock]) => stock > 0)
+        : availabilityFilter === "no-disponible"
+        ? Object.entries(producto.tallas).every(([_, stock]) => stock === 0)
+        : true;
+    return nameMatch && categoryMatch && availabilityMatch;
   });
 
   return (
@@ -58,6 +66,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="zapatillas">Zapatillas</option>
           <option value="ropa">Ropa</option>
           <option value="accesorios">Accesorios</option>
+        </select>
+        <select
+          value={availabilityFilter}
+          onChange={(e) => setAvailabilityFilter(e.target.value)}
+          className="w-full p-2 border rounded sm:w-auto"
+        >
+          <option value="">Seleccione disponibilidad</option>
+          <option value="disponible">Disponible</option>
+          <option value="no-disponible">No disponible</option>
         </select>
         <button
           type="button"
@@ -108,10 +125,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           </tbody>
         </table>
       </div>
-      <AddProductModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-      />
+      <AddProductModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 };
