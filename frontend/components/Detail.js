@@ -98,7 +98,11 @@ export default function Detail({ product }) {
         </div>
         <div className="text-sm text-gray-600">
           {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
-            <span className="text-green-500">Entrega inmediata</span>
+            product.encargo ? (
+              <span className="text-yellow-500">Disponible en 3 días</span>
+            ) : (
+              <span className="text-green-500">Entrega inmediata</span>
+            )
           ) : (
             <span className="text-red-500">Disponible en 20 días</span>
           )}
