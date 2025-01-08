@@ -8,6 +8,7 @@ import useStore from "../store/store";
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
+  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -22,16 +23,16 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
+    setEncargoFilter(false);  // Limpiar filtro de encargo
     fetchProducts();
   };
 
- const filteredProducts = editableProducts.filter((producto) => {
-  const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
-  const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-  const encargoMatch = encargoFilter ? producto.encargo === encargoFilter : true; // Filtrado por encargo
-  return nameMatch && categoryMatch && encargoMatch;
-});
-
+  const filteredProducts = editableProducts.filter((producto) => {
+    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    return nameMatch && categoryMatch && encargoMatch;
+  });
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -61,18 +62,16 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="ropa">Ropa</option>
           <option value="accesorios">Accesorios</option>
         </select>
-
-        {/* Filtro de encargo */}
-        <select
-          value={encargoFilter}
-          onChange={(e) => setEncargoFilter(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
-        >
-          <option value="">Encargo</option>
-          <option value="true">Sí</option>
-          <option value="false">No</option>
-        </select>
-
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="encargoFilter"
+            checked={encargoFilter}
+            onChange={() => setEncargoFilter(!encargoFilter)}
+            className="w-4 h-4"
+          />
+          <label htmlFor="encargoFilter">Filtrar por Encargo</label>
+        </div>
         <button
           type="button"
           onClick={handleRemoveFilters}
