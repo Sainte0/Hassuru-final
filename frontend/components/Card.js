@@ -12,14 +12,16 @@ export default function Card({ currentProducts }) {
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
-    if (hasTallas) {
-      return { message: "Entrega inmediata", color: "text-green-500" };
-    } else if (product.encargo) {
-      return { message: "Disponible en 20 días", color: "text-red-500" };
-    } else {
+  
+    if (hasTallas && product.encargo) {
       return { message: "Disponible en 3 días", color: "text-yellow-500" };
+    } else if (hasTallas) {
+      return { message: "Entrega inmediata", color: "text-green-500" };
+    } else {
+      return { message: "Disponible en 20 días", color: "text-red-500" };
     }
   };
+  
 
   return (
     <div className="p-4">
