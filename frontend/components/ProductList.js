@@ -10,8 +10,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [nameFilter, setNameFilter] = useState("");
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [encargoFilter, setEncargoFilter] = useState("");  // Nuevo estado
-
 
   useEffect(() => {
     fetchDolarBlue();
@@ -27,13 +25,13 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
-  const filteredProducts = editableProducts.filter((producto) => {
-    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
-    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === encargoFilter : true; // Filtrado por encargo
-    return nameMatch && categoryMatch && encargoMatch;
-  });
-  
+ const filteredProducts = editableProducts.filter((producto) => {
+  const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+  const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
+  const encargoMatch = encargoFilter ? producto.encargo === encargoFilter : true; // Filtrado por encargo
+  return nameMatch && categoryMatch && encargoMatch;
+});
+
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -64,6 +62,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="accesorios">Accesorios</option>
         </select>
 
+        {/* Filtro de encargo */}
         <select
           value={encargoFilter}
           onChange={(e) => setEncargoFilter(e.target.value)}
@@ -102,7 +101,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Destacado</th>
               <th className="px-4 py-2">Destacado Z</th>
-              <th className="px-4 py-2">Disponible</th>
+              <th className="px-4 py-2">Encargo</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
