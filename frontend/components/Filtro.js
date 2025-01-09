@@ -67,7 +67,8 @@ export default function Filter({ products, setFilteredProducts }) {
     if (selectedTallaZapatilla) {
       filtered = filtered.filter(
         (product) =>
-          product.categoria === "zapatillas" && product.tallas[selectedTallaZapatilla]
+          product.categoria === "zapatillas" && 
+          product.tallas[selectedTallaZapatilla]
       );
     }
     if (selectedTallaAccesorio) {
@@ -202,7 +203,7 @@ export default function Filter({ products, setFilteredProducts }) {
           )}
           {selectedTallaAccesorio && (
             <div className="flex items-center mb-2">
-              <span className="mr-2 text-gray-600">Talla de Accesorios: {selectedTallaAccesorio}</span>
+              <span className="mr-2 text-gray-600">Tecnología: {selectedTallaAccesorio}</span>
               <button onClick={() => setSelectedTallaAccesorio("")} className="text-red-500">X</button>
             </div>
           )}
@@ -327,7 +328,7 @@ export default function Filter({ products, setFilteredProducts }) {
             )}
             {tallasAccesorio.length > 0 && (
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Talla de Accesorios</label>
+                <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
                 <div className="overflow-auto max-h-32">
                   {tallasAccesorio.map((talla, index) => (
                     <div key={index} className="flex items-center mb-2">
