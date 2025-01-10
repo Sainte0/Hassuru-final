@@ -49,6 +49,9 @@ export default function Filter({ products, setFilteredProducts }) {
 
   useEffect(() => {
     let filtered = products;
+    if (selectedMarca) {
+      filtered = filtered.filter((product) => product.marca === selectedMarca);
+    }
     if (selectedTallaRopa) {
       filtered = filtered.filter(
         (product) =>
@@ -85,6 +88,7 @@ export default function Filter({ products, setFilteredProducts }) {
 
     setFilteredProducts(filtered);
   }, [
+    selectedMarca,
     selectedTallaRopa,
     selectedTallaZapatilla,
     selectedAccesorio,
@@ -319,10 +323,10 @@ export default function Filter({ products, setFilteredProducts }) {
             )}
             {accesorios.length > 0 && (
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Accesorios</label>
+                <label className="block  font-medium text-gray-700">Accesorios</label>
                 <div className="overflow-auto max-h-32">
                   {accesorios.map((accesorio, index) => (
-                    <div key={index} className="flex items-center">
+                    <div key={index} className="flex items-center ">
                       <input
                         type="radio"
                         id={`accesorio-${accesorio}`}
@@ -343,6 +347,7 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
             )}
+            <AccesorioFilter products={products} setFilteredProducts={setFilteredProducts} />
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-700">Precio</label>
               <input
