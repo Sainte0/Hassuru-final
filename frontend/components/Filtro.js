@@ -322,7 +322,7 @@ export default function Filter({ products, setFilteredProducts }) {
                 <label className="block mb-1 font-medium text-gray-700">Accesorios</label>
                 <div className="overflow-auto max-h-32">
                   {accesorios.map((accesorio, index) => (
-                    <div key={index} className="flex items-center mb-2">
+                    <div key={index} className="flex items-center">
                       <input
                         type="radio"
                         id={`accesorio-${accesorio}`}
