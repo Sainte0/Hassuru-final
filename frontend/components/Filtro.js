@@ -29,7 +29,7 @@ export default function Filter({ products, setFilteredProducts }) {
     setMarcas(Array.from(marcasSet));
   }, [products]);
 
-  
+
   useEffect(() => {
     let filtered = products;
     if (selectedMarca) {
@@ -207,7 +207,7 @@ export default function Filter({ products, setFilteredProducts }) {
           )}
           {selectedAccesorio && (
             <div className="flex items-center mb-2">
-              <span className="mr-2 text-gray-600">Accesorio: {selectedAccesorio}</span>
+              <span className="mr-2 text-gray-600">Tecnología: {selectedAccesorio}</span>
               <button onClick={() => setSelectedAccesorio("")} className="text-red-500">X</button>
             </div>
           )}
@@ -332,10 +332,10 @@ export default function Filter({ products, setFilteredProducts }) {
             )}
             {accesorios.length > 0 && (
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Accesorios</label>
+                <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
                 <div className="overflow-auto max-h-32">
                   {accesorios.map((accesorio, index) => (
-                    <div key={index} className="flex items-center mb-2">
+                    <div key={index} className="flex items-center mb-1"> {/* Cambié mb-2 a mb-1 para reducir el espacio */}
                       <input
                         type="radio"
                         id={`accesorio-${accesorio}`}
@@ -347,7 +347,7 @@ export default function Filter({ products, setFilteredProducts }) {
                       />
                       <label
                         htmlFor={`accesorio-${accesorio}`}
-                        className="p-2 text-gray-600 bg-white rounded cursor-pointer"
+                        className="p-1 text-gray-600 bg-white rounded cursor-pointer" {/* Cambié p-2 a p-1 */}
                       >
                         {accesorio}
                       </label>
