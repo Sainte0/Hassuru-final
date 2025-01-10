@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 export default function Filter({ products, setFilteredProducts }) {
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
   const [selectedTallaZapatilla, setSelectedTallaZapatilla] = useState("");
-  const [selectedTallaAccesorio, setSelectedTallaAccesorio] = useState("");
+  const [selectedAccesorio, setSelectedAccesorio] = useState("");
   const [precioMin, setPrecioMin] = useState("");
   const [precioMax, setPrecioMax] = useState("");
   const [stockOnly, setStockOnly] = useState(false);
   const [selectedDisponibilidad, setSelectedDisponibilidad] = useState("");
   const [tallasRopa, setTallasRopa] = useState([]);
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
-  const [tallasAccesorio, setTallasAccesorio] = useState([]);
+  const [accesorios, setAccesorios] = useState([]);
   const [selectedMarca, setSelectedMarca] = useState("");
   const [marcas, setMarcas] = useState([]);
   const [showFilters, setShowFilters] = useState(true);
@@ -30,29 +30,21 @@ export default function Filter({ products, setFilteredProducts }) {
   }, [products]);
 
   useEffect(() => {
-    let filtered = products;
-    if (selectedMarca) {
-      filtered = filtered.filter((product) => product.marca === selectedMarca);
-    }
-    setFilteredProducts(filtered);
-  }, [selectedMarca, products]);
-
-  useEffect(() => {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
-    const tallasAccesorioSet = new Set();
+    const accesoriosSet = new Set();
     products.forEach((product) => {
       if (product.categoria === "ropa") {
         Object.keys(product.tallas).forEach((talla) => tallasRopaSet.add(talla));
       } else if (product.categoria === "zapatillas") {
         Object.keys(product.tallas).forEach((talla) => tallasZapatillaSet.add(talla));
       } else if (product.categoria === "accesorios") {
-        Object.keys(product.tallas).forEach((talla) => tallasAccesorioSet.add(talla));
+        Object.keys(product.tallas).forEach((talla) => accesoriosSet.add(talla));
       }
     });
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
-    setTallasAccesorio(Array.from(tallasAccesorioSet));
+    setAccesorios(Array.from(accesoriosSet));
   }, [products]);
 
   useEffect(() => {
@@ -67,15 +59,14 @@ export default function Filter({ products, setFilteredProducts }) {
     if (selectedTallaZapatilla) {
       filtered = filtered.filter(
         (product) =>
-          product.categoria === "zapatillas" && 
-          product.tallas[selectedTallaZapatilla]
+          product.categoria === "zapatillas" && product.tallas[selectedTallaZapatilla]
       );
     }
-    if (selectedTallaAccesorio) {
+    if (selectedAccesorio) {
       filtered = filtered.filter(
         (product) =>
           product.categoria === "accesorios" &&
-          product.tallas[selectedTallaAccesorio] !== undefined
+          product.tallas[selectedAccesorio] !== undefined
       );
     }
     if (stockOnly) {
@@ -96,7 +87,7 @@ export default function Filter({ products, setFilteredProducts }) {
   }, [
     selectedTallaRopa,
     selectedTallaZapatilla,
-    selectedTallaAccesorio,
+    selectedAccesorio,
     stockOnly,
     selectedDisponibilidad,
     products,
@@ -128,7 +119,7 @@ export default function Filter({ products, setFilteredProducts }) {
   const resetFilters = () => {
     setSelectedTallaRopa("");
     setSelectedTallaZapatilla("");
-    setSelectedTallaAccesorio("");
+    setSelectedAccesorio("");
     setSelectedMarca("");
     setPrecioMin("");
     setPrecioMax("");
@@ -141,17 +132,17 @@ export default function Filter({ products, setFilteredProducts }) {
   const handleSelectTallaRopa = (talla) => {
     setSelectedTallaRopa(talla);
     setSelectedTallaZapatilla("");
-    setSelectedTallaAccesorio("");
+    setSelectedAccesorio("");
   };
 
   const handleSelectTallaZapatilla = (talla) => {
     setSelectedTallaZapatilla(talla);
     setSelectedTallaRopa("");
-    setSelectedTallaAccesorio("");
+    setSelectedAccesorio("");
   };
 
-  const handleSelectTallaAccesorio = (talla) => {
-    setSelectedTallaAccesorio(talla);
+  const handleSelectAccesorio = (accesorio) => {
+    setSelectedAccesorio(accesorio);
     setSelectedTallaRopa("");
     setSelectedTallaZapatilla("");
   };
@@ -201,10 +192,10 @@ export default function Filter({ products, setFilteredProducts }) {
               <button onClick={() => setSelectedTallaZapatilla("")} className="text-red-500">X</button>
             </div>
           )}
-          {selectedTallaAccesorio && (
+          {selectedAccesorio && (
             <div className="flex items-center mb-2">
-              <span className="mr-2 text-gray-600">Tecnología: {selectedTallaAccesorio}</span>
-              <button onClick={() => setSelectedTallaAccesorio("")} className="text-red-500">X</button>
+              <span className="mr-2 text-gray-600">Accesorio: {selectedAccesorio}</span>
+              <button onClick={() => setSelectedAccesorio("")} className="text-red-500">X</button>
             </div>
           )}
           {stockOnly && (
@@ -326,33 +317,32 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
             )}
-            {tallasAccesorio.length > 0 && (
+            {accesorios.length > 0 && (
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
+                <label className="block mb-1 font-medium text-gray-700">Accesorios</label>
                 <div className="overflow-auto max-h-32">
-                  {tallasAccesorio.map((talla, index) => (
+                  {accesorios.map((accesorio, index) => (
                     <div key={index} className="flex items-center mb-2">
                       <input
                         type="radio"
-                        id={`tallaAccesorio-${talla}`}
-                        name="tallaAccesorio"
-                        value={talla}
-                        checked={selectedTallaAccesorio === talla}
-                        onChange={() => handleSelectTallaAccesorio(talla)}
+                        id={`accesorio-${accesorio}`}
+                        name="accesorio"
+                        value={accesorio}
+                        checked={selectedAccesorio === accesorio}
+                        onChange={() => handleSelectAccesorio(accesorio)}
                         className="mr-1"
                       />
                       <label
-                        htmlFor={`tallaAccesorio-${talla}`}
+                        htmlFor={`accesorio-${accesorio}`}
                         className="p-2 text-gray-600 bg-white rounded cursor-pointer"
                       >
-                        {talla}
+                        {accesorio}
                       </label>
                     </div>
                   ))}
                 </div>
               </div>
             )}
-            <AccesorioFilter products={products} setFilteredProducts={setFilteredProducts} />
             <div className="mb-4">
               <label className="block mb-1 font-medium text-gray-700">Precio</label>
               <input
