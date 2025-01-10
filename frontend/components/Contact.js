@@ -34,17 +34,16 @@ export default function Contact() {
 
     return (
         <div className="flex flex-col items-center justify-between gap-4 px-4 py-20 md:flex-row">
-            <div className="w-full md:w-[49.5%] lg:h-[700px]">
+            <div className="w-full md:w-[49.5%] lg:max-h-[500px]">
                 <Image
                     width={300}
                     height={300}
                     quality={100}
                     src="/images/Explicacion.png"
                     alt="Explicación"
-                    className="object-contain w-full h-full rounded-md shadow-xl lg:object-cover"
+                    className="object-contain w-full h-full rounded-md shadow-xl"
                 />
             </div>
-
             <div className="w-full md:w-[49.5%] h-[700px] p-8 rounded-md shadow-xl bg-gray-50 flex items-center justify-center">
                 <div className="w-full">
                     <h2 className="mb-6 text-2xl font-bold text-center">Encargos</h2>
