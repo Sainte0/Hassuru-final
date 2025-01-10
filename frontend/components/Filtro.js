@@ -335,7 +335,7 @@ export default function Filter({ products, setFilteredProducts }) {
                 <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
                 <div className="overflow-auto max-h-32">
                   {accesorios.map((accesorio, index) => (
-                    <div key={index} className="flex items-center mb-1"> {/* Cambié mb-2 a mb-1 para reducir el espacio */}
+                    <div key={index} className="flex items-center mb-1"> 
                       <input
                         type="radio"
                         id={`accesorio-${accesorio}`}
@@ -347,7 +347,7 @@ export default function Filter({ products, setFilteredProducts }) {
                       />
                       <label
                         htmlFor={`accesorio-${accesorio}`}
-                        className="p-1 text-gray-600 bg-white rounded cursor-pointer" {/* Cambié p-2 a p-1 */}
+                        className="p-1 text-gray-600 bg-white rounded cursor-pointer" 
                       >
                         {accesorio}
                       </label>
