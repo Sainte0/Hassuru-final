@@ -22,7 +22,7 @@ const ProductRow = ({
   const [newColor, setNewColor] = useState("");
   const { dolarBlue, fetchDolarBlue, productAdded } = useStore();
   const [newImage, setNewImage] = useState(null);
-
+  
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
@@ -255,35 +255,52 @@ const ProductRow = ({
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
+          <div className="flex flex-col">
+            <input
+              type="text"
+              value={producto.precio}
+              onChange={(e) => handleProductChange(e, "precio", index)}
+              className="w-full p-1 mb-2 border"
+              placeholder="Precio en USD"
+            />
+            {dolarBlue ? (
+              <label className="w-full p-1">
+                {(producto.precio * dolarBlue).toFixed(2)} ARS
+              </label>
+            ) : (
+              <p>Cargando cotización...</p>
+            )}
+          </div>
+        ) : (
           <div>
-            {Object.entries(producto.tallas).map(([talla, { precio, stock }]) => (
+            <p>{producto.precio} USD</p>
+            {dolarBlue ? (
+              <p>{(producto.precio * dolarBlue).toFixed(2)} ARS</p>
+            ) : (
+              <p>Cargando cotización...</p>
+            )}
+          </div>
+        )}
+      </td>
+      <td className="px-2 py-2 border">
+        {selectedProduct === producto._id ? (
+          <div>
+            {Object.entries(producto.tallas).map(([talla, cantidad]) => (
               <div
                 key={talla}
                 className="flex flex-col items-center mb-1 sm:flex-row"
               >
-                {/* Campo para la talla (solo lectura) */}
                 <input
                   type="text"
                   value={talla}
                   readOnly
-                  className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
+                  className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
                 />
-                {/* Campo para el precio */}
                 <input
                   type="number"
-                  value={precio}
-                  onChange={(e) => handleTallaPriceChange(e, talla)}
-                  className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
-                  placeholder="Precio"
-                  min="0"
-                />
-                {/* Campo para el stock */}
-                <input
-                  type="number"
-                  value={stock}
-                  onChange={(e) => handleTallaStockChange(e, talla)}
-                  className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
-                  placeholder="Stock"
+                  value={cantidad}
+                  onChange={(e) => handleTallaChange(e, talla)}
+                  className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
                   min="0"
                   onBlur={(e) => {
                     if (e.target.value < 0) {
@@ -291,7 +308,6 @@ const ProductRow = ({
                     }
                   }}
                 />
-                {/* Botón para eliminar la talla */}
                 <button
                   onClick={() => handleDeleteTalla(talla)}
                   className="px-2 py-1 mt-2 ml-0 text-white bg-red-500 rounded sm:ml-2 sm:mt-0"
@@ -300,30 +316,26 @@ const ProductRow = ({
                 </button>
               </div>
             ))}
-            {/* Agregar nueva talla */}
             <div className="flex flex-col mt-2 sm:flex-row">
               <input
                 type="text"
                 value={newTalla}
                 onChange={(e) => setNewTalla(e.target.value)}
                 placeholder="Nueva talla"
-                className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
-              />
-              <input
-                type="number"
-                value={newPrice}
-                onChange={(e) => setNewPrice(e.target.value)}
-                placeholder="Precio"
-                className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
-                min="0"
+                className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
               />
               <input
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
                 placeholder="Stock"
-                className="w-full p-1 mb-2 mr-2 border sm:w-1/4 sm:mb-0"
+                className="w-full p-1 border sm:w-1/3"
                 min="0"
+                onBlur={(e) => {
+                  if (e.target.value < 0) {
+                    setNewStock(0);
+                  }
+                }}
               />
               <button
                 onClick={handleAddTalla}
@@ -335,9 +347,9 @@ const ProductRow = ({
           </div>
         ) : (
           <div>
-            {Object.entries(producto.tallas).map(([talla, { precio, stock }]) => (
+            {Object.entries(producto.tallas).map(([talla, cantidad]) => (
               <div key={talla}>
-                {talla}: {stock} unidades, ${precio.toFixed(2)}
+                {talla}: {cantidad}
               </div>
             ))}
           </div>
