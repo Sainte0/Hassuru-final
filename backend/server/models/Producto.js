@@ -8,10 +8,6 @@ const ProductoSchema = new mongoose.Schema({
   descripcion: {
     type: String,
   },
-  precio: {
-    type: Number,
-    required: [true, 'El precio es obligatorio'],
-  },
   marca: {
     type: String,
     required: [true, 'La marca del producto es obligatoria'],
@@ -21,11 +17,18 @@ const ProductoSchema = new mongoose.Schema({
     enum: ['zapatillas', 'ropa', 'accesorios'],
     required: true,
   },
-  tallas: {
-    type: Map,
-    of: Number,
-    required: true,
-  },
+  tallas: [
+    {
+      talla: {
+        type: String,
+        required: [true, 'La talla es obligatoria'],
+      },
+      precio: {
+        type: Number,
+        required: [true, 'El precio para esta talla es obligatorio'],
+      },
+    },
+  ],
   colores: [
     {
       color: {
