@@ -290,49 +290,49 @@ const ProductRow = ({
             {producto.tallas.map((tallaObj, tallaIndex) => (
               <div
                 key={tallaIndex}
-                className="flex flex-col items-center mb-1 sm:flex-row"
+                className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
               >
                 <input
                   type="text"
                   value={tallaObj.talla}
                   readOnly
-                  className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
                 />
                 <input
                   type="number"
                   value={tallaObj.precioTalla}
                   onChange={(e) => handleTallaChange(e, tallaIndex)}
-                  className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
                   min="0"
                   placeholder="Precio"
                 />
                 <button
                   onClick={() => handleDeleteTalla(tallaIndex)}
-                  className="px-2 py-1 mt-2 ml-0 text-white bg-red-500 rounded sm:ml-2 sm:mt-0"
+                  className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
                 </button>
               </div>
             ))}
-            <div className="flex flex-col mt-2 sm:flex-row">
+            <div className="flex flex-col sm:flex-row mt-2">
               <input
                 type="text"
                 value={newTalla}
                 onChange={(e) => setNewTalla(e.target.value)}
                 placeholder="Nueva talla"
-                className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
               />
               <input
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
                 placeholder="Precio"
-                className="w-full p-1 border sm:w-1/3"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
                 min="0"
               />
               <button
                 onClick={handleAddTalla}
-                className="px-2 py-1 mt-2 ml-0 text-white bg-blue-500 rounded sm:ml-2 sm:mt-0"
+                className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
               >
                 <IoAddCircleOutline />
               </button>

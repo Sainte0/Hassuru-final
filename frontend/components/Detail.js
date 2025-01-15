@@ -98,7 +98,7 @@ export default function Detail({ product }) {
           )}
         </div>
         <div className="text-sm text-gray-600">
-          {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
+          {product.tallas.some((tallaObj) => tallaObj.precioTalla > 0) ? (
             product.encargo ? (
               <span className="text-yellow-500">Disponible en 3 días</span>
             ) : (
@@ -108,6 +108,7 @@ export default function Detail({ product }) {
             <span className="text-red-500">Disponible en 20 días</span>
           )}
         </div>
+
         <div className="flex items-center space-x-2 text-sm text-gray-600">
           <span>✓</span>
           <p>Artículo verificado, 100% original.</p>

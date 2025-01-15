@@ -58,38 +58,42 @@ export default function Filter({ products, setFilteredProducts }) {
 
   useEffect(() => {
     let filtered = products;
+
     if (selectedMarca) {
       filtered = filtered.filter((product) => product.marca === selectedMarca);
     }
+
     if (selectedTallaRopa) {
-      filtered = filtered.filter(
-        (product) =>
-          product.categoria === "ropa" &&
-          product.tallas[selectedTallaRopa] !== undefined
+      filtered = filtered.filter((product) =>
+        product.categoria === "ropa" &&
+        product.tallas.some((talla) => talla.talla === selectedTallaRopa)
       );
     }
+
     if (selectedTallaZapatilla) {
-      filtered = filtered.filter(
-        (product) =>
-          product.categoria === "zapatillas" && product.tallas[selectedTallaZapatilla]
+      filtered = filtered.filter((product) =>
+        product.categoria === "zapatillas" &&
+        product.tallas.some((talla) => talla.talla === selectedTallaZapatilla)
       );
     }
+
     if (selectedAccesorio) {
-      filtered = filtered.filter(
-        (product) =>
-          product.categoria === "accesorios" &&
-          product.tallas[selectedAccesorio] !== undefined
+      filtered = filtered.filter((product) =>
+        product.categoria === "accesorios" &&
+        product.tallas.some((talla) => talla.talla === selectedAccesorio)
       );
     }
+
     if (stockOnly) {
       filtered = filtered.filter((product) =>
-        Object.values(product.tallas).some((stock) => stock > 0)
+        product.tallas.some((talla) => talla.precioTalla > 0)
       );
     }
+
     if (selectedDisponibilidad) {
       filtered = filtered.filter((product) => {
         if (selectedDisponibilidad === "Solo productos en stock") {
-          return Object.values(product.tallas).some((stock) => stock > 0);
+          return product.tallas.some((talla) => talla.precioTalla > 0);
         }
         return getDisponibilidad(product) === selectedDisponibilidad;
       });
@@ -105,6 +109,7 @@ export default function Filter({ products, setFilteredProducts }) {
     selectedDisponibilidad,
     products,
   ]);
+
 
   const handleSearch = () => {
     let filtered = products;
@@ -161,7 +166,8 @@ export default function Filter({ products, setFilteredProducts }) {
   };
 
   const getDisponibilidad = (product) => {
-    const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
+    // Verifica si el array 'tallas' tiene algún objeto con precioTalla
+    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
 
     if (hasTallas && product.encargo) {
       return "Disponible en 3 días";
@@ -171,6 +177,7 @@ export default function Filter({ products, setFilteredProducts }) {
       return "Disponible en 20 días";
     }
   };
+
 
   const handleSelectDisponibilidad = (opcion) => {
     if (selectedDisponibilidad === opcion) {
@@ -335,7 +342,7 @@ export default function Filter({ products, setFilteredProducts }) {
                 <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
                 <div className="overflow-auto max-h-32">
                   {accesorios.map((accesorio, index) => (
-                    <div key={index} className="flex items-center mb-1"> 
+                    <div key={index} className="flex items-center mb-1">
                       <input
                         type="radio"
                         id={`accesorio-${accesorio}`}
@@ -347,7 +354,7 @@ export default function Filter({ products, setFilteredProducts }) {
                       />
                       <label
                         htmlFor={`accesorio-${accesorio}`}
-                        className="p-1 text-gray-600 bg-white rounded cursor-pointer" 
+                        className="p-1 text-gray-600 bg-white rounded cursor-pointer"
                       >
                         {accesorio}
                       </label>
