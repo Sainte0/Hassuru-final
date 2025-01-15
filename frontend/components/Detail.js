@@ -64,15 +64,16 @@ export default function Detail({ product }) {
           </button>
           {showTallas && (
             <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-md">
-              {Object.entries(product.tallas).map(([talla, stock], index) => (
+              {product.tallas.map((tallaObj, index) => (
                 <button
                   key={index}
-                  className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${selectedTalla === talla ? "font-bold" : ""}`}
-                  onClick={() => handleTallaSelect(talla)}
+                  className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${selectedTalla === tallaObj.talla ? "font-bold" : ""}`}
+                  onClick={() => handleTallaSelect(tallaObj.talla)}
                 >
-                  Talla {talla} {stock > 0 ? "(En stock)" : "(Sin stock)"}
+                  Talla {tallaObj.talla}: ${tallaObj.precioTalla} {tallaObj.precioTalla > 0 ? "(Disponible)" : "(Sin stock)"}
                 </button>
               ))}
+
               <p className="px-4 py-2 text-left text-red-600">¿No encuentras el talle que buscas?</p>
               <div className="flex items-center justify-between px-4 py-2 space-x-4">
                 <input

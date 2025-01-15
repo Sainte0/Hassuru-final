@@ -19,7 +19,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const { addProduct, productAdded } = useStore();
   const [tallaInput, setTallaInput] = useState('');
-  const [cantidadTalla, setCantidadTalla] = useState('');
+  const [precioTalla, setPrecioTalla] = useState(''); // Nuevo estado para el precio de la talla
   const [colorInput, setColorInput] = useState('');
 
   const [imagePreview, setImagePreview] = useState(null);
@@ -59,25 +59,19 @@ const AddProductModal = ({ isOpen, onClose }) => {
   };
 
   const handleAddTalla = () => {
-    if (tallaInput && cantidadTalla) {
+    if (tallaInput && precioTalla) {
       setProduct((prev) => ({
         ...prev,
-        tallas: {
-          ...prev.tallas,
-          [tallaInput]: parseInt(cantidadTalla, 10),
-        },
+        tallas: [...prev.tallas, { talla: tallaInput, precioTalla: parseFloat(precioTalla) }],
       }));
       setTallaInput('');
-      setCantidadTalla('');
+      setPrecioTalla('');
     }
   };
-
-  const handleRemoveTalla = (tallaToRemove) => {
-    const updatedTallas = { ...product.tallas };
-    delete updatedTallas[tallaToRemove];
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      tallas: updatedTallas,
+  const handleRemoveTalla = (index) => {
+    setProduct((prev) => ({
+      ...prev,
+      tallas: prev.tallas.filter((_, i) => i !== index),
     }));
   };
 
@@ -100,6 +94,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       marca: product.marca,
       categoria: product.categoria,
       precio: parseFloat(product.precio),
+      tallas: product.tallas,
       tallas: product.tallas,
       colores: product.colores,
       encargo: product.encargo,
@@ -189,31 +184,34 @@ const AddProductModal = ({ isOpen, onClose }) => {
               />
             </div>
           )}
-          <div className="flex flex-col mb-4 sm:flex-row sm:space-x-2">
+          <div className="flex mb-4 space-x-2">
             <input
               type="text"
               value={tallaInput}
               onChange={(e) => setTallaInput(e.target.value)}
-              placeholder="Agregar Talla"
-              className="w-full p-2 mb-2 border sm:mb-0 sm:w-1/4"
+              placeholder="Talla"
+              className="w-1/2 p-2 border"
             />
             <input
               type="number"
-              value={cantidadTalla}
-              onChange={(e) => setCantidadTalla(e.target.value)}
-              placeholder="Cantidad"
-              className="w-full p-2 mb-2 border sm:mb-0 sm:w-1/4"
+              value={precioTalla}
+              onChange={(e) => setPrecioTalla(e.target.value)}
+              placeholder="Precio Talla"
+              className="w-1/2 p-2 border"
             />
-            <button type="button" onClick={handleAddTalla} className="px-4 py-2 mt-2 text-white bg-blue-500 rounded sm:mt-0">Agregar Talla</button>
+            <button type="button" onClick={handleAddTalla} className="px-4 py-2 text-white bg-blue-500 rounded">
+              Agregar Talla
+            </button>
           </div>
           <ul className="mb-4">
-            {Object.entries(product.tallas).map(([talla, cantidad], index) => (
+            {product.tallas.map((talla, index) => (
               <li key={index} className="flex items-center justify-between">
-                Talla {talla}: {cantidad} unidades
+                Talla {talla.talla}: ${talla.precioTalla}
                 <button
                   type="button"
-                  onClick={() => handleRemoveTalla(talla)}
-                  className="px-4 py-2 text-white bg-red-500 rounded">
+                  onClick={() => handleRemoveTalla(index)}
+                  className="px-4 py-2 text-white bg-red-500 rounded"
+                >
                   Eliminar
                 </button>
               </li>

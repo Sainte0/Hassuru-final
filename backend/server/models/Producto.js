@@ -21,11 +21,18 @@ const ProductoSchema = new mongoose.Schema({
     enum: ['zapatillas', 'ropa', 'accesorios'],
     required: true,
   },
-  tallas: {
-    type: Map,
-    of: Number,
-    required: true,
-  },
+  tallas: [
+    {
+      talla: {
+        type: String,
+        required: true,
+      },
+      precioTalla: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
   colores: [
     {
       color: {

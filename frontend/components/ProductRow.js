@@ -22,7 +22,7 @@ const ProductRow = ({
   const [newColor, setNewColor] = useState("");
   const { dolarBlue, fetchDolarBlue, productAdded } = useStore();
   const [newImage, setNewImage] = useState(null);
-  
+
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
@@ -33,29 +33,31 @@ const ProductRow = ({
     }
   }, [productAdded]);
 
-  const handleTallaChange = (e, talla) => {
+  const handleTallaChange = (e, tallaIndex) => {
     const updatedProducts = [...editableProducts];
-    updatedProducts[index].tallas[talla] = e.target.value;
+    updatedProducts[index].tallas[tallaIndex].precioTalla = parseFloat(e.target.value);
     setEditableProducts(updatedProducts);
   };
+
   const handleAddTalla = () => {
-    if (newTalla && newStock > 0) {
+    if (newTalla && parseFloat(newStock) > 0) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].tallas[newTalla] = newStock;
+      updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newStock) });
       setEditableProducts(updatedProducts);
       setNewTalla("");
-      setNewStock(0);
+      setNewStock("");
     } else {
       alert(
         "Por favor ingresa un nombre de talla válido y un stock mayor a 0."
       );
     }
   };
-  const handleDeleteTalla = (talla) => {
+  const handleDeleteTalla = (tallaIndex) => {
     const updatedProducts = [...editableProducts];
-    delete updatedProducts[index].tallas[talla];
+    updatedProducts[index].tallas.splice(tallaIndex, 1);
     setEditableProducts(updatedProducts);
   };
+
   const handleColorChange = (e, colorId) => {
     const updatedProducts = [...editableProducts];
     const colorIndex = updatedProducts[index].colores.findIndex(
@@ -285,31 +287,27 @@ const ProductRow = ({
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <div>
-            {Object.entries(producto.tallas).map(([talla, cantidad]) => (
+            {producto.tallas.map((tallaObj, tallaIndex) => (
               <div
-                key={talla}
+                key={tallaIndex}
                 className="flex flex-col items-center mb-1 sm:flex-row"
               >
                 <input
                   type="text"
-                  value={talla}
+                  value={tallaObj.talla}
                   readOnly
                   className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
                 />
                 <input
                   type="number"
-                  value={cantidad}
-                  onChange={(e) => handleTallaChange(e, talla)}
+                  value={tallaObj.precioTalla}
+                  onChange={(e) => handleTallaChange(e, tallaIndex)}
                   className="w-full p-1 mb-2 mr-2 border sm:w-1/3 sm:mb-0"
                   min="0"
-                  onBlur={(e) => {
-                    if (e.target.value < 0) {
-                      e.target.value = 0;
-                    }
-                  }}
+                  placeholder="Precio"
                 />
                 <button
-                  onClick={() => handleDeleteTalla(talla)}
+                  onClick={() => handleDeleteTalla(tallaIndex)}
                   className="px-2 py-1 mt-2 ml-0 text-white bg-red-500 rounded sm:ml-2 sm:mt-0"
                 >
                   <RiDeleteBin5Line />
@@ -328,14 +326,9 @@ const ProductRow = ({
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
-                placeholder="Stock"
+                placeholder="Precio"
                 className="w-full p-1 border sm:w-1/3"
                 min="0"
-                onBlur={(e) => {
-                  if (e.target.value < 0) {
-                    setNewStock(0);
-                  }
-                }}
               />
               <button
                 onClick={handleAddTalla}
@@ -347,9 +340,9 @@ const ProductRow = ({
           </div>
         ) : (
           <div>
-            {Object.entries(producto.tallas).map(([talla, cantidad]) => (
-              <div key={talla}>
-                {talla}: {cantidad}
+            {producto.tallas.map((tallaObj, tallaIndex) => (
+              <div key={tallaIndex}>
+                {tallaObj.talla}: ${tallaObj.precioTalla}
               </div>
             ))}
           </div>
