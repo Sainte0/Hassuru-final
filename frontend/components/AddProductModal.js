@@ -199,12 +199,16 @@ const AddProductModal = ({ isOpen, onClose }) => {
               placeholder="Precio Talla"
               className="w-1/2 p-2 border"
             />
-            <button type="button" onClick={handleAddTalla} className="px-4 py-2 text-white bg-blue-500 rounded">
+            <button
+              type="button"
+              onClick={handleAddTalla}
+              className="px-4 py-2 text-white bg-blue-500 rounded"
+            >
               Agregar Talla
             </button>
           </div>
           <ul className="mb-4">
-            {product.tallas.map((talla, index) => (
+            {Array.isArray(product.tallas) && product.tallas.map((talla, index) => (
               <li key={index} className="flex items-center justify-between">
                 Talla {talla.talla}: ${talla.precioTalla}
                 <button
