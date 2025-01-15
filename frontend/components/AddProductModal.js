@@ -9,7 +9,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     marca: '',
     categoria: '',
     precio: '',
-    tallas: {},
+    tallas: [],
     colores: [],
     image: null,
     encargo: false,
