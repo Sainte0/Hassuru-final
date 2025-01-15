@@ -42,19 +42,22 @@ export default function Filter({ products, setFilteredProducts }) {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
     const accesoriosSet = new Set();
+  
     products.forEach((product) => {
       if (product.categoria === "ropa") {
-        Object.keys(product.tallas).forEach((talla) => tallasRopaSet.add(talla));
+        product.tallas.forEach((tallaObj) => tallasRopaSet.add(tallaObj.talla));
       } else if (product.categoria === "zapatillas") {
-        Object.keys(product.tallas).forEach((talla) => tallasZapatillaSet.add(talla));
+        product.tallas.forEach((tallaObj) => tallasZapatillaSet.add(tallaObj.talla));
       } else if (product.categoria === "accesorios") {
-        Object.keys(product.tallas).forEach((talla) => accesoriosSet.add(talla));
+        product.tallas.forEach((tallaObj) => accesoriosSet.add(tallaObj.talla));
       }
     });
+  
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
     setAccesorios(Array.from(accesoriosSet));
   }, [products]);
+  
 
   useEffect(() => {
     let filtered = products;
