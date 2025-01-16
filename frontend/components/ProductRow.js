@@ -348,7 +348,6 @@ const ProductRow = ({
           </div>
         )}
       </td>
-
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <div>

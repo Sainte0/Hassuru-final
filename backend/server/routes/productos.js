@@ -72,9 +72,9 @@ router.post('/', authMiddleware, async (req, res) => {
     if (!nombre || !precio || !marca || !categoria || !tallas) {
       return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
-    if (typeof tallas !== 'object' || Array.isArray(tallas)) {
-      return res.status(400).json({ error: 'El campo tallas debe ser un objeto con tallas y su stock' });
-    }
+    if (!Array.isArray(tallas) || !tallas.every(talla => talla.talla && talla.precioTalla)) {
+      return res.status(400).json({ error: 'El campo tallas debe ser un arreglo con objetos que incluyan talla y precioTalla' });
+    }    
     const nuevoProducto = new Producto({
       nombre,
       descripcion,
