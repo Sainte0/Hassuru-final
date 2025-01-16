@@ -89,8 +89,8 @@ const ProductRow = ({
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
       ...producto,
-      categoria: producto.categoria,
-    };
+      categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
+    };    
     const formData = new FormData();
     Object.keys(updatedProduct).forEach((key) => {
       if (key !== "image") {
