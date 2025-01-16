@@ -16,6 +16,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
+  
+
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
