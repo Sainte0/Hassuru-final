@@ -18,7 +18,7 @@ const ProductRow = ({
   setSelectedProduct,
 }) => {
   const [newTalla, setNewTalla] = useState("");
-  const [newStock, setNewStock] = useState(0);
+  const [newTallaPrecio, setNewTallaPrecio] = useState("");
   const [newColor, setNewColor] = useState("");
   const { dolarBlue, fetchDolarBlue, productAdded } = useStore();
   const [newImage, setNewImage] = useState(null);
@@ -45,7 +45,7 @@ const ProductRow = ({
       updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newStock) });
       setEditableProducts(updatedProducts);
       setNewTalla("");
-      setNewStock("");
+      setNewTallaPrecio("");
     } else {
       alert(
         "Por favor ingresa un nombre de talla válido y precio de la Talla."
@@ -324,8 +324,8 @@ const ProductRow = ({
               />
               <input
                 type="number"
-                value={newStock}
-                onChange={(e) => setNewStock(e.target.value)}
+                value={newTallaPrecio}
+                onChange={(e) => setNewTallaPrecio(e.target.value)}
                 placeholder="Precio"
                 className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
                 min="0"
