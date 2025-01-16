@@ -48,7 +48,7 @@ const ProductRow = ({
       setNewStock("");
     } else {
       alert(
-        "Por favor ingresa un nombre de talla válido y un stock mayor a 0."
+        "Por favor ingresa un nombre de talla válido y precio de la Talla."
       );
     }
   };

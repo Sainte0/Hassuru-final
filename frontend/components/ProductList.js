@@ -8,15 +8,12 @@ import useStore from "../store/store";
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
-
-  
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -25,15 +22,13 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
     fetchProducts();
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
-    return nameMatch && categoryMatch && encargoMatch;
+    return nameMatch && categoryMatch;
   });
 
   return (
@@ -64,16 +59,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="ropa">Ropa</option>
           <option value="accesorios">Accesorios</option>
         </select>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="encargoFilter"
-            checked={encargoFilter}
-            onChange={() => setEncargoFilter(!encargoFilter)} // Actualización correcta de encargoFilter
-            className="w-4 h-4"
-          />
-          <label htmlFor="encargoFilter">Filtrar por Encargo</label>
-        </div>
         <button
           type="button"
           onClick={handleRemoveFilters}
@@ -97,12 +82,12 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
               <th className="px-4 py-2">Marca</th>
               <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Precios (USD/AR)</th>
-              <th className="px-4 py-2">Tallas (Precio)</th>
+              <th className="px-4 py-2">Tallas (Stock)</th>
               <th className="px-4 py-2">Colores</th>
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Destacado</th>
               <th className="px-4 py-2">Destacado Z</th>
-              <th className="px-4 py-2">Encargo</th>
+              <th className="px-4 py-2">Disponible</th>
               <th className="px-4 py-2">Acciones</th>
             </tr>
           </thead>
