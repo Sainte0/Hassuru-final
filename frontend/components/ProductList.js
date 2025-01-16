@@ -15,22 +15,28 @@ const ProductList = ({
 }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
+  const [encargoFilter, setEncargoFilter] = useState(false);
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
+  // Ejecutar al inicio para obtener el dólar
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
-  useEffect(() => {
+  // Esta función se encarga de manejar los filtros
+  const handleFiltersChange = () => {
     if (categoriaFilter || nameFilter || encargoFilter) {
-      fetchProductsFiltered(categoriaFilter, nameFilter, encargoFilter); // Llama a fetchProductsFiltered con los filtros actuales
+      fetchProductsFiltered(categoriaFilter, nameFilter, encargoFilter); // Llamar a los productos filtrados
     } else {
-      fetchProducts(); // Si no hay filtros, recarga todos los productos
+      fetchProducts(); // Llamar a todos los productos si no hay filtros
     }
-  }, [categoriaFilter, nameFilter, encargoFilter]); // Elimina fetchProducts y fetchProductsFiltered de las dependencias
-  
+  };
+
+  // Ejecutar una vez al cargar el componente
+  useEffect(() => {
+    handleFiltersChange(); // Cargar productos iniciales o filtrados
+  }, [categoriaFilter, nameFilter, encargoFilter]); // Solo se ejecuta cuando los filtros cambian
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -39,18 +45,17 @@ const ProductList = ({
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
-    fetchProducts();  // Vuelve a cargar todos los productos sin filtros
+    setEncargoFilter(false);
+    fetchProducts(); // Volver a cargar todos los productos sin filtros
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    const encargoMatch = encargoFilter ? producto.encargo === true : true;
     return nameMatch && categoryMatch && encargoMatch;
   });
 
-  // Esta es la lista que se muestra, no afectando la edición de productos
   const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : editableProducts;
 
   return (
@@ -68,12 +73,18 @@ const ProductList = ({
           type="text"
           placeholder="Buscar por nombre..."
           value={nameFilter}
-          onChange={(e) => setNameFilter(e.target.value)}
+          onChange={(e) => {
+            setNameFilter(e.target.value);
+            handleFiltersChange(); // Llamar a los filtros cuando se cambie
+          }}
           className="w-full p-2 border rounded sm:w-auto"
         />
         <select
           value={categoriaFilter}
-          onChange={(e) => setCategoriaFilter(e.target.value)}
+          onChange={(e) => {
+            setCategoriaFilter(e.target.value);
+            handleFiltersChange(); // Llamar a los filtros cuando se cambie
+          }}
           className="w-full p-2 border rounded sm:w-auto"
         >
           <option value="">Seleccione una categoría</option>
@@ -86,7 +97,10 @@ const ProductList = ({
             type="checkbox"
             id="encargoFilter"
             checked={encargoFilter}
-            onChange={() => setEncargoFilter(!encargoFilter)} // Actualización correcta de encargoFilter
+            onChange={() => {
+              setEncargoFilter(!encargoFilter);
+              handleFiltersChange(); // Llamar a los filtros cuando se cambie
+            }}
             className="w-4 h-4"
           />
           <label htmlFor="encargoFilter">Filtrar por Encargo</label>
