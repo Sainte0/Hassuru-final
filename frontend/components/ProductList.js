@@ -15,10 +15,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
-
+  
   const handleProductSelect = (id) => {
-    setSelectedProduct(id);
+    const selected = editableProducts.find((producto) => producto._id === id);
+    setSelectedProduct(selected || null);
   };
+
+  useEffect(() => {
+    if (selectedProduct && !filteredProducts.some((p) => p._id === selectedProduct._id)) {
+      setSelectedProduct(null); // Deseleccionar si no está en los filtros
+    }
+  }, [filteredProducts, selectedProduct]);
+
 
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
@@ -95,7 +103,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
               <th className="px-4 py-2">Marca</th>
               <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Precios (USD/AR)</th>
-             <th className="px-4 py-2">Tallas (Precio)</th>
+              <th className="px-4 py-2">Tallas (Precio)</th>
               <th className="px-4 py-2">Colores</th>
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Destacado</th>

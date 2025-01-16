@@ -70,7 +70,7 @@ export default function Detail({ product }) {
                   className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${selectedTalla === tallaObj.talla ? "font-bold" : ""}`}
                   onClick={() => handleTallaSelect(tallaObj.talla)}
                 >
-                  Talla {tallaObj.talla}: ${tallaObj.precioTalla} {tallaObj.precioTalla > 0 ? "(Disponible)" : "(Sin stock)"}
+                  Talla {tallaObj.talla}: ${tallaObj.precioTalla}  "USD" / ${(tallaObj.precioTalla * dolarBlue).toFixed(2)} ARS
                 </button>
               ))}
 
