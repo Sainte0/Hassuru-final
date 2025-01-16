@@ -11,8 +11,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // Nuevo estado para controlar el modo de edición
 
-  // Calcula los productos filtrados antes de los efectos
+  // Calcula los productos filtrados
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
@@ -25,21 +26,23 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   }, [fetchDolarBlue]);
 
   useEffect(() => {
-    // Asegúrate de que `filteredProducts` esté inicializado correctamente antes de usarlo
-    if (selectedProduct && !filteredProducts.some((p) => p._id === selectedProduct._id)) {
-      setSelectedProduct(null); // Deseleccionar si no está en los filtros
+    // Evita deseleccionar mientras estás editando un producto
+    if (!isEditing && selectedProduct && !editableProducts.some((p) => p._id === selectedProduct._id)) {
+      setSelectedProduct(null);
     }
-  }, [filteredProducts, selectedProduct]);
+  }, [editableProducts, selectedProduct, isEditing]);
+
 
   const handleProductSelect = (id) => {
     const selected = editableProducts.find((producto) => producto._id === id);
     setSelectedProduct(selected || null);
+    setIsEditing(false); // Al seleccionar un producto, se sale del modo de edición
   };
 
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
+    setEncargoFilter(false); // Limpiar filtro de encargo
     fetchProducts();
   };
 
@@ -125,6 +128,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
+                setIsEditing={setIsEditing} // Controlar edición desde ProductRow
               />
             ))}
           </tbody>
