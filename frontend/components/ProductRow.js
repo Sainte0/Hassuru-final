@@ -285,69 +285,69 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-2 py-2 border">
-  {selectedProduct === producto._id ? (
-    <div>
-      {producto.tallas.map((tallaObj, tallaIndex) => (
-        <div
-          key={tallaIndex}
-          className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
-        >
-          <input
-            type="text"
-            value={tallaObj.talla}
-            readOnly
-            className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
-          />
-          <input
-            type="number"
-            value={tallaObj.precioTalla}
-            onChange={(e) => handleTallaChange(e, tallaIndex)}
-            className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
-            min="0"
-            placeholder="Precio"
-          />
-          <button
-            onClick={() => handleDeleteTalla(tallaIndex)}
-            className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
-          >
-            <RiDeleteBin5Line />
-          </button>
-        </div>
-      ))}
-      <div className="flex flex-col sm:flex-row mt-2">
-        <input
-          type="text"
-          value={newTalla}
-          onChange={(e) => setNewTalla(e.target.value)}
-          placeholder="Nueva talla"
-          className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
-        />
-        <input
-          type="number"
-          value={newStock}
-          onChange={(e) => setNewStock(e.target.value)}
-          placeholder="Precio"
-          className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
-          min="0"
-        />
-        <button
-          onClick={handleAddTalla}
-          className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
-        >
-          <IoAddCircleOutline />
-        </button>
-      </div>
-    </div>
-  ) : (
-    <div>
-      {producto.tallas.map((tallaObj, tallaIndex) => (
-        <div key={tallaIndex}>
-          {tallaObj.talla}: ${tallaObj.precioTalla}
-        </div>
-      ))}
-    </div>
-  )}
-</td>
+        {selectedProduct === producto._id ? (
+          <div>
+            {producto.tallas.map((tallaObj, tallaIndex) => (
+              <div
+                key={tallaIndex}
+                className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
+              >
+                <input
+                  type="text"
+                  value={tallaObj.talla}
+                  readOnly
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                />
+                <input
+                  type="number"
+                  value={tallaObj.precioTalla}
+                  onChange={(e) => handleTallaChange(e, tallaIndex)}
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  min="0"
+                  placeholder="Precio"
+                />
+                <button
+                  onClick={() => handleDeleteTalla(tallaIndex)}
+                  className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
+                >
+                  <RiDeleteBin5Line />
+                </button>
+              </div>
+            ))}
+            <div className="flex flex-col sm:flex-row mt-2">
+              <input
+                type="text"
+                value={newTalla}
+                onChange={(e) => setNewTalla(e.target.value)}
+                placeholder="Nueva talla"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+              />
+              <input
+                type="number"
+                value={newStock}
+                onChange={(e) => setNewStock(e.target.value)}
+                placeholder="Precio"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
+                min="0"
+              />
+              <button
+                onClick={handleAddTalla}
+                className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
+              >
+                <IoAddCircleOutline />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {producto.tallas.map((tallaObj, tallaIndex) => (
+              <div key={tallaIndex}>
+                {tallaObj.talla}: ${tallaObj.precioTalla}
+              </div>
+            ))}
+          </div>
+        )}
+      </td>
 
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (

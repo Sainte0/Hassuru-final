@@ -87,31 +87,48 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Validar que las tallas tengan el formato correcto
+    const tallasValidas = product.tallas.every(
+      (talla) =>
+        talla.talla &&
+        typeof talla.talla === "string" &&
+        typeof talla.precioTalla === "number"
+    );
+  
+    if (!tallasValidas) {
+      toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
+      return;
+    }
+  
     const productoAEnviar = {
       nombre: product.nombre,
       descripcion: product.descripcion,
       marca: product.marca,
       categoria: product.categoria,
       precio: parseFloat(product.precio),
-      tallas: product.tallas,
-      tallas: product.tallas,
+      tallas: product.tallas.map((talla) => ({
+        talla: talla.talla,
+        precioTalla: talla.precioTalla,
+      })), // Formatear las tallas correctamente
       colores: product.colores,
       encargo: product.encargo,
       destacado: product.destacado,
       destacado_zapatillas: product.destacado_zapatillas,
     };
-
+  
     const imageFile = product.image;
-
+  
     try {
       await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       onClose();
     } catch (error) {
+      console.error("Error en la respuesta del servidor:", error); // Log para debug
       toast.error("Error al agregar el producto.");
     }
   };
+  
 
   if (!isOpen) return null;
 
