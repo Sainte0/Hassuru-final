@@ -40,18 +40,17 @@ const ProductRow = ({
   };
 
   const handleAddTalla = () => {
-    if (newTalla && parseFloat(newStock) > 0) {
+    if (newTalla && parseFloat(newTallaPrecio) > 0) {
       const updatedProducts = [...editableProducts];
-      updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newStock) });
+      updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newTallaPrecio) });
       setEditableProducts(updatedProducts);
       setNewTalla("");
       setNewTallaPrecio("");
     } else {
-      alert(
-        "Por favor ingresa un nombre de talla válido y precio de la Talla."
-      );
+      alert("Por favor ingresa un nombre de talla válido y precio de la Talla.");
     }
   };
+
   const handleDeleteTalla = (tallaIndex) => {
     const updatedProducts = [...editableProducts];
     updatedProducts[index].tallas.splice(tallaIndex, 1);
@@ -60,14 +59,13 @@ const ProductRow = ({
 
   const handleColorChange = (e, colorId) => {
     const updatedProducts = [...editableProducts];
-    const colorIndex = updatedProducts[index].colores.findIndex(
-      (c) => c._id === colorId
-    );
+    const colorIndex = updatedProducts[index].colores.findIndex((c) => c._id === colorId);
     if (colorIndex !== -1) {
       updatedProducts[index].colores[colorIndex].color = e.target.value;
       setEditableProducts(updatedProducts);
     }
   };
+
   const handleAddColor = () => {
     if (newColor) {
       const updatedProducts = [...editableProducts];
@@ -78,11 +76,10 @@ const ProductRow = ({
       alert("Por favor ingresa un color válido.");
     }
   };
+
   const handleDeleteColor = (colorId) => {
     const updatedProducts = [...editableProducts];
-    updatedProducts[index].colores = updatedProducts[index].colores.filter(
-      (c) => c._id !== colorId
-    );
+    updatedProducts[index].colores = updatedProducts[index].colores.filter((c) => c._id !== colorId);
     setEditableProducts(updatedProducts);
   };
 
@@ -90,7 +87,7 @@ const ProductRow = ({
     const updatedProduct = {
       ...producto,
       categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
-    };    
+    };
     const formData = new FormData();
     Object.keys(updatedProduct).forEach((key) => {
       if (key !== "image") {
@@ -110,16 +107,13 @@ const ProductRow = ({
       if (newImage) {
         const imageFormData = new FormData();
         imageFormData.append("image", newImage);
-        const imageResponse = await fetch(
-          `${URL1}/api/productos/${producto._id}/image`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: imageFormData,
-          }
-        );
+        const imageResponse = await fetch(`${URL1}/api/productos/${producto._id}/image`, {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: imageFormData,
+        });
         if (imageResponse.ok) {
           toast.success("Imagen actualizada con éxito");
           await fetchProducts();
@@ -137,9 +131,7 @@ const ProductRow = ({
   };
 
   const handleProductDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro que quieres eliminar este producto?"
-    );
+    const confirmDelete = window.confirm("¿Estás seguro que quieres eliminar este producto?");
     if (confirmDelete) {
       const response = await fetch(`${URL1}/api/productos/${id}`, {
         method: "DELETE",
@@ -183,11 +175,13 @@ const ProductRow = ({
     updatedProducts[index].destacado = e.target.checked;
     setEditableProducts(updatedProducts);
   };
+
   const handleDestacadoZapatillasChange = (e) => {
     const updatedProducts = [...editableProducts];
     updatedProducts[index].destacado_zapatillas = e.target.checked;
     setEditableProducts(updatedProducts);
   };
+
   const handleEncargoChange = (e) => {
     const updatedProducts = [...editableProducts];
     updatedProducts[index].encargo = e.target.checked;

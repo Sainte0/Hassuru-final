@@ -11,40 +11,28 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // Nuevo estado para controlar el modo de edición
 
-  // Calcula los productos filtrados
+  useEffect(() => {
+    fetchDolarBlue();
+  }, [fetchDolarBlue]);
+
+  const handleProductSelect = (id) => {
+    setSelectedProduct(id);
+  };
+
+  const handleRemoveFilters = () => {
+    setCategoriaFilter("");
+    setNameFilter("");
+    setEncargoFilter(false);  // Limpiar filtro de encargo
+    fetchProducts();
+  };
+
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
     const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
     return nameMatch && categoryMatch && encargoMatch;
   });
-
-  useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
-
-  useEffect(() => {
-    // Evita deseleccionar mientras estás editando un producto
-    if (!isEditing && selectedProduct && !editableProducts.some((p) => p._id === selectedProduct._id)) {
-      setSelectedProduct(null);
-    }
-  }, [editableProducts, selectedProduct, isEditing]);
-
-
-  const handleProductSelect = (id) => {
-    const selected = editableProducts.find((producto) => producto._id === id);
-    setSelectedProduct(selected || null);
-    setIsEditing(false); // Al seleccionar un producto, se sale del modo de edición
-  };
-
-  const handleRemoveFilters = () => {
-    setCategoriaFilter("");
-    setNameFilter("");
-    setEncargoFilter(false); // Limpiar filtro de encargo
-    fetchProducts();
-  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -128,7 +116,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
-                setIsEditing={setIsEditing} // Controlar edición desde ProductRow
               />
             ))}
           </tbody>
