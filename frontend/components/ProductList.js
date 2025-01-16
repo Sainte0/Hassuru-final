@@ -29,7 +29,8 @@ const ProductList = ({
     } else {
       fetchProducts(); // Si no hay filtros, recarga todos los productos
     }
-  }, [categoriaFilter, nameFilter, encargoFilter, fetchProducts, fetchProductsFiltered]);
+  }, [categoriaFilter, nameFilter, encargoFilter]); // Elimina fetchProducts y fetchProductsFiltered de las dependencias
+  
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
