@@ -12,6 +12,8 @@ const useStore = create((set) => ({
   error: null,
   filteredProducts: [],
   tiktokLinks: [],
+  editableProducts: [], // Añadir editableProducts al estado
+
 
   fetchProducts: async () => {
     set({ loading: true });
@@ -26,7 +28,7 @@ const useStore = create((set) => ({
         throw new Error('Error al cargar los productos');
       }
       const data = await response.json();
-      set({ products: data });
+      set({ products: data, editableProducts: data }); // Actualizar editableProducts
     } catch (error) {
       set({ error: error.message });
       console.error('Error al cargar los productos:', error);
@@ -35,6 +37,7 @@ const useStore = create((set) => ({
     }
   },
 
+  
   addProduct: async (productoAEnviar, imagenFile) => {
     set({ loading: true });
     try {
@@ -70,8 +73,8 @@ const useStore = create((set) => ({
         }
       }
       set((state) => ({
-        products: [...state.products, nuevoProducto],
-        productAdded: true,
+        products: [...state.products, newProduct],
+        editableProducts: [...state.editableProducts, newProduct], // Actualizar editableProducts
       }));
       toast.success('Producto agregado con éxito');
     } catch (error) {
