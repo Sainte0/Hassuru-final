@@ -5,7 +5,14 @@ import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
+const ProductList = ({
+  editableProducts,
+  setEditableProducts,
+  selectedProduct,
+  setSelectedProduct,
+  fetchProducts,
+  fetchProductsFiltered,
+}) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
@@ -24,7 +31,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setCategoriaFilter("");
     setNameFilter("");
     setEncargoFilter(false);  // Limpiar filtro de encargo
-    fetchProducts();
+    fetchProducts();  // Vuelve a cargar todos los productos sin filtros
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
@@ -33,6 +40,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
     return nameMatch && categoryMatch && encargoMatch;
   });
+
+  // Esta es la lista que se muestra, no afectando la edición de productos
+  const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : editableProducts;
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
