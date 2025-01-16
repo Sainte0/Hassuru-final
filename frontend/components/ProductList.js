@@ -15,17 +15,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
-  
-  const handleProductSelect = (id) => {
-    const selected = editableProducts.find((producto) => producto._id === id);
-    setSelectedProduct(selected || null);
-  };
 
+  
   useEffect(() => {
     if (selectedProduct && !filteredProducts.some((p) => p._id === selectedProduct._id)) {
       setSelectedProduct(null); // Deseleccionar si no está en los filtros
     }
   }, [filteredProducts, selectedProduct]);
+  
+  const handleProductSelect = (id) => {
+    const selected = editableProducts.find((producto) => producto._id === id);
+    setSelectedProduct(selected || null);
+  };
 
 
   const handleRemoveFilters = () => {
