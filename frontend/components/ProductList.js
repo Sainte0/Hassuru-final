@@ -23,6 +23,14 @@ const ProductList = ({
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
+  useEffect(() => {
+    if (categoriaFilter || nameFilter || encargoFilter) {
+      fetchProductsFiltered(categoriaFilter, nameFilter, encargoFilter); // Llama a fetchProductsFiltered con los filtros actuales
+    } else {
+      fetchProducts(); // Si no hay filtros, recarga todos los productos
+    }
+  }, [categoriaFilter, nameFilter, encargoFilter, fetchProducts, fetchProductsFiltered]);
+
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -115,7 +123,7 @@ const ProductList = ({
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((producto, index) => (
+            {productsToDisplay.map((producto, index) => (
               <ProductRow
                 key={producto._id}
                 producto={producto}
