@@ -5,38 +5,16 @@ import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
-const ProductList = ({
-  editableProducts,
-  setEditableProducts,
-  selectedProduct,
-  setSelectedProduct,
-  fetchProducts,
-  fetchProductsFiltered,
-}) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false);
+  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
-  // Ejecutar al inicio para obtener el dólar
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
-
-  // Esta función se encarga de manejar los filtros
-  const handleFiltersChange = () => {
-    if (categoriaFilter || nameFilter || encargoFilter) {
-      fetchProductsFiltered(categoriaFilter, nameFilter, encargoFilter); // Llamar a los productos filtrados
-    } else {
-      fetchProducts(); // Llamar a todos los productos si no hay filtros
-    }
-  };
-
-  // Ejecutar una vez al cargar el componente
-  useEffect(() => {
-    handleFiltersChange(); // Cargar productos iniciales o filtrados
-  }, [categoriaFilter, nameFilter, encargoFilter]); // Solo se ejecuta cuando los filtros cambian
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -45,18 +23,16 @@ const ProductList = ({
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);
-    fetchProducts(); // Volver a cargar todos los productos sin filtros
+    setEncargoFilter(false);  // Limpiar filtro de encargo
+    fetchProducts();
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
     return nameMatch && categoryMatch && encargoMatch;
   });
-
-  const productsToDisplay = filteredProducts.length > 0 ? filteredProducts : editableProducts;
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -73,18 +49,12 @@ const ProductList = ({
           type="text"
           placeholder="Buscar por nombre..."
           value={nameFilter}
-          onChange={(e) => {
-            setNameFilter(e.target.value);
-            handleFiltersChange(); // Llamar a los filtros cuando se cambie
-          }}
+          onChange={(e) => setNameFilter(e.target.value)}
           className="w-full p-2 border rounded sm:w-auto"
         />
         <select
           value={categoriaFilter}
-          onChange={(e) => {
-            setCategoriaFilter(e.target.value);
-            handleFiltersChange(); // Llamar a los filtros cuando se cambie
-          }}
+          onChange={(e) => setCategoriaFilter(e.target.value)}
           className="w-full p-2 border rounded sm:w-auto"
         >
           <option value="">Seleccione una categoría</option>
@@ -97,10 +67,7 @@ const ProductList = ({
             type="checkbox"
             id="encargoFilter"
             checked={encargoFilter}
-            onChange={() => {
-              setEncargoFilter(!encargoFilter);
-              handleFiltersChange(); // Llamar a los filtros cuando se cambie
-            }}
+            onChange={() => setEncargoFilter(!encargoFilter)} // Actualización correcta de encargoFilter
             className="w-4 h-4"
           />
           <label htmlFor="encargoFilter">Filtrar por Encargo</label>
@@ -138,7 +105,7 @@ const ProductList = ({
             </tr>
           </thead>
           <tbody>
-            {productsToDisplay.map((producto, index) => (
+            {filteredProducts.map((producto, index) => (
               <ProductRow
                 key={producto._id}
                 producto={producto}
