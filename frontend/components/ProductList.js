@@ -12,22 +12,29 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
+  // Calcula los productos filtrados antes de los efectos
+  const filteredProducts = editableProducts.filter((producto) => {
+    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    return nameMatch && categoryMatch && encargoMatch;
+  });
+
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
-  
   useEffect(() => {
+    // Asegúrate de que `filteredProducts` esté inicializado correctamente antes de usarlo
     if (selectedProduct && !filteredProducts.some((p) => p._id === selectedProduct._id)) {
       setSelectedProduct(null); // Deseleccionar si no está en los filtros
     }
   }, [filteredProducts, selectedProduct]);
-  
+
   const handleProductSelect = (id) => {
     const selected = editableProducts.find((producto) => producto._id === id);
     setSelectedProduct(selected || null);
   };
-
 
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
@@ -35,13 +42,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setEncargoFilter(false);  // Limpiar filtro de encargo
     fetchProducts();
   };
-
-  const filteredProducts = editableProducts.filter((producto) => {
-    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
-    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
-    return nameMatch && categoryMatch && encargoMatch;
-  });
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
