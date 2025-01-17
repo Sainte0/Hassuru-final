@@ -524,7 +524,7 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-2 py-2 text-center border">
-        {selectedProduct === producto._id && (
+        {selectedProduct === producto._id ? (
           <div>
             <button
               onClick={() => handleProductUpdate(producto)}
@@ -538,14 +538,21 @@ const ProductRow = ({
             >
               Cancelar
             </button>
+            <button
+              onClick={() => handleProductDelete(producto._id)}
+              className="px-2 py-1 text-white bg-red-500 rounded mt-1"
+            >
+              Confirmar Eliminación
+            </button>
           </div>
+        ) : (
+          <button
+            onClick={() => setSelectedProduct(producto._id)}
+            className="px-2 py-1 text-white bg-red-500 rounded"
+          >
+            Eliminar
+          </button>
         )}
-        <button
-          onClick={() => handleProductDelete(producto._id)}
-          className="px-2 py-1 text-white bg-red-500 rounded"
-        >
-          Eliminar
-        </button>
       </td>
     </tr>
   );
