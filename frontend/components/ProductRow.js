@@ -129,20 +129,10 @@ const ProductRow = ({
 
 
   const handleProductUpdate = async (producto) => {
-    const updatedProduct = {
-      ...producto,
-      categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
-    };
-
-    const formData = new FormData();
-    Object.keys(updatedProduct).forEach((key) => {
-      if (key !== "image") {
-        formData.append(key, updatedProduct[key]);
-      }
-    });
-
+    const updatedProduct = { ...producto, categoria: producto.categoria.toLowerCase() }; // Normaliza a minúsculas
+  
     try {
-      const responseData = await fetch(`${URL1}/api/productos/${producto._id}`, {
+      const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -150,14 +140,14 @@ const ProductRow = ({
         },
         body: JSON.stringify(updatedProduct),
       });
-
-      if (responseData.ok) {
+  
+      if (response.ok) {
         toast.success("Producto actualizado con éxito");
-
+  
+        // Actualiza la imagen si es necesario
         if (newImage) {
           const imageFormData = new FormData();
           imageFormData.append("image", newImage);
-
           const imageResponse = await fetch(
             `${URL1}/api/productos/${producto._id}/image`,
             {
@@ -168,7 +158,7 @@ const ProductRow = ({
               body: imageFormData,
             }
           );
-
+  
           if (imageResponse.ok) {
             toast.success("Imagen actualizada con éxito");
           } else {
@@ -176,32 +166,33 @@ const ProductRow = ({
             console.error("Error al actualizar la imagen");
           }
         }
-
-        await fetchProducts();
+  
+        fetchProducts();
         setSelectedProduct(null);
       } else {
         toast.error("Error al actualizar el producto");
         console.error("Error al actualizar el producto");
       }
     } catch (error) {
-      console.error("Error en la solicitud de actualización", error);
+      console.error("Error al actualizar el producto:", error);
+      toast.error("Error al actualizar el producto");
     }
   };
-
-  const handleProductDelete = async (id) => {
+  
+  const handleProductDelete = async (producto) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro que quieres eliminar este producto?"
     );
-
+  
     if (confirmDelete) {
       try {
-        const response = await fetch(`${URL1}/api/productos/${id}`, {
+        const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-
+  
         if (response.ok) {
           toast.success("Producto eliminado con éxito");
           fetchProducts();
@@ -210,24 +201,21 @@ const ProductRow = ({
           console.error("Error al eliminar el producto");
         }
       } catch (error) {
-        console.error("Error en la solicitud de eliminación", error);
+        console.error("Error al eliminar el producto:", error);
+        toast.error("Error al eliminar el producto");
       }
     }
   };
-
-  const handleProductChange = (e, field, index) => {
-    const updatedProducts = [...editableProducts];
-    const newValue = e.target.value;
-
-    if (!updatedProducts[index]) {
-      console.error(`Producto en el índice ${index} no existe.`);
-      return;
-    }
-
-    updatedProducts[index][field] = newValue;
-    setEditableProducts(updatedProducts);
+  
+  const handleProductChange = (e, field, producto) => {
+    const updatedProduct = { ...producto, [field]: e.target.value };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
-
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
