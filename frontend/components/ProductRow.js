@@ -130,7 +130,7 @@ const ProductRow = ({
 
   const handleProductUpdate = async (producto) => {
     const updatedProduct = { ...producto, categoria: producto.categoria.toLowerCase() }; // Normaliza a minúsculas
-  
+
     try {
       const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
         method: "PUT",
@@ -140,10 +140,10 @@ const ProductRow = ({
         },
         body: JSON.stringify(updatedProduct),
       });
-  
+
       if (response.ok) {
         toast.success("Producto actualizado con éxito");
-  
+
         // Actualiza la imagen si es necesario
         if (newImage) {
           const imageFormData = new FormData();
@@ -158,7 +158,7 @@ const ProductRow = ({
               body: imageFormData,
             }
           );
-  
+
           if (imageResponse.ok) {
             toast.success("Imagen actualizada con éxito");
           } else {
@@ -166,7 +166,7 @@ const ProductRow = ({
             console.error("Error al actualizar la imagen");
           }
         }
-  
+
         fetchProducts();
         setSelectedProduct(null);
       } else {
@@ -178,12 +178,12 @@ const ProductRow = ({
       toast.error("Error al actualizar el producto");
     }
   };
-  
+
   const handleProductDelete = async (producto) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro que quieres eliminar este producto?"
     );
-  
+
     if (confirmDelete) {
       try {
         const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
@@ -192,7 +192,7 @@ const ProductRow = ({
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-  
+
         if (response.ok) {
           toast.success("Producto eliminado con éxito");
           fetchProducts();
@@ -206,7 +206,7 @@ const ProductRow = ({
       }
     }
   };
-  
+
   const handleProductChange = (e, field, producto) => {
     const updatedProduct = { ...producto, [field]: e.target.value };
     setEditableProducts((prevProducts) =>
@@ -215,7 +215,7 @@ const ProductRow = ({
       )
     );
   };
-  
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -269,7 +269,7 @@ const ProductRow = ({
           <input
             type="text"
             value={producto.nombre}
-            onChange={(e) => handleProductChange(e, "nombre", index)}
+            onChange={(e) => handleProductChange(e, "nombre", producto)}
             className="w-full p-1 border"
           />
         ) : (
@@ -281,7 +281,7 @@ const ProductRow = ({
           <input
             type="text"
             value={producto.descripcion}
-            onChange={(e) => handleProductChange(e, "descripcion", index)}
+            onChange={(e) => handleProductChange(e, "descripcion", producto)}
             className="w-full p-1 border"
           />
         ) : (
@@ -293,7 +293,7 @@ const ProductRow = ({
           <input
             type="text"
             value={producto.marca}
-            onChange={(e) => handleProductChange(e, "marca", index)}
+            onChange={(e) => handleProductChange(e, "marca", producto)}
             className="w-full p-1 border"
           />
         ) : (
@@ -304,7 +304,7 @@ const ProductRow = ({
         {selectedProduct === producto._id ? (
           <select
             value={producto.categoria}
-            onChange={(e) => handleProductChange(e, "categoria", index)}
+            onChange={(e) => handleProductChange(e, "categoria", producto)}
             className="w-full p-1 border"
           >
             <option value="ropa">Ropa</option>
