@@ -321,7 +321,7 @@ const ProductRow = ({
             <input
               type="text"
               value={producto.precio}
-              onChange={(e) => handleProductChange(e, "precio", index)}
+              onChange={(e) => handleProductChange(e, "precio", producto)}
               className="w-full p-1 mb-2 border"
               placeholder="Precio en USD"
             />
