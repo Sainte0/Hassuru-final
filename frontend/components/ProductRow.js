@@ -34,63 +34,99 @@ const ProductRow = ({
   }, [productAdded, fetchProducts]);
 
   const handleTallaChange = (e, tallaIndex) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].tallas[tallaIndex].precioTalla = parseFloat(e.target.value);
-    setEditableProducts(updatedProducts);
+    const updatedProduct = {
+      ...producto,
+      tallas: producto.tallas.map((talla, index) =>
+        index === tallaIndex
+          ? { ...talla, precioTalla: parseFloat(e.target.value) }
+          : talla
+      ),
+    };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
 
   const handleAddTalla = () => {
     if (newTalla && parseFloat(newStock) > 0) {
-      const updatedProducts = [...editableProducts];
-      updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newStock) });
-      setEditableProducts(updatedProducts);
+      const updatedProduct = {
+        ...producto,
+        tallas: [...producto.tallas, { talla: newTalla, precioTalla: parseFloat(newStock) }],
+      };
+      setEditableProducts((prevProducts) =>
+        prevProducts.map((prod) =>
+          prod._id === producto._id ? updatedProduct : prod
+        )
+      );
       setNewTalla("");
       setNewStock("");
     } else {
-      alert(
-        "Por favor ingresa un nombre de talla válido y precio de la Talla."
-      );
+      alert("Por favor ingresa un nombre de talla válido y precio de la Talla.");
     }
   };
+
   const handleDeleteTalla = (tallaIndex) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].tallas.splice(tallaIndex, 1);
-    setEditableProducts(updatedProducts);
+    const updatedProduct = {
+      ...producto,
+      tallas: producto.tallas.filter((_, index) => index !== tallaIndex),
+    };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
 
   const handleColorChange = (e, colorId) => {
-    const updatedProducts = [...editableProducts];
-    const colorIndex = updatedProducts[index].colores.findIndex(
-      (c) => c._id === colorId
+    const updatedProduct = {
+      ...producto,
+      colores: producto.colores.map((color) =>
+        color._id === colorId ? { ...color, color: e.target.value } : color
+      ),
+    };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
     );
-    if (colorIndex !== -1) {
-      updatedProducts[index].colores[colorIndex].color = e.target.value;
-      setEditableProducts(updatedProducts);
-    }
   };
+
   const handleAddColor = () => {
     if (newColor) {
-      const updatedProducts = [...editableProducts];
-      updatedProducts[index].colores.push({ color: newColor });
-      setEditableProducts(updatedProducts);
+      const updatedProduct = {
+        ...producto,
+        colores: [...producto.colores, { _id: generateUniqueId(), color: newColor }],
+      };
+      setEditableProducts((prevProducts) =>
+        prevProducts.map((prod) =>
+          prod._id === producto._id ? updatedProduct : prod
+        )
+      );
       setNewColor("");
     } else {
       alert("Por favor ingresa un color válido.");
     }
   };
+
   const handleDeleteColor = (colorId) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].colores = updatedProducts[index].colores.filter(
-      (c) => c._id !== colorId
+    const updatedProduct = {
+      ...producto,
+      colores: producto.colores.filter((color) => color._id !== colorId),
+    };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
     );
-    setEditableProducts(updatedProducts);
   };
 
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
       ...producto,
       categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
-    };    
+    };
     const formData = new FormData();
     Object.keys(updatedProduct).forEach((key) => {
       if (key !== "image") {
