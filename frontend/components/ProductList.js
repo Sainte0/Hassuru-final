@@ -5,7 +5,14 @@ import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
+const ProductList = ({
+  editableProducts,
+  setEditableProducts,
+  selectedProduct,
+  setSelectedProduct,
+  fetchProducts,
+  fetchProductsFiltered,
+}) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
@@ -16,6 +23,11 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
+  // Aplica los filtros cada vez que se actualicen
+  useEffect(() => {
+    fetchProductsFiltered({ categoriaFilter, nameFilter, encargoFilter });
+  }, [categoriaFilter, nameFilter, encargoFilter, fetchProductsFiltered]);
+
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -23,8 +35,13 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
-    fetchProducts();
+    setEncargoFilter(false); // Limpiar filtro de encargo
+    fetchProducts(); // Carga productos sin filtros
+  };
+
+  const handleSave = () => {
+    // Guarda la edición y recarga los productos con filtros aplicados
+    fetchProductsFiltered({ categoriaFilter, nameFilter, encargoFilter });
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
@@ -95,7 +112,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
               <th className="px-4 py-2">Marca</th>
               <th className="px-4 py-2">Categoría</th>
               <th className="px-4 py-2">Precios (USD/AR)</th>
-             <th className="px-4 py-2">Tallas (Precio)</th>
+              <th className="px-4 py-2">Tallas (Precio)</th>
               <th className="px-4 py-2">Colores</th>
               <th className="px-4 py-2">Imagen</th>
               <th className="px-4 py-2">Destacado</th>
@@ -114,6 +131,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
                 fetchProducts={fetchProducts}
+                fetchProductsFiltered={fetchProductsFiltered}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
               />
