@@ -179,19 +179,30 @@ const ProductRow = ({
   };
 
   const handleDestacadoChange = (e) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].destacado = e.target.checked;
-    setEditableProducts(updatedProducts);
+    const updatedProduct = { ...producto, destacado: e.target.checked };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
+
   const handleDestacadoZapatillasChange = (e) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].destacado_zapatillas = e.target.checked;
-    setEditableProducts(updatedProducts);
+    const updatedProduct = { ...producto, destacadoZapatillas: e.target.checked };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
+
   const handleEncargoChange = (e) => {
-    const updatedProducts = [...editableProducts];
-    updatedProducts[index].encargo = e.target.checked;
-    setEditableProducts(updatedProducts);
+    const updatedProduct = { ...producto, encargo: e.target.checked };
+    setEditableProducts((prevProducts) =>
+      prevProducts.map((prod) =>
+        prod._id === producto._id ? updatedProduct : prod
+      )
+    );
   };
 
   return (
