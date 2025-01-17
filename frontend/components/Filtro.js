@@ -42,7 +42,7 @@ export default function Filter({ products, setFilteredProducts }) {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
     const accesoriosSet = new Set();
-  
+
     products.forEach((product) => {
       if (product.categoria === "ropa") {
         product.tallas.forEach((tallaObj) => tallasRopaSet.add(tallaObj.talla));
@@ -52,12 +52,12 @@ export default function Filter({ products, setFilteredProducts }) {
         product.tallas.forEach((tallaObj) => accesoriosSet.add(tallaObj.talla));
       }
     });
-  
+
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
     setAccesorios(Array.from(accesoriosSet));
   }, [products]);
-  
+
 
   useEffect(() => {
     let filtered = products;
@@ -281,7 +281,7 @@ export default function Filter({ products, setFilteredProducts }) {
             {tallasRopa.length > 0 && (
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
-                {tallasRopa
+                {Array.from(new Set(tallasRopa))
                   .sort((a, b) => {
                     const tallaOrder = ["S", "M", "L", "XL", "OS"];
                     return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
