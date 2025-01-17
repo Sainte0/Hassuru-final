@@ -133,48 +133,58 @@ const ProductRow = ({
       ...producto,
       categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
     };
+
     const formData = new FormData();
     Object.keys(updatedProduct).forEach((key) => {
       if (key !== "image") {
         formData.append(key, updatedProduct[key]);
       }
     });
-    const responseData = await fetch(`${URL1}/api/productos/${producto._id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedProduct),
-    });
-    if (responseData.ok) {
-      toast.success("Producto actualizado con éxito");
-      if (newImage) {
-        const imageFormData = new FormData();
-        imageFormData.append("image", newImage);
-        const imageResponse = await fetch(
-          `${URL1}/api/productos/${producto._id}/image`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: imageFormData,
+
+    try {
+      const responseData = await fetch(`${URL1}/api/productos/${producto._id}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedProduct),
+      });
+
+      if (responseData.ok) {
+        toast.success("Producto actualizado con éxito");
+
+        if (newImage) {
+          const imageFormData = new FormData();
+          imageFormData.append("image", newImage);
+
+          const imageResponse = await fetch(
+            `${URL1}/api/productos/${producto._id}/image`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+              body: imageFormData,
+            }
+          );
+
+          if (imageResponse.ok) {
+            toast.success("Imagen actualizada con éxito");
+          } else {
+            toast.error("Error al actualizar la imagen");
+            console.error("Error al actualizar la imagen");
           }
-        );
-        if (imageResponse.ok) {
-          toast.success("Imagen actualizada con éxito");
-          await fetchProducts();
-        } else {
-          toast.error("Error al actualizar la imagen");
-          console.error("Error al actualizar la imagen");
         }
+
+        await fetchProducts();
+        setSelectedProduct(null);
+      } else {
+        toast.error("Error al actualizar el producto");
+        console.error("Error al actualizar el producto");
       }
-      fetchProducts();
-      setSelectedProduct(null);
-    } else {
-      toast.error("Error al actualizar el producto");
-      console.error("Error al actualizar el producto");
+    } catch (error) {
+      console.error("Error en la solicitud de actualización", error);
     }
   };
 
@@ -182,19 +192,25 @@ const ProductRow = ({
     const confirmDelete = window.confirm(
       "¿Estás seguro que quieres eliminar este producto?"
     );
+
     if (confirmDelete) {
-      const response = await fetch(`${URL1}/api/productos/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (response.ok) {
-        toast.success("Producto eliminado con éxito");
-        fetchProducts();
-      } else {
-        toast.error("Error al eliminar el producto");
-        console.error("Error al eliminar el producto");
+      try {
+        const response = await fetch(`${URL1}/api/productos/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (response.ok) {
+          toast.success("Producto eliminado con éxito");
+          fetchProducts();
+        } else {
+          toast.error("Error al eliminar el producto");
+          console.error("Error al eliminar el producto");
+        }
+      } catch (error) {
+        console.error("Error en la solicitud de eliminación", error);
       }
     }
   };
@@ -202,13 +218,16 @@ const ProductRow = ({
   const handleProductChange = (e, field, index) => {
     const updatedProducts = [...editableProducts];
     const newValue = e.target.value;
+
     if (!updatedProducts[index]) {
       console.error(`Producto en el índice ${index} no existe.`);
       return;
     }
+
     updatedProducts[index][field] = newValue;
     setEditableProducts(updatedProducts);
   };
+
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
