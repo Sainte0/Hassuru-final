@@ -57,13 +57,10 @@ const ProductRow = ({
     setEditableProducts(updatedProducts);
   };
 
-  const handleColorChange = (e, colorId) => {
+  const handleColorChange = (e, colorIndex) => {
     const updatedProducts = [...editableProducts];
-    const colorIndex = updatedProducts[index].colores.findIndex((c) => c._id === colorId);
-    if (colorIndex !== -1) {
-      updatedProducts[index].colores[colorIndex].color = e.target.value;
-      setEditableProducts(updatedProducts);
-    }
+    updatedProducts[index].colores[colorIndex].color = e.target.value;
+    setEditableProducts(updatedProducts);
   };
 
   const handleAddColor = () => {
@@ -77,9 +74,9 @@ const ProductRow = ({
     }
   };
 
-  const handleDeleteColor = (colorId) => {
+  const handleDeleteColor = (colorIndex) => {
     const updatedProducts = [...editableProducts];
-    updatedProducts[index].colores = updatedProducts[index].colores.filter((c) => c._id !== colorId);
+    updatedProducts[index].colores.splice(colorIndex, 1);
     setEditableProducts(updatedProducts);
   };
 
@@ -254,82 +251,50 @@ const ProductRow = ({
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
-          <div className="flex flex-col">
-            <input
-              type="text"
-              value={producto.precio}
-              onChange={(e) => handleProductChange(e, "precio", index)}
-              className="w-full p-1 mb-2 border"
-              placeholder="Precio en USD"
-            />
-            {dolarBlue ? (
-              <label className="w-full p-1">
-                {(producto.precio * dolarBlue).toFixed(2)} ARS
-              </label>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p>{producto.precio} USD</p>
-            {dolarBlue ? (
-              <p>{(producto.precio * dolarBlue).toFixed(2)} ARS</p>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
-          </div>
-        )}
-      </td>
-      <td className="px-2 py-2 border">
-        {selectedProduct === producto._id ? (
           <div>
             {producto.tallas.map((tallaObj, tallaIndex) => (
-              <div
-                key={tallaIndex}
-                className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
-              >
+              <div key={tallaIndex} className="flex items-center mb-2">
                 <input
                   type="text"
                   value={tallaObj.talla}
                   readOnly
-                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  className="w-1/3 p-1 border"
                 />
                 <input
                   type="number"
                   value={tallaObj.precioTalla}
                   onChange={(e) => handleTallaChange(e, tallaIndex)}
-                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  className="w-1/3 p-1 border"
                   min="0"
                   placeholder="Precio"
                 />
                 <button
                   onClick={() => handleDeleteTalla(tallaIndex)}
-                  className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
+                  className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
                 </button>
               </div>
             ))}
-            <div className="flex flex-col sm:flex-row mt-2">
+            <div className="flex mt-2">
               <input
                 type="text"
                 value={newTalla}
                 onChange={(e) => setNewTalla(e.target.value)}
                 placeholder="Nueva talla"
-                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                className="w-1/3 p-1 border"
               />
               <input
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
                 placeholder="Precio"
-                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
+                className="w-1/3 p-1 border"
                 min="0"
               />
               <button
                 onClick={handleAddTalla}
-                className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
+                className="px-2 py-1 ml-2 text-white bg-blue-500 rounded"
               >
                 <IoAddCircleOutline />
               </button>
@@ -348,33 +313,33 @@ const ProductRow = ({
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <div>
-            {producto.colores.map((color) => (
-              <div key={color._id} className="flex items-center mb-1">
+            {producto.colores.map((colorObj, colorIndex) => (
+              <div key={colorIndex} className="flex items-center mb-2">
                 <input
                   type="text"
-                  value={color.color}
-                  onChange={(e) => handleColorChange(e, color._id)}
-                  className="w-1/2 p-1 border"
+                  value={colorObj.color}
+                  onChange={(e) => handleColorChange(e, colorIndex)}
+                  className="w-1/3 p-1 border"
                 />
                 <button
-                  onClick={() => handleDeleteColor(color._id)}
+                  onClick={() => handleDeleteColor(colorIndex)}
                   className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
                 </button>
               </div>
             ))}
-            <div className="mt-2">
+            <div className="flex mt-2">
               <input
                 type="text"
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
                 placeholder="Nuevo color"
-                className="w-1/2 p-1 mr-2 border"
+                className="w-1/3 p-1 border"
               />
               <button
                 onClick={handleAddColor}
-                className="px-2 py-1 mt-2 text-white bg-blue-500 rounded"
+                className="px-2 py-1 ml-2 text-white bg-blue-500 rounded"
               >
                 <IoAddCircleOutline />
               </button>
@@ -382,8 +347,10 @@ const ProductRow = ({
           </div>
         ) : (
           <div>
-            {producto.colores.map((color) => (
-              <div key={color._id}>{color.color}</div>
+            {producto.colores.map((colorObj, colorIndex) => (
+              <div key={colorIndex}>
+                {colorObj.color}
+              </div>
             ))}
           </div>
         )}
