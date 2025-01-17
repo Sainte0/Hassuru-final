@@ -34,69 +34,56 @@ const ProductRow = ({
   }, [productAdded, fetchProducts]);
 
   const handleTallaChange = (e, tallaIndex) => {
-    const updatedTallas = [...producto.tallas];
-    updatedTallas[tallaIndex] = e.target.value;
-    const updatedProduct = { ...producto, tallas: updatedTallas };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].tallas[tallaIndex].precioTalla = parseFloat(e.target.value);
+    setEditableProducts(updatedProducts);
   };
 
   const handleAddTalla = () => {
-    const updatedTallas = [...producto.tallas, newTalla];
-    const updatedProduct = { ...producto, tallas: updatedTallas };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
-    setNewTalla("");
+    if (newTalla && parseFloat(newStock) > 0) {
+      const updatedProducts = [...editableProducts];
+      updatedProducts[index].tallas.push({ talla: newTalla, precioTalla: parseFloat(newStock) });
+      setEditableProducts(updatedProducts);
+      setNewTalla("");
+      setNewStock("");
+    } else {
+      alert(
+        "Por favor ingresa un nombre de talla válido y precio de la Talla."
+      );
+    }
   };
-
   const handleDeleteTalla = (tallaIndex) => {
-    const updatedTallas = producto.tallas.filter((_, index) => index !== tallaIndex);
-    const updatedProduct = { ...producto, tallas: updatedTallas };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].tallas.splice(tallaIndex, 1);
+    setEditableProducts(updatedProducts);
   };
 
   const handleColorChange = (e, colorId) => {
-    const updatedColors = producto.colores.map((color) =>
-      color.id === colorId ? { ...color, value: e.target.value } : color
+    const updatedProducts = [...editableProducts];
+    const colorIndex = updatedProducts[index].colores.findIndex(
+      (c) => c._id === colorId
     );
-    const updatedProduct = { ...producto, colores: updatedColors };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    if (colorIndex !== -1) {
+      updatedProducts[index].colores[colorIndex].color = e.target.value;
+      setEditableProducts(updatedProducts);
+    }
   };
-
   const handleAddColor = () => {
-    const newColorObj = { id: Date.now(), value: newColor };
-    const updatedColors = [...producto.colores, newColorObj];
-    const updatedProduct = { ...producto, colores: updatedColors };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
-    setNewColor("");
+    if (newColor) {
+      const updatedProducts = [...editableProducts];
+      updatedProducts[index].colores.push({ color: newColor });
+      setEditableProducts(updatedProducts);
+      setNewColor("");
+    } else {
+      alert("Por favor ingresa un color válido.");
+    }
   };
-
   const handleDeleteColor = (colorId) => {
-    const updatedColors = producto.colores.filter((color) => color.id !== colorId);
-    const updatedProduct = { ...producto, colores: updatedColors };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].colores = updatedProducts[index].colores.filter(
+      (c) => c._id !== colorId
     );
+    setEditableProducts(updatedProducts);
   };
 
   const handleProductUpdate = async (producto) => {
@@ -170,14 +157,15 @@ const ProductRow = ({
     }
   };
 
- 
   const handleProductChange = (e, field, index) => {
-    const updatedProduct = { ...producto, [field]: e.target.value };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    const updatedProducts = [...editableProducts];
+    const newValue = e.target.value;
+    if (!updatedProducts[index]) {
+      console.error(`Producto en el índice ${index} no existe.`);
+      return;
+    }
+    updatedProducts[index][field] = newValue;
+    setEditableProducts(updatedProducts);
   };
 
   const handleImageChange = (e) => {
@@ -191,32 +179,21 @@ const ProductRow = ({
   };
 
   const handleDestacadoChange = (e) => {
-    const updatedProduct = { ...producto, destacado: e.target.checked };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].destacado = e.target.checked;
+    setEditableProducts(updatedProducts);
   };
-
   const handleDestacadoZapatillasChange = (e) => {
-    const updatedProduct = { ...producto, destacadoZapatillas: e.target.checked };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].destacado_zapatillas = e.target.checked;
+    setEditableProducts(updatedProducts);
+  };
+  const handleEncargoChange = (e) => {
+    const updatedProducts = [...editableProducts];
+    updatedProducts[index].encargo = e.target.checked;
+    setEditableProducts(updatedProducts);
   };
 
-  const handleEncargoChange = (e) => {
-    const updatedProduct = { ...producto, encargo: e.target.checked };
-    setEditableProducts((prevProducts) =>
-      prevProducts.map((prod) =>
-        prod._id === producto._id ? updatedProduct : prod
-      )
-    );
-  };
-  
   return (
     <tr className="overflow-x-auto text-gray-600">
       <td className="px-4 py-2 border">
