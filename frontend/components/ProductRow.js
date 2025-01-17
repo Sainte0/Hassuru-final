@@ -79,13 +79,14 @@ const ProductRow = ({
     );
   };
 
-  const handleColorChange = (e, colorId) => {
+  const handleColorChange = (e, colorIndex) => {
     const updatedProduct = {
       ...producto,
-      colores: producto.colores.map((color) =>
-        color._id === colorId ? { ...color, color: e.target.value } : color
+      colores: producto.colores.map((color, index) =>
+        index === colorIndex ? { ...color, color: e.target.value } : color
       ),
     };
+
     setEditableProducts((prevProducts) =>
       prevProducts.map((prod) =>
         prod._id === producto._id ? updatedProduct : prod
@@ -93,34 +94,39 @@ const ProductRow = ({
     );
   };
 
+
   const handleAddColor = () => {
-    if (newColor) {
+    if (newColor.trim()) {
       const updatedProduct = {
         ...producto,
-        colores: [...producto.colores, { _id: generateUniqueId(), color: newColor }],
+        colores: [...producto.colores, { color: newColor.trim() }],
       };
+
       setEditableProducts((prevProducts) =>
         prevProducts.map((prod) =>
           prod._id === producto._id ? updatedProduct : prod
         )
       );
-      setNewColor("");
+
+      setNewColor(""); // Limpiar el campo de entrada
     } else {
       alert("Por favor ingresa un color válido.");
     }
   };
 
-  const handleDeleteColor = (colorId) => {
+  const handleDeleteColor = (colorIndex) => {
     const updatedProduct = {
       ...producto,
-      colores: producto.colores.filter((color) => color._id !== colorId),
+      colores: producto.colores.filter((_, index) => index !== colorIndex),
     };
+
     setEditableProducts((prevProducts) =>
       prevProducts.map((prod) =>
         prod._id === producto._id ? updatedProduct : prod
       )
     );
   };
+
 
   const handleProductUpdate = async (producto) => {
     const updatedProduct = {
@@ -398,16 +404,16 @@ const ProductRow = ({
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <div>
-            {producto.colores.map((color) => (
-              <div key={color._id} className="flex items-center mb-1">
+            {producto.colores.map((color, index) => (
+              <div key={index} className="flex items-center mb-1">
                 <input
                   type="text"
                   value={color.color}
-                  onChange={(e) => handleColorChange(e, color._id)}
+                  onChange={(e) => handleColorChange(e, index)}
                   className="w-1/2 p-1 border"
                 />
                 <button
-                  onClick={() => handleDeleteColor(color._id)}
+                  onClick={() => handleDeleteColor(index)}
                   className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
@@ -432,8 +438,8 @@ const ProductRow = ({
           </div>
         ) : (
           <div>
-            {producto.colores.map((color) => (
-              <div key={color._id}>{color.color}</div>
+            {producto.colores.map((color, index) => (
+              <div key={index}>{color.color}</div>
             ))}
           </div>
         )}
