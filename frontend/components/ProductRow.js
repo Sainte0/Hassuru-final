@@ -178,34 +178,27 @@ const ProductRow = ({
       toast.error("Error al actualizar el producto");
     }
   };
-
-  const handleProductDelete = async (producto) => {
+  const handleProductDelete = async (id) => {
     const confirmDelete = window.confirm(
       "¿Estás seguro que quieres eliminar este producto?"
     );
-
     if (confirmDelete) {
-      try {
-        const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if (response.ok) {
-          toast.success("Producto eliminado con éxito");
-          fetchProducts();
-        } else {
-          toast.error("Error al eliminar el producto");
-          console.error("Error al eliminar el producto");
-        }
-      } catch (error) {
-        console.error("Error al eliminar el producto:", error);
+      const response = await fetch(`${URL1}/api/productos/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.ok) {
+        toast.success("Producto eliminado con éxito");
+        fetchProducts();
+      } else {
         toast.error("Error al eliminar el producto");
+        console.error("Error al eliminar el producto");
       }
     }
   };
+  
 
   const handleProductChange = (e, field, producto) => {
     const updatedProduct = { ...producto, [field]: e.target.value };
@@ -524,7 +517,7 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-2 py-2 text-center border">
-        {selectedProduct === producto._id ? (
+        {selectedProduct === producto._id && (
           <div>
             <button
               onClick={() => handleProductUpdate(producto)}
@@ -538,21 +531,14 @@ const ProductRow = ({
             >
               Cancelar
             </button>
-            <button
-              onClick={() => handleProductDelete(producto._id)}
-              className="px-2 py-1 text-white bg-red-500 rounded mt-1"
-            >
-              Confirmar Eliminación
-            </button>
           </div>
-        ) : (
-          <button
-            onClick={() => setSelectedProduct(producto._id)}
-            className="px-2 py-1 text-white bg-red-500 rounded"
-          >
-            Eliminar
-          </button>
         )}
+        <button
+          onClick={() => handleProductDelete(producto._id)}
+          className="px-2 py-1 text-white bg-red-500 rounded"
+        >
+          Eliminar
+        </button>
       </td>
     </tr>
   );
