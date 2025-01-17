@@ -87,7 +87,6 @@ export default function AdminDashboard() {
           <p className="text-red-500">{error}</p>
         ) : (
           <ProductList
-            key={editableProducts.map(producto => producto.id).join("-")}
             editableProducts={editableProducts}
             setEditableProducts={setEditableProducts}
             selectedProduct={selectedProduct}
