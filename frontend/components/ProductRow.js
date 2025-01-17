@@ -90,7 +90,7 @@ const ProductRow = ({
     const updatedProduct = {
       ...producto,
       categoria: producto.categoria.toLowerCase(), // Normaliza a minúsculas
-    };
+    };    
     const formData = new FormData();
     Object.keys(updatedProduct).forEach((key) => {
       if (key !== "image") {
@@ -295,60 +295,112 @@ const ProductRow = ({
           </div>
         )}
       </td>
-      <td className="px-4 py-2 border">
-        {producto.tallas.map((talla, tallaIndex) => (
-          <div key={tallaIndex}>
-            <input
-              type="text"
-              value={talla.talla}
-              readOnly
-              className="w-full px-2 py-1 border rounded"
-            />
-            <input
-              type="number"
-              value={talla.precioTalla}
-              onChange={(e) => handleTallaChange(e, tallaIndex)}
-              className="w-full px-2 py-1 border rounded"
-            />
-            <button onClick={() => handleDeleteTalla(tallaIndex)}>Eliminar Talla</button>
+      <td className="px-2 py-2 border">
+        {selectedProduct === producto._id ? (
+          <div>
+            {producto.tallas.map((talla, tallaIndex) => (
+              <div
+                key={tallaIndex}
+                className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
+              >
+                <input
+                  type="text"
+                  value={talla.talla}
+                  readOnly
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                />
+                <input
+                  type="number"
+                  value={tallaObj.precioTalla}
+                  onChange={(e) => handleTallaChange(e, tallaIndex)}
+                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  min="0"
+                  placeholder="Precio"
+                />
+                <button
+                  onClick={() => handleDeleteTalla(tallaIndex)}
+                  className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
+                >
+                  <RiDeleteBin5Line />
+                </button>
+              </div>
+            ))}
+            <div className="flex flex-col sm:flex-row mt-2">
+              <input
+                type="text"
+                value={newTalla}
+                onChange={(e) => setNewTalla(e.target.value)}
+                placeholder="Nueva talla"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+              />
+              <input
+                type="number"
+                value={newStock}
+                onChange={(e) => setNewStock(e.target.value)}
+                placeholder="Precio"
+                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
+                min="0"
+              />
+              <button
+                onClick={handleAddTalla}
+                className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
+              >
+                <IoAddCircleOutline />
+              </button>
+            </div>
           </div>
-        ))}
-        <input
-          type="text"
-          value={newTalla}
-          onChange={(e) => setNewTalla(e.target.value)}
-          placeholder="Nueva Talla"
-          className="w-full px-2 py-1 border rounded"
-        />
-        <input
-          type="number"
-          value={newStock}
-          onChange={(e) => setNewStock(e.target.value)}
-          placeholder="Precio Talla"
-          className="w-full px-2 py-1 border rounded"
-        />
-        <button onClick={handleAddTalla}>Añadir Talla</button>
+        ) : (
+          <div>
+            {producto.tallas.map((tallaObj, tallaIndex) => (
+              <div key={tallaIndex}>
+                {tallaObj.talla}: ${tallaObj.precioTalla}
+              </div>
+            ))}
+          </div>
+        )}
       </td>
-      <td className="px-4 py-2 border">
-        {producto.colores.map((color, colorIndex) => (
-          <div key={colorIndex}>
-            <input
-              type="text"
-              value={color.color}
-              onChange={(e) => handleColorChange(e, color._id)}
-              className="w-full px-2 py-1 border rounded"
-            />
-            <button onClick={() => handleDeleteColor(color._id)}>Eliminar Color</button>
+      <td className="px-2 py-2 border">
+        {selectedProduct === producto._id ? (
+          <div>
+            {producto.colores.map((color) => (
+              <div key={color._id} className="flex items-center mb-1">
+                <input
+                  type="text"
+                  value={color.color}
+                  onChange={(e) => handleColorChange(e, color._id)}
+                  className="w-1/2 p-1 border"
+                />
+                <button
+                  onClick={() => handleDeleteColor(color._id)}
+                  className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
+                >
+                  <RiDeleteBin5Line />
+                </button>
+              </div>
+            ))}
+            <div className="mt-2">
+              <input
+                type="text"
+                value={newColor}
+                onChange={(e) => setNewColor(e.target.value)}
+                placeholder="Nuevo color"
+                className="w-1/2 p-1 mr-2 border"
+              />
+              <button
+                onClick={handleAddColor}
+                className="px-2 py-1 mt-2 text-white bg-blue-500 rounded"
+              >
+                <IoAddCircleOutline />
+              </button>
+            </div>
           </div>
-        ))}
-        <input
-          type="text"
-          value={newColor}
-          onChange={(e) => setNewColor(e.target.value)}
-          placeholder="Nuevo Color"
-          className="w-full px-2 py-1 border rounded"
-        />
-        <button onClick={handleAddColor}>Añadir Color</button>
+        ) : (
+          <div>
+            {producto.colores.map((color) => (
+              <div key={color._id}>{color.color}</div>
+            ))}
+          </div>
+        )}
       </td>
       <td className="px-4 py-2 border">
         {(producto.image || newImage) && (
