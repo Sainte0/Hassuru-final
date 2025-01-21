@@ -198,7 +198,7 @@ const ProductRow = ({
       }
     }
   };
-
+  
 
   const handleProductChange = (e, field, producto) => {
     const updatedProduct = { ...producto, [field]: e.target.value };
@@ -306,6 +306,35 @@ const ProductRow = ({
           </select>
         ) : (
           producto.categoria
+        )}
+      </td>
+      <td className="px-2 py-2 border">
+        {selectedProduct === producto._id ? (
+          <div className="flex flex-col">
+            <input
+              type="text"
+              value={producto.precio}
+              onChange={(e) => handleProductChange(e, "precio", producto)}
+              className="w-full p-1 mb-2 border"
+              placeholder="Precio en USD"
+            />
+            {dolarBlue ? (
+              <label className="w-full p-1">
+                {(producto.precio * dolarBlue).toFixed(2)} ARS
+              </label>
+            ) : (
+              <p>Cargando cotización...</p>
+            )}
+          </div>
+        ) : (
+          <div>
+            <p>{producto.precio} USD</p>
+            {dolarBlue ? (
+              <p>{(producto.precio * dolarBlue).toFixed(2)} ARS</p>
+            ) : (
+              <p>Cargando cotización...</p>
+            )}
+          </div>
         )}
       </td>
       <td className="px-2 py-2 border">
