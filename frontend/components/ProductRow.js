@@ -198,7 +198,7 @@ const ProductRow = ({
       }
     }
   };
-  
+
 
   const handleProductChange = (e, field, producto) => {
     const updatedProduct = { ...producto, [field]: e.target.value };
@@ -310,35 +310,6 @@ const ProductRow = ({
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
-          <div className="flex flex-col">
-            <input
-              type="text"
-              value={producto.precio}
-              onChange={(e) => handleProductChange(e, "precio", producto)}
-              className="w-full p-1 mb-2 border"
-              placeholder="Precio en USD"
-            />
-            {dolarBlue ? (
-              <label className="w-full p-1">
-                {(producto.precio * dolarBlue).toFixed(2)} ARS
-              </label>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p>{producto.precio} USD</p>
-            {dolarBlue ? (
-              <p>{(producto.precio * dolarBlue).toFixed(2)} ARS</p>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
-          </div>
-        )}
-      </td>
-      <td className="px-2 py-2 border">
-        {selectedProduct === producto._id ? (
           <div>
             {producto.tallas.map((tallaObj, tallaIndex) => (
               <div
@@ -349,13 +320,13 @@ const ProductRow = ({
                   type="text"
                   value={tallaObj.talla}
                   readOnly
-                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
                 />
                 <input
                   type="number"
                   value={tallaObj.precioTalla}
                   onChange={(e) => handleTallaChange(e, tallaIndex)}
-                  className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                  className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
                   min="0"
                   placeholder="Precio"
                 />
@@ -373,14 +344,14 @@ const ProductRow = ({
                 value={newTalla}
                 onChange={(e) => setNewTalla(e.target.value)}
                 placeholder="Nueva talla"
-                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
               />
               <input
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
                 placeholder="Precio"
-                className="w-full sm:w-1/3 p-1 mb-2 sm:mb-0 border"
+                className="w-full sm:w-24 p-1 mb-2 sm:mb-0 border"
                 min="0"
               />
               <button
