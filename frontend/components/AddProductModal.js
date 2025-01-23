@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -123,6 +123,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       onClose();
+      await fetchProducts();
     } catch (error) {
       console.error("Error en la respuesta del servidor:", error); // Log para debug
       toast.error("Error al agregar el producto.");
