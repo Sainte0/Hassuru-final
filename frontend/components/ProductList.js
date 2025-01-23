@@ -124,7 +124,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        fetchProducts={fetchProducts}
       />
     </div>
   );
