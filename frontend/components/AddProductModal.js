@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 
-const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
+const AddProductModal = ({ isOpen, onClose }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -17,7 +17,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     destacado_zapatillas: false,
   });
 
-  const { addProduct, productAdded } = useStore();
+  const { addProduct, productAdded, fetchProducts } = useStore();
   const [tallaInput, setTallaInput] = useState('');
   const [precioTalla, setPrecioTalla] = useState(''); // Nuevo estado para el precio de la talla
   const [colorInput, setColorInput] = useState('');
@@ -29,8 +29,6 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     'zapatillas',
     'accesorios',
   ];
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -89,68 +87,46 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
+  
+    // Validar que las tallas tengan el formato correcto
+    const tallasValidas = product.tallas.every(
+      (talla) =>
+        talla.talla &&
+        typeof talla.talla === "string" &&
+        typeof talla.precioTalla === "number"
+    );
+  
+    if (!tallasValidas) {
+      toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
+      return;
+    }
+  
+    const productoAEnviar = {
+      nombre: product.nombre,
+      descripcion: product.descripcion,
+      marca: product.marca,
+      categoria: product.categoria,
+      precio: parseFloat(product.precio),
+      tallas: product.tallas.map((talla) => ({
+        talla: talla.talla,
+        precioTalla: talla.precioTalla,
+      })), // Formatear las tallas correctamente
+      colores: product.colores,
+      encargo: product.encargo,
+      destacado: product.destacado,
+      destacado_zapatillas: product.destacado_zapatillas,
+    };
+  
+    const imageFile = product.image;
+  
     try {
-      // Validate tallas format
-      const tallasValidas = product.tallas.every(
-        (talla) =>
-          talla.talla &&
-          typeof talla.talla === "string" &&
-          typeof talla.precioTalla === "number"
-      );
-
-      if (!tallasValidas) {
-        toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
-        return;
-      }
-
-      const productoAEnviar = {
-        nombre: product.nombre,
-        descripcion: product.descripcion,
-        marca: product.marca,
-        categoria: product.categoria,
-        precio: parseFloat(product.precio),
-        tallas: product.tallas.map((talla) => ({
-          talla: talla.talla,
-          precioTalla: talla.precioTalla,
-        })),
-        colores: product.colores,
-        encargo: product.encargo,
-        destacado: product.destacado,
-        destacado_zapatillas: product.destacado_zapatillas,
-      };
-
-      const imageFile = product.image;
-
       await addProduct(productoAEnviar, imageFile);
-      toast.success("Producto agregado exitosamente!");
-      
-      // Reset form
-      setProduct({
-        nombre: '',
-        descripcion: '',
-        marca: '',
-        categoria: '',
-        precio: '',
-        tallas: [],
-        colores: [],
-        image: null,
-        encargo: false,
-        destacado: false,
-        destacado_zapatillas: false,
-      });
-      setImagePreview(null);
-      
-      // Close modal and refresh products
-      onClose();
       await fetchProducts();
-
+      toast.success("Producto agregado exitosamente!");
+      onClose();
     } catch (error) {
-      console.error("Error al agregar el producto:", error);
+      console.error("Error en la respuesta del servidor:", error);
       toast.error("Error al agregar el producto.");
-    } finally {
-      setIsLoading(false);
     }
   };
   
@@ -338,24 +314,10 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             </div>
           </div>
           <div className="flex justify-end">
-            <button 
-              type="button" 
-              onClick={onClose} 
-              className="px-4 py-2 mr-2 text-white bg-red-500 rounded"
-              disabled={isLoading}
-            >
-              Cancelar
-            </button>
-            <button 
-              type="submit" 
-              className="px-4 py-2 text-white bg-blue-500 rounded"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Agregando...' : 'Agregar Producto'}
-            </button>
+            <button type="button" onClick={onClose} className="px-4 py-2 mr-2 text-white bg-red-500 rounded">Cancelar</button>
+            <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">Agregar Producto</button>
           </div>
         </form>
-        <Toaster position="top-right" />
       </div>
     </div>
   );
