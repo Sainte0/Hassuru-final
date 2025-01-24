@@ -30,6 +30,8 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     'accesorios',
   ];
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
@@ -88,21 +90,58 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     try {
+      // Validate tallas format
+      const tallasValidas = product.tallas.every(
+        (talla) =>
+          talla.talla &&
+          typeof talla.talla === "string" &&
+          typeof talla.precioTalla === "number"
+      );
+
+      if (!tallasValidas) {
+        toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
+        return;
+      }
+
+      // Create FormData for multipart/form-data submission
+      const formData = new FormData();
+      
+      // Add the image file if it exists
+      if (product.image) {
+        formData.append('image', product.image);
+      }
+
+      // Prepare product data
+      const productData = {
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        marca: product.marca,
+        categoria: product.categoria,
+        precio: parseFloat(product.precio),
+        tallas: product.tallas,
+        colores: product.colores,
+        encargo: product.encargo,
+        destacado: product.destacado,
+        destacado_zapatillas: product.destacado_zapatillas,
+      };
+
+      // Add product data as JSON string
+      formData.append('product', JSON.stringify(productData));
+
       const response = await fetch('/api/productos', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(product)
+        body: formData, // Send formData instead of JSON
       });
 
       if (!response.ok) {
         throw new Error('Failed to create product');
       }
 
-      // Reset form and close modal
+      toast.success("Producto agregado exitosamente!");
+      
+      // Reset form
       setProduct({
         nombre: '',
         descripcion: '',
@@ -116,13 +155,15 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
         destacado: false,
         destacado_zapatillas: false,
       });
-      onClose();
+      setImagePreview(null);
       
-      // Fetch updated products list
+      // Close modal and refresh products
+      onClose();
       await fetchProducts();
+      
     } catch (error) {
       console.error('Error creating product:', error);
-      // Handle error (you might want to show an error message to the user)
+      toast.error("Error al agregar el producto.");
     } finally {
       setIsLoading(false);
     }
@@ -312,10 +353,24 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             </div>
           </div>
           <div className="flex justify-end">
-            <button type="button" onClick={onClose} className="px-4 py-2 mr-2 text-white bg-red-500 rounded">Cancelar</button>
-            <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">Agregar Producto</button>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="px-4 py-2 mr-2 text-white bg-red-500 rounded"
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              className="px-4 py-2 text-white bg-blue-500 rounded"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Agregando...' : 'Agregar Producto'}
+            </button>
           </div>
         </form>
+        <Toaster position="top-right" />
       </div>
     </div>
   );
