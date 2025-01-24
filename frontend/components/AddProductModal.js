@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -87,45 +87,44 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Validar que las tallas tengan el formato correcto
-    const tallasValidas = product.tallas.every(
-      (talla) =>
-        talla.talla &&
-        typeof talla.talla === "string" &&
-        typeof talla.precioTalla === "number"
-    );
-  
-    if (!tallasValidas) {
-      toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
-      return;
-    }
-  
-    const productoAEnviar = {
-      nombre: product.nombre,
-      descripcion: product.descripcion,
-      marca: product.marca,
-      categoria: product.categoria,
-      precio: parseFloat(product.precio),
-      tallas: product.tallas.map((talla) => ({
-        talla: talla.talla,
-        precioTalla: talla.precioTalla,
-      })), // Formatear las tallas correctamente
-      colores: product.colores,
-      encargo: product.encargo,
-      destacado: product.destacado,
-      destacado_zapatillas: product.destacado_zapatillas,
-    };
-  
-    const imageFile = product.image;
-  
+    setIsLoading(true);
+    
     try {
-      await addProduct(productoAEnviar, imageFile);
-      toast.success("Producto agregado exitosamente!");
+      const response = await fetch('/api/productos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(product)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create product');
+      }
+
+      // Reset form and close modal
+      setProduct({
+        nombre: '',
+        descripcion: '',
+        marca: '',
+        categoria: '',
+        precio: '',
+        tallas: [],
+        colores: [],
+        image: null,
+        encargo: false,
+        destacado: false,
+        destacado_zapatillas: false,
+      });
       onClose();
+      
+      // Fetch updated products list
+      await fetchProducts();
     } catch (error) {
-      console.error("Error en la respuesta del servidor:", error); // Log para debug
-      toast.error("Error al agregar el producto.");
+      console.error('Error creating product:', error);
+      // Handle error (you might want to show an error message to the user)
+    } finally {
+      setIsLoading(false);
     }
   };
   
