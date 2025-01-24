@@ -105,40 +105,25 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
         return;
       }
 
-      // Create FormData for multipart/form-data submission
-      const formData = new FormData();
-      
-      // Add the image file if it exists
-      if (product.image) {
-        formData.append('image', product.image);
-      }
-
-      // Prepare product data
-      const productData = {
+      const productoAEnviar = {
         nombre: product.nombre,
         descripcion: product.descripcion,
         marca: product.marca,
         categoria: product.categoria,
         precio: parseFloat(product.precio),
-        tallas: product.tallas,
+        tallas: product.tallas.map((talla) => ({
+          talla: talla.talla,
+          precioTalla: talla.precioTalla,
+        })),
         colores: product.colores,
         encargo: product.encargo,
         destacado: product.destacado,
         destacado_zapatillas: product.destacado_zapatillas,
       };
 
-      // Add product data as JSON string
-      formData.append('product', JSON.stringify(productData));
+      const imageFile = product.image;
 
-      const response = await fetch('/api/productos', {
-        method: 'POST',
-        body: formData, // Send formData instead of JSON
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create product');
-      }
-
+      await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       
       // Reset form
@@ -160,9 +145,9 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       // Close modal and refresh products
       onClose();
       await fetchProducts();
-      
+
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error("Error al agregar el producto:", error);
       toast.error("Error al agregar el producto.");
     } finally {
       setIsLoading(false);
