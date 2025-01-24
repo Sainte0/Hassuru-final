@@ -16,19 +16,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
-  useEffect(() => {
-    if (!isModalOpen) {
-      const refreshProducts = async () => {
-        try {
-          await fetchProducts();
-        } catch (error) {
-          console.error("Error refreshing products:", error);
-        }
-      };
-      refreshProducts();
-    }
-  }, [isModalOpen, fetchProducts]);
-
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -38,10 +25,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setNameFilter("");
     setEncargoFilter(false);  // Limpiar filtro de encargo
     fetchProducts();
-  };
-
-  const handleModalClose = () => {
-    setModalOpen(false);
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
@@ -140,7 +123,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
       <AddProductModal
         isOpen={isModalOpen}
-        onClose={handleModalClose}
+        onClose={() => setModalOpen(false)}
       />
     </div>
   );
