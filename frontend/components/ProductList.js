@@ -16,6 +16,19 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
+  useEffect(() => {
+    if (!isModalOpen) {
+      const refreshProducts = async () => {
+        try {
+          await fetchProducts();
+        } catch (error) {
+          console.error("Error refreshing products:", error);
+        }
+      };
+      refreshProducts();
+    }
+  }, [isModalOpen, fetchProducts]);
+
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -27,13 +40,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
-  const handleModalClose = async () => {
+  const handleModalClose = () => {
     setModalOpen(false);
-    try {
-      await fetchProducts(); // Refresh products after modal closes
-    } catch (error) {
-      console.error("Error refreshing products:", error);
-    }
   };
 
   const filteredProducts = editableProducts.filter((producto) => {

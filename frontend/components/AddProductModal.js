@@ -17,7 +17,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     destacado_zapatillas: false,
   });
 
-  const { addProduct, productAdded, fetchProducts } = useStore();
+  const { addProduct, productAdded } = useStore();
   const [tallaInput, setTallaInput] = useState('');
   const [precioTalla, setPrecioTalla] = useState(''); // Nuevo estado para el precio de la talla
   const [colorInput, setColorInput] = useState('');
@@ -121,11 +121,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
   
     try {
       await addProduct(productoAEnviar, imageFile);
-      await fetchProducts();
       toast.success("Producto agregado exitosamente!");
       onClose();
     } catch (error) {
-      console.error("Error en la respuesta del servidor:", error);
+      console.error("Error en la respuesta del servidor:", error); // Log para debug
       toast.error("Error al agregar el producto.");
     }
   };
