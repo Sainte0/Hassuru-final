@@ -27,6 +27,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
+  const handleModalClose = async () => {
+    setModalOpen(false);
+    try {
+      await fetchProducts(); // Refresh products after modal closes
+    } catch (error) {
+      console.error("Error refreshing products:", error);
+    }
+  };
+
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
@@ -123,8 +132,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
       <AddProductModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        fetchProducts={fetchProducts}
+        onClose={handleModalClose}
       />
     </div>
   );
