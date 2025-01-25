@@ -27,6 +27,11 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
+  const handleModalClose = () => {
+    setModalOpen(false);
+    fetchProducts();
+  };
+
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
@@ -123,7 +128,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
       <AddProductModal
         isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={handleModalClose}
       />
     </div>
   );

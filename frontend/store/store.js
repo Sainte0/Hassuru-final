@@ -46,16 +46,13 @@ const useStore = create((set) => ({
         },
         body: JSON.stringify(productoAEnviar),
       });
-      
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
         toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
         return;
       }
-      
       const nuevoProducto = await response.json();
-      
       if (imagenFile) {
         const formData = new FormData();
         formData.append('image', imagenFile);
@@ -66,29 +63,16 @@ const useStore = create((set) => ({
           },
           body: formData,
         });
-        
         if (!imagenResponse.ok) {
           const imagenErrorData = await imagenResponse.json();
           toast.error(`Error al subir la imagen: ${imagenErrorData.message || 'Error desconocido'}`);
           return;
         }
       }
-
-      // Fetch fresh product list instead of adding to existing array
-      const refreshResponse = await fetch(`${URL}/api/productos`, {
-        method: 'GET',
-        headers: {
-          'Authorization': getToken(),
-        },
-      });
-      
-      if (!refreshResponse.ok) {
-        throw new Error('Error al actualizar la lista de productos');
-      }
-      
-      const updatedProducts = await refreshResponse.json();
-      set({ products: updatedProducts });
-      
+      set((state) => ({
+        products: [...state.products, nuevoProducto],
+        productAdded: true,
+      }));
       toast.success('Producto agregado con éxito');
     } catch (error) {
       set({ error: error.message });
