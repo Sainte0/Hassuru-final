@@ -28,7 +28,7 @@ export default function Navbar() {
         <div className="absolute inset-0 w-full h-full">
           <Link href="/">
             <Image
-              src={isMobile ? "/logo.png" : "/banner-3.png"}
+              src={isMobile ? "/banner-3.png" : "/banner-3.png"}
               alt="Background"
               layout="fill"
               objectFit="cover"
