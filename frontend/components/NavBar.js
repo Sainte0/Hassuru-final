@@ -31,8 +31,14 @@ export default function Navbar() {
               src={isMobile ? "/banner-3.png" : "/banner-3.png"}
               alt="Background"
               layout="fill"
-              objectFit="cover"
+              objectFit="contain"
               quality={100}
+              priority={true}
+              sizes="(max-width: 768px) 100vw, 1200px"
+              style={{
+                objectPosition: 'center',
+                imageRendering: 'crisp-edges'
+              }}
             />
           </Link>
         </div>
