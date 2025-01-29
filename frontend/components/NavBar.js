@@ -24,15 +24,15 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="relative p-12 shadow-md">
-        <div className="absolute inset-0 w-full h-full flex justify-center items-center">
+      <nav className="relative p-4 md:p-12 shadow-md">
+        <div className="flex justify-center items-center w-full h-full min-h-[120px]">
           <Link href="/">
             <picture>
               <source
                 media="(max-width: 768px)"
                 srcSet="/banner-3.png"
-                width={300}
-                height={120}
+                width={400}
+                height={160}
               />
               <source
                 media="(min-width: 769px)"
@@ -45,12 +45,13 @@ export default function Navbar() {
                 alt="Logo"
                 width={600}
                 height={240}
-                className="object-contain max-w-full h-auto"
+                className="object-contain w-auto h-auto"
                 priority={true}
                 quality={100}
                 style={{
-                  maxHeight: '120px',
-                  width: 'auto'
+                  maxHeight: isMobile ? '160px' : '120px',
+                  width: isMobile ? '90%' : 'auto',
+                  margin: '0 auto'
                 }}
               />
             </picture>
