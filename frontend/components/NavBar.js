@@ -24,37 +24,16 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="relative p-4 md:p-12 shadow-md">
-        <div className="flex justify-center items-center w-full h-full min-h-[120px]">
+      <nav className="relative p-12 shadow-md">
+        <div className="absolute inset-0 w-full h-full">
           <Link href="/">
-            <picture>
-              <source
-                media="(max-width: 768px)"
-                srcSet="/banner-3.png"
-                width={400}
-                height={160}
-              />
-              <source
-                media="(min-width: 769px)"
-                srcSet="/banner-3.png"
-                width={600}
-                height={240}
-              />
-              <Image
-                src="/banner-3.png"
-                alt="Logo"
-                width={600}
-                height={240}
-                className="object-contain w-auto h-auto"
-                priority={true}
-                quality={100}
-                style={{
-                  maxHeight: isMobile ? '160px' : '120px',
-                  width: isMobile ? '90%' : 'auto',
-                  margin: '0 auto'
-                }}
-              />
-            </picture>
+            <Image
+              src={isMobile ? "/banner-3.png" : "/banner-3.png"}
+              alt="Background"
+              layout="fill"
+              objectFit="cover"
+              quality={100}
+            />
           </Link>
         </div>
       </nav>
