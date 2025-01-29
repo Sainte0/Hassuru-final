@@ -28,11 +28,12 @@ export default function Navbar() {
         <div className="absolute inset-0 w-full h-full">
           <Link href="/">
             <Image
-              src={isMobile ? "/banner-3.png" : "/banner-3.png"}
-              alt="Background"
-              layout="fill"
-              objectFit="cover"
-              quality={100}
+              src="/logo.svg"
+              alt="Logo"
+              width={150}
+              height={60}
+              className="object-contain w-auto h-auto"
+              priority={true}
             />
           </Link>
         </div>
