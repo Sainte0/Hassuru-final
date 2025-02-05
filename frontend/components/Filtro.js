@@ -308,7 +308,7 @@ export default function Filter({ products, setFilteredProducts }) {
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Talla de Zapatillas</label>
                 <div className="overflow-auto max-h-32">
-                  {tallasZapatilla
+                  {Array.from(new Set(tallasZapatilla))
                     .sort((a, b) => {
                       const parseTalla = (talla) => {
                         const parts = talla.split(" ");
