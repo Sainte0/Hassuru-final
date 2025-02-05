@@ -348,7 +348,7 @@ const ProductRow = ({
                 <input
                   type="text"
                   value={tallaObj.talla}
-                  
+                  onChange={(e) => handleTallaChange(e, tallaIndex)}
                   className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
                 />
                 <input
