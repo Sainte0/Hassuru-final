@@ -34,11 +34,12 @@ const ProductRow = ({
   }, [productAdded, fetchProducts]);
 
   const handleTallaChange = (e, tallaIndex) => {
+    const { value } = e.target;
     const updatedProduct = {
       ...producto,
       tallas: producto.tallas.map((talla, index) =>
         index === tallaIndex
-          ? { ...talla, precioTalla: parseFloat(e.target.value) }
+          ? { ...talla, talla: value }
           : talla
       ),
     };
