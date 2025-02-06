@@ -139,7 +139,11 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const handleAddSizes = () => {
     const uniqueSizes = [...new Set([...product.tallas.map(t => t.talla), ...selectedSizes])]; // Ensure unique sizes
-    setProduct(prev => ({ ...prev, tallas: uniqueSizes.map(size => ({ talla: size, precioTalla: 0 })) })); // Add selected sizes
+    const newTallas = uniqueSizes.map(size => ({
+      talla: size,
+      precioTalla: sizePrices[size] || 0 // Use the price from the modal or default to 0
+    }));
+    setProduct(prev => ({ ...prev, tallas: newTallas })); // Add selected sizes
     setSelectedSizes([]); // Reset selected sizes
     setIsSizeModalOpen(false); // Close the modal
   };

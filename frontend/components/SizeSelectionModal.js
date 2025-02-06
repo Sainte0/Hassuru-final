@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }) => {
   // Define the available sizes
@@ -13,12 +13,22 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }
     "14 USA | 47.5 ARG"
   ];
 
+  // State to hold prices for each selected size
+  const [sizePrices, setSizePrices] = useState({});
+
   const handleCheckboxChange = (size) => {
     if (selectedSizes.includes(size)) {
       setSelectedSizes(selectedSizes.filter(s => s !== size)); // Remove size if already selected
+      const newSizePrices = { ...sizePrices };
+      delete newSizePrices[size]; // Remove price entry for the unselected size
+      setSizePrices(newSizePrices);
     } else {
       setSelectedSizes([...selectedSizes, size]); // Add size if not selected
     }
+  };
+
+  const handlePriceChange = (size, price) => {
+    setSizePrices(prev => ({ ...prev, [size]: price })); // Update the price for the size
   };
 
   const handleConfirm = () => {
@@ -29,7 +39,7 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }
     isOpen ? (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-          <h2 className="mb-4 text-xl">Selecciona las Tallas</h2>
+          <h2 className="mb-4 text-xl">Selecciona las Tallas y Precios</h2>
           <div className="max-h-60 overflow-y-auto">
             {availableSizes.map((size, index) => (
               <div key={index} className="flex items-center mb-2">
@@ -41,6 +51,15 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }
                   className="mr-2"
                 />
                 <label htmlFor={`size-${size}`} className="cursor-pointer">{size}</label>
+                {selectedSizes.includes(size) && (
+                  <input
+                    type="number"
+                    placeholder="Precio"
+                    value={sizePrices[size] || ''}
+                    onChange={(e) => handlePriceChange(size, e.target.value)}
+                    className="ml-2 border rounded p-1 w-20"
+                  />
+                )}
               </div>
             ))}
           </div>
