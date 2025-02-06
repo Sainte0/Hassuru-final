@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }) => {
+const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, sizePrices, setSizePrices }) => {
   // Define the available sizes
   const availableSizes = [
     "3.5 USA | 34.5 ARG", "4 USA | 35 ARG", "4.5 USA | 35.5 ARG",
@@ -12,9 +12,6 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes }
     "12.5 USA | 44.5 ARG", "13 USA | 45 ARG", "13.5 USA | 45.5 ARG",
     "14 USA | 47.5 ARG"
   ];
-
-  // State to hold prices for each selected size
-  const [sizePrices, setSizePrices] = useState({});
 
   const handleCheckboxChange = (size) => {
     if (selectedSizes.includes(size)) {

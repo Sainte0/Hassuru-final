@@ -27,6 +27,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+  const [sizePrices, setSizePrices] = useState({}); // State to hold prices for each selected size
 
   const categoriasDisponibles = [
     'ropa',
@@ -138,13 +139,18 @@ const AddProductModal = ({ isOpen, onClose }) => {
   };
 
   const handleAddSizes = () => {
-    const uniqueSizes = [...new Set([...product.tallas.map(t => t.talla), ...selectedSizes])]; // Ensure unique sizes
-    const newTallas = uniqueSizes.map(size => ({
+    const newTallas = selectedSizes.map(size => ({
       talla: size,
       precioTalla: sizePrices[size] || 0 // Use the price from the modal or default to 0
     }));
-    setProduct(prev => ({ ...prev, tallas: newTallas })); // Add selected sizes
+    
+    setProduct(prev => ({
+      ...prev,
+      tallas: [...prev.tallas, ...newTallas] // Add selected sizes
+    }));
+    
     setSelectedSizes([]); // Reset selected sizes
+    setSizePrices({}); // Reset size prices
     setIsSizeModalOpen(false); // Close the modal
   };
 
@@ -341,6 +347,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
           onClose={() => setIsSizeModalOpen(false)}
           selectedSizes={selectedSizes}
           setSelectedSizes={setSelectedSizes}
+          sizePrices={sizePrices}
+          setSizePrices={setSizePrices}
         />
         <button onClick={handleAddSizes} className="px-4 py-2 text-white bg-green-500 rounded">Agregar Tallas Seleccionadas</button>
       </div>
