@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
+import SizeSelectionModal from './SizeSelectionModal';
 
 const AddProductModal = ({ isOpen, onClose }) => {
   const [product, setProduct] = useState({
@@ -29,6 +30,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
     'zapatillas',
     'accesorios',
   ];
+
+  const [availableSizes, setAvailableSizes] = useState(['8 usa | 40 arg', '9 usa | 41 arg', '10 usa | 42 arg']); // Example sizes
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -129,6 +134,16 @@ const AddProductModal = ({ isOpen, onClose }) => {
     }
   };
   
+  const handleOpenSizeModal = () => {
+    setIsSizeModalOpen(true);
+  };
+
+  const handleAddSizes = () => {
+    const uniqueSizes = [...new Set([...product.tallas.map(t => t.talla), ...selectedSizes])]; // Ensure unique sizes
+    setProduct(prev => ({ ...prev, tallas: uniqueSizes.map(size => ({ talla: size, precioTalla: 0 })) })); // Add selected sizes
+    setSelectedSizes([]); // Reset selected sizes
+    setIsSizeModalOpen(false); // Close the modal
+  };
 
   if (!isOpen) return null;
 
@@ -317,6 +332,15 @@ const AddProductModal = ({ isOpen, onClose }) => {
             <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">Agregar Producto</button>
           </div>
         </form>
+        <button onClick={handleOpenSizeModal} className="px-4 py-2 text-white bg-blue-500 rounded">Seleccionar Tallas</button>
+        <SizeSelectionModal
+          isOpen={isSizeModalOpen}
+          onClose={() => setIsSizeModalOpen(false)}
+          availableSizes={availableSizes}
+          selectedSizes={selectedSizes}
+          setSelectedSizes={setSelectedSizes}
+        />
+        <button onClick={handleAddSizes} className="px-4 py-2 text-white bg-green-500 rounded">Agregar Tallas Seleccionadas</button>
       </div>
     </div>
   );
