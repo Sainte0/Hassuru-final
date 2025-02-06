@@ -141,17 +141,24 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const handleAddSizes = () => {
     const newTallas = selectedSizes.map(size => ({
       talla: size,
-      precioTalla: sizePrices[size] || 0 // Use the price from the modal or default to 0
+      precioTalla: parseFloat(sizePrices[size]) || 0 // Ensure the price is a number
     }));
+
+    // Check if newTallas is valid before adding
+    const isValid = newTallas.every(talla => typeof talla.talla === 'string' && !isNaN(talla.precioTalla));
     
-    setProduct(prev => ({
-      ...prev,
-      tallas: [...prev.tallas, ...newTallas] // Add selected sizes
-    }));
-    
-    setSelectedSizes([]); // Reset selected sizes
-    setSizePrices({}); // Reset size prices
-    setIsSizeModalOpen(false); // Close the modal
+    if (isValid) {
+      setProduct(prev => ({
+        ...prev,
+        tallas: [...prev.tallas, ...newTallas] // Add selected sizes
+      }));
+      
+      setSelectedSizes([]); // Reset selected sizes
+      setSizePrices({}); // Reset size prices
+      setIsSizeModalOpen(false); // Close the modal
+    } else {
+      toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
+    }
   };
 
   if (!isOpen) return null;

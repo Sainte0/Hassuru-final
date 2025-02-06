@@ -25,7 +25,12 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, 
   };
 
   const handlePriceChange = (size, price) => {
-    setSizePrices(prev => ({ ...prev, [size]: price })); // Update the price for the size
+    const parsedPrice = parseFloat(price);
+    if (!isNaN(parsedPrice)) {
+      setSizePrices(prev => ({ ...prev, [size]: parsedPrice })); // Update the price for the size
+    } else {
+      setSizePrices(prev => ({ ...prev, [size]: 0 })); // Default to 0 if the input is invalid
+    }
   };
 
   const handleConfirm = () => {
