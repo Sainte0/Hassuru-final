@@ -39,11 +39,8 @@ export default function Catalogo() {
         return availabilityOrder[availabilityA] - availabilityOrder[availabilityB];
       });
 
-      // Shuffle the sorted products
-      const randomizedData = sortedData.sort(() => Math.random() - 0.5);
-
-      setProducts(randomizedData);
-      setFilteredProducts(randomizedData);
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
     } catch (er) {
       setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
