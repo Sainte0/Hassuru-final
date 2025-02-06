@@ -24,12 +24,42 @@ export default function Catalogo() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      setProducts(data);
-      setFilteredProducts(data);
+
+      // Sort products by availability
+      const sortedData = data.sort((a, b) => {
+        const availabilityOrder = {
+          "Entrega inmediata": 1,
+          "Disponible en 3 días": 2,
+          "Disponible en 20 días": 3,
+        };
+
+        const availabilityA = getDisponibilidad(a);
+        const availabilityB = getDisponibilidad(b);
+
+        return availabilityOrder[availabilityA] - availabilityOrder[availabilityB];
+      });
+
+      // Shuffle the sorted products
+      const randomizedData = sortedData.sort(() => Math.random() - 0.5);
+
+      setProducts(randomizedData);
+      setFilteredProducts(randomizedData);
     } catch (er) {
       setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getDisponibilidad = (product) => {
+    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+
+    if (hasTallas && product.encargo) {
+      return "Disponible en 3 días";
+    } else if (hasTallas) {
+      return "Entrega inmediata";
+    } else {
+      return "Disponible en 20 días";
     }
   };
 
