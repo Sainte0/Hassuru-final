@@ -25,15 +25,14 @@ const AddProductModal = ({ isOpen, onClose }) => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+
   const categoriasDisponibles = [
     'ropa',
     'zapatillas',
     'accesorios',
   ];
-
-  const [availableSizes, setAvailableSizes] = useState(['8 usa | 40 arg', '9 usa | 41 arg', '10 usa | 42 arg']); // Example sizes
-  const [selectedSizes, setSelectedSizes] = useState([]);
-  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -336,7 +335,6 @@ const AddProductModal = ({ isOpen, onClose }) => {
         <SizeSelectionModal
           isOpen={isSizeModalOpen}
           onClose={() => setIsSizeModalOpen(false)}
-          availableSizes={availableSizes}
           selectedSizes={selectedSizes}
           setSelectedSizes={setSelectedSizes}
         />
