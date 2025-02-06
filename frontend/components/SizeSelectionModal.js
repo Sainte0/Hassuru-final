@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, sizePrices, setSizePrices }) => {
   // Define the available sizes
