@@ -6,10 +6,10 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, 
         "3.5 usa | 34.5 arg", "4 usa | 35 arg", "4.5 usa | 35.5 arg",
         "5 usa | 36 arg", "5.5 usa | 37 arg", "6 usa | 37.5 arg",
         "6.5 usa | 38 arg", "7 usa | 39 arg", "7.5 usa | 39.5 arg",
-        "8 usa | 40 arg", "8.5 usa | 40.5 arg", "9 usa | 41 arg",
-        "9.5 usa | 41.5 arg", "10 usa | 42 arg", "10.5 usa | 42.5 arg",
-        "11 usa | 43 arg", "11.5 usa | 43.5 arg", "12 usa | 44 arg",
-        "12.5 usa | 44.5 arg", "13 usa | 45 arg", "13.5 usa | 45.5 arg",
+        "8 usa | 40 arg", "8.5 usa | 41 arg", "9 usa | 41.5 arg",
+        "9.5 usa | 42 arg", "10 usa | 43 arg", "10.5 usa | 43.5 arg",
+        "11 usa | 44 arg", "11.5 usa | 44.5 arg", "12 usa | 45 arg",
+        "12.5 usa | 45.5 arg", "13 usa | 46.5 arg", "13.5 usa | 47 arg",
         "14 usa | 47.5 arg"
     ];
 
