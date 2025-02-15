@@ -31,14 +31,14 @@ export default function Card({ currentProducts }) {
           return (
             <Link href={`/producto/${product._id}`} key={product.id}>
               <div key={product._id} className="flex flex-col justify-between h-full transition-transform transform hover:scale-105">
-                <div className="relative w-full h-[320px] mb-3">
+                <div className="relative aspect-[3/4] w-full mb-3">
                   <Image
                     src={product.image}
                     alt={product.nombre}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
                 <h3 className="text-lg font-semibold">{product.nombre}</h3>

@@ -283,7 +283,7 @@ export default function Filter({ products, setFilteredProducts }) {
                 <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
                 {Array.from(new Set(tallasRopa))
                   .sort((a, b) => {
-                    const tallaOrder = ["S", "M", "L", "XL", "OS"];
+                    const tallaOrder = ["XS","S", "M", "L", "XL", "OS"];
                     return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
                   })
                   .map((talla, index) => (
