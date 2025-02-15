@@ -30,8 +30,8 @@ export default function Card({ currentProducts }) {
           const disponibilidad = getDisponibilidad(product);
           return (
             <Link href={`/producto/${product._id}`} key={product.id}>
-              <div key={product._id} className="flex flex-col h-[500px] justify-between transition-transform transform hover:scale-105">
-                <div className="relative w-full h-[300px] mb-3">
+              <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
+                <div className="relative w-full h-[300px]">
                   <Image
                     src={product.image}
                     alt={product.nombre}
@@ -41,16 +41,18 @@ export default function Card({ currentProducts }) {
                     className="object-contain"
                   />
                 </div>
-                <h3 className="text-lg font-semibold">{product.nombre}</h3>
-                <h5 className="mt-2 text-sm leading-relaxed text-gray-500">
-                  {product.description}
-                </h5>
-                <div className="flex flex-col mt-2">
-                  <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                  <p className="text-lg font-bold text-gray-800">$
-                    {(product.precio * dolarBlue).toFixed(2)} ARS
-                  </p>
-                  <span className={disponibilidad.color}>{disponibilidad.message}</span>
+                <div className="flex flex-col mt-2 space-y-1">
+                  <h3 className="text-lg font-semibold">{product.nombre}</h3>
+                  <h5 className="text-sm leading-relaxed text-gray-500">
+                    {product.description}
+                  </h5>
+                  <div className="flex flex-col">
+                    <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
+                    <p className="text-lg font-bold text-gray-800">
+                      ${(product.precio * dolarBlue).toFixed(2)} ARS
+                    </p>
+                    <span className={disponibilidad.color}>{disponibilidad.message}</span>
+                  </div>
                 </div>
               </div>
             </Link>
