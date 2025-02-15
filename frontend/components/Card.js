@@ -30,8 +30,8 @@ export default function Card({ currentProducts }) {
           const disponibilidad = getDisponibilidad(product);
           return (
             <Link href={`/producto/${product._id}`} key={product.id}>
-              <div key={product._id} className="flex flex-col justify-between h-full transition-transform transform hover:scale-105">
-                <div className="relative aspect-[3/4] w-full mb-3">
+              <div key={product._id} className="flex flex-col h-[500px] justify-between transition-transform transform hover:scale-105">
+                <div className="relative w-full h-[300px] mb-3">
                   <Image
                     src={product.image}
                     alt={product.nombre}
