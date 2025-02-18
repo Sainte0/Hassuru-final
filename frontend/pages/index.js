@@ -32,7 +32,7 @@ export default function Home() {
               src="/images/Sneackers.png"
               alt="Catalogo"
               width={600}
-              height={500}
+              height={450}
               className="object-cover w-full h-full"
             />
           </Link>
@@ -41,7 +41,7 @@ export default function Home() {
               src="/images/Ropa.png"
               alt="Encargo"
               width={600}
-              height={500}
+              height={450}
               className="object-cover w-full h-full"
             />
           </Link>
