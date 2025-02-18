@@ -27,21 +27,21 @@ export default function Home() {
     <main>
       <div className="container p-4 mx-auto">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Link className="w-full md:w-[50%] h-auto block" href="/productos/categoria/zapatillas">
+          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/categoria/zapatillas">
             <Image
               src="/images/Sneackers.png"
               alt="Catalogo"
               width={600}
-              height={450}
+              height={500}
               className="object-cover w-full h-full"
             />
           </Link>
-          <Link className="w-full md:w-[50%] h-auto block" href="/catalogo">
+          <Link className="w-full md:w-[49.51%] h-auto block" href="/catalogo">
             <Image
               src="/images/Ropa.png"
               alt="Encargo"
-              width={600}
-              height={490}
+              width={620}
+              height={500}
               className="object-cover w-full h-full"
             />
           </Link>
