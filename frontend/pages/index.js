@@ -36,7 +36,7 @@ export default function Home() {
               className="object-cover w-full h-full"
             />
           </Link>
-          <Link className="w-full md:w-[50.49%] h-auto block" href="/catalogo">
+          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/categoria/ropa">
             <Image
               src="/images/Ropa.png"
               alt="Encargo"
