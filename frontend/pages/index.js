@@ -27,7 +27,7 @@ export default function Home() {
     <main>
       <div className="container p-4 mx-auto">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/zapatillas">
+          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/categoria/zapatillas">
             <Image
               src="/images/Sneackers.jpg"
               alt="Catalogo"
