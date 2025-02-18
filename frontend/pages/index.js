@@ -29,7 +29,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/zapatillas">
             <Image
-              src="/images/Zapatillas.jpg"
+              src="/images/Sneackers.jpg"
               alt="Catalogo"
               width={620}
               height={500}
