@@ -40,7 +40,7 @@ export default function Home() {
             <Image
               src="/images/Ropa.png"
               alt="Encargo"
-              width={600}
+              width={620}
               height={500}
               className="object-cover w-full h-full"
             />
