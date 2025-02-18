@@ -41,7 +41,7 @@ export default function Home() {
               src="/images/Ropa.png"
               alt="Encargo"
               width={600}
-              height={450}
+              height={470}
               className="object-cover w-full h-full"
             />
           </Link>
