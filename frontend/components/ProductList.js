@@ -6,7 +6,7 @@ import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 import axios from 'axios';
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts }) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false);
@@ -133,7 +133,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        fetchProducts={fetchProducts}
         setEditableProducts={setEditableProducts}
       />
     </div>

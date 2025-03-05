@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 import SizeSelectionModal from './SizeSelectionModal';
+import axios from 'axios';
 
-const AddProductModal = ({ isOpen, onClose, fetchProducts, setEditableProducts }) => {
+const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -93,12 +94,11 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts, setEditableProducts }
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validar que las tallas tengan el formato correcto
-    const tallasValidas = product.tallas.every(
-      (talla) =>
-        talla.talla &&
-        typeof talla.talla === "string" &&
-        typeof talla.precioTalla === "number"
+    if (!product.nombre || !product.marca || !product.categoria || !product.precio) {
+      toast.error("Por favor complete todos los campos requeridos");
+      return;
+    }
+  
     );
   
     if (!tallasValidas) {
