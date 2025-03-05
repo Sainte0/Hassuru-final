@@ -32,10 +32,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setModalOpen(false);
-    fetchProducts();
-  };
+  }, []);
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
@@ -134,7 +133,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        fetchProducts={fetchProducts} // Pasar fetchProducts al modal
+        fetchProducts={fetchProducts}
+        setEditableProducts={setEditableProducts}
       />
     </div>
   );

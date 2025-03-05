@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 import SizeSelectionModal from './SizeSelectionModal';
 
-const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
+const AddProductModal = ({ isOpen, onClose, fetchProducts, setEditableProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -125,10 +125,10 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     const imageFile = product.image;
   
     try {
-      await addProduct(productoAEnviar, imageFile);
-      toast.success("Producto agregado exitosamente!");
+      const response = await axios.post('/api/productos', productoAEnviar);
+      // Actualizar el estado directamente sin llamar a fetchProducts
+      setEditableProducts(prevProducts => [...prevProducts, response.data]);
       onClose();
-      fetchProducts(); // Usar el fetchProducts que viene como prop
     } catch (error) {
       console.error("Error en la respuesta del servidor:", error); // Log para debug
       toast.error("Error al agregar el producto.");
