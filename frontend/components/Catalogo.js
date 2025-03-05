@@ -89,6 +89,15 @@ export default function Catalogo() {
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  return (
+    <div className="container flex flex-col py-10 mx-auto lg:flex-row">
+      <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
+        <Filter
+          products={products}
+          setFilteredProducts={setFilteredProducts}
+        />
       </aside>
       <section className="w-full lg:w-3/4">
         {loading ? (
@@ -104,7 +113,7 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
-              onPageChange={(page) => setCurrentPage(page)}
+              onPageChange={handlePageChange}
               totalPages={totalPages}
             />
           </>
