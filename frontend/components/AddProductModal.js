@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 import SizeSelectionModal from './SizeSelectionModal';
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -128,6 +128,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       onClose();
+      fetchProducts(); // Usar el fetchProducts que viene como prop
     } catch (error) {
       console.error("Error en la respuesta del servidor:", error); // Log para debug
       toast.error("Error al agregar el producto.");

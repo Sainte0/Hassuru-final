@@ -6,25 +6,20 @@ import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 import axios from 'axios';
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProductsFiltered }) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
+  const [encargoFilter, setEncargoFilter] = useState(false);
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/productos');
-      setEditableProducts(response.data);
-    } catch (error) {
-      console.error('Error al obtener productos:', error);
+    if (isInitialLoad) {
+      fetchDolarBlue();
+      setIsInitialLoad(false);
     }
-  }, []);
+  }, [fetchDolarBlue, isInitialLoad]);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -139,6 +134,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
+        fetchProducts={fetchProducts} // Pasar fetchProducts al modal
       />
     </div>
   );
