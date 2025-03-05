@@ -16,32 +16,27 @@ export default function Catalogo() {
   const productsPerPage = 20;
 
   const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
-      if (!response.ok) {
-        throw new Error("Error al cargar los productos");
-      }
+      const response = await fetch('/api/productos');
       const data = await response.json();
 
       // Ordenar productos por disponibilidad
-      const sortedData = data.sort((a, b) => {
-        const disponibilidadA = getDisponibilidad(a);
-        const disponibilidadB = getDisponibilidad(b);
-
-        const ordenDisponibilidad = {
+      const sortedProducts = data.sort((a, b) => {
+        const disponibilidadOrder = {
           "Entrega inmediata": 0,
           "Disponible en 3 días": 1,
           "Disponible en 20 días": 2
         };
 
-        return ordenDisponibilidad[disponibilidadA] - ordenDisponibilidad[disponibilidadB];
+        const dispA = getDisponibilidad(a);
+        const dispB = getDisponibilidad(b);
+
+        return disponibilidadOrder[dispA] - disponibilidadOrder[dispB];
       });
 
-      setProducts(sortedData);
-      setFilteredProducts(sortedData);
-    } catch (er) {
+      setProducts(sortedProducts);
+      setFilteredProducts(sortedProducts);
+    } catch (error) {
       setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
@@ -84,7 +79,6 @@ export default function Catalogo() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Hacer scroll al inicio de la página
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
@@ -113,8 +107,8 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
-              onPageChange={handlePageChange}
               totalPages={totalPages}
+              onPageChange={handlePageChange}
             />
           </>
         )}
