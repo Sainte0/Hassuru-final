@@ -25,18 +25,18 @@ export default function Catalogo() {
       }
       const data = await response.json();
 
-      // Sort products by availability
+      // Ordenar productos por disponibilidad
       const sortedData = data.sort((a, b) => {
-        const availabilityOrder = {
-          "Entrega inmediata": 1,
-          "Disponible en 3 días": 2,
-          "Disponible en 20 días": 3,
+        const disponibilidadA = getDisponibilidad(a);
+        const disponibilidadB = getDisponibilidad(b);
+
+        const ordenDisponibilidad = {
+          "Entrega inmediata": 0,
+          "Disponible en 3 días": 1,
+          "Disponible en 20 días": 2
         };
 
-        const availabilityA = getDisponibilidad(a);
-        const availabilityB = getDisponibilidad(b);
-
-        return availabilityOrder[availabilityA] - availabilityOrder[availabilityB];
+        return ordenDisponibilidad[disponibilidadA] - ordenDisponibilidad[disponibilidadB];
       });
 
       setProducts(sortedData);
@@ -82,13 +82,13 @@ export default function Catalogo() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  return (
-    <div className="container flex flex-col py-10 mx-auto lg:flex-row">
-      <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
-        <Filter
-          products={products}
-          setFilteredProducts={setFilteredProducts}
-        />
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Hacer scroll al inicio de la página
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
       </aside>
       <section className="w-full lg:w-3/4">
         {loading ? (
