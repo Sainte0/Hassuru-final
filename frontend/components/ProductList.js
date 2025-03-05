@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ProductRow from "./ProductRow";
 import { MdFilterAltOff } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
+import axios from 'axios';
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
@@ -15,6 +16,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await axios.get('/api/productos');
+      setEditableProducts(response.data);
+    } catch (error) {
+      console.error('Error al obtener productos:', error);
+    }
+  }, []);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
