@@ -1,46 +1,21 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ProductRow from "./ProductRow";
-import { MdFilterAltOff, MdAdd } from "react-icons/md";
+import { MdFilterAltOff } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct }) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false);
+  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Función para ordenar productos
-  const sortProducts = useCallback((products) => {
-    return [...products].sort((a, b) => {
-      const getValue = (product) => {
-        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        if (!hasTallas) return 3;
-        return product.encargo ? 2 : 1;
-      };
-      return getValue(a) - getValue(b);
-    });
-  }, []);
-
-  // Efecto para cargar el dólar blue
   useEffect(() => {
-    if (isInitialLoad) {
-      fetchDolarBlue();
-      setIsInitialLoad(false);
-    }
-  }, [fetchDolarBlue, isInitialLoad]);
+    fetchDolarBlue();
+  }, [fetchDolarBlue]);
 
-  // Aplicar filtros
-  const filteredProducts = editableProducts.filter((producto) => {
-    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
-    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true;
-    return nameMatch && categoryMatch && encargoMatch;
-  });
-
-  // Handlers
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -48,19 +23,21 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);
+    setEncargoFilter(false);  // Limpiar filtro de encargo
+    fetchProducts();
   };
 
-  const handleModalClose = useCallback(() => {
+  const handleModalClose = () => {
     setModalOpen(false);
-  }, []);
+    fetchProducts();
+  };
 
-  const handleAddProduct = useCallback((newProduct) => {
-    setEditableProducts(prev => {
-      const newProducts = [...prev, newProduct];
-      return sortProducts(newProducts);
-    });
-  }, [sortProducts]);
+  const filteredProducts = editableProducts.filter((producto) => {
+    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    return nameMatch && categoryMatch && encargoMatch;
+  });
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -141,6 +118,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 selectedProduct={selectedProduct}
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
+                fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
               />
@@ -151,7 +129,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        setEditableProducts={setEditableProducts}
       />
     </div>
   );
