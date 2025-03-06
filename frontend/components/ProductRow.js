@@ -33,10 +33,10 @@ const ProductRow = ({
   }, [fetchDolarBlue]);
 
   useEffect(() => {
-    if (productAdded) {
-      fetchProducts();
+    if (productAdded && refreshProducts) {
+      refreshProducts();
     }
-  }, [productAdded, fetchProducts]);
+  }, [productAdded, refreshProducts]);
 
   const handleTallaChange = (e, tallaIndex) => {
     const { value } = e.target;

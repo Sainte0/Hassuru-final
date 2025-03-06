@@ -128,6 +128,7 @@ const ProductList = ({
                 setEditableProducts={setEditableProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
+                refreshProducts={refreshProducts} // Asegurarse de pasar esta prop
               />
             ))}
           </tbody>
