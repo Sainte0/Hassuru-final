@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ProductRow from "./ProductRow";
-import { MdFilterAltOff } from "react-icons/md";
-import { MdAdd } from "react-icons/md";
+import { MdFilterAltOff, MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
-import axios from 'axios';
 
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
@@ -15,7 +13,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Función para ordenar productos
-  const sortProducts = (products) => {
+  const sortProducts = useCallback((products) => {
     return [...products].sort((a, b) => {
       const getValue = (product) => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -24,8 +22,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       };
       return getValue(a) - getValue(b);
     });
-  };
+  }, []);
 
+  // Efecto para cargar el dólar blue
   useEffect(() => {
     if (isInitialLoad) {
       fetchDolarBlue();
@@ -33,6 +32,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     }
   }, [fetchDolarBlue, isInitialLoad]);
 
+  // Aplicar filtros
+  const filteredProducts = editableProducts.filter((producto) => {
+    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true;
+    return nameMatch && categoryMatch && encargoMatch;
+  });
+
+  // Handlers
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
   };
@@ -41,20 +49,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setCategoriaFilter("");
     setNameFilter("");
     setEncargoFilter(false);
-    // Ya no necesitamos llamar a fetchProducts aquí
   };
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
   }, []);
 
-  // Modificar ProductRow para no pasar fetchProducts
-  const filteredProducts = editableProducts.filter((producto) => {
-    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
-    const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
-    return nameMatch && categoryMatch && encargoMatch;
-  });
+  const handleAddProduct = useCallback((newProduct) => {
+    setEditableProducts(prev => {
+      const newProducts = [...prev, newProduct];
+      return sortProducts(newProducts);
+    });
+  }, [sortProducts]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">

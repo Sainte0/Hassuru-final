@@ -5,6 +5,7 @@ import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import Sidebar from "../../components/Sidebar";
 import { BounceLoader } from 'react-spinners';
+import axios from 'axios';
 
 const URL = process.env.NEXT_PUBLIC_URL;
 
@@ -21,15 +22,12 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${URL}/api/productos`, {
+      const response = await axios.get(`${URL}/api/productos`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      if (!response.ok) throw new Error("Error al cargar los productos");
-      const data = await response.json();
-      setProductos(data);
-      setEditableProducts(data);
+      setEditableProducts(response.data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -41,14 +39,12 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${URL}/api/productos/categoria/${categoria}`, {
+      const response = await axios.get(`${URL}/api/productos/categoria/${categoria}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      if (!response.ok) throw new Error("Error al cargar productos por categoría");
-      const data = await response.json();
-      setEditableProducts(data);
+      setEditableProducts(response.data);
     } catch (err) {
       setError(err.message);
     } finally {
