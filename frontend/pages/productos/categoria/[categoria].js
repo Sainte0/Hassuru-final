@@ -25,8 +25,9 @@ export default function Categoria() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      const sortedData = sortProductsByAvailability(data);
       
+      // Aplicar el ordenamiento antes de establecer los estados
+      const sortedData = sortProductsByAvailability(data);
       setProducts(sortedData);
       setFilteredProducts(sortedData);
     } catch (error) {
@@ -54,17 +55,29 @@ export default function Categoria() {
     }
   }, [categoria]);
 
+  // Agregar useEffect para reordenar cuando cambian los productos filtrados
+  useEffect(() => {
+    if (products.length > 0) {
+      const sortedProducts = sortProductsByAvailability(products);
+      setFilteredProducts(sortedProducts);
+    }
+  }, [products]);
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   return (
-    <div className="container flex flex-col py-10 mx-auto lg:flex-row">
+    <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={setFilteredProducts}
+          setFilteredProducts={(newFilteredProducts) => {
+            // Aplicar ordenamiento cuando se filtran los productos
+            const sortedFiltered = sortProductsByAvailability(newFilteredProducts);
+            setFilteredProducts(sortedFiltered);
+          }}
         />
       </aside>
       <section className="flex flex-col w-full lg:w-3/4">
