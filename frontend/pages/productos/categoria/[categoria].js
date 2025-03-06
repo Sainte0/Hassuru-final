@@ -34,15 +34,29 @@ export default function Categoria() {
   const fetchProductsByCategory = async () => {
     setLoading(true);
     setError(null);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
+      if (!response.ok) throw new Error("Error al cargar los productos");
+      
+      const data = await response.json();
+      const orderedData = orderProducts(data);
+      
+      setProducts(orderedData);
+      setFilteredProducts(orderedData);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Modificamos el manejador de filtros
-  const handleFilteredProducts = (newFilteredProducts) => {
-    // Aplicamos el ordenamiento después del filtro
-    const sortedFiltered = sortProductsByAvailability(newFilteredProducts);
-    setFilteredProducts(sortedFiltered);
-  };
+  // Efecto para reordenar productos cuando cambien
+  useEffect(() => {
+    if (products.length > 0) {
+      const orderedProducts = orderProducts(products);
+      setFilteredProducts(orderedProducts);
+    }
+  }, [products, orderProducts]);
 
   const getDisponibilidad = (product) => {
     const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -72,11 +86,14 @@ export default function Categoria() {
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
+      <div>
+        <h1>hola</h1>
+      </div>
         <Filter
           products={products}
           setFilteredProducts={(newProducts) => {
-            const sortedProducts = sortProductsByAvailability(newProducts);
-            setFilteredProducts(sortedProducts);
+            const orderedProducts = orderProducts(newProducts);
+            setFilteredProducts(orderedProducts);
           }}
         />
       </aside>
