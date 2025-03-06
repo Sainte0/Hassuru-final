@@ -14,9 +14,10 @@ const ProductRow = ({
   index,
   selectedProduct,
   handleProductSelect,
-  editableProducts,
   setEditableProducts,
+  editableProducts,
   setSelectedProduct,
+  refreshProducts
 }) => {
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
@@ -152,15 +153,15 @@ const ProductRow = ({
   };
 
   const handleProductDelete = async (id) => {
-    if (window.confirm("¿Estás seguro que quieres eliminar este producto?")) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       try {
         await axios.delete(`/api/productos/${id}`);
-        toast.success("Producto eliminado con éxito");
-        setEditableProducts(prev => prev.filter(p => p._id !== id));
+        toast.success('Producto eliminado exitosamente');
+        await refreshProducts(); // Usar la función de recarga
         setSelectedProduct(null);
       } catch (error) {
-        console.error("Error:", error);
-        toast.error("Error al eliminar el producto");
+        console.error('Error al eliminar el producto:', error);
+        toast.error('Error al eliminar el producto');
       }
     }
   };

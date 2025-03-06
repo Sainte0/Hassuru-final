@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ProductRow from "./ProductRow";
-import { MdFilterAltOff } from "react-icons/md";
-import { MdAdd } from "react-icons/md";
+import { MdFilterAltOff, MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
-import axios from 'axios';
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct }) => {
+const ProductList = ({ 
+  editableProducts, 
+  setEditableProducts, 
+  selectedProduct, 
+  setSelectedProduct,
+  refreshProducts 
+}) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false);
@@ -33,7 +37,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
-  }, []);
+    refreshProducts(); // Actualizar productos después de cerrar el modal
+  }, [refreshProducts]);
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
@@ -132,6 +137,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         isOpen={isModalOpen}
         onClose={handleModalClose}
         setEditableProducts={setEditableProducts}
+        refreshProducts={refreshProducts}
       />
     </div>
   );
