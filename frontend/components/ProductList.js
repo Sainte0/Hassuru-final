@@ -1,29 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import ProductRow from "./ProductRow";
-import { MdFilterAltOff, MdAdd } from "react-icons/md";
+import { MdFilterAltOff } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
-const ProductList = ({ 
-  editableProducts, 
-  setEditableProducts, 
-  selectedProduct, 
-  setSelectedProduct,
-  refreshProducts 
-}) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false);
+  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    if (isInitialLoad) {
-      fetchDolarBlue();
-      setIsInitialLoad(false);
-    }
-  }, [fetchDolarBlue, isInitialLoad]);
+    fetchDolarBlue();
+  }, [fetchDolarBlue]);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -32,18 +23,19 @@ const ProductList = ({
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);
+    setEncargoFilter(false);  // Limpiar filtro de encargo
+    fetchProducts();
   };
 
-  const handleModalClose = useCallback(() => {
+  const handleModalClose = () => {
     setModalOpen(false);
-    refreshProducts(); // Actualizar productos después de cerrar el modal
-  }, [refreshProducts]);
+    fetchProducts();
+  };
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true;
+    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
     return nameMatch && categoryMatch && encargoMatch;
   });
 
@@ -126,9 +118,9 @@ const ProductList = ({
                 selectedProduct={selectedProduct}
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
+                fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
-                refreshProducts={refreshProducts} // Asegurarse de pasar esta prop
               />
             ))}
           </tbody>
@@ -137,8 +129,6 @@ const ProductList = ({
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        setEditableProducts={setEditableProducts}
-        refreshProducts={refreshProducts}
       />
     </div>
   );
