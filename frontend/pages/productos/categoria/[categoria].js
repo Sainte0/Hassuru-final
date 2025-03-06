@@ -4,6 +4,7 @@ import Card from "../../../components/Card";
 import Filter from "../../../components/Filtro";
 import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
+import { sortProductsByAvailability } from '../../../utils/sortProducts';
 
 export default function Categoria() {
   const [products, setProducts] = useState([]);
@@ -24,25 +25,10 @@ export default function Categoria() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-
-
-        // Sort products by availability
-        const sortedData = data.sort((a, b) => {
-          const availabilityOrder = {
-            "Entrega inmediata": 1,
-            "Disponible en 3 días": 2,
-            "Disponible en 20 días": 3,
-          };
-  
-          const availabilityA = getDisponibilidad(a);
-          const availabilityB = getDisponibilidad(b);
-  
-          return availabilityOrder[availabilityA] - availabilityOrder[availabilityB];
-        });
-  
-        setProducts(sortedData);
-        setFilteredProducts(sortedData);
-     
+      const sortedData = sortProductsByAvailability(data);
+      
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
     } catch (error) {
       setError(error.message);
     } finally {

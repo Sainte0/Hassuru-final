@@ -4,6 +4,7 @@ import Card from "./Card";
 import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
+import { sortProductsByAvailability } from '../utils/sortProducts';
 
 export default function Catalogo() {
   const router = useRouter();
@@ -24,26 +25,26 @@ export default function Catalogo() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-
-      // Ordenar productos por disponibilidad
-      const sortedData = data.sort((a, b) => {
-        const getDisponibilidadPrioridad = (product) => {
-          const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-          
-          if (hasTallas && !product.encargo) return 0;     // Productos con tallas (entrega inmediata)
-          if (hasTallas && product.encargo) return 1;      // Productos con tallas y encargo (3 días)
-          return 2;                                        // Productos sin tallas (20 días)
-        };
-
-        return getDisponibilidadPrioridad(a) - getDisponibilidadPrioridad(b);
-      });
-
+      const sortedData = sortProductsByAvailability(data);
+      
       setProducts(sortedData);
       setFilteredProducts(sortedData);
     } catch (er) {
       setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getDisponibilidad = (product) => {
+    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+
+    if (hasTallas && product.encargo) {
+      return "Disponible en 3 días";
+    } else if (hasTallas) {
+      return "Entrega inmediata";
+    } else {
+      return "Disponible en 20 días";
     }
   };
 
@@ -91,9 +92,7 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
-              onPageChange={(page) => {
-                setCurrentPage(page);
-              }}
+              onPageChange={(page) => setCurrentPage(page)}
               totalPages={totalPages}
             />
           </>
