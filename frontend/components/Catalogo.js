@@ -16,25 +16,31 @@ export default function Catalogo() {
   const productsPerPage = 20;
 
   const fetchProducts = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await fetch('/api/productos');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
+      if (!response.ok) {
+        throw new Error("Error al cargar los productos");
+      }
       const data = await response.json();
 
       // Ordenar productos por disponibilidad
-      const sortedProducts = [...data].sort((a, b) => {
-        const getDisponibilidadOrder = (product) => {
+      const sortedData = data.sort((a, b) => {
+        const getDisponibilidadPrioridad = (product) => {
           const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-          if (hasTallas && !product.encargo) return 0; // Entrega inmediata
-          if (hasTallas && product.encargo) return 1;  // 3 días
-          return 2; // 20 días
+          
+          if (hasTallas && !product.encargo) return 0;     // Productos con tallas (entrega inmediata)
+          if (hasTallas && product.encargo) return 1;      // Productos con tallas y encargo (3 días)
+          return 2;                                        // Productos sin tallas (20 días)
         };
 
-        return getDisponibilidadOrder(a) - getDisponibilidadOrder(b);
+        return getDisponibilidadPrioridad(a) - getDisponibilidadPrioridad(b);
       });
 
-      setProducts(sortedProducts);
-      setFilteredProducts(sortedProducts);
-    } catch (error) {
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
+    } catch (er) {
       setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
@@ -63,19 +69,8 @@ export default function Catalogo() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // Asegurar que el scroll funcione correctamente
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, 100);
-  };
-
   return (
-    <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
+    <div className="container flex flex-col py-10 mx-auto lg:flex-row">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
@@ -96,8 +91,10 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+              }}
               totalPages={totalPages}
-              onPageChange={handlePageChange}
             />
           </>
         )}
