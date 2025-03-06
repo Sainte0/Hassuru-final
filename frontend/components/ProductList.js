@@ -14,6 +14,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [isModalOpen, setModalOpen] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
 
+  // Función para ordenar productos
+  const sortProducts = (products) => {
+    return [...products].sort((a, b) => {
+      const getValue = (product) => {
+        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+        if (!hasTallas) return 3;
+        return product.encargo ? 2 : 1;
+      };
+      return getValue(a) - getValue(b);
+    });
+  };
+
   useEffect(() => {
     if (isInitialLoad) {
       fetchDolarBlue();
@@ -28,14 +40,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
-    fetchProducts();
+    setEncargoFilter(false);
+    // Ya no necesitamos llamar a fetchProducts aquí
   };
 
   const handleModalClose = useCallback(() => {
     setModalOpen(false);
   }, []);
 
+  // Modificar ProductRow para no pasar fetchProducts
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
@@ -122,7 +135,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 selectedProduct={selectedProduct}
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
-                fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
               />

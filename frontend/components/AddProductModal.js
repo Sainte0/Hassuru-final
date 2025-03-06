@@ -93,13 +93,21 @@ const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!product.nombre || !product.marca || !product.categoria || !product.precio) {
       toast.error("Por favor complete todos los campos requeridos");
       return;
     }
-
+  
     try {
+      const formData = new FormData();
+      
+      // Agregar la imagen si existe
+      if (product.image) {
+        formData.append('image', product.image);
+      }
+      
+      // Crear el objeto del producto
       const productoAEnviar = {
         nombre: product.nombre,
         descripcion: product.descripcion,
@@ -115,16 +123,17 @@ const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
 
       const response = await axios.post('/api/productos', productoAEnviar);
       
-      // Actualizamos directamente el estado con el nuevo producto
+      // Actualizar el estado localmente
       setEditableProducts(prevProducts => {
-        const newProducts = [...prevProducts, response.data];
-        return sortProducts(newProducts);
+        const newProducts = [...prevProducts];
+        newProducts.push(response.data);
+        return newProducts;
       });
 
       toast.success("Producto agregado exitosamente");
       onClose();
       
-      // Limpiamos el formulario
+      // Limpiar el formulario
       setProduct({
         nombre: '',
         descripcion: '',
@@ -138,24 +147,14 @@ const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
         destacado: false,
         destacado_zapatillas: false,
       });
+      setImagePreview(null);
+      
     } catch (error) {
       console.error("Error al crear el producto:", error);
       toast.error("Error al crear el producto");
     }
   };
-
-  // Función de ordenamiento
-  const sortProducts = (products) => {
-    return products.sort((a, b) => {
-      const getValue = (product) => {
-        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        if (!hasTallas) return 3;
-        return product.encargo ? 2 : 1;
-      };
-      return getValue(a) - getValue(b);
-    });
-  };
-
+  
   const handleOpenSizeModal = () => {
     setIsSizeModalOpen(true);
   };

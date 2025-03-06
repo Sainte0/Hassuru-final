@@ -13,10 +13,9 @@ const ProductRow = ({
   index,
   selectedProduct,
   handleProductSelect,
-  editableProducts,
   setEditableProducts,
-  fetchProducts,
-  setSelectedProduct,
+  editableProducts,
+  setSelectedProduct
 }) => {
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
@@ -277,6 +276,21 @@ const ProductRow = ({
     setSelectedSizes([]);
     setSizePrices({});
     setIsSizeModalOpen(false);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+      try {
+        await axios.delete(`/api/productos/${producto._id}`);
+        // Actualizar el estado localmente
+        setEditableProducts(prevProducts => 
+          prevProducts.filter(p => p._id !== producto._id)
+        );
+        setSelectedProduct(null);
+      } catch (error) {
+        console.error('Error al eliminar el producto:', error);
+      }
+    }
   };
 
   return (
