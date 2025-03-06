@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import useStore from "../store/store";
 import Image from "next/image";
 import SizeSelectionModal from './SizeSelectionModal';
+import axios from 'axios';
 
 const URL1 = process.env.NEXT_PUBLIC_URL;
 
@@ -15,7 +16,6 @@ const ProductRow = ({
   handleProductSelect,
   editableProducts,
   setEditableProducts,
-  fetchProducts,
   setSelectedProduct,
 }) => {
   const [newTalla, setNewTalla] = useState("");
@@ -134,76 +134,36 @@ const ProductRow = ({
 
 
   const handleProductUpdate = async (producto) => {
-    const updatedProduct = { ...producto, categoria: producto.categoria.toLowerCase() }; // Normaliza a minúsculas
-
     try {
-      const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedProduct),
-      });
-
-      if (response.ok) {
+      const response = await axios.put(`/api/productos/${producto._id}`, producto);
+      
+      if (response.status === 200) {
         toast.success("Producto actualizado con éxito");
-
-        // Actualiza la imagen si es necesario
-        if (newImage) {
-          const imageFormData = new FormData();
-          imageFormData.append("image", newImage);
-          const imageResponse = await fetch(
-            `${URL1}/api/productos/${producto._id}/image`,
-            {
-              method: "PUT",
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-              body: imageFormData,
-            }
-          );
-
-          if (imageResponse.ok) {
-            toast.success("Imagen actualizada con éxito");
-          } else {
-            toast.error("Error al actualizar la imagen");
-            console.error("Error al actualizar la imagen");
-          }
-        }
-
-        fetchProducts();
+        // Actualizar estado local
+        setEditableProducts(prev => 
+          prev.map(p => p._id === producto._id ? response.data : p)
+        );
         setSelectedProduct(null);
-      } else {
-        toast.error("Error al actualizar el producto");
-        console.error("Error al actualizar el producto");
       }
     } catch (error) {
-      console.error("Error al actualizar el producto:", error);
+      console.error("Error:", error);
       toast.error("Error al actualizar el producto");
     }
   };
+
   const handleProductDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro que quieres eliminar este producto?"
-    );
-    if (confirmDelete) {
-      const response = await fetch(`${URL1}/api/productos/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (response.ok) {
+    if (window.confirm("¿Estás seguro que quieres eliminar este producto?")) {
+      try {
+        await axios.delete(`/api/productos/${id}`);
         toast.success("Producto eliminado con éxito");
-        fetchProducts();
-      } else {
+        setEditableProducts(prev => prev.filter(p => p._id !== id));
+        setSelectedProduct(null);
+      } catch (error) {
+        console.error("Error:", error);
         toast.error("Error al eliminar el producto");
-        console.error("Error al eliminar el producto");
       }
     }
   };
-  
 
   const handleProductChange = (e, field, producto) => {
     const updatedProduct = { ...producto, [field]: e.target.value };

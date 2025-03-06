@@ -28,8 +28,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
-    fetchProducts();
+    setEncargoFilter(false);
   };
 
   const handleModalClose = useCallback(() => {
@@ -39,7 +38,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    const encargoMatch = encargoFilter ? producto.encargo === true : true;
     return nameMatch && categoryMatch && encargoMatch;
   });
 
@@ -122,7 +121,6 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 selectedProduct={selectedProduct}
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
-                fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
               />
