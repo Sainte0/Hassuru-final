@@ -123,11 +123,18 @@ const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
 
       const response = await axios.post('/api/productos', productoAEnviar);
       
-      // Actualizar el estado localmente
+      // Actualizar el estado localmente ordenando los productos
       setEditableProducts(prevProducts => {
-        const newProducts = [...prevProducts];
-        newProducts.push(response.data);
-        return newProducts;
+        const newProducts = [...prevProducts, response.data];
+        // Ordenar productos por disponibilidad
+        return newProducts.sort((a, b) => {
+          const getValue = (product) => {
+            const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+            if (!hasTallas) return 3;
+            return product.encargo ? 2 : 1;
+          };
+          return getValue(a) - getValue(b);
+        });
       });
 
       toast.success("Producto agregado exitosamente");
