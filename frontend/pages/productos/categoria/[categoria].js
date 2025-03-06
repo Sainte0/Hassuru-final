@@ -21,20 +21,24 @@ export default function Categoria() {
     setError(null);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
-      if (!response.ok) {
-        throw new Error("Error al cargar los productos");
-      }
-      const data = await response.json();
+      if (!response.ok) throw new Error("Error al cargar los productos");
       
-      // Aplicar el ordenamiento antes de establecer los estados
+      const data = await response.json();
       const sortedData = sortProductsByAvailability(data);
-      setProducts(sortedData);
-      setFilteredProducts(sortedData);
+      
+      setProducts(data); // Guardamos los datos originales
+      setFilteredProducts(sortedData); // Guardamos los datos ordenados
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Manejador para cuando se aplican filtros
+  const handleFilteredProducts = (newFilteredProducts) => {
+    const sortedFiltered = sortProductsByAvailability(newFilteredProducts);
+    setFilteredProducts(sortedFiltered);
   };
 
   const getDisponibilidad = (product) => {
@@ -52,16 +56,9 @@ export default function Categoria() {
   useEffect(() => {
     if (categoria) {
       fetchProductsByCategory();
+      setCurrentPage(1);
     }
   }, [categoria]);
-
-  // Agregar useEffect para reordenar cuando cambian los productos filtrados
-  useEffect(() => {
-    if (products.length > 0) {
-      const sortedProducts = sortProductsByAvailability(products);
-      setFilteredProducts(sortedProducts);
-    }
-  }, [products]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -73,11 +70,7 @@ export default function Categoria() {
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={(newFilteredProducts) => {
-            // Aplicar ordenamiento cuando se filtran los productos
-            const sortedFiltered = sortProductsByAvailability(newFilteredProducts);
-            setFilteredProducts(sortedFiltered);
-          }}
+          setFilteredProducts={handleFilteredProducts}
         />
       </aside>
       <section className="flex flex-col w-full lg:w-3/4">
