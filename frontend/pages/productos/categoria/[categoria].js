@@ -15,6 +15,20 @@ export default function Categoria() {
   const router = useRouter();
   const { categoria } = router.query;
 
+  const sortProductsByAvailability = (products) => {
+    return [...products].sort((a, b) => {
+      const getDisponibilidadPrioridad = (product) => {
+        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+        
+        if (hasTallas && !product.encargo) return 0;     // Entrega inmediata
+        if (hasTallas && product.encargo) return 1;      // 3 días
+        return 2;                                        // 20 días
+      };
+
+      return getDisponibilidadPrioridad(a) - getDisponibilidadPrioridad(b);
+    });
+  };
+
   const fetchProductsByCategory = async () => {
     setLoading(true);
     setError(null);
@@ -24,8 +38,9 @@ export default function Categoria() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      setProducts(data);
-      setFilteredProducts(data);
+      const sortedData = sortProductsByAvailability(data);
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -36,8 +51,17 @@ export default function Categoria() {
   useEffect(() => {
     if (categoria) {
       fetchProductsByCategory();
+      setCurrentPage(1); // Reset página al cambiar categoría
     }
   }, [categoria]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -65,7 +89,7 @@ export default function Categoria() {
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={handlePageChange}
         />
       </section>
     </div>
