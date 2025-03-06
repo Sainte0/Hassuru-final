@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import Card from "../../../components/Card";
 import Filter from "../../../components/Filtro";
@@ -16,24 +16,24 @@ export default function Categoria() {
   const router = useRouter();
   const { categoria } = router.query;
 
+  // Nueva función para ordenar productos
+  const orderProducts = useCallback((products) => {
+    if (!Array.isArray(products)) return [];
+    
+    return [...products].sort((a, b) => {
+      const getValue = (product) => {
+        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+        if (!hasTallas) return 3;                    // Sin tallas (20 días)
+        return product.encargo ? 2 : 1;              // Con encargo (3 días) : Inmediato
+      };
+      
+      return getValue(a) - getValue(b);
+    });
+  }, []);
+
   const fetchProductsByCategory = async () => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
-      if (!response.ok) throw new Error("Error al cargar los productos");
-      
-      const data = await response.json();
-      // Ordenamos los datos inmediatamente
-      const sortedData = sortProductsByAvailability(data);
-      
-      // Guardamos los datos ya ordenados en ambos estados
-      setProducts(sortedData);
-      setFilteredProducts(sortedData);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
