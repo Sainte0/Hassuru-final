@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 import SizeSelectionModal from './SizeSelectionModal';
+import axios from 'axios';
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, setEditableProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -93,44 +94,64 @@ const AddProductModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Validar que las tallas tengan el formato correcto
-    const tallasValidas = product.tallas.every(
-      (talla) =>
-        talla.talla &&
-        typeof talla.talla === "string" &&
-        typeof talla.precioTalla === "number"
-    );
-  
-    if (!tallasValidas) {
-      toast.error("Las tallas deben contener 'talla' como texto y 'precioTalla' como número.");
+    if (!product.nombre || !product.marca || !product.categoria || !product.precio) {
+      toast.error("Por favor complete todos los campos requeridos");
       return;
     }
   
-    const productoAEnviar = {
-      nombre: product.nombre,
-      descripcion: product.descripcion,
-      marca: product.marca,
-      categoria: product.categoria,
-      precio: parseFloat(product.precio),
-      tallas: product.tallas.map((talla) => ({
-        talla: talla.talla,
-        precioTalla: talla.precioTalla,
-      })), // Formatear las tallas correctamente
-      colores: product.colores,
-      encargo: product.encargo,
-      destacado: product.destacado,
-      destacado_zapatillas: product.destacado_zapatillas,
-    };
-  
-    const imageFile = product.image;
-  
     try {
-      await addProduct(productoAEnviar, imageFile);
-      toast.success("Producto agregado exitosamente!");
+      const formData = new FormData();
+      
+      // Agregar la imagen si existe
+      if (product.image) {
+        formData.append('image', product.image);
+      }
+      
+      // Crear el objeto del producto
+      const productoAEnviar = {
+        nombre: product.nombre,
+        descripcion: product.descripcion,
+        marca: product.marca,
+        categoria: product.categoria,
+        precio: parseFloat(product.precio),
+        tallas: product.tallas,
+        colores: product.colores,
+        encargo: product.encargo,
+        destacado: product.destacado,
+        destacado_zapatillas: product.destacado_zapatillas,
+      };
+
+      const response = await axios.post('/api/productos', productoAEnviar);
+      
+      // Actualizar el estado localmente
+      setEditableProducts(prevProducts => {
+        const newProducts = [...prevProducts];
+        newProducts.push(response.data);
+        return newProducts;
+      });
+
+      toast.success("Producto agregado exitosamente");
       onClose();
+      
+      // Limpiar el formulario
+      setProduct({
+        nombre: '',
+        descripcion: '',
+        marca: '',
+        categoria: '',
+        precio: '',
+        tallas: [],
+        colores: [],
+        image: null,
+        encargo: false,
+        destacado: false,
+        destacado_zapatillas: false,
+      });
+      setImagePreview(null);
+      
     } catch (error) {
-      console.error("Error en la respuesta del servidor:", error); // Log para debug
-      toast.error("Error al agregar el producto.");
+      console.error("Error al crear el producto:", error);
+      toast.error("Error al crear el producto");
     }
   };
   

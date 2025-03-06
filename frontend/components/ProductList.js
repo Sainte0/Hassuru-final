@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ProductRow from "./ProductRow";
 import { MdFilterAltOff } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
+import axios from 'axios';
 
-const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
+const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
+  const [encargoFilter, setEncargoFilter] = useState(false);
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
+    if (isInitialLoad) {
+      fetchDolarBlue();
+      setIsInitialLoad(false);
+    }
+  }, [fetchDolarBlue, isInitialLoad]);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -27,10 +32,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     fetchProducts();
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = useCallback(() => {
     setModalOpen(false);
-    fetchProducts();
-  };
+  }, []);
 
   const filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
@@ -129,6 +133,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
+        setEditableProducts={setEditableProducts}
       />
     </div>
   );
