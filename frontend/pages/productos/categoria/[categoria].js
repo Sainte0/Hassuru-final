@@ -9,12 +9,10 @@ import { sortProductsByAvailability } from '../../../utils/sortProducts';
 export default function Categoria() {
   const router = useRouter();
   
-  // Si la página está en fallback
   if (router.isFallback) {
     return <div>Cargando...</div>;
   }
 
-  // Si no hay categoría
   if (!router.query.categoria) {
     return <div>No se encontró la categoría</div>;
   }
@@ -27,15 +25,14 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Nueva función para ordenar productos
   const orderProducts = useCallback((products) => {
     if (!Array.isArray(products)) return [];
     
     return [...products].sort((a, b) => {
       const getValue = (product) => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        if (!hasTallas) return 3;                    // Sin tallas (20 días)
-        return product.encargo ? 2 : 1;              // Con encargo (3 días) : Inmediato
+        if (!hasTallas) return 3;
+        return product.encargo ? 2 : 1;
       };
       
       return getValue(a) - getValue(b);
@@ -61,7 +58,6 @@ export default function Categoria() {
     }
   };
 
-  // Efecto para reordenar productos cuando cambien
   useEffect(() => {
     if (products.length > 0) {
       const orderedProducts = orderProducts(products);
@@ -81,9 +77,7 @@ export default function Categoria() {
     }
   };
 
-  // Efecto para cargar productos cuando cambia la categoría
   useEffect(() => {
-    console.log('Categoría cambió:', categoria); // Debug log
     if (categoria) {
       fetchProductsByCategory();
       setCurrentPage(1);
@@ -95,20 +89,12 @@ export default function Categoria() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  console.log('Categoria actual:', categoria); // Debug log
-  console.log('Productos:', products.length); // Debug log
-  console.log('Productos filtrados:', filteredProducts.length); // Debug log
-
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
-        <div className="bg-red-500 p-4 mb-4">
-          <h1 className="text-white">Categoría: {categoria}</h1>
-        </div>
         <Filter
           products={products}
           setFilteredProducts={(newProducts) => {
-            console.log('Nuevos productos filtrados:', newProducts.length); // Debug log
             const orderedProducts = orderProducts(newProducts);
             setFilteredProducts(orderedProducts);
           }}
