@@ -26,7 +26,7 @@ export default function Categoria() {
       const data = await response.json();
       const sortedData = sortProductsByAvailability(data);
       
-      setProducts(data); // Guardamos los datos originales
+      setProducts(data); // Guardamos los datos originales sin ordenar
       setFilteredProducts(sortedData); // Guardamos los datos ordenados
     } catch (error) {
       setError(error.message);
@@ -35,8 +35,9 @@ export default function Categoria() {
     }
   };
 
-  // Manejador para cuando se aplican filtros
+  // Modificamos el manejador de filtros
   const handleFilteredProducts = (newFilteredProducts) => {
+    // Aplicamos el ordenamiento después del filtro
     const sortedFiltered = sortProductsByAvailability(newFilteredProducts);
     setFilteredProducts(sortedFiltered);
   };
@@ -53,6 +54,7 @@ export default function Categoria() {
     }
   };
 
+  // Efecto para cargar productos cuando cambia la categoría
   useEffect(() => {
     if (categoria) {
       fetchProductsByCategory();
