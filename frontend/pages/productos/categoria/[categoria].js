@@ -7,13 +7,24 @@ import { BounceLoader } from 'react-spinners';
 import { sortProductsByAvailability } from '../../../utils/sortProducts';
 
 export default function Categoria() {
+  const router = useRouter();
+  
+  // Si la página está en fallback
+  if (router.isFallback) {
+    return <div>Cargando...</div>;
+  }
+
+  // Si no hay categoría
+  if (!router.query.categoria) {
+    return <div>No se encontró la categoría</div>;
+  }
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(20);
-  const router = useRouter();
   const { categoria } = router.query;
 
   // Nueva función para ordenar productos
@@ -72,6 +83,7 @@ export default function Categoria() {
 
   // Efecto para cargar productos cuando cambia la categoría
   useEffect(() => {
+    console.log('Categoría cambió:', categoria); // Debug log
     if (categoria) {
       fetchProductsByCategory();
       setCurrentPage(1);
@@ -83,15 +95,20 @@ export default function Categoria() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
+  console.log('Categoria actual:', categoria); // Debug log
+  console.log('Productos:', products.length); // Debug log
+  console.log('Productos filtrados:', filteredProducts.length); // Debug log
+
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
-      <div>
-        <h1>hola</h1>
-      </div>
+        <div className="bg-red-500 p-4 mb-4">
+          <h1 className="text-white">Categoría: {categoria}</h1>
+        </div>
         <Filter
           products={products}
           setFilteredProducts={(newProducts) => {
+            console.log('Nuevos productos filtrados:', newProducts.length); // Debug log
             const orderedProducts = orderProducts(newProducts);
             setFilteredProducts(orderedProducts);
           }}
