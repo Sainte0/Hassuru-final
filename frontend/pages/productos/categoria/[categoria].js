@@ -24,10 +24,12 @@ export default function Categoria() {
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
+      // Ordenamos los datos inmediatamente
       const sortedData = sortProductsByAvailability(data);
       
-      setProducts(data); // Guardamos los datos originales sin ordenar
-      setFilteredProducts(sortedData); // Guardamos los datos ordenados
+      // Guardamos los datos ya ordenados en ambos estados
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -72,7 +74,10 @@ export default function Categoria() {
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={handleFilteredProducts}
+          setFilteredProducts={(newProducts) => {
+            const sortedProducts = sortProductsByAvailability(newProducts);
+            setFilteredProducts(sortedProducts);
+          }}
         />
       </aside>
       <section className="flex flex-col w-full lg:w-3/4">

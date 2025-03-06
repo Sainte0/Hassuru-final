@@ -198,6 +198,16 @@ export default function Filter({ products, setFilteredProducts }) {
     setShowFilters(!showFilters);
   };
 
+  const applyFilters = () => {
+    let filtered = [...products];
+    
+    // Aplicar los filtros existentes...
+    
+    // Asegurarnos de que el resultado mantenga el orden
+    const sortedFiltered = sortProductsByAvailability(filtered);
+    setFilteredProducts(sortedFiltered);
+  };
+
   return (
     <main className="px-4 font-semibold md:px-12">
       <div className="mb-4">
