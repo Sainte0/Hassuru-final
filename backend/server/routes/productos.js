@@ -44,17 +44,24 @@ router.get('/nombre/:nombre', async (req, res) => {
     const { nombre } = req.params;
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
+    
     if (!nombre || nombre.trim() === '') {
-      return res.status(400).json({ error: 'Debes proporcionar un nombre para filtrar.' });
+      return res.status(400).json({ error: 'Debes proporcionar un término para buscar.' });
     }
+
+    const searchRegex = new RegExp(nombre, 'i');
     const productosFiltrados = await Producto.find({
-      nombre: { $regex: new RegExp(nombre, 'i') }
+      $or: [
+        { nombre: { $regex: searchRegex } },
+        { descripcion: { $regex: searchRegex } }
+      ]
     })
       .skip((page - 1) * limit)
       .limit(limit);
+      
     res.status(200).json(productosFiltrados);
   } catch (error) {
-    console.error('Error al filtrar productos por nombre:', error);
+    console.error('Error al filtrar productos:', error);
     res.status(500).json({ error: error.message });
   }
 });

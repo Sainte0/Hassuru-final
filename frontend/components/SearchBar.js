@@ -96,7 +96,14 @@ export default function SearchBar({ isHamburgerOpen }) {
           {filteredProducts.map((product) => (
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
               <Link href={`/producto/${product._id}`}>
-                <p onClick={handleSearch}>{product.nombre}</p>
+                <div onClick={handleSearch} className="cursor-pointer">
+                  <p className="font-semibold">{product.nombre}</p>
+                  {product.descripcion && (
+                    <p className="text-sm text-gray-600 truncate">
+                      {product.descripcion}
+                    </p>
+                  )}
+                </div>
               </Link>
             </li>
           ))}
