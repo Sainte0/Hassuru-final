@@ -70,7 +70,7 @@ export default function AdminDashboard() {
       <Sidebar fetchProducts={fetchProducts} />
       <div className="flex-1 w-full p-4 md:p-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-black">Bienvenido al Dashboard 2</h2>
+          <h2 className="text-2xl font-semibold text-black">Bienvenido al Dashboard sda 2</h2>
           <button
             onClick={handleLogout}
             className="px-4 py-2 text-sm font-medium text-white transition duration-300 bg-red-500 rounded hover:bg-red-600 md:text-base"
