@@ -168,6 +168,13 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     const imageBuffer = fs.readFileSync(req.file.path);
     const contentType = req.file.mimetype;
 
+    // Verificar que el producto existe antes de actualizar
+    const productoExistente = await Producto.findById(id);
+    if (!productoExistente) {
+      fs.unlinkSync(req.file.path); // Limpiar el archivo temporal
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
     // Actualizar el producto con la imagen como Buffer
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
@@ -178,16 +185,21 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
         }
       },
       { new: true }
-    );
+    ).select('-image.data'); // No enviar el buffer en la respuesta
 
     // Eliminar el archivo temporal
     fs.unlinkSync(req.file.path);
 
-    if (!productoActualizado) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
-    }
     res.status(200).json(productoActualizado);
   } catch (error) {
+    // Asegurarse de limpiar el archivo temporal en caso de error
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error al eliminar archivo temporal:', unlinkError);
+      }
+    }
     console.error('Error al actualizar la imagen del producto:', error);
     res.status(400).json({ error: error.message });
   }

@@ -227,13 +227,49 @@ const ProductRow = ({
   };
 
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const updatedProducts = [...editableProducts];
-      updatedProducts[index].image = URL.createObjectURL(file);
-      setEditableProducts(updatedProducts);
-      setNewImage(file);
+    if (!file) return;
+
+    // Validar el tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      toast.error('Por favor, selecciona un archivo de imagen válido');
+      return;
+    }
+
+    // Validar el tamaño del archivo (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('La imagen no debe superar los 5MB');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch(`${URL1}/api/productos/${producto._id}/image`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la imagen');
+      }
+
+      const updatedProduct = await response.json();
+      setEditableProducts(prevProducts =>
+        prevProducts.map(prod =>
+          prod._id === producto._id ? updatedProduct : prod
+        )
+      );
+
+      toast.success('Imagen actualizada con éxito');
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error.message);
     }
   };
 
