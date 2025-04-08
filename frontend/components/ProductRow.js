@@ -39,8 +39,12 @@ const ProductRow = ({
 
   useEffect(() => {
     if (producto && producto.image) {
-      const timestamp = new Date().getTime();
-      setNewImage(`${URL1}/api/productos/${producto._id}/image?t=${timestamp}`);
+      if (typeof producto.image === 'string' && producto.image.includes('cloudinary')) {
+        setNewImage(producto.image);
+      } else {
+        const timestamp = new Date().getTime();
+        setNewImage(`${URL1}/api/productos/${producto._id}/image?t=${timestamp}`);
+      }
     }
   }, [producto]);
 
@@ -293,8 +297,8 @@ const ProductRow = ({
   };
 
   const getImageUrl = (product) => {
-    // Si no hay producto o imagen, devolver una imagen por defecto
-    if (!product || !product.image) return '/placeholder-image.jpg';
+    // Si no hay imagen, devolver una imagen por defecto
+    if (!product || !product.image) return "/placeholder.jpg";
     
     // Si la imagen es una URL de Cloudinary, usarla directamente
     if (typeof product.image === 'string' && product.image.includes('cloudinary')) {
@@ -303,13 +307,11 @@ const ProductRow = ({
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://web-production-73e61.up.railway.app';
-      // Agregar timestamp para evitar el caché
       const timestamp = new Date().getTime();
-      return `${baseUrl}/api/productos/${product._id}/image?t=${timestamp}`;
+      return `${URL1}/api/productos/${product._id}/image?t=${timestamp}`;
     }
     
-    return '/placeholder-image.jpg';
+    return "/placeholder.jpg";
   };
 
   const handleDestacadoChange = (e) => {
