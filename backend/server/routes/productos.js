@@ -178,7 +178,11 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { image, ...updatedData } = req.body;
-    const productoActualizado = await Producto.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+    const productoActualizado = await Producto.findByIdAndUpdate(
+      req.params.id, 
+      updatedData, 
+      { new: true }
+    );
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
@@ -218,7 +222,7 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
         }
       },
       { new: true }
-    });
+    );
 
     // Eliminar el archivo temporal
     fs.unlinkSync(req.file.path);
