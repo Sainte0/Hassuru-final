@@ -261,6 +261,10 @@ router.get('/:id/image', async (req, res) => {
     res.set('Pragma', 'no-cache');
     res.set('Expires', '0');
     
+    // Establecer cabeceras CORS para permitir el acceso desde cualquier origen
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    
     // Enviar la imagen como respuesta
     res.send(producto.image.data);
   } catch (error) {

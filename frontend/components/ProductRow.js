@@ -8,7 +8,7 @@ import SizeSelectionModal from './SizeSelectionModal';
 import { useAuth } from "../hooks/useAuth";
 import { useRouter } from "next/router";
 
-const URL1 = process.env.NEXT_PUBLIC_URL;
+const URL1 = process.env.NEXT_PUBLIC_URL || 'https://web-production-73e61.up.railway.app';
 
 const ProductRow = ({
   producto,
@@ -281,10 +281,21 @@ const ProductRow = ({
   };
 
   const getImageUrl = (product) => {
-    if (product.image && product.image.data) {
-      return `${URL1}/api/productos/${product._id}/image`;
+    // Si no hay producto o imagen, devolver una imagen por defecto
+    if (!product || !product.image) return '/placeholder-image.jpg';
+    
+    // Si la imagen es una URL de Cloudinary, usarla directamente
+    if (typeof product.image === 'string' && product.image.includes('cloudinary')) {
+      return product.image;
     }
-    return '/placeholder-image.jpg'; // Imagen por defecto
+    
+    // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
+    if (product._id) {
+      const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://web-production-73e61.up.railway.app';
+      return `${baseUrl}/api/productos/${product._id}/image`;
+    }
+    
+    return '/placeholder-image.jpg';
   };
 
   const handleDestacadoChange = (e) => {
