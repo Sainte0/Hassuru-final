@@ -23,16 +23,20 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching products from:', `${URL}/api/productos`);
       const response = await fetch(`${URL}/api/productos`, {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
       });
+      console.log('Response status:', response.status);
       if (!response.ok) throw new Error("Error al cargar los productos");
       const data = await response.json();
+      console.log('Fetched products:', data);
       setProductos(data);
       setEditableProducts(data);
     } catch (err) {
+      console.error('Error fetching products:', err);
       setError(err.message);
     } finally {
       setLoading(false);
