@@ -38,46 +38,50 @@ const useStore = create((set) => ({
   addProduct: async (productoAEnviar, imagenFile) => {
     set({ loading: true });
     try {
+      const formData = new FormData();
+      
+      Object.keys(productoAEnviar).forEach(key => {
+        if (key === 'tallas' || key === 'colores') {
+          formData.append(key, JSON.stringify(productoAEnviar[key]));
+        } else if (key === 'encargo' || key === 'destacado' || key === 'destacado_zapatillas') {
+          formData.append(key, productoAEnviar[key].toString());
+        } else {
+          formData.append(key, productoAEnviar[key]);
+        }
+      });
+      
+      if (imagenFile) {
+        formData.append('image', imagenFile);
+      }
+      
       const response = await fetch(`${URL}/api/productos`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': getToken(),
         },
-        body: JSON.stringify(productoAEnviar),
+        body: formData,
       });
+      
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
-        toast.error(`Error al agregar el producto: ${errorData.message || 'Error desconocido'}`);
-        return;
+        throw new Error(errorData.error || 'Error al agregar el producto');
       }
+      
       const nuevoProducto = await response.json();
-      if (imagenFile) {
-        const formData = new FormData();
-        formData.append('image', imagenFile);
-        const imagenResponse = await fetch(`${URL}/api/productos/${nuevoProducto._id}/imagen`, {
-          method: 'POST',
-          headers: {
-            'Authorization': getToken(),
-          },
-          body: formData,
-        });
-        if (!imagenResponse.ok) {
-          const imagenErrorData = await imagenResponse.json();
-          toast.error(`Error al subir la imagen: ${imagenErrorData.message || 'Error desconocido'}`);
-          return;
-        }
-      }
+      
       set((state) => ({
         products: [...state.products, nuevoProducto],
         productAdded: true,
       }));
+      
       toast.success('Producto agregado con éxito');
+      return nuevoProducto;
     } catch (error) {
       set({ error: error.message });
       console.error('Error al agregar el producto:', error);
-      toast.error('Error al agregar el producto');
+      toast.error(error.message || 'Error al agregar el producto');
+      throw error;
     } finally {
       set({ loading: false });
     }

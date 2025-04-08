@@ -115,7 +115,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
       tallas: product.tallas.map((talla) => ({
         talla: talla.talla,
         precioTalla: talla.precioTalla,
-      })), // Formatear las tallas correctamente
+      })),
       colores: product.colores,
       encargo: product.encargo,
       destacado: product.destacado,
@@ -129,8 +129,8 @@ const AddProductModal = ({ isOpen, onClose }) => {
       toast.success("Producto agregado exitosamente!");
       onClose();
     } catch (error) {
-      console.error("Error en la respuesta del servidor:", error); // Log para debug
-      toast.error("Error al agregar el producto.");
+      console.error("Error al agregar el producto:", error);
+      toast.error(error.message || "Error al agregar el producto.");
     }
   };
   

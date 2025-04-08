@@ -82,6 +82,11 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { nombre, descripcion, precio, marca, categoria, tallas, colores, encargo, destacado, destacado_zapatillas } = req.body;
     
+    // Validar campos requeridos
+    if (!nombre || !precio || !marca || !categoria) {
+      return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
+    }
+    
     let imageData = null;
     if (req.file) {
       imageData = {
@@ -91,14 +96,32 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       fs.unlinkSync(req.file.path);
     }
 
+    // Parsear tallas y colores si son strings JSON
+    let parsedTallas = [];
+    let parsedColores = [];
+    
+    try {
+      parsedTallas = tallas ? JSON.parse(tallas) : [];
+    } catch (e) {
+      console.error('Error al parsear tallas:', e);
+      return res.status(400).json({ error: 'Formato de tallas inválido' });
+    }
+    
+    try {
+      parsedColores = colores ? JSON.parse(colores) : [];
+    } catch (e) {
+      console.error('Error al parsear colores:', e);
+      return res.status(400).json({ error: 'Formato de colores inválido' });
+    }
+
     const nuevoProducto = new Producto({
       nombre,
       descripcion,
-      precio,
+      precio: parseFloat(precio),
       marca,
       categoria,
-      tallas: tallas ? JSON.parse(tallas) : [],
-      colores: colores ? JSON.parse(colores) : [],
+      tallas: parsedTallas,
+      colores: parsedColores,
       encargo: encargo === 'true',
       destacado: destacado === 'true',
       destacado_zapatillas: destacado_zapatillas === 'true',
