@@ -17,7 +17,7 @@ export default function AdminDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { fetchDolarBlue } = useStore();
+  const { fetchDolarBlue, dolarBlue } = useStore();
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -64,19 +64,23 @@ export default function AdminDashboard() {
         // Cargar productos
         await fetchProducts();
         
-        // Verificar si necesitamos obtener el valor del dólar blue
-        const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
-        const now = Date.now();
-        if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
-          await fetchDolarBlue();
-        }
+        // Obtener el valor del dólar blue
+        await fetchDolarBlue();
+        
+        // Configurar un intervalo para actualizar el valor del dólar cada 5 minutos
+        const interval = setInterval(() => {
+          fetchDolarBlue();
+        }, 5 * 60 * 1000);
+        
+        return () => clearInterval(interval);
       } catch (error) {
         console.error("Error al inicializar datos:", error);
+        setError(error.message);
       }
     };
     
     initializeData();
-  }, []);
+  }, [fetchDolarBlue]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
