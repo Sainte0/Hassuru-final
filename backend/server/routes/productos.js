@@ -1,10 +1,22 @@
 const authMiddleware = require('../middlewares/authMiddleware');
 const express = require('express');
 const Producto = require('../models/Producto');
-const cloudinary = require('../../cloudinaryConfig');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const fs = require('fs');
+const path = require('path');
 const router = express.Router();
+
+// Configuración de multer para manejar la carga de archivos
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 router.get('/', async (req, res) => {
   try {
@@ -82,7 +94,6 @@ router.post('/', authMiddleware, async (req, res) => {
       marca,
       categoria,
       tallas,
-      image: '',
       encargo,
       destacado,
       destacado_zapatillas
@@ -101,12 +112,26 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     if (!req.file) {
       return res.status(400).json({ error: 'Se debe proporcionar una imagen.' });
     }
-    const uploadResult = await cloudinary.uploader.upload(req.file.path);
+
+    // Leer el archivo como Buffer
+    const imageBuffer = fs.readFileSync(req.file.path);
+    const contentType = req.file.mimetype;
+
+    // Actualizar el producto con la imagen como Buffer
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      { image: uploadResult.secure_url },
+      { 
+        image: {
+          data: imageBuffer,
+          contentType: contentType
+        }
+      },
       { new: true }
     );
+
+    // Eliminar el archivo temporal
+    fs.unlinkSync(req.file.path);
+
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
@@ -138,12 +163,26 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     if (!req.file) {
       return res.status(400).json({ error: 'Se requiere una imagen para actualizar.' });
     }
-    const uploadResult = await cloudinary.uploader.upload(req.file.path);
+
+    // Leer el archivo como Buffer
+    const imageBuffer = fs.readFileSync(req.file.path);
+    const contentType = req.file.mimetype;
+
+    // Actualizar el producto con la imagen como Buffer
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      { image: uploadResult.secure_url },
+      { 
+        image: {
+          data: imageBuffer,
+          contentType: contentType
+        }
+      },
       { new: true }
     );
+
+    // Eliminar el archivo temporal
+    fs.unlinkSync(req.file.path);
+
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }

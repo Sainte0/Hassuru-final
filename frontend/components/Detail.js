@@ -34,11 +34,29 @@ export default function Detail({ product }) {
     }
   };
 
+  // Función para obtener la URL de la imagen
+  const getImageUrl = () => {
+    // Si no hay imagen, devolver una imagen por defecto
+    if (!product.image) return "/placeholder.jpg";
+    
+    // Si la imagen es una URL de Cloudinary, usarla directamente
+    if (typeof product.image === 'string' && product.image.includes('cloudinary')) {
+      return product.image;
+    }
+    
+    // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
+    if (product._id) {
+      return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/images/${product._id}`;
+    }
+    
+    return "/placeholder.jpg";
+  };
+
   return (
     <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
       <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
         <Image
-          src={product.image}
+          src={getImageUrl()}
           alt={product.nombre}
           layout="responsive"
           width={500}

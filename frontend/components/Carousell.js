@@ -23,6 +23,24 @@ export default function Carousell({ title, products, dolarBlue }) {
     });
   };
 
+  // Función para obtener la URL de la imagen
+  const getImageUrl = (product) => {
+    // Si no hay imagen, devolver una imagen por defecto
+    if (!product.image) return "/placeholder.jpg";
+    
+    // Si la imagen es una URL de Cloudinary, usarla directamente
+    if (typeof product.image === 'string' && product.image.includes('cloudinary')) {
+      return product.image;
+    }
+    
+    // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
+    if (product._id) {
+      return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/images/${product._id}`;
+    }
+    
+    return "/placeholder.jpg";
+  };
+
   return (
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
@@ -56,7 +74,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                   <Image
                     width={300}
                     height={300}
-                    src={product.image}
+                    src={getImageUrl(product)}
                     alt={product.nombre}
                     className="object-cover w-full mb-3 h-80"
                   />
