@@ -49,10 +49,11 @@ export default function Card({ currentProducts }) {
                   <Image
                     src={getImageUrl(product)}
                     alt={product.nombre}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    width={300}
+                    height={300}
                     priority
-                    className="object-contain"
+                    unoptimized={true}
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="flex flex-col mt-2 space-y-1">

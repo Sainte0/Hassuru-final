@@ -55,11 +55,11 @@ export default function Detail({ product }) {
         <Image
           src={getImageUrl()}
           alt={product.nombre}
-          layout="responsive"
           width={500}
           height={500}
-          quality={90}
-          className="object-contain w-full h-auto max-h-[700px]"
+          priority
+          unoptimized={true}
+          className="object-contain w-full h-auto"
         />
       </div>
       <div className="flex flex-col w-full p-2 space-y-4 lg:w-1/2">
