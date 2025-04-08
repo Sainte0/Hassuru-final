@@ -175,7 +175,6 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
   }
 });
 
-
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const { image, ...updatedData } = req.body;
@@ -188,7 +187,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
 
 router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res) => {
   try {
