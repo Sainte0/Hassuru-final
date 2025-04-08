@@ -78,29 +78,39 @@ router.get('/categoria/:categoria', async (req, res) => {
   }
 });
 
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
-    const { nombre, descripcion, precio, marca, categoria, tallas, encargo, destacado, destacado_zapatillas } = req.body;
-    if (!nombre || !precio || !marca || !categoria || !tallas) {
-      return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    const { nombre, descripcion, precio, marca, categoria, tallas, colores, encargo, destacado, destacado_zapatillas } = req.body;
+    
+    let imageData = null;
+    if (req.file) {
+      imageData = {
+        data: fs.readFileSync(req.file.path),
+        contentType: req.file.mimetype
+      };
+      fs.unlinkSync(req.file.path);
     }
-    if (!Array.isArray(tallas) || !tallas.every(talla => talla.talla && talla.precioTalla)) {
-      return res.status(400).json({ error: 'El campo tallas debe ser un arreglo con objetos que incluyan talla y precioTalla' });
-    }    
+
     const nuevoProducto = new Producto({
       nombre,
       descripcion,
       precio,
       marca,
       categoria,
-      tallas,
-      encargo,
-      destacado,
-      destacado_zapatillas
+      tallas: tallas ? JSON.parse(tallas) : [],
+      colores: colores ? JSON.parse(colores) : [],
+      encargo: encargo === 'true',
+      destacado: destacado === 'true',
+      destacado_zapatillas: destacado_zapatillas === 'true',
+      image: imageData
     });
+
     const productoGuardado = await nuevoProducto.save();
     res.status(201).json(productoGuardado);
   } catch (error) {
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
+    }
     console.error('Error al crear el producto:', error);
     res.status(400).json({ error: error.message });
   }
@@ -164,18 +174,18 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
       return res.status(400).json({ error: 'Se requiere una imagen para actualizar.' });
     }
 
+    // Verificar que el producto existe
+    const productoExistente = await Producto.findById(id);
+    if (!productoExistente) {
+      fs.unlinkSync(req.file.path);
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
     const contentType = req.file.mimetype;
 
-    // Verificar que el producto existe antes de actualizar
-    const productoExistente = await Producto.findById(id);
-    if (!productoExistente) {
-      fs.unlinkSync(req.file.path); // Limpiar el archivo temporal
-      return res.status(404).json({ error: 'Producto no encontrado' });
-    }
-
-    // Actualizar el producto con la imagen como Buffer
+    // Actualizar el producto con la imagen
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
       { 
@@ -192,13 +202,8 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
 
     res.status(200).json(productoActualizado);
   } catch (error) {
-    // Asegurarse de limpiar el archivo temporal en caso de error
-    if (req.file && req.file.path) {
-      try {
-        fs.unlinkSync(req.file.path);
-      } catch (unlinkError) {
-        console.error('Error al eliminar archivo temporal:', unlinkError);
-      }
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
     }
     console.error('Error al actualizar la imagen del producto:', error);
     res.status(400).json({ error: error.message });
@@ -213,6 +218,22 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     }
     res.status(204).json();
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para obtener la imagen de un producto
+router.get('/:id/image', async (req, res) => {
+  try {
+    const producto = await Producto.findById(req.params.id);
+    if (!producto || !producto.image || !producto.image.data) {
+      return res.status(404).json({ error: 'Imagen no encontrada' });
+    }
+
+    res.set('Content-Type', producto.image.contentType);
+    res.send(producto.image.data);
+  } catch (error) {
+    console.error('Error al obtener la imagen:', error);
     res.status(500).json({ error: error.message });
   }
 });

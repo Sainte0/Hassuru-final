@@ -256,21 +256,35 @@ const ProductRow = ({
       });
 
       if (!response.ok) {
-        throw new Error('Error al actualizar la imagen');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al actualizar la imagen');
       }
 
       const updatedProduct = await response.json();
+      
+      // Actualizar el estado local
       setEditableProducts(prevProducts =>
         prevProducts.map(prod =>
           prod._id === producto._id ? updatedProduct : prod
         )
       );
 
+      // Actualizar la vista previa de la imagen
+      const imageUrl = `${URL1}/api/productos/${producto._id}/image`;
+      setNewImage(imageUrl);
+
       toast.success('Imagen actualizada con éxito');
     } catch (error) {
       console.error('Error:', error);
       toast.error(error.message);
     }
+  };
+
+  const getImageUrl = (product) => {
+    if (product.image && product.image.data) {
+      return `${URL1}/api/productos/${product._id}/image`;
+    }
+    return '/placeholder-image.jpg'; // Imagen por defecto
   };
 
   const handleDestacadoChange = (e) => {
@@ -525,25 +539,28 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-4 py-2 border">
-        {(producto.image || newImage) && (
+        <div className="relative w-16 h-16">
           <Image
-            width={300}
-            height={300}
-            src={newImage ? URL.createObjectURL(newImage) : producto?.image}
+            src={getImageUrl(producto)}
             alt={producto.nombre}
-            className="object-cover w-16 h-16"
+            width={64}
+            height={64}
+            className="object-cover w-full h-full"
           />
-        )}
-        {selectedProduct === producto._id && (
-          <div>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="w-full p-1 mt-2 border"
-            />
-          </div>
-        )}
+          {selectedProduct === producto._id && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
+              <label className="cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+                <span className="text-white text-sm">Cambiar imagen</span>
+              </label>
+            </div>
+          )}
+        </div>
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
