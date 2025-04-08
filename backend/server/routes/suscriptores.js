@@ -11,7 +11,7 @@ router.post("/", (req, res) => {
   const filePath = path.join(__dirname, "suscriptores.json");
   fs.readFile(filePath, "utf-8", (err, data) => {
     if (err) {
-      console.error("Error al leer el archivo sd:", err);
+      console.error("Error al leer el archivo:", err);
       return res.status(500).json({ mensaje: "Error al leer el archivo" });
     }
     let suscriptores = [];
