@@ -18,38 +18,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.get('/', async (req, res) => {
+// Rutas específicas primero
+router.get('/buscar/:termino', async (req, res) => {
   try {
-    const productos = await Producto.find();
-    res.status(200).json(productos);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const producto = await Producto.findById(req.params.id);
-    if (!producto) {
-      return res.status(404).json({ error: 'Producto no encontrado' });
-    }
-    res.status(200).json(producto);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/nombre/:nombre', async (req, res) => {
-  try {
-    const { nombre } = req.params;
+    const { termino } = req.params;
     const limit = parseInt(req.query.limit) || 10;
     const page = parseInt(req.query.page) || 1;
     
-    if (!nombre || nombre.trim() === '') {
+    if (!termino || termino.trim() === '') {
       return res.status(400).json({ error: 'Debes proporcionar un término para buscar.' });
     }
 
-    const searchRegex = new RegExp(nombre, 'i');
+    const searchRegex = new RegExp(termino, 'i');
     const productosFiltrados = await Producto.find({
       $or: [
         { nombre: { $regex: searchRegex } },
@@ -81,6 +61,28 @@ router.get('/categoria/:categoria', async (req, res) => {
     }
   } catch (error) {
     console.error('Error en la ruta /categoria:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Rutas generales después
+router.get('/', async (req, res) => {
+  try {
+    const productos = await Producto.find();
+    res.status(200).json(productos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const producto = await Producto.findById(req.params.id);
+    if (!producto) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+    res.status(200).json(producto);
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });

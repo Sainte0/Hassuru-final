@@ -11,7 +11,7 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const fetchProducts = async (searchQuery) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/nombre/${searchQuery}?limit=10`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/buscar/${searchQuery}?limit=10`);
       const data = await res.json();
       if (res.ok) {
         setFilteredProducts(data);
