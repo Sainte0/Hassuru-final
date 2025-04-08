@@ -5,6 +5,7 @@ import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import Sidebar from "../../components/Sidebar";
 import { BounceLoader } from 'react-spinners';
+import useStore from "../../store/store";
 
 const URL = process.env.NEXT_PUBLIC_URL;
 
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { fetchDolarBlue } = useStore();
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -57,7 +59,23 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchProducts();
+    const initializeData = async () => {
+      try {
+        // Cargar productos
+        await fetchProducts();
+        
+        // Verificar si necesitamos obtener el valor del dólar blue
+        const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
+        const now = Date.now();
+        if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
+          await fetchDolarBlue();
+        }
+      } catch (error) {
+        console.error("Error al inicializar datos:", error);
+      }
+    };
+    
+    initializeData();
   }, []);
 
   const handleLogout = () => {

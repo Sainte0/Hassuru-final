@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ProductRow from "./ProductRow";
 import { MdFilterAltOff } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
@@ -9,12 +9,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
-  const { dolarBlue, fetchDolarBlue } = useStore();
+  const { dolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);

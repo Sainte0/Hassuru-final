@@ -23,17 +23,13 @@ const ProductRow = ({
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
   const [newColor, setNewColor] = useState("");
-  const { dolarBlue, fetchDolarBlue, productAdded } = useStore();
+  const { dolarBlue, productAdded } = useStore();
   const [newImage, setNewImage] = useState(null);
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [sizePrices, setSizePrices] = useState({});
   const { checkAuth } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
 
   useEffect(() => {
     if (productAdded) {

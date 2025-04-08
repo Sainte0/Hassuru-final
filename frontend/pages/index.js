@@ -10,11 +10,29 @@ export default function Home() {
   const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
 
   useEffect(() => {
-    fetchProducts();
-    fetchDolarBlue();
-    if (!tiktokLinks.length) {
-      fetchTikTokLinks();
-    }
+    // Función para inicializar los datos
+    const initializeData = async () => {
+      try {
+        // Obtener productos
+        await fetchProducts();
+        
+        // Obtener valor del dólar blue (solo si no está en caché)
+        const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
+        const now = Date.now();
+        if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
+          await fetchDolarBlue();
+        }
+        
+        // Obtener enlaces de TikTok (solo si no hay datos)
+        if (!tiktokLinks.length) {
+          await fetchTikTokLinks();
+        }
+      } catch (error) {
+        console.error("Error al inicializar datos:", error);
+      }
+    };
+    
+    initializeData();
   }, []);
 
   if (loading) return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;

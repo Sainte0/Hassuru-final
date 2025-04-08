@@ -1,14 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import useStore from "../store/store";
 import Image from "next/image";
 
 export default function Card({ currentProducts }) {
-  const { dolarBlue, fetchDolarBlue } = useStore();
-
-  useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
+  const { dolarBlue } = useStore();
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;

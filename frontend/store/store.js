@@ -120,19 +120,52 @@ const useStore = create((set) => ({
   },
 
   fetchDolarBlue: async () => {
-    set({ loading: true });
-    try {
-      const response = await fetch('https://dolarapi.com/v1/dolares/blue');
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
-      }
-      const data = await response.json();
-      set({ dolarBlue: data.venta });
-    } catch (error) {
-      set({ error: error.message });
-    } finally {
-      set({ loading: false });
+    // Si ya tenemos un valor para dolarBlue y la última actualización fue hace menos de 5 minutos, no hacer la solicitud
+    const now = Date.now();
+    const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
+    const cachedValue = localStorage.getItem('dolarBlueValue');
+    
+    if (lastUpdate && cachedValue && now - parseInt(lastUpdate) < 5 * 60 * 1000) {
+      set({ dolarBlue: parseFloat(cachedValue) });
+      return;
     }
+    
+    set({ loading: true });
+    
+    // Implementar un mecanismo de reintento
+    const maxRetries = 3;
+    let retryCount = 0;
+    
+    while (retryCount < maxRetries) {
+      try {
+        const response = await fetch('https://dolarapi.com/v1/dolares/blue');
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        const data = await response.json();
+        
+        // Guardar en caché
+        localStorage.setItem('dolarBlueValue', data.venta.toString());
+        localStorage.setItem('dolarBlueLastUpdate', now.toString());
+        
+        set({ dolarBlue: data.venta });
+        break;
+      } catch (error) {
+        retryCount++;
+        if (retryCount === maxRetries) {
+          set({ error: error.message });
+          // Si tenemos un valor en caché, usarlo como fallback
+          if (cachedValue) {
+            set({ dolarBlue: parseFloat(cachedValue) });
+          }
+        } else {
+          // Esperar antes de reintentar (backoff exponencial)
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+        }
+      }
+    }
+    
+    set({ loading: false });
   },
 
   setFilteredProducts: (filtered) => set({ filteredProducts: filtered }),

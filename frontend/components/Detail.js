@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import useStore from "../store/store";
 import Image from "next/image";
 
@@ -6,11 +6,7 @@ export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [customTalla, setCustomTalla] = useState("");
-  const { dolarBlue, fetchDolarBlue } = useStore();
-
-  useEffect(() => {
-    fetchDolarBlue();
-  }, [fetchDolarBlue]);
+  const { dolarBlue } = useStore();
 
   const handleCompraClick = () => {
     if (selectedTalla || customTalla) {
