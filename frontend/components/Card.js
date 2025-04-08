@@ -34,7 +34,7 @@ export default function Card({ currentProducts }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001"}/api/images/${product._id}`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
     }
     
     return "/placeholder.jpg";

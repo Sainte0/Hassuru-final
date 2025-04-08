@@ -253,7 +253,15 @@ router.get('/:id/image', async (req, res) => {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
 
+    // Establecer el tipo de contenido correcto
     res.set('Content-Type', producto.image.contentType);
+    
+    // Establecer cabeceras para evitar el almacenamiento en caché
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    
+    // Enviar la imagen como respuesta
     res.send(producto.image.data);
   } catch (error) {
     console.error('Error al obtener la imagen:', error);
