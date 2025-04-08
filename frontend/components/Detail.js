@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useStore from "../store/store";
 import Image from "next/image";
 
@@ -6,7 +6,18 @@ export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [customTalla, setCustomTalla] = useState("");
-  const { dolarBlue } = useStore();
+  const { dolarBlue, fetchDolarBlue } = useStore();
+
+  useEffect(() => {
+    fetchDolarBlue();
+    
+    // Actualizar el valor cada 5 minutos
+    const interval = setInterval(() => {
+      fetchDolarBlue();
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [fetchDolarBlue]);
 
   const handleCompraClick = () => {
     if (selectedTalla || customTalla) {
