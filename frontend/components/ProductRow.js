@@ -5,6 +5,8 @@ import { toast } from "react-hot-toast";
 import useStore from "../store/store";
 import Image from "next/image";
 import SizeSelectionModal from './SizeSelectionModal';
+import { useAuth } from "../hooks/useAuth";
+import { useRouter } from "next/router";
 
 const URL1 = process.env.NEXT_PUBLIC_URL;
 
@@ -26,6 +28,8 @@ const ProductRow = ({
   const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [sizePrices, setSizePrices] = useState({});
+  const { checkAuth } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     fetchDolarBlue();
@@ -183,24 +187,32 @@ const ProductRow = ({
       toast.error("Error al actualizar el producto");
     }
   };
-  const handleProductDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro que quieres eliminar este producto?"
-    );
-    if (confirmDelete) {
-      const response = await fetch(`${URL1}/api/productos/${id}`, {
-        method: "DELETE",
+  const handleProductDelete = async () => {
+    if (!await checkAuth()) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
+        method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      if (response.ok) {
-        toast.success("Producto eliminado con éxito");
-        fetchProducts();
-      } else {
-        toast.error("Error al eliminar el producto");
-        console.error("Error al eliminar el producto");
+
+      if (response.status === 401) {
+        throw new Error('Sesión expirada. Por favor, inicie sesión nuevamente.');
       }
+
+      if (!response.ok) {
+        throw new Error('Error al eliminar el producto');
+      }
+
+      toast.success("Producto eliminado con éxito");
+      fetchProducts();
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error.message);
     }
   };
   
@@ -566,7 +578,7 @@ const ProductRow = ({
           </div>
         )}
         <button
-          onClick={() => handleProductDelete(producto._id)}
+          onClick={handleProductDelete}
           className="px-2 py-1 text-white bg-red-500 rounded"
         >
           Eliminar

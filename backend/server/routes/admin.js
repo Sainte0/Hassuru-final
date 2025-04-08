@@ -40,4 +40,8 @@ router.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/verify', authMiddleware, (req, res) => {
+  res.status(200).json({ message: 'Token válido' });
+});
+
 module.exports = router;
