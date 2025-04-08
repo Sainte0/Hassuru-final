@@ -260,18 +260,32 @@ const ProductRow = ({
         throw new Error(errorData.error || 'Error al actualizar la imagen');
       }
 
-      const updatedProduct = await response.json();
+      // Forzar una recarga del producto para obtener la imagen actualizada
+      const productResponse = await fetch(`${URL1}/api/productos/${producto._id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (!productResponse.ok) {
+        throw new Error('Error al obtener el producto actualizado');
+      }
+
+      const updatedProduct = await productResponse.json();
       
-      // Actualizar el estado local
+      // Actualizar el estado local con el producto actualizado
       setEditableProducts(prevProducts =>
         prevProducts.map(prod =>
           prod._id === producto._id ? updatedProduct : prod
         )
       );
 
-      // Actualizar la vista previa de la imagen
-      const imageUrl = `${URL1}/api/productos/${producto._id}/image`;
-      setNewImage(imageUrl);
+      // Forzar una actualización de la imagen en la interfaz
+      const timestamp = new Date().getTime();
+      setNewImage(`${URL1}/api/productos/${producto._id}/image?t=${timestamp}`);
+
+      // Actualizar la lista de productos
+      fetchProducts();
 
       toast.success('Imagen actualizada con éxito');
     } catch (error) {
@@ -292,7 +306,9 @@ const ProductRow = ({
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
       const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://web-production-73e61.up.railway.app';
-      return `${baseUrl}/api/productos/${product._id}/image`;
+      // Agregar timestamp para evitar el caché
+      const timestamp = new Date().getTime();
+      return `${baseUrl}/api/productos/${product._id}/image?t=${timestamp}`;
     }
     
     return '/placeholder-image.jpg';
