@@ -193,8 +193,10 @@ router.put('/:id', authMiddleware, async (req, res) => {
 router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Verificar que se ha subido un archivo
     if (!req.file) {
-      return res.status(400).json({ error: 'Se requiere una imagen para actualizar.' });
+      return res.status(400).json({ error: 'No se ha proporcionado ninguna imagen' });
     }
 
     // Verificar que el producto existe
@@ -218,18 +220,26 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
         }
       },
       { new: true }
-    ).select('-image.data'); // No enviar el buffer en la respuesta
+    });
 
     // Eliminar el archivo temporal
     fs.unlinkSync(req.file.path);
 
-    res.status(200).json(productoActualizado);
+    // Devolver el producto actualizado sin los datos de la imagen para reducir el tamaño de la respuesta
+    const productoRespuesta = {
+      ...productoActualizado.toObject(),
+      image: {
+        contentType: productoActualizado.image.contentType
+      }
+    };
+
+    res.status(200).json(productoRespuesta);
   } catch (error) {
     if (req.file) {
       fs.unlinkSync(req.file.path);
     }
     console.error('Error al actualizar la imagen del producto:', error);
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
