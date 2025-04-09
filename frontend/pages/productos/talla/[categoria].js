@@ -149,36 +149,54 @@ export default function TallaSelector() {
   return (
     <div className="container py-10 mx-auto">
       <div className="max-w-2xl mx-auto text-center">
-        <h1 className="mb-6 text-3xl font-bold">{getTitle()}</h1>
+        <h1 className="mb-8 text-3xl font-bold text-gray-800">{getTitle()}</h1>
         
         {error && <p className="mb-4 text-red-500">{error}</p>}
         
-        <div className="grid grid-cols-3 gap-4 mb-8 sm:grid-cols-4 md:grid-cols-5">
-          {availableTallas.map((talla) => (
-            <button
-              key={talla}
-              onClick={() => handleTallaSelect(talla)}
-              className={`p-4 text-lg font-medium border rounded-lg ${
-                selectedTalla === talla
-                  ? "bg-red-500 text-white border-red-600"
-                  : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              {talla}
-            </button>
-          ))}
+        <div className="grid grid-cols-3 gap-4 mb-8 sm:grid-cols-4 md:grid-cols-5 justify-items-center">
+          {availableTallas.map((talla) => {
+            // Formatear la talla para mostrar con emojis de banderas
+            let formattedTalla = talla;
+            if (categoria === "zapatillas" && talla.includes("|")) {
+              const parts = talla.split("|");
+              if (parts.length === 2) {
+                const usPart = parts[0].trim();
+                const arPart = parts[1].trim();
+                formattedTalla = (
+                  <span className="flex flex-col items-center">
+                    <span className="text-xl font-bold">{usPart}</span>
+                    <span className="text-sm">🇺🇸 | {arPart} 🇦🇷</span>
+                  </span>
+                );
+              }
+            }
+            
+            return (
+              <button
+                key={talla}
+                onClick={() => handleTallaSelect(talla)}
+                className={`p-4 text-lg font-medium border rounded-full w-full flex items-center justify-center transition-all duration-200 ${
+                  selectedTalla === talla
+                    ? "bg-red-500 text-white border-red-600 shadow-md transform scale-105"
+                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
+                }`}
+              >
+                {formattedTalla}
+              </button>
+            );
+          })}
         </div>
         
         <div className="flex justify-center space-x-4">
           <Link 
             href={`/productos/categoria/${categoria}`}
-            className="px-6 py-3 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+            className="px-6 py-3 text-white bg-gray-500 rounded-full hover:bg-gray-600 transition-colors duration-200"
           >
             Saltar
           </Link>
           <button
             onClick={handleContinue}
-            className="px-6 py-3 text-white bg-red-500 rounded-lg hover:bg-red-600"
+            className="px-6 py-3 text-white bg-red-500 rounded-full hover:bg-red-600 transition-colors duration-200"
           >
             Continuar
           </button>
