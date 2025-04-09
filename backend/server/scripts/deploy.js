@@ -43,7 +43,7 @@ async function runMigration() {
     
     // Close MongoDB connection
     await mongoose.connection.close();
-    console.log('MongoDB connection closed');
+    console.log('MongoDB connection closed ');
     
     // Start the server
     console.log('Starting server...');
