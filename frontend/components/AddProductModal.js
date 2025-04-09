@@ -131,19 +131,19 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       // Use the store's addProduct function which handles both the API call and store update
       await addProduct(productoAEnviar, imageFile);
       
-      // Close the modal
-      onClose();
-      
       // Show success message
       toast.dismiss(loadingToast);
       toast.success("Producto agregado exitosamente!");
       
-      // Refresh the product list if fetchProducts is provided
+      // Close the modal first
+      onClose();
+      
+      // Then refresh the product list if fetchProducts is provided
       if (typeof fetchProducts === 'function') {
-        // Esperar un momento para asegurar que el producto se haya guardado
+        // Esperar un momento para asegurar que el modal se haya cerrado
         setTimeout(() => {
           fetchProducts();
-        }, 500);
+        }, 100);
       }
     } catch (error) {
       console.error("Error al agregar el producto:", error);

@@ -41,13 +41,27 @@ export default function AdminDashboard() {
       setError(null);
       
       try {
+        // Verificar autenticación antes de hacer la petición
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No hay token de autenticación");
+        }
+        
         console.log('Fetching products from:', `${URL}/api/productos`);
         const response = await fetch(`${URL}/api/productos`, {
           headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            "Authorization": `Bearer ${token}`,
           },
         });
         console.log('Response status:', response.status);
+        
+        // Si el token expiró, redirigir al login
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          router.push("/login");
+          return;
+        }
+        
         if (!response.ok) throw new Error("Error al cargar los productos");
         const data = await response.json();
         console.log('Fetched products:', data);
@@ -60,12 +74,18 @@ export default function AdminDashboard() {
       } catch (err) {
         console.error('Error fetching products:', err);
         setError(err.message);
+        
+        // Si el error es de autenticación, redirigir al login
+        if (err.message.includes('token') || err.message.includes('autenticación')) {
+          localStorage.removeItem("token");
+          router.push("/login");
+        }
       } finally {
         setLoading(false);
         isFetchingRef.current = false;
       }
-    }, 300); // 300ms debounce
-  }, []);
+    }, 100); // Reducir el debounce a 100ms para una respuesta más rápida
+  }, [router]);
 
   const fetchProductsFiltered = async (categoria) => {
     setLoading(true);
