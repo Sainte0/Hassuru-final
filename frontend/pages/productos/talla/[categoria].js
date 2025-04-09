@@ -167,15 +167,14 @@ export default function TallaSelector() {
                 const usPart = parts[0].trim().split(" ")[0]; // Solo tomar el número
                 const arPart = parts[1].trim().split(" ")[0]; // Solo tomar el número
                 formattedTalla = (
-                  <div className="flex items-center gap-1 w-full justify-center">
-                    <div className="flex items-center">
+                  <div className="flex flex-col items-center w-full gap-2 py-2">
+                    <div className="flex items-center gap-1">
                       <span className="text-lg font-bold">{usPart}</span>
-                      <Image src={US_FLAG} alt="US" width={16} height={12} className="ml-1" />
+                      <Image src={US_FLAG} alt="US" width={16} height={12} className="inline-block" />
                     </div>
-                    <span className="mx-1">|</span>
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       <span className="text-lg font-bold">{arPart}</span>
-                      <Image src={AR_FLAG} alt="AR" width={16} height={12} className="ml-1" />
+                      <Image src={AR_FLAG} alt="AR" width={16} height={12} className="inline-block" />
                     </div>
                   </div>
                 );
@@ -186,7 +185,7 @@ export default function TallaSelector() {
               <button
                 key={talla}
                 onClick={() => handleTallaSelect(talla)}
-                className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[60px] flex items-center justify-center transition-all duration-200 overflow-hidden ${
+                className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[80px] flex items-center justify-center transition-all duration-200 ${
                   selectedTalla === talla
                     ? "bg-red-500 text-white border-red-600 shadow-md transform scale-105"
                     : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
