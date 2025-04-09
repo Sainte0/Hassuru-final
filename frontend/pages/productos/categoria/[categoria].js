@@ -63,19 +63,50 @@ export default function Categoria() {
       fetchProductsByCategory();
       // Set current page from URL or default to 1
       setCurrentPage(router.query.page ? parseInt(router.query.page) : 1);
-
-      // Asegurarse de que los filtros se apliquen inmediatamente después de cargar los productos
-      if (products.length > 0) {
-        const orderedProducts = orderProducts(products);
-        setFilteredProducts(orderedProducts);
-      }
     }
-  }, [categoria, router.query]);
+  }, [categoria]);
 
-  // Efecto adicional para manejar cambios en los parámetros de la URL
+  // Efecto para manejar cambios en los parámetros de la URL
   useEffect(() => {
     if (products.length > 0 && router.isReady) {
-      const orderedProducts = orderProducts(products);
+      // Aplicar filtros basados en los parámetros de la URL
+      let filtered = [...products];
+      
+      // Filtrar por talla de ropa
+      if (router.query.tallaRopa) {
+        const tallaRopa = decodeURIComponent(router.query.tallaRopa);
+        filtered = filtered.filter((product) => {
+          if (product.categoria !== "ropa" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+            return false;
+          }
+          return product.tallas.some((tallaObj) => tallaObj.talla === tallaRopa);
+        });
+      }
+      
+      // Filtrar por talla de zapatilla
+      if (router.query.tallaZapatilla) {
+        const tallaZapatilla = decodeURIComponent(router.query.tallaZapatilla);
+        filtered = filtered.filter((product) => {
+          if (product.categoria !== "zapatillas" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+            return false;
+          }
+          return product.tallas.some((tallaObj) => tallaObj.talla === tallaZapatilla);
+        });
+      }
+      
+      // Filtrar por accesorio
+      if (router.query.accesorio) {
+        const accesorio = decodeURIComponent(router.query.accesorio);
+        filtered = filtered.filter((product) => {
+          if (product.categoria !== "accesorios" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+            return false;
+          }
+          return product.tallas.some((tallaObj) => tallaObj.talla === accesorio);
+        });
+      }
+      
+      // Ordenar los productos filtrados
+      const orderedProducts = orderProducts(filtered);
       setFilteredProducts(orderedProducts);
     }
   }, [router.query, products, orderProducts]);

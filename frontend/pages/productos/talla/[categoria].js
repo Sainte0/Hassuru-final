@@ -79,20 +79,20 @@ export default function TallaSelector() {
     }
 
     // Redirigir a la categoría con el filtro de talla aplicado
-    const queryParams = {};
-    
+    let paramName = "";
     if (categoria === "ropa") {
-      queryParams.tallaRopa = encodeURIComponent(selectedTalla);
+      paramName = "tallaRopa";
     } else if (categoria === "zapatillas") {
-      queryParams.tallaZapatilla = encodeURIComponent(selectedTalla);
+      paramName = "tallaZapatilla";
     } else if (categoria === "accesorios") {
-      queryParams.accesorio = encodeURIComponent(selectedTalla);
+      paramName = "accesorio";
     }
     
-    router.push({
-      pathname: `/productos/categoria/${categoria}`,
-      query: queryParams
-    });
+    // Construir la URL directamente
+    const url = `/productos/categoria/${categoria}?${paramName}=${encodeURIComponent(selectedTalla)}`;
+    
+    // Usar router.push con la URL completa
+    router.push(url);
   };
 
   const getTitle = () => {

@@ -21,7 +21,7 @@ export default function Filter({ products, setFilteredProducts }) {
 
   // Initialize filters from URL parameters
   useEffect(() => {
-    if (router.isReady && products.length > 0) {
+    if (router.isReady) {
       const { tallaRopa, tallaZapatilla, accesorio, precioMin, precioMax, stock, disponibilidad, marca, q } = router.query;
       
       // Decodificar los parámetros de la URL
@@ -34,79 +34,8 @@ export default function Filter({ products, setFilteredProducts }) {
       if (disponibilidad) setSelectedDisponibilidad(decodeURIComponent(disponibilidad));
       if (marca) setSelectedMarca(decodeURIComponent(marca));
       if (q) setQuery(decodeURIComponent(q));
-
-      // Aplicar los filtros inmediatamente
-      let filtered = [...products];
-
-      if (tallaRopa) {
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "ropa" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === decodeURIComponent(tallaRopa));
-        });
-      }
-
-      if (tallaZapatilla) {
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "zapatillas" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === decodeURIComponent(tallaZapatilla));
-        });
-      }
-
-      if (accesorio) {
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "accesorios" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === decodeURIComponent(accesorio));
-        });
-      }
-
-      if (marca) {
-        filtered = filtered.filter((product) => product.marca === decodeURIComponent(marca));
-      }
-
-      if (precioMin || precioMax) {
-        filtered = filtered.filter((product) => {
-          const precio = product.precio;
-          if (precioMin && precioMax) {
-            return precio >= parseInt(decodeURIComponent(precioMin)) && precio <= parseInt(decodeURIComponent(precioMax));
-          } else if (precioMin) {
-            return precio >= parseInt(decodeURIComponent(precioMin));
-          } else if (precioMax) {
-            return precio <= parseInt(decodeURIComponent(precioMax));
-          }
-          return true;
-        });
-      }
-
-      if (stock === 'true') {
-        filtered = filtered.filter((product) =>
-          product.tallas.some((talla) => talla.precioTalla > 0)
-        );
-      }
-
-      if (disponibilidad) {
-        filtered = filtered.filter((product) => {
-          if (decodeURIComponent(disponibilidad) === "Solo productos en stock") {
-            return product.tallas.some((talla) => talla.precioTalla > 0);
-          }
-          return getDisponibilidad(product) === decodeURIComponent(disponibilidad);
-        });
-      }
-
-      if (q) {
-        filtered = filtered.filter((product) =>
-          product.nombre.toLowerCase().includes(decodeURIComponent(q).toLowerCase())
-        );
-      }
-
-      setFilteredProducts(filtered);
     }
-  }, [router.isReady, router.query, products]);
+  }, [router.isReady, router.query]);
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
