@@ -165,10 +165,8 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       // Get the new product data
       const nuevoProducto = await response.json();
       
-      // Update the store with the new product
-      set((state) => ({
-        products: [...state.products, nuevoProducto],
-      }));
+      // Update the store with the new product using addProduct
+      addProduct(nuevoProducto);
       
       // Close the modal
       onClose();
