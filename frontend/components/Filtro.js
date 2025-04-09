@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { sortProductsByAvailability } from '../utils/sortProducts';
 
 export default function Filter({ products, setFilteredProducts }) {
+  const router = useRouter();
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
   const [selectedTallaZapatilla, setSelectedTallaZapatilla] = useState("");
   const [selectedAccesorio, setSelectedAccesorio] = useState("");
@@ -16,6 +19,23 @@ export default function Filter({ products, setFilteredProducts }) {
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
 
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    if (router.isReady) {
+      const { tallaRopa, tallaZapatilla, accesorio, precioMin, precioMax, stock, disponibilidad, marca, q } = router.query;
+      
+      if (tallaRopa) setSelectedTallaRopa(tallaRopa);
+      if (tallaZapatilla) setSelectedTallaZapatilla(tallaZapatilla);
+      if (accesorio) setSelectedAccesorio(accesorio);
+      if (precioMin) setPrecioMin(precioMin);
+      if (precioMax) setPrecioMax(precioMax);
+      if (stock === 'true') setStockOnly(true);
+      if (disponibilidad) setSelectedDisponibilidad(disponibilidad);
+      if (marca) setSelectedMarca(marca);
+      if (q) setQuery(q);
+    }
+  }, [router.isReady, router.query]);
+
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
     if (isMobile) {
@@ -29,6 +49,50 @@ export default function Filter({ products, setFilteredProducts }) {
     setMarcas(Array.from(marcasSet));
   }, [products]);
 
+  // Update URL when filters change
+  useEffect(() => {
+    if (router.isReady) {
+      const queryParams = {};
+      
+      if (selectedTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
+      if (selectedTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
+      if (selectedAccesorio) queryParams.accesorio = selectedAccesorio;
+      if (precioMin) queryParams.precioMin = precioMin;
+      if (precioMax) queryParams.precioMax = precioMax;
+      if (stockOnly) queryParams.stock = 'true';
+      if (selectedDisponibilidad) queryParams.disponibilidad = selectedDisponibilidad;
+      if (selectedMarca) queryParams.marca = selectedMarca;
+      if (query) queryParams.q = query;
+      
+      // Preserve the category parameter if it exists
+      if (router.query.categoria) {
+        queryParams.categoria = router.query.categoria;
+      }
+      
+      // Update URL without triggering a page reload
+      router.push(
+        {
+          pathname: router.pathname,
+          query: queryParams,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [
+    selectedTallaRopa,
+    selectedTallaZapatilla,
+    selectedAccesorio,
+    precioMin,
+    precioMax,
+    stockOnly,
+    selectedDisponibilidad,
+    selectedMarca,
+    query,
+    router.isReady,
+    router.pathname,
+    router.query.categoria
+  ]);
 
   useEffect(() => {
     let filtered = products;

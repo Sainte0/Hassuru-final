@@ -80,9 +80,26 @@ export default function Categoria() {
   useEffect(() => {
     if (categoria) {
       fetchProductsByCategory();
-      setCurrentPage(1);
+      // Set current page from URL or default to 1
+      setCurrentPage(router.query.page ? parseInt(router.query.page) : 1);
     }
   }, [categoria]);
+
+  // Handle page changes by updating URL
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    
+    // Update URL with page parameter while preserving other query parameters
+    const queryParams = { ...router.query, page };
+    router.push(
+      {
+        pathname: router.pathname,
+        query: queryParams,
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -97,6 +114,10 @@ export default function Categoria() {
           setFilteredProducts={(newProducts) => {
             const orderedProducts = orderProducts(newProducts);
             setFilteredProducts(orderedProducts);
+            // Reset to page 1 when filters change
+            if (currentPage !== 1) {
+              handlePageChange(1);
+            }
           }}
         />
       </aside>
@@ -113,7 +134,7 @@ export default function Categoria() {
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={handlePageChange}
         />
       </section>
     </div>
