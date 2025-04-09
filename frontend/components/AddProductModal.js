@@ -131,13 +131,9 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       // Close the modal after successful product creation
       onClose();
       
-      // Manually trigger a product list update
-      // This is a one-time update after adding a product
+      // Refresh the admin page after a short delay
       setTimeout(() => {
-        // Use the fetchProducts function passed from the parent component
-        if (typeof fetchProducts === 'function') {
-          fetchProducts();
-        }
+        window.location.reload();
       }, 500);
     } catch (error) {
       console.error("Error al agregar el producto:", error);

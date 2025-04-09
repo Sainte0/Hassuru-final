@@ -25,8 +25,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
 
   const handleModalClose = () => {
     setModalOpen(false);
-    // Fetch products only once when the modal is closed
-    fetchProducts();
+    // No need to fetch products here as the page will be reloaded
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
