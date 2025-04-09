@@ -5,7 +5,9 @@
   "main": "server/dbconfig.js",
   "scripts": {
     "start": "node server/dbconfig.js",
-    "dev": "nodemon server/dbconfig.js"
+    "dev": "nodemon server/dbconfig.js",
+    "deploy": "node server/scripts/deploy.js",
+    "migrate": "node server/scripts/generateSlugs.js"
   },
   "dependencies": {
     "backend": "file:",
