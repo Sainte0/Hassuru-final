@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { BounceLoader } from 'react-spinners';
 
+// Importar las imágenes de las banderas
+const US_FLAG = "https://flagcdn.com/w20/us.png";
+const AR_FLAG = "https://flagcdn.com/w20/ar.png";
+
 export default function TallaSelector() {
   const router = useRouter();
   const { categoria } = router.query;
@@ -155,7 +159,7 @@ export default function TallaSelector() {
         
         <div className="grid grid-cols-3 gap-4 mb-8 sm:grid-cols-4 md:grid-cols-5 justify-items-center">
           {availableTallas.map((talla) => {
-            // Formatear la talla para mostrar con emojis de banderas
+            // Formatear la talla para mostrar con imágenes de banderas
             let formattedTalla = talla;
             if (categoria === "zapatillas" && talla.includes("|")) {
               const parts = talla.split("|");
@@ -163,15 +167,12 @@ export default function TallaSelector() {
                 const usPart = parts[0].trim().split(" ")[0]; // Solo tomar el número
                 const arPart = parts[1].trim().split(" ")[0]; // Solo tomar el número
                 formattedTalla = (
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg font-bold">{usPart}</span>
-                      <span className="text-sm">🇺🇸</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg font-bold">{arPart}</span>
-                      <span className="text-sm">🇦🇷</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-bold">{usPart}</span>
+                    <Image src={US_FLAG} alt="US" width={20} height={15} className="inline-block" />
+                    <span className="text-lg mx-1">|</span>
+                    <span className="text-lg font-bold">{arPart}</span>
+                    <Image src={AR_FLAG} alt="AR" width={20} height={15} className="inline-block" />
                   </div>
                 );
               }
