@@ -125,18 +125,60 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     const imageFile = product.image;
   
     try {
-      const nuevoProducto = await addProduct(productoAEnviar, imageFile);
-      toast.success("Producto agregado exitosamente!");
+      // Show loading toast
+      toast.loading("Agregando producto...");
       
-      // Close the modal after successful product creation
+      // Create FormData for the request
+      const formData = new FormData();
+      
+      // Add product data to FormData
+      Object.keys(productoAEnviar).forEach(key => {
+        if (key === 'tallas' || key === 'colores') {
+          formData.append(key, JSON.stringify(productoAEnviar[key]));
+        } else if (key === 'encargo' || key === 'destacado' || key === 'destacado_zapatillas') {
+          formData.append(key, productoAEnviar[key].toString());
+        } else {
+          formData.append(key, productoAEnviar[key]);
+        }
+      });
+      
+      // Add image if provided
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+      
+      // Send request to server
+      const URL = process.env.NEXT_PUBLIC_URL || 'https://web-production-73e61.up.railway.app';
+      const response = await fetch(`${URL}/api/productos`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al agregar el producto');
+      }
+      
+      // Get the new product data
+      const nuevoProducto = await response.json();
+      
+      // Update the store with the new product
+      set((state) => ({
+        products: [...state.products, nuevoProducto],
+      }));
+      
+      // Close the modal
       onClose();
       
-      // Refresh the admin page after a short delay
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
+      // Show success message
+      toast.dismiss();
+      toast.success("Producto agregado exitosamente!");
     } catch (error) {
       console.error("Error al agregar el producto:", error);
+      toast.dismiss();
       toast.error(error.message || "Error al agregar el producto.");
     }
   };
