@@ -38,14 +38,23 @@ export const useAuth = () => {
         },
       });
 
+      if (response.status === 401) {
+        // Token expirado o inválido
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+        router.push("/login");
+        return false;
+      }
+
       if (!response.ok) {
-        throw new Error("Token inválido o expirado");
+        throw new Error("Error al verificar la autenticación");
       }
 
       setIsAuthenticated(true);
       lastCheckTime.current = now;
       return true;
     } catch (error) {
+      console.error("Error en la verificación de autenticación:", error);
       localStorage.removeItem("token");
       setIsAuthenticated(false);
       router.push("/login");
@@ -56,11 +65,20 @@ export const useAuth = () => {
   };
 
   useEffect(() => {
-    // Solo verificar en la carga inicial o cuando cambia la ruta
+    // Verificar autenticación en la carga inicial y cuando cambia la ruta
     if (router.isReady) {
-      checkAuth();
+      checkAuth(true); // Forzar verificación en la carga inicial
     }
   }, [router.isReady]);
+
+  // Verificar autenticación cada 5 minutos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkAuth(true);
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return { isAuthenticated, checkAuth };
 };

@@ -126,7 +126,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   
     try {
       // Show loading toast
-      toast.loading("Agregando producto...");
+      const loadingToast = toast.loading("Agregando producto...");
       
       // Use the store's addProduct function which handles both the API call and store update
       await addProduct(productoAEnviar, imageFile);
@@ -135,16 +135,28 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       onClose();
       
       // Show success message
-      toast.dismiss();
+      toast.dismiss(loadingToast);
       toast.success("Producto agregado exitosamente!");
       
       // Refresh the product list if fetchProducts is provided
       if (typeof fetchProducts === 'function') {
-        fetchProducts();
+        // Esperar un momento para asegurar que el producto se haya guardado
+        setTimeout(() => {
+          fetchProducts();
+        }, 500);
       }
     } catch (error) {
       console.error("Error al agregar el producto:", error);
       toast.dismiss();
+      
+      // Si el error es de autenticación, redirigir al login
+      if (error.message.includes('Token') || error.message.includes('autenticación')) {
+        toast.error("Sesión expirada. Por favor, inicie sesión nuevamente.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
+      
       toast.error(error.message || "Error al agregar el producto.");
     }
   };
