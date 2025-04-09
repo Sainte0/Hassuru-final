@@ -3,7 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import useStore from '../store/store';
 import SizeSelectionModal from './SizeSelectionModal';
 
-const AddProductModal = ({ isOpen, onClose }) => {
+const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
@@ -125,7 +125,7 @@ const AddProductModal = ({ isOpen, onClose }) => {
     const imageFile = product.image;
   
     try {
-      await addProduct(productoAEnviar, imageFile);
+      const nuevoProducto = await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
       
       // Close the modal after successful product creation
@@ -134,8 +134,10 @@ const AddProductModal = ({ isOpen, onClose }) => {
       // Manually trigger a product list update
       // This is a one-time update after adding a product
       setTimeout(() => {
-        // Force a product list update
-        window.location.reload();
+        // Use the fetchProducts function passed from the parent component
+        if (typeof fetchProducts === 'function') {
+          fetchProducts();
+        }
       }, 500);
     } catch (error) {
       console.error("Error al agregar el producto:", error);

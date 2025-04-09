@@ -76,11 +76,6 @@ const useStore = create((set) => ({
       
       toast.success('Producto agregado con éxito');
       
-      // Force a page reload to ensure the product list is updated
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-      
       return nuevoProducto;
     } catch (error) {
       set({ error: error.message });
