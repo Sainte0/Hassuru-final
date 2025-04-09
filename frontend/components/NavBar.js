@@ -16,8 +16,8 @@ export default function Navbar() {
   }, []);
 
   const navigation = [
-    { name: "Zapatillas", href: "/productos/categoria/zapatillas" },
-    { name: "Ropa", href: "/productos/categoria/ropa" },
+    { name: "Zapatillas", href: "/productos/talla/zapatillas" },
+    { name: "Ropa", href: "/productos/talla/ropa" },
     { name: "Tecnología", href: "/productos/categoria/accesorios" },
     { name: "Encargos", href: "/encargos" },
   ];

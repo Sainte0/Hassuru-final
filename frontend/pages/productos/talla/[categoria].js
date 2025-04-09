@@ -74,15 +74,8 @@ export default function TallaSelector() {
   const handleTallaSelect = (talla) => {
     setSelectedTalla(talla);
     setError("");
-  };
 
-  const handleContinue = () => {
-    if (!selectedTalla) {
-      setError("Por favor, selecciona una talla");
-      return;
-    }
-
-    // Redirigir a la categoría con el filtro de talla aplicado
+    // Redirigir inmediatamente al seleccionar una talla
     let paramName = "";
     if (categoria === "ropa") {
       paramName = "tallaRopa";
@@ -92,10 +85,8 @@ export default function TallaSelector() {
       paramName = "accesorio";
     }
     
-    // Construir la URL directamente
-    const url = `/productos/categoria/${categoria}?${paramName}=${encodeURIComponent(selectedTalla)}`;
-    
-    // Usar router.push con la URL completa
+    // Construir la URL y redirigir
+    const url = `/productos/categoria/${categoria}?${paramName}=${encodeURIComponent(talla)}`;
     router.push(url);
   };
 
@@ -185,10 +176,10 @@ export default function TallaSelector() {
               <button
                 key={talla}
                 onClick={() => handleTallaSelect(talla)}
-                className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[80px] flex items-center justify-center transition-all duration-200 ${
+                className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[80px] flex items-center justify-center transition-all duration-200 hover:bg-red-500 hover:text-white hover:border-red-600 ${
                   selectedTalla === talla
-                    ? "bg-red-500 text-white border-red-600 shadow-md transform scale-105"
-                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
+                    ? "bg-red-500 text-white border-red-600 shadow-md"
+                    : "bg-white text-gray-800 border-gray-300"
                 }`}
               >
                 {formattedTalla}
@@ -197,19 +188,13 @@ export default function TallaSelector() {
           })}
         </div>
         
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center">
           <Link 
             href={`/productos/categoria/${categoria}`}
             className="px-6 py-3 text-white bg-gray-500 rounded-lg hover:bg-gray-600 transition-colors duration-200"
           >
             Saltar
           </Link>
-          <button
-            onClick={handleContinue}
-            className="px-6 py-3 text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors duration-200"
-          >
-            Continuar
-          </button>
         </div>
       </div>
     </div>
