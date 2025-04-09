@@ -160,13 +160,19 @@ export default function TallaSelector() {
             if (categoria === "zapatillas" && talla.includes("|")) {
               const parts = talla.split("|");
               if (parts.length === 2) {
-                const usPart = parts[0].trim();
-                const arPart = parts[1].trim();
+                const usPart = parts[0].trim().split(" ")[0]; // Solo tomar el número
+                const arPart = parts[1].trim().split(" ")[0]; // Solo tomar el número
                 formattedTalla = (
-                  <span className="flex flex-col items-center">
-                    <span className="text-xl font-bold">{usPart} 🇺🇸</span>
-                    <span className="text-xl font-bold">{arPart} 🇦🇷</span>
-                  </span>
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg font-bold">{usPart}</span>
+                      <span className="text-sm">🇺🇸</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg font-bold">{arPart}</span>
+                      <span className="text-sm">🇦🇷</span>
+                    </div>
+                  </div>
                 );
               }
             }
@@ -175,7 +181,7 @@ export default function TallaSelector() {
               <button
                 key={talla}
                 onClick={() => handleTallaSelect(talla)}
-                className={`p-4 text-lg font-medium border rounded-lg w-full flex items-center justify-center transition-all duration-200 ${
+                className={`p-3 text-lg font-medium border rounded-lg w-full flex items-center justify-center transition-all duration-200 ${
                   selectedTalla === talla
                     ? "bg-red-500 text-white border-red-600 shadow-md transform scale-105"
                     : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
