@@ -94,14 +94,7 @@ export default function Filter({ products, setFilteredProducts }) {
     router.query.categoria
   ]);
 
-  useEffect(() => {
-    let filtered = products;
-    if (selectedMarca) {
-      filtered = filtered.filter((product) => product.marca === selectedMarca);
-    }
-    setFilteredProducts(filtered);
-  }, [selectedMarca, products]);
-
+  // Extract available sizes from products
   useEffect(() => {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
@@ -122,14 +115,16 @@ export default function Filter({ products, setFilteredProducts }) {
     setAccesorios(Array.from(accesoriosSet));
   }, [products]);
 
-
+  // Combined filter effect - this is the main filtering logic
   useEffect(() => {
-    let filtered = products;
+    let filtered = [...products];
 
+    // Apply marca filter
     if (selectedMarca) {
       filtered = filtered.filter((product) => product.marca === selectedMarca);
     }
 
+    // Apply talla filters
     if (selectedTallaRopa) {
       filtered = filtered.filter((product) =>
         product.categoria === "ropa" &&
@@ -151,35 +146,7 @@ export default function Filter({ products, setFilteredProducts }) {
       );
     }
 
-    if (stockOnly) {
-      filtered = filtered.filter((product) =>
-        product.tallas.some((talla) => talla.precioTalla > 0)
-      );
-    }
-
-    if (selectedDisponibilidad) {
-      filtered = filtered.filter((product) => {
-        if (selectedDisponibilidad === "Solo productos en stock") {
-          return product.tallas.some((talla) => talla.precioTalla > 0);
-        }
-        return getDisponibilidad(product) === selectedDisponibilidad;
-      });
-    }
-
-    setFilteredProducts(filtered);
-  }, [
-    selectedMarca,
-    selectedTallaRopa,
-    selectedTallaZapatilla,
-    selectedAccesorio,
-    stockOnly,
-    selectedDisponibilidad,
-    products,
-  ]);
-
-
-  const handleSearch = () => {
-    let filtered = products;
+    // Apply price filters
     if (precioMin || precioMax) {
       filtered = filtered.filter((product) => {
         const precio = product.precio;
@@ -193,12 +160,74 @@ export default function Filter({ products, setFilteredProducts }) {
         return true;
       });
     }
+
+    // Apply stock filter
+    if (stockOnly) {
+      filtered = filtered.filter((product) =>
+        product.tallas.some((talla) => talla.precioTalla > 0)
+      );
+    }
+
+    // Apply disponibilidad filter
+    if (selectedDisponibilidad) {
+      filtered = filtered.filter((product) => {
+        if (selectedDisponibilidad === "Solo productos en stock") {
+          return product.tallas.some((talla) => talla.precioTalla > 0);
+        }
+        return getDisponibilidad(product) === selectedDisponibilidad;
+      });
+    }
+
+    // Apply search query filter
     if (query) {
       filtered = filtered.filter((product) =>
         product.nombre.toLowerCase().includes(query.toLowerCase())
       );
     }
-    setFilteredProducts(filtered);
+
+    // Sort the filtered products
+    const sortedFiltered = sortProductsByAvailability(filtered);
+    setFilteredProducts(sortedFiltered);
+  }, [
+    products,
+    selectedMarca,
+    selectedTallaRopa,
+    selectedTallaZapatilla,
+    selectedAccesorio,
+    precioMin,
+    precioMax,
+    stockOnly,
+    selectedDisponibilidad,
+    query
+  ]);
+
+  const handleSearch = () => {
+    // This function is now redundant as the filtering is handled by the useEffect
+    // But we'll keep it for backward compatibility
+    let filtered = [...products];
+    
+    if (precioMin || precioMax) {
+      filtered = filtered.filter((product) => {
+        const precio = product.precio;
+        if (precioMin && precioMax) {
+          return precio >= parseInt(precioMin) && precio <= parseInt(precioMax);
+        } else if (precioMin) {
+          return precio >= parseInt(precioMin);
+        } else if (precioMax) {
+          return precio <= parseInt(precioMax);
+        }
+        return true;
+      });
+    }
+    
+    if (query) {
+      filtered = filtered.filter((product) =>
+        product.nombre.toLowerCase().includes(query.toLowerCase())
+      );
+    }
+    
+    const sortedFiltered = sortProductsByAvailability(filtered);
+    setFilteredProducts(sortedFiltered);
   };
 
   const resetFilters = () => {
@@ -245,7 +274,6 @@ export default function Filter({ products, setFilteredProducts }) {
     }
   };
 
-
   const handleSelectDisponibilidad = (opcion) => {
     if (selectedDisponibilidad === opcion) {
       setSelectedDisponibilidad("");
@@ -260,16 +288,6 @@ export default function Filter({ products, setFilteredProducts }) {
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
-  };
-
-  const applyFilters = () => {
-    let filtered = [...products];
-    
-    // Aplicar los filtros existentes...
-    
-    // Asegurarnos de que el resultado mantenga el orden
-    const sortedFiltered = sortProductsByAvailability(filtered);
-    setFilteredProducts(sortedFiltered);
   };
 
   return (
