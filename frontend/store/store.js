@@ -72,13 +72,7 @@ const useStore = create((set) => ({
       
       set((state) => ({
         products: [...state.products, nuevoProducto],
-        productAdded: true,
       }));
-      
-      // Reset productAdded flag after a short delay to prevent infinite loops
-      setTimeout(() => {
-        set({ productAdded: false });
-      }, 1000);
       
       toast.success('Producto agregado con éxito');
       return nuevoProducto;

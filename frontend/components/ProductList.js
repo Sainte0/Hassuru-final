@@ -25,8 +25,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
 
   const handleModalClose = () => {
     setModalOpen(false);
-    // No need to fetch products here as the ProductRow component will handle it
-    // when productAdded changes
+    // Fetch products only once when the modal is closed
+    fetchProducts();
   };
 
   const filteredProducts = editableProducts.filter((producto) => {

@@ -127,7 +127,19 @@ const AddProductModal = ({ isOpen, onClose }) => {
     try {
       await addProduct(productoAEnviar, imageFile);
       toast.success("Producto agregado exitosamente!");
+      
+      // Close the modal after successful product creation
       onClose();
+      
+      // Manually trigger a product list update
+      // This is a one-time update after adding a product
+      setTimeout(() => {
+        // Use the fetchProducts function passed from the parent component
+        if (typeof onClose === 'function') {
+          // If onClose is a function that also fetches products, we don't need to do anything else
+          // Otherwise, we would need to pass fetchProducts as a prop to this component
+        }
+      }, 500);
     } catch (error) {
       console.error("Error al agregar el producto:", error);
       toast.error(error.message || "Error al agregar el producto.");

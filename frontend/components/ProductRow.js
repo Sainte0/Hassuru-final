@@ -37,18 +37,6 @@ const ProductRow = ({
   }, [fetchDolarBlue]);
 
   useEffect(() => {
-    if (productAdded && !hasFetchedRef.current) {
-      hasFetchedRef.current = true;
-      fetchProducts();
-      
-      // Reset the ref after a short delay
-      setTimeout(() => {
-        hasFetchedRef.current = false;
-      }, 2000);
-    }
-  }, [productAdded, fetchProducts]);
-
-  useEffect(() => {
     if (producto && producto.image) {
       if (typeof producto.image === 'string' && producto.image.includes('cloudinary')) {
         setNewImage(producto.image);

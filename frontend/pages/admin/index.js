@@ -1,5 +1,5 @@
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
@@ -18,39 +18,49 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { fetchDolarBlue, dolarBlue } = useStore();
-  const [lastFetchTime, setLastFetchTime] = useState(0);
+  const fetchTimeoutRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
   const fetchProducts = useCallback(async () => {
-    // Prevent multiple fetches within 2 seconds
-    const now = Date.now();
-    if (now - lastFetchTime < 2000) {
-      console.log('Skipping fetch - too soon after last fetch');
+    // If already fetching, don't start another fetch
+    if (isFetchingRef.current) {
+      console.log('Already fetching products, skipping this request');
       return;
     }
-    
-    setLastFetchTime(now);
-    setLoading(true);
-    setError(null);
-    try {
-      console.log('Fetching products from:', `${URL}/api/productos`);
-      const response = await fetch(`${URL}/api/productos`, {
-        headers: {
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      console.log('Response status:', response.status);
-      if (!response.ok) throw new Error("Error al cargar los productos");
-      const data = await response.json();
-      console.log('Fetched products:', data);
-      setProductos(data);
-      setEditableProducts(data);
-    } catch (err) {
-      console.error('Error fetching products:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+
+    // Clear any existing timeout
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current);
     }
-  }, [lastFetchTime]);
+
+    // Set a timeout to prevent multiple rapid fetches
+    fetchTimeoutRef.current = setTimeout(async () => {
+      isFetchingRef.current = true;
+      setLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Fetching products from:', `${URL}/api/productos`);
+        const response = await fetch(`${URL}/api/productos`, {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        console.log('Response status:', response.status);
+        if (!response.ok) throw new Error("Error al cargar los productos");
+        const data = await response.json();
+        console.log('Fetched products:', data);
+        setProductos(data);
+        setEditableProducts(data);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+        isFetchingRef.current = false;
+      }
+    }, 300); // 300ms debounce
+  }, []);
 
   const fetchProductsFiltered = async (categoria) => {
     setLoading(true);
