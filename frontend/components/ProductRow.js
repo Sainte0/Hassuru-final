@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { toast } from "react-hot-toast";
@@ -30,14 +30,21 @@ const ProductRow = ({
   const [sizePrices, setSizePrices] = useState({});
   const { checkAuth } = useAuth();
   const router = useRouter();
+  const hasFetchedRef = useRef(false);
 
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
 
   useEffect(() => {
-    if (productAdded) {
+    if (productAdded && !hasFetchedRef.current) {
+      hasFetchedRef.current = true;
       fetchProducts();
+      
+      // Reset the ref after a short delay
+      setTimeout(() => {
+        hasFetchedRef.current = false;
+      }, 2000);
     }
   }, [productAdded, fetchProducts]);
 

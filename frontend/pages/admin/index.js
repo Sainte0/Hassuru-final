@@ -1,5 +1,5 @@
 import { useAuth } from "../../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
@@ -18,8 +18,17 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { fetchDolarBlue, dolarBlue } = useStore();
+  const [lastFetchTime, setLastFetchTime] = useState(0);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
+    // Prevent multiple fetches within 2 seconds
+    const now = Date.now();
+    if (now - lastFetchTime < 2000) {
+      console.log('Skipping fetch - too soon after last fetch');
+      return;
+    }
+    
+    setLastFetchTime(now);
     setLoading(true);
     setError(null);
     try {
@@ -41,7 +50,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [lastFetchTime]);
 
   const fetchProductsFiltered = async (categoria) => {
     setLoading(true);

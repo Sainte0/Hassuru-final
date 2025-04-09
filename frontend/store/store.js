@@ -65,7 +65,7 @@ const useStore = create((set) => ({
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Error en la respuesta del servidor:', errorData);
-        throw new Error(errorData.error || 'Error al agregar el producto');
+        throw new Error(errorData.error || 'Error al agregar el producto ');
       }
       
       const nuevoProducto = await response.json();
@@ -74,6 +74,11 @@ const useStore = create((set) => ({
         products: [...state.products, nuevoProducto],
         productAdded: true,
       }));
+      
+      // Reset productAdded flag after a short delay to prevent infinite loops
+      setTimeout(() => {
+        set({ productAdded: false });
+      }, 1000);
       
       toast.success('Producto agregado con éxito');
       return nuevoProducto;
