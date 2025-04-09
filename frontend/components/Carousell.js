@@ -41,6 +41,12 @@ export default function Carousell({ title, products, dolarBlue }) {
     return "/placeholder.jpg";
   };
 
+  // Función para obtener la URL del producto
+  const getProductUrl = (product) => {
+    // Usar el slug si está disponible, de lo contrario usar el ID
+    return product.slug ? `/producto/${product.slug}` : `/producto/${product._id}`;
+  };
+
   return (
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
@@ -69,7 +75,7 @@ export default function Carousell({ title, products, dolarBlue }) {
         >
           {products.map((product, index) => (
             <div key={index} className="flex-none w-48 sm:w-64">
-              <Link href={`/producto/${product._id}`} key={product.id}>
+              <Link href={getProductUrl(product)} key={product.id}>
                 <div className="flex flex-col justify-between h-full">
                   <Image
                     width={300}

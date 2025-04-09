@@ -4,6 +4,7 @@ const Producto = require('../models/Producto');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
+const { generateUniqueSlug } = require('../utils/slugify');
 const router = express.Router();
 
 // Configuración de multer para manejar la carga de archivos
@@ -75,9 +76,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Ruta para obtener un producto por ID (mantener compatibilidad)
 router.get('/:id', async (req, res) => {
   try {
-    const producto = await Producto.findById(req.params.id);
+    // Verificar si el ID es un slug o un ID de MongoDB
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(req.params.id);
+    
+    let producto;
+    if (isMongoId) {
+      producto = await Producto.findById(req.params.id);
+    } else {
+      producto = await Producto.findOne({ slug: req.params.id });
+    }
+    
     if (!producto) {
       return res.status(404).json({ error: 'Producto no encontrado.' });
     }
@@ -123,8 +134,12 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'Formato de colores inválido' });
     }
 
+    // Generar un slug único para el producto
+    const slug = generateUniqueSlug(nombre);
+
     const nuevoProducto = new Producto({
       nombre,
+      slug,
       descripcion,
       precio: parseFloat(precio),
       marca,
@@ -186,7 +201,16 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
 
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
-    const { image, ...updatedData } = req.body;
+    const { image, nombre, ...updatedData } = req.body;
+    
+    // Si se está actualizando el nombre, actualizar también el slug
+    if (nombre) {
+      const producto = await Producto.findById(req.params.id);
+      if (producto) {
+        updatedData.slug = generateUniqueSlug(nombre, req.params.id);
+      }
+    }
+    
     const productoActualizado = await Producto.findByIdAndUpdate(
       req.params.id, 
       updatedData, 
@@ -269,7 +293,16 @@ router.delete('/:id', authMiddleware, async (req, res) => {
 // Ruta para obtener la imagen de un producto
 router.get('/:id/image', async (req, res) => {
   try {
-    const producto = await Producto.findById(req.params.id);
+    // Verificar si el ID es un slug o un ID de MongoDB
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(req.params.id);
+    
+    let producto;
+    if (isMongoId) {
+      producto = await Producto.findById(req.params.id);
+    } else {
+      producto = await Producto.findOne({ slug: req.params.id });
+    }
+    
     if (!producto || !producto.image || !producto.image.data) {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }

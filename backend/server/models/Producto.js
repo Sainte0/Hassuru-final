@@ -5,6 +5,11 @@ const ProductoSchema = new mongoose.Schema({
     type: String,
     required: [true, 'El nombre del producto es obligatorio'],
   },
+  slug: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   descripcion: {
     type: String,
   },

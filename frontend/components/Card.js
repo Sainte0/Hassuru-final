@@ -48,13 +48,19 @@ export default function Card({ currentProducts }) {
     return "/placeholder.jpg";
   };
 
+  // Función para obtener la URL del producto
+  const getProductUrl = (product) => {
+    // Usar el slug si está disponible, de lo contrario usar el ID
+    return product.slug ? `/producto/${product.slug}` : `/producto/${product._id}`;
+  };
+
   return (
     <div className="p-4">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {currentProducts.map((product) => {
           const disponibilidad = getDisponibilidad(product);
           return (
-            <Link href={`/producto/${product._id}`} key={product.id}>
+            <Link href={getProductUrl(product)} key={product.id}>
               <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
                 <div className="relative w-full h-[300px]">
                   <Image
