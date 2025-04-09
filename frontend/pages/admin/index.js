@@ -20,6 +20,7 @@ export default function AdminDashboard() {
   const { fetchDolarBlue, dolarBlue } = useStore();
   const fetchTimeoutRef = useRef(null);
   const isFetchingRef = useRef(false);
+  const fetchCountRef = useRef(0);
 
   const fetchProducts = useCallback(async () => {
     // If already fetching, don't start another fetch
@@ -52,6 +53,10 @@ export default function AdminDashboard() {
         console.log('Fetched products:', data);
         setProductos(data);
         setEditableProducts(data);
+        
+        // Increment fetch count to track updates
+        fetchCountRef.current += 1;
+        console.log('Product list updated, fetch count:', fetchCountRef.current);
       } catch (err) {
         console.error('Error fetching products:', err);
         setError(err.message);

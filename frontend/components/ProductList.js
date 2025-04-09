@@ -27,6 +27,11 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setModalOpen(false);
     // Fetch products only once when the modal is closed
     fetchProducts();
+    
+    // Force a product list update after a short delay
+    setTimeout(() => {
+      fetchProducts();
+    }, 1000);
   };
 
   const filteredProducts = editableProducts.filter((producto) => {
