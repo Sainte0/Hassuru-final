@@ -126,24 +126,36 @@ export default function Filter({ products, setFilteredProducts }) {
 
     // Apply talla filters
     if (selectedTallaRopa) {
-      filtered = filtered.filter((product) =>
-        product.categoria === "ropa" &&
-        product.tallas.some((talla) => talla.talla === selectedTallaRopa)
-      );
+      filtered = filtered.filter((product) => {
+        // Verificar que el producto sea de la categoría correcta y tenga tallas
+        if (product.categoria !== "ropa" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+          return false;
+        }
+        // Buscar la talla exacta en el array de tallas
+        return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaRopa);
+      });
     }
 
     if (selectedTallaZapatilla) {
-      filtered = filtered.filter((product) =>
-        product.categoria === "zapatillas" &&
-        product.tallas.some((talla) => talla.talla === selectedTallaZapatilla)
-      );
+      filtered = filtered.filter((product) => {
+        // Verificar que el producto sea de la categoría correcta y tenga tallas
+        if (product.categoria !== "zapatillas" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+          return false;
+        }
+        // Buscar la talla exacta en el array de tallas
+        return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaZapatilla);
+      });
     }
 
     if (selectedAccesorio) {
-      filtered = filtered.filter((product) =>
-        product.categoria === "accesorios" &&
-        product.tallas.some((talla) => talla.talla === selectedAccesorio)
-      );
+      filtered = filtered.filter((product) => {
+        // Verificar que el producto sea de la categoría correcta y tenga tallas
+        if (product.categoria !== "accesorios" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
+          return false;
+        }
+        // Buscar la talla exacta en el array de tallas
+        return product.tallas.some((tallaObj) => tallaObj.talla === selectedAccesorio);
+      });
     }
 
     // Apply price filters
