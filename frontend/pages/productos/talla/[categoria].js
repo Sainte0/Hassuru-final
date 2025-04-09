@@ -167,12 +167,16 @@ export default function TallaSelector() {
                 const usPart = parts[0].trim().split(" ")[0]; // Solo tomar el número
                 const arPart = parts[1].trim().split(" ")[0]; // Solo tomar el número
                 formattedTalla = (
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold">{usPart}</span>
-                    <Image src={US_FLAG} alt="US" width={20} height={15} className="inline-block" />
-                    <span className="text-lg mx-1">|</span>
-                    <span className="text-lg font-bold">{arPart}</span>
-                    <Image src={AR_FLAG} alt="AR" width={20} height={15} className="inline-block" />
+                  <div className="flex items-center gap-1 w-full justify-center">
+                    <div className="flex items-center">
+                      <span className="text-lg font-bold">{usPart}</span>
+                      <Image src={US_FLAG} alt="US" width={16} height={12} className="ml-1" />
+                    </div>
+                    <span className="mx-1">|</span>
+                    <div className="flex items-center">
+                      <span className="text-lg font-bold">{arPart}</span>
+                      <Image src={AR_FLAG} alt="AR" width={16} height={12} className="ml-1" />
+                    </div>
                   </div>
                 );
               }
@@ -182,7 +186,7 @@ export default function TallaSelector() {
               <button
                 key={talla}
                 onClick={() => handleTallaSelect(talla)}
-                className={`p-3 text-lg font-medium border rounded-lg w-full flex items-center justify-center transition-all duration-200 ${
+                className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[60px] flex items-center justify-center transition-all duration-200 overflow-hidden ${
                   selectedTalla === talla
                     ? "bg-red-500 text-white border-red-600 shadow-md transform scale-105"
                     : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 hover:shadow-sm"
