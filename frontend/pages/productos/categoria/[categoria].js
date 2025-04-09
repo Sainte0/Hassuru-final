@@ -59,11 +59,26 @@ export default function Categoria() {
   };
 
   useEffect(() => {
-    if (products.length > 0) {
+    if (categoria) {
+      fetchProductsByCategory();
+      // Set current page from URL or default to 1
+      setCurrentPage(router.query.page ? parseInt(router.query.page) : 1);
+
+      // Asegurarse de que los filtros se apliquen inmediatamente después de cargar los productos
+      if (products.length > 0) {
+        const orderedProducts = orderProducts(products);
+        setFilteredProducts(orderedProducts);
+      }
+    }
+  }, [categoria, router.query]);
+
+  // Efecto adicional para manejar cambios en los parámetros de la URL
+  useEffect(() => {
+    if (products.length > 0 && router.isReady) {
       const orderedProducts = orderProducts(products);
       setFilteredProducts(orderedProducts);
     }
-  }, [products, orderProducts]);
+  }, [router.query, products, orderProducts]);
 
   const getDisponibilidad = (product) => {
     const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -76,14 +91,6 @@ export default function Categoria() {
       return "Disponible en 20 días";
     }
   };
-
-  useEffect(() => {
-    if (categoria) {
-      fetchProductsByCategory();
-      // Set current page from URL or default to 1
-      setCurrentPage(router.query.page ? parseInt(router.query.page) : 1);
-    }
-  }, [categoria]);
 
   // Handle page changes by updating URL
   const handlePageChange = (page) => {

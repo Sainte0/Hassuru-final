@@ -82,11 +82,11 @@ export default function TallaSelector() {
     const queryParams = {};
     
     if (categoria === "ropa") {
-      queryParams.tallaRopa = selectedTalla;
+      queryParams.tallaRopa = encodeURIComponent(selectedTalla);
     } else if (categoria === "zapatillas") {
-      queryParams.tallaZapatilla = selectedTalla;
+      queryParams.tallaZapatilla = encodeURIComponent(selectedTalla);
     } else if (categoria === "accesorios") {
-      queryParams.accesorio = selectedTalla;
+      queryParams.accesorio = encodeURIComponent(selectedTalla);
     }
     
     router.push({
