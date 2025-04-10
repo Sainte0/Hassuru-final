@@ -25,16 +25,6 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Inicializar la página desde la URL
-  useEffect(() => {
-    if (router.isReady && router.query.page) {
-      const page = parseInt(router.query.page);
-      if (!isNaN(page) && page > 0) {
-        setCurrentPage(page);
-      }
-    }
-  }, [router.isReady, router.query.page]);
-
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
     
@@ -156,12 +146,12 @@ export default function Categoria() {
     const filtered = applyFilters(products, filters);
     setFilteredProducts(filtered);
     
-    // Si hay filtros activos y no estamos en la página 1, volver a la página 1
+    // Si hay filtros activos, volver a la página 1
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
-    if (hasActiveFilters && currentPage !== 1) {
+    if (hasActiveFilters) {
       setCurrentPage(1);
     }
-  }, [router.query, products, applyFilters, router.isReady, currentPage]);
+  }, [router.query, products, applyFilters, router.isReady]);
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
