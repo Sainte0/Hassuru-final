@@ -37,6 +37,7 @@ router.get('/buscar/:termino', async (req, res) => {
         { descripcion: { $regex: searchRegex } }
       ]
     })
+      .select('-image.data')
       .skip((page - 1) * limit)
       .limit(limit);
       
@@ -55,7 +56,7 @@ router.get('/categoria/:categoria', async (req, res) => {
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       const productosFiltrados = await Producto.find({
         categoria: { $regex: new RegExp(categoria, 'i') }
-      });
+      }).select('-image.data');
       return res.status(200).json(productosFiltrados);
     } else {
       return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
@@ -69,7 +70,7 @@ router.get('/categoria/:categoria', async (req, res) => {
 // Rutas generales después
 router.get('/', async (req, res) => {
   try {
-    const productos = await Producto.find();
+    const productos = await Producto.find().select('-image.data');
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -298,9 +299,9 @@ router.get('/:id/image', async (req, res) => {
     
     let producto;
     if (isMongoId) {
-      producto = await Producto.findById(req.params.id);
+      producto = await Producto.findById(req.params.id).select('image');
     } else {
-      producto = await Producto.findOne({ slug: req.params.id });
+      producto = await Producto.findOne({ slug: req.params.id }).select('image');
     }
     
     if (!producto || !producto.image || !producto.image.data) {

@@ -9,6 +9,7 @@ const ProductoSchema = new mongoose.Schema({
     type: String,
     unique: true,
     sparse: true,
+    index: true,
   },
   descripcion: {
     type: String,
@@ -77,5 +78,7 @@ const ProductoSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+ProductoSchema.index({ categoria: 1, destacado: 1 });
 
 module.exports = mongoose.models.Producto || mongoose.model('Producto', ProductoSchema);
