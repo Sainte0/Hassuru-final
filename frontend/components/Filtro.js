@@ -106,19 +106,16 @@ export default function Filter({ products, setFilteredProducts }) {
       filtered = filtered.filter(product => {
         const hasStock = product.tallas.some(talla => talla.stock > 0);
         
-        if (filters.disponibilidad === "Solo productos en stock") {
-          return hasStock;
+        switch (filters.disponibilidad) {
+          case "Entrega inmediata":
+            return hasStock;
+          case "Disponible en 3 días":
+            return hasStock && product.encargo;
+          case "Disponible en 20 días":
+            return !hasStock;
+          default:
+            return true;
         }
-
-        if (filters.disponibilidad === "Entrega inmediata") {
-          return hasStock;
-        } else if (filters.disponibilidad === "Disponible en 3 días") {
-          return !hasStock && product.encargo;
-        } else if (filters.disponibilidad === "Disponible en 20 días") {
-          return !hasStock && !product.encargo;
-        }
-        
-        return true;
       });
     }
 

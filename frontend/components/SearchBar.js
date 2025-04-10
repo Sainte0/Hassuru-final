@@ -74,13 +74,8 @@ export default function SearchBar({ isHamburgerOpen }) {
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
           onKeyPress={handleKeyPress}
-          placeholder="Buscar..."
-          className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 ${isHamburgerOpen
-            ? "w-64 opacity-100"
-            : isFocused
-              ? "w-64 opacity-100"
-              : "w-0 opacity-0 p-0"
-            }`}
+          placeholder="Buscar productos..."
+          className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
         />
         <button
           type="button"
