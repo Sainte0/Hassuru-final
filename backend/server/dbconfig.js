@@ -12,6 +12,7 @@ const imagesRoutes = require('./routes/images');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
+const HOST = process.env.HOST || '0.0.0.0'; // Use 0.0.0.0 to listen on all network interfaces
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -33,8 +34,8 @@ app.use('/api/images', imagesRoutes);
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Conectado a MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Backend corriendo en http://localhost:${PORT}`);
+    app.listen(PORT, HOST, () => {
+      console.log(`Backend corriendo en puerto ${PORT}`);
     });
   })
   .catch(err => {
