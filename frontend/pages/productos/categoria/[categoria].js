@@ -25,6 +25,16 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
+  // Inicializar la página desde la URL
+  useEffect(() => {
+    if (router.isReady && router.query.page) {
+      const page = parseInt(router.query.page);
+      if (!isNaN(page) && page > 0) {
+        setCurrentPage(page);
+      }
+    }
+  }, [router.isReady, router.query.page]);
+
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
     
@@ -100,18 +110,18 @@ export default function Categoria() {
       );
     }
 
-    // Filtro de disponibilidad
+    // Filtro de disponibilidad - Invertido: 20 días con inmediata
     if (filters.disponibilidad) {
       filtered = filtered.filter(product => {
         const hasStock = product.tallas.some(talla => talla.stock > 0);
         
         switch (filters.disponibilidad) {
           case "Entrega inmediata":
-            return hasStock;
+            return !hasStock && !product.encargo; // Cambiado: ahora es 20 días
           case "Disponible en 3 días":
             return !hasStock && product.encargo;
           case "Disponible en 20 días":
-            return !hasStock && !product.encargo;
+            return hasStock; // Cambiado: ahora es inmediata
           default:
             return true;
         }
@@ -145,7 +155,23 @@ export default function Categoria() {
 
     const filtered = applyFilters(products, filters);
     setFilteredProducts(filtered);
-  }, [router.query, products, applyFilters, router.isReady]);
+    
+    // Si hay filtros activos y no estamos en la página 1, volver a la página 1
+    const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
+    if (hasActiveFilters && currentPage !== 1) {
+      setCurrentPage(1);
+      // Actualizar URL para reflejar la página 1
+      const queryParams = { ...router.query, page: 1 };
+      router.push(
+        {
+          pathname: router.pathname,
+          query: queryParams,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [router.query, products, applyFilters, router.isReady, currentPage, router]);
 
   // Manejar cambio de página
   const handlePageChange = (pageNumber) => {
@@ -174,10 +200,14 @@ export default function Categoria() {
 
   // Restaurar página 1 cuando cambian los filtros
   useEffect(() => {
-    if (currentPage !== 1) {
+    const hasActiveFilters = Object.values(router.query).some(value => 
+      value !== undefined && value !== '' && value !== '1' && value !== 'page'
+    );
+    
+    if (hasActiveFilters && currentPage !== 1) {
       setCurrentPage(1);
     }
-  }, [filteredProducts]);
+  }, [filteredProducts, router.query, currentPage]);
 
   if (!router.isReady) return null;
 
