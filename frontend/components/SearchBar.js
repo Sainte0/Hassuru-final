@@ -97,7 +97,7 @@ export default function SearchBar({ isHamburgerOpen }) {
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
               <Link href={`/producto/${product._id}`}>
                 <div onClick={handleSearch} className="cursor-pointer">
-                  <p className="font-semibold">{product.nombre}</p>
+                  <p className="font-semibold text-black">{product.nombre}</p>
                   {product.descripcion && (
                     <p className="text-sm text-gray-600 truncate">
                       {product.descripcion}
