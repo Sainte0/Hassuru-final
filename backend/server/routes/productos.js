@@ -39,7 +39,7 @@ router.get('/buscar/:termino', async (req, res) => {
     .select('-image.data')
     .lean();
       
-    res.status(200).json({ productos: productosFiltrados });
+    res.status(200).json(productosFiltrados);
   } catch (error) {
     console.error('Error al filtrar productos:', error);
     res.status(500).json({ error: error.message });
@@ -59,7 +59,7 @@ router.get('/categoria/:categoria', async (req, res) => {
       .select('-image.data')
       .lean();
       
-      return res.status(200).json({ productos: productosFiltrados });
+      return res.status(200).json(productosFiltrados);
     } else {
       return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
@@ -70,9 +70,11 @@ router.get('/categoria/:categoria', async (req, res) => {
 });
 
 // Rutas generales después
-router.get('/', cacheMiddleware(300), async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const productos = await Producto.find().select('-image.data');
+    const productos = await Producto.find()
+      .select('-image.data')
+      .lean();
     res.status(200).json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });
