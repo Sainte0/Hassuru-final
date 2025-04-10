@@ -36,7 +36,14 @@ export default function Navbar() {
 
         productos.forEach(producto => {
           if (producto.categoria && producto.marca) {
-            marcasPorCat[producto.categoria].add(producto.marca);
+            // Solo agregar la marca si el producto pertenece a esa categoría
+            if (producto.categoria === "zapatillas") {
+              marcasPorCat.zapatillas.add(producto.marca);
+            } else if (producto.categoria === "ropa") {
+              marcasPorCat.ropa.add(producto.marca);
+            } else if (producto.categoria === "accesorios") {
+              marcasPorCat.accesorios.add(producto.marca);
+            }
           }
         });
 
