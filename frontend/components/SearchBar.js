@@ -1,17 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { BounceLoader } from 'react-spinners';
 
 export default function SearchBar({ isHamburgerOpen }) {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
   const router = useRouter();
-  const searchRef = useRef(null);
 
   const fetchProducts = async (searchQuery) => {
     try {
@@ -29,46 +25,30 @@ export default function SearchBar({ isHamburgerOpen }) {
     }
   };
 
-  const handleInputChange = async (e) => {
+  const handleInputChange = (e) => {
     const searchQuery = e.target.value;
     setQuery(searchQuery);
-    
-    if (searchQuery.trim().length > 2) {
-      setSearchLoading(true);
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/buscar?q=${encodeURIComponent(searchQuery)}`);
-        if (!response.ok) throw new Error("Error en la búsqueda");
-        
-        const data = await response.json();
-        setFilteredProducts(data.slice(0, 5)); // Limitar a 5 resultados
-        setShowSearchResults(true);
-      } catch (error) {
-        console.error("Error en la búsqueda:", error);
-        setFilteredProducts([]);
-      } finally {
-        setSearchLoading(false);
-      }
+
+    if (searchQuery.trim()) {
+      fetchProducts(searchQuery);
     } else {
       setFilteredProducts([]);
-      setShowSearchResults(false);
     }
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = () => {
     if (query.trim()) {
       router.push(`/catalogo?search=${encodeURIComponent(query)}`);
     }
     setQuery("");
     setFilteredProducts([]);
     setIsFocused(false);
-    setShowSearchResults(false);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleSearch(e);
+      handleSearch();
     }
   };
 
@@ -84,29 +64,8 @@ export default function SearchBar({ isHamburgerOpen }) {
     if (!query) setIsFocused(false);
   };
 
-  // Cerrar resultados al hacer clic fuera
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
-        setShowSearchResults(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  // Cerrar resultados cuando se abre el menú hamburguesa
-  useEffect(() => {
-    if (isHamburgerOpen) {
-      setShowSearchResults(false);
-    }
-  }, [isHamburgerOpen]);
-
   return (
-    <div className="relative flex items-center" ref={searchRef}>
+    <div className="relative flex items-center">
       <div className="relative flex items-center transition-all duration-300 ease-in-out">
         <input
           type="text"
@@ -132,31 +91,23 @@ export default function SearchBar({ isHamburgerOpen }) {
         </button>
       </div>
 
-      {showSearchResults && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
-          {searchLoading ? (
-            <div className="flex items-center justify-center p-4">
-              <BounceLoader color="#BE1A1D" size={20} />
-            </div>
-          ) : filteredProducts.length > 0 ? (
-            <ul className="py-2">
-              {filteredProducts.map((product) => (
-                <li
-                  key={product._id}
-                  onClick={() => handleSearch(e)}
-                  className="px-4 py-2 text-gray-800 cursor-pointer hover:bg-gray-100"
-                >
-                  <div className="font-medium">{product.nombre}</div>
+      {filteredProducts.length > 0 && isFocused && (
+        <ul className="absolute left-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12">
+          {filteredProducts.map((product) => (
+            <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
+              <Link href={`/producto/${product._id}`}>
+                <div onClick={handleSearch} className="cursor-pointer">
+                  <p className="font-semibold">{product.nombre}</p>
                   {product.descripcion && (
-                    <div className="text-sm text-gray-600">{product.descripcion}</div>
+                    <p className="text-sm text-gray-600 truncate">
+                      {product.descripcion}
+                    </p>
                   )}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div className="p-4 text-gray-500">No se encontraron resultados</div>
-          )}
-        </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

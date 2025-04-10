@@ -107,11 +107,11 @@ export default function Categoria() {
         
         switch (filters.disponibilidad) {
           case "Entrega inmediata":
-            return !hasStock && !product.encargo; // Cambiado: ahora es 20 días
+            return hasStock; // Productos con stock disponible
           case "Disponible en 3 días":
-            return !hasStock && product.encargo;
+            return !hasStock && product.encargo; // Productos sin stock pero con encargo
           case "Disponible en 20 días":
-            return hasStock; // Cambiado: ahora es inmediata
+            return !hasStock && !product.encargo; // Productos sin stock y sin encargo
           default:
             return true;
         }
@@ -120,6 +120,16 @@ export default function Categoria() {
 
     return sortProductsByPrice(filtered);
   }, []);
+
+  // Inicializar la página actual desde la URL
+  useEffect(() => {
+    if (router.isReady && router.query.page) {
+      const pageNumber = parseInt(router.query.page, 10);
+      if (!isNaN(pageNumber) && pageNumber > 0) {
+        setCurrentPage(pageNumber);
+      }
+    }
+  }, [router.isReady, router.query.page]);
 
   // Cargar productos cuando cambia la categoría
   useEffect(() => {
@@ -162,6 +172,24 @@ export default function Categoria() {
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+    
+    // Actualizar la URL con el nuevo número de página, manteniendo los filtros existentes
+    const queryParams = { ...router.query, page: pageNumber };
+    
+    // Eliminar el parámetro de página si es 1 (para URLs más limpias)
+    if (pageNumber === 1) {
+      delete queryParams.page;
+    }
+    
+    router.push(
+      {
+        pathname: router.pathname,
+        query: queryParams,
+      },
+      undefined,
+      { shallow: true, scroll: false }
+    );
+    
     window.scrollTo(0, 0);
   };
 
