@@ -31,10 +31,14 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
     if (response.data && response.data.success) {
       return response.data.data.url;
     } else {
+      console.error('ImgBB API error:', response.data);
       throw new Error('Failed to upload image to ImgBB');
     }
   } catch (error) {
-    console.error('Error uploading to ImgBB:', error);
+    console.error('Error uploading to ImgBB:', error.message);
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+    }
     throw error;
   }
 };

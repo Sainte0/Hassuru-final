@@ -117,30 +117,43 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     let imageUrl = null;
     
     if (req.file) {
-      // Leer el archivo como Buffer
-      const imageBuffer = fs.readFileSync(req.file.path);
-      
-      // Subir la imagen a ImgBB
       try {
-        imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+        // Leer el archivo como Buffer
+        const imageBuffer = fs.readFileSync(req.file.path);
         
-        // Mantener compatibilidad con el formato anterior
-        imageData = {
-          data: imageBuffer,
-          contentType: req.file.mimetype,
-          url: imageUrl
-        };
+        // Subir la imagen a ImgBB
+        try {
+          console.log('Intentando subir imagen a ImgBB...');
+          imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+          console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
+          
+          // Mantener compatibilidad con el formato anterior
+          imageData = {
+            data: imageBuffer,
+            contentType: req.file.mimetype,
+            url: imageUrl
+          };
+        } catch (error) {
+          console.error('Error al subir la imagen a ImgBB:', error);
+          // Si falla la subida a ImgBB, guardar en la base de datos como antes
+          imageData = {
+            data: imageBuffer,
+            contentType: req.file.mimetype
+          };
+        }
       } catch (error) {
-        console.error('Error al subir la imagen a ImgBB:', error);
-        // Si falla la subida a ImgBB, guardar en la base de datos como antes
-        imageData = {
-          data: imageBuffer,
-          contentType: req.file.mimetype
-        };
+        console.error('Error al procesar la imagen:', error);
+        return res.status(500).json({ error: 'Error al procesar la imagen: ' + error.message });
+      } finally {
+        // Eliminar el archivo temporal
+        if (req.file && req.file.path) {
+          try {
+            fs.unlinkSync(req.file.path);
+          } catch (error) {
+            console.error('Error al eliminar archivo temporal:', error);
+          }
+        }
       }
-      
-      // Eliminar el archivo temporal
-      fs.unlinkSync(req.file.path);
     }
 
     // Parsear tallas y colores si son strings JSON
@@ -179,14 +192,24 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       image: imageData
     });
 
+    console.log('Guardando producto en la base de datos...');
     const productoGuardado = await nuevoProducto.save();
+    console.log('Producto guardado exitosamente');
+    
     res.status(201).json(productoGuardado);
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     console.error('Error al crear el producto:', error);
-    res.status(400).json({ error: error.message });
+    
+    // Asegurarse de eliminar el archivo temporal si existe
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error al eliminar archivo temporal:', unlinkError);
+      }
+    }
+    
+    res.status(500).json({ error: 'Error al crear el producto: ' + error.message });
   }
 });
 
@@ -204,7 +227,9 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     // Subir la imagen a ImgBB
     let imageUrl = null;
     try {
+      console.log('Intentando subir imagen a ImgBB...');
       imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+      console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
       // Si falla la subida a ImgBB, continuar con el método anterior
@@ -230,7 +255,11 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     );
 
     // Eliminar el archivo temporal
-    fs.unlinkSync(req.file.path);
+    try {
+      fs.unlinkSync(req.file.path);
+    } catch (error) {
+      console.error('Error al eliminar archivo temporal:', error);
+    }
 
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
@@ -238,7 +267,17 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     res.status(200).json(productoActualizado);
   } catch (error) {
     console.error('Error al subir la imagen:', error);
-    res.status(400).json({ error: error.message });
+    
+    // Asegurarse de eliminar el archivo temporal si existe
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error al eliminar archivo temporal:', unlinkError);
+      }
+    }
+    
+    res.status(500).json({ error: 'Error al subir la imagen: ' + error.message });
   }
 });
 
@@ -280,7 +319,11 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Verificar que el producto existe
     const productoExistente = await Producto.findById(id);
     if (!productoExistente) {
-      fs.unlinkSync(req.file.path);
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (error) {
+        console.error('Error al eliminar archivo temporal:', error);
+      }
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
@@ -291,7 +334,9 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Subir la imagen a ImgBB
     let imageUrl = null;
     try {
+      console.log('Intentando subir imagen a ImgBB...');
       imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+      console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
       // Si falla la subida a ImgBB, continuar con el método anterior
@@ -317,7 +362,11 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     );
 
     // Eliminar el archivo temporal
-    fs.unlinkSync(req.file.path);
+    try {
+      fs.unlinkSync(req.file.path);
+    } catch (error) {
+      console.error('Error al eliminar archivo temporal:', error);
+    }
 
     // Devolver el producto actualizado sin los datos de la imagen para reducir el tamaño de la respuesta
     const productoRespuesta = {
@@ -330,11 +379,18 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
 
     res.status(200).json(productoRespuesta);
   } catch (error) {
-    if (req.file) {
-      fs.unlinkSync(req.file.path);
-    }
     console.error('Error al actualizar la imagen del producto:', error);
-    res.status(500).json({ error: error.message });
+    
+    // Asegurarse de eliminar el archivo temporal si existe
+    if (req.file && req.file.path) {
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error al eliminar archivo temporal:', unlinkError);
+      }
+    }
+    
+    res.status(500).json({ error: 'Error al actualizar la imagen del producto: ' + error.message });
   }
 });
 
