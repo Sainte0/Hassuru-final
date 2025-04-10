@@ -17,11 +17,10 @@ const HOST = process.env.HOST || '0.0.0.0'; // Use 0.0.0.0 to listen on all netw
 
 // Verificar variables de entorno críticas
 console.log('Verificando variables de entorno...');
-if (!process.env.IMGBB_API_KEY) {
-  console.error('ERROR: IMGBB_API_KEY no está definida en el archivo .env');
-  process.exit(1);
-}
-console.log('Variables de entorno verificadas correctamente');
+console.log('IMGBB_API_KEY disponible:', !!process.env.IMGBB_API_KEY);
+console.log('MONGODB_URI disponible:', !!process.env.MONGODB_URI);
+
+// No es necesario verificar IMGBB_API_KEY ya que ahora usamos una hardcodeada como respaldo
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));

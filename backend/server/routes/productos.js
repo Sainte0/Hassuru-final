@@ -130,8 +130,8 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         // Subir la imagen a ImgBB
         try {
           console.log('Intentando subir imagen a ImgBB...');
-          console.log('API Key disponible:', !!process.env.IMGBB_API_KEY);
-          imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+          // No pasamos la API key, usará la hardcodeada como respaldo
+          imageUrl = await uploadToImgBB(imageBuffer);
           console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
           
           // Mantener compatibilidad con el formato anterior
@@ -243,7 +243,8 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     let imageUrl = null;
     try {
       console.log('Intentando subir imagen a ImgBB...');
-      imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+      // No pasamos la API key, usará la hardcodeada como respaldo
+      imageUrl = await uploadToImgBB(imageBuffer);
       console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
@@ -350,7 +351,8 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     let imageUrl = null;
     try {
       console.log('Intentando subir imagen a ImgBB...');
-      imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+      // No pasamos la API key, usará la hardcodeada como respaldo
+      imageUrl = await uploadToImgBB(imageBuffer);
       console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
