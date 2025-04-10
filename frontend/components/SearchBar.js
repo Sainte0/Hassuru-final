@@ -74,8 +74,13 @@ export default function SearchBar({ isHamburgerOpen }) {
           onFocus={() => setIsFocused(true)}
           onBlur={handleBlur}
           onKeyPress={handleKeyPress}
-          placeholder="Buscar productos..."
-          className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+          placeholder="Buscar..."
+          className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 ${isHamburgerOpen
+            ? "w-64 opacity-100"
+            : isFocused
+              ? "w-64 opacity-100"
+              : "w-0 opacity-0 p-0"
+            }`}
         />
         <button
           type="button"
@@ -92,7 +97,7 @@ export default function SearchBar({ isHamburgerOpen }) {
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
               <Link href={`/producto/${product._id}`}>
                 <div onClick={handleSearch} className="cursor-pointer">
-                  <p className="font-semibold text-black">{product.nombre}</p>
+                  <p className="font-semibold">{product.nombre}</p>
                   {product.descripcion && (
                     <p className="text-sm text-gray-600 truncate">
                       {product.descripcion}
