@@ -76,7 +76,7 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
-      <nav className="relative bg-black text-white">
+      <nav className="relative bg-gray-800 text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Desktop Navigation */}
@@ -90,7 +90,7 @@ export default function Navbar() {
                 <button className="py-2 hover:text-gray-300">
                   Stock
                 </button>
-                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-black bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-gray-800 bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                   <div className="py-6 px-8 grid grid-cols-3 gap-8">
                     {/* Zapatillas Column */}
                     <div>
@@ -98,7 +98,7 @@ export default function Navbar() {
                         href="/productos/talla/zapatillas"
                         className="block text-lg font-semibold mb-4 text-white hover:text-gray-300"
                       >
-                        CALZADO
+                        ZAPATILLAS
                       </Link>
                       {marcasPorCategoria.zapatillas.map((marca, index) => (
                         <button
@@ -130,13 +130,13 @@ export default function Navbar() {
                       ))}
                     </div>
 
-                    {/* Accesorios Column */}
+                    {/* Tecnología Column */}
                     <div>
                       <Link 
                         href="/productos/categoria/accesorios"
                         className="block text-lg font-semibold mb-4 text-white hover:text-gray-300"
                       >
-                        ACCESORIOS
+                        TECNOLOGÍA
                       </Link>
                       {marcasPorCategoria.accesorios.map((marca, index) => (
                         <button
@@ -186,7 +186,7 @@ export default function Navbar() {
                   className="block py-2 px-4 hover:bg-gray-700"
                   onClick={() => setIsOpen(false)}
                 >
-                  CALZADO
+                  ZAPATILLAS
                 </Link>
                 <div className="pl-4">
                   {marcasPorCategoria.zapatillas.map((marca, index) => (
@@ -223,14 +223,14 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {/* Accesorios Mobile */}
+              {/* Tecnología Mobile */}
               <div className="mb-4">
                 <Link 
                   href="/productos/categoria/accesorios"
                   className="block py-2 px-4 hover:bg-gray-700"
                   onClick={() => setIsOpen(false)}
                 >
-                  ACCESORIOS
+                  TECNOLOGÍA
                 </Link>
                 <div className="pl-4">
                   {marcasPorCategoria.accesorios.map((marca, index) => (
