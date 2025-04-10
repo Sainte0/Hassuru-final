@@ -95,9 +95,13 @@ const useStore = create((set) => ({
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      set({ products: data, filteredProducts: data });
+      set({ 
+        products: data.productos || [], 
+        filteredProducts: data.productos || []
+      });
     } catch (error) {
       set({ error: error.message });
+      console.error('Error al cargar los productos por categoría:', error);
     } finally {
       set({ loading: false });
     }
@@ -212,6 +216,23 @@ const useStore = create((set) => ({
     } catch (error) {
       toast.error("Error al intentar iniciar sesión.");
       console.error(error);
+    }
+  },
+
+  searchProducts: async (termino) => {
+    set({ loading: true, error: null });
+    try {
+      const response = await fetch(`${URL}/api/productos/buscar/${termino}`);
+      if (!response.ok) {
+        throw new Error("Error al buscar productos");
+      }
+      const data = await response.json();
+      set({ filteredProducts: data.productos || [] });
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al buscar productos:', error);
+    } finally {
+      set({ loading: false });
     }
   },
 }));

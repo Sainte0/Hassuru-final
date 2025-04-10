@@ -5,6 +5,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const { generateUniqueSlug } = require('../utils/slugify');
+const { cacheMiddleware } = require('../utils/cache');
 const router = express.Router();
 
 // Configuración de multer para manejar la carga de archivos
@@ -23,8 +24,6 @@ const upload = multer({ storage: storage });
 router.get('/buscar/:termino', async (req, res) => {
   try {
     const { termino } = req.params;
-    const limit = parseInt(req.query.limit) || 10;
-    const page = parseInt(req.query.page) || 1;
     
     if (!termino || termino.trim() === '') {
       return res.status(400).json({ error: 'Debes proporcionar un término para buscar.' });
@@ -37,11 +36,10 @@ router.get('/buscar/:termino', async (req, res) => {
         { descripcion: { $regex: searchRegex } }
       ]
     })
-      .select('-image.data')
-      .skip((page - 1) * limit)
-      .limit(limit);
+    .select('-image.data')
+    .lean();
       
-    res.status(200).json(productosFiltrados);
+    res.status(200).json({ productos: productosFiltrados });
   } catch (error) {
     console.error('Error al filtrar productos:', error);
     res.status(500).json({ error: error.message });
@@ -53,11 +51,15 @@ router.get('/categoria/:categoria', async (req, res) => {
     const { categoria } = req.params;
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
     const categoriaLower = categoria ? categoria.toLowerCase() : null;
+    
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       const productosFiltrados = await Producto.find({
         categoria: { $regex: new RegExp(categoria, 'i') }
-      }).select('-image.data');
-      return res.status(200).json(productosFiltrados);
+      })
+      .select('-image.data')
+      .lean();
+      
+      return res.status(200).json({ productos: productosFiltrados });
     } else {
       return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
@@ -68,7 +70,7 @@ router.get('/categoria/:categoria', async (req, res) => {
 });
 
 // Rutas generales después
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(300), async (req, res) => {
   try {
     const productos = await Producto.find().select('-image.data');
     res.status(200).json(productos);
