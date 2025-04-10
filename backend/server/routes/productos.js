@@ -117,7 +117,6 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
     }
     
-    let imageData = null;
     let imageUrl = null;
     
     if (req.file) {
@@ -133,35 +132,23 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
           // No pasamos la API key, usará la hardcodeada como respaldo
           imageUrl = await uploadToImgBB(imageBuffer);
           console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
-          
-          // Mantener compatibilidad con el formato anterior
-          imageData = {
-            data: imageBuffer,
-            contentType: req.file.mimetype,
-            url: imageUrl
-          };
         } catch (error) {
           console.error('Error al subir la imagen a ImgBB:', error);
-          // Si falla la subida a ImgBB, guardar en la base de datos como antes
-          console.log('Guardando imagen en la base de datos como fallback');
-          imageData = {
-            data: imageBuffer,
-            contentType: req.file.mimetype
-          };
+          return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+        } finally {
+          // Eliminar el archivo temporal
+          if (req.file && req.file.path) {
+            try {
+              fs.unlinkSync(req.file.path);
+              console.log('Archivo temporal eliminado');
+            } catch (error) {
+              console.error('Error al eliminar archivo temporal:', error);
+            }
+          }
         }
       } catch (error) {
         console.error('Error al procesar la imagen:', error);
         return res.status(500).json({ error: 'Error al procesar la imagen: ' + error.message });
-      } finally {
-        // Eliminar el archivo temporal
-        if (req.file && req.file.path) {
-          try {
-            fs.unlinkSync(req.file.path);
-            console.log('Archivo temporal eliminado');
-          } catch (error) {
-            console.error('Error al eliminar archivo temporal:', error);
-          }
-        }
       }
     } else {
       console.log('No se recibió ningún archivo de imagen');
@@ -203,7 +190,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       encargo: encargo === 'true',
       destacado: destacado === 'true',
       destacado_zapatillas: destacado_zapatillas === 'true',
-      image: imageData
+      image: imageUrl ? { url: imageUrl } : null
     });
 
     console.log('Guardando producto en la base de datos...');
@@ -237,7 +224,6 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
 
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
-    const contentType = req.file.mimetype;
     
     // Subir la imagen a ImgBB
     let imageUrl = null;
@@ -248,34 +234,24 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
       console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
-      // Si falla la subida a ImgBB, continuar con el método anterior
-    }
-
-    // Actualizar el producto con la imagen
-    const updateData = {
-      image: {
-        data: imageBuffer,
-        contentType: contentType
+      return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+    } finally {
+      // Eliminar el archivo temporal
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (error) {
+        console.error('Error al eliminar archivo temporal:', error);
       }
-    };
-    
-    // Si se subió correctamente a ImgBB, agregar la URL
-    if (imageUrl) {
-      updateData.image.url = imageUrl;
     }
 
+    // Actualizar el producto con la URL de la imagen
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      updateData,
+      { 
+        image: { url: imageUrl }
+      },
       { new: true }
     );
-
-    // Eliminar el archivo temporal
-    try {
-      fs.unlinkSync(req.file.path);
-    } catch (error) {
-      console.error('Error al eliminar archivo temporal:', error);
-    }
 
     if (!productoActualizado) {
       return res.status(404).json({ error: 'Producto no encontrado' });
@@ -345,7 +321,6 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
 
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
-    const contentType = req.file.mimetype;
     
     // Subir la imagen a ImgBB
     let imageUrl = null;
@@ -356,45 +331,27 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
       console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
     } catch (error) {
       console.error('Error al subir la imagen a ImgBB:', error);
-      // Si falla la subida a ImgBB, continuar con el método anterior
-    }
-
-    // Actualizar el producto con la imagen
-    const updateData = {
-      image: {
-        data: imageBuffer,
-        contentType: contentType
+      return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+    } finally {
+      // Eliminar el archivo temporal
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (error) {
+        console.error('Error al eliminar archivo temporal:', error);
       }
-    };
-    
-    // Si se subió correctamente a ImgBB, agregar la URL
-    if (imageUrl) {
-      updateData.image.url = imageUrl;
     }
 
+    // Actualizar el producto con la URL de la imagen
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      updateData,
+      { 
+        image: { url: imageUrl }
+      },
       { new: true }
     );
 
-    // Eliminar el archivo temporal
-    try {
-      fs.unlinkSync(req.file.path);
-    } catch (error) {
-      console.error('Error al eliminar archivo temporal:', error);
-    }
-
-    // Devolver el producto actualizado sin los datos de la imagen para reducir el tamaño de la respuesta
-    const productoRespuesta = {
-      ...productoActualizado.toObject(),
-      image: {
-        contentType: productoActualizado.image.contentType,
-        url: productoActualizado.image.url
-      }
-    };
-
-    res.status(200).json(productoRespuesta);
+    // Devolver el producto actualizado
+    res.status(200).json(productoActualizado);
   } catch (error) {
     console.error('Error al actualizar la imagen del producto:', error);
     
@@ -439,24 +396,6 @@ router.get('/:id/image', async (req, res) => {
     // Si el producto tiene una URL de imagen, redirigir a esa URL
     if (producto && producto.image && producto.image.url) {
       return res.redirect(producto.image.url);
-    }
-    
-    // Si no tiene URL pero tiene datos de imagen, enviar la imagen como antes
-    if (producto && producto.image && producto.image.data) {
-      // Establecer el tipo de contenido correcto
-      res.set('Content-Type', producto.image.contentType);
-      
-      // Establecer cabeceras para evitar el almacenamiento en caché
-      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-      res.set('Pragma', 'no-cache');
-      res.set('Expires', '0');
-      
-      // Establecer cabeceras CORS para permitir el acceso desde cualquier origen
-      res.set('Access-Control-Allow-Origin', '*');
-      res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-      
-      // Enviar la imagen como respuesta
-      res.send(producto.image.data);
     } else {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }

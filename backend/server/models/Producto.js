@@ -48,14 +48,6 @@ const ProductoSchema = new mongoose.Schema({
     },
   ],
   image: {
-    data: {
-      type: Buffer,
-      required: false,
-    },
-    contentType: {
-      type: String,
-      required: false,
-    },
     url: {
       type: String,
       required: false,
