@@ -123,40 +123,28 @@ export default function Filter({ products, setFilteredProducts }) {
     // Apply marca filter
     if (selectedMarca) {
       filtered = filtered.filter((product) => 
-        product.marca && product.marca.toLowerCase() === selectedMarca.toLowerCase()
+        product.marca && product.marca === selectedMarca // Removed toLowerCase() for exact match
       );
     }
 
     // Apply talla filters
     if (selectedTallaRopa) {
       filtered = filtered.filter((product) => {
-        // Verificar que el producto sea de la categoría correcta y tenga tallas
-        if (product.categoria !== "ropa" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-          return false;
-        }
-        // Buscar la talla exacta en el array de tallas
+        if (product.categoria !== "ropa") return false;
         return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaRopa);
       });
     }
 
     if (selectedTallaZapatilla) {
       filtered = filtered.filter((product) => {
-        // Verificar que el producto sea de la categoría correcta y tenga tallas
-        if (product.categoria !== "zapatillas" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-          return false;
-        }
-        // Buscar la talla exacta en el array de tallas
+        if (product.categoria !== "zapatillas") return false;
         return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaZapatilla);
       });
     }
 
     if (selectedAccesorio) {
       filtered = filtered.filter((product) => {
-        // Verificar que el producto sea de la categoría correcta y tenga tallas
-        if (product.categoria !== "accesorios" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-          return false;
-        }
-        // Buscar la talla exacta en el array de tallas
+        if (product.categoria !== "accesorios") return false;
         return product.tallas.some((tallaObj) => tallaObj.talla === selectedAccesorio);
       });
     }
@@ -164,22 +152,17 @@ export default function Filter({ products, setFilteredProducts }) {
     // Apply price filters
     if (precioMin || precioMax) {
       filtered = filtered.filter((product) => {
-        const precio = product.precio;
-        if (precioMin && precioMax) {
-          return precio >= parseInt(precioMin) && precio <= parseInt(precioMax);
-        } else if (precioMin) {
-          return precio >= parseInt(precioMin);
-        } else if (precioMax) {
-          return precio <= parseInt(precioMax);
-        }
-        return true;
+        const precio = parseFloat(product.precio);
+        const min = precioMin ? parseFloat(precioMin) : -Infinity;
+        const max = precioMax ? parseFloat(precioMax) : Infinity;
+        return precio >= min && precio <= max;
       });
     }
 
     // Apply stock filter
     if (stockOnly) {
       filtered = filtered.filter((product) =>
-        product.tallas.some((talla) => talla.precioTalla > 0)
+        product.tallas.some((talla) => talla.stock > 0)
       );
     }
 
@@ -187,21 +170,35 @@ export default function Filter({ products, setFilteredProducts }) {
     if (selectedDisponibilidad) {
       filtered = filtered.filter((product) => {
         if (selectedDisponibilidad === "Solo productos en stock") {
-          return product.tallas.some((talla) => talla.precioTalla > 0);
+          return product.tallas.some((talla) => talla.stock > 0);
         }
-        const productDisponibilidad = getDisponibilidad(product);
-        return productDisponibilidad === selectedDisponibilidad;
+        
+        // Determine product availability based on stock and encargo status
+        let availability;
+        const hasStock = product.tallas.some((talla) => talla.stock > 0);
+        
+        if (hasStock) {
+          availability = "Entrega inmediata";
+        } else if (product.encargo) {
+          availability = "Disponible en 3 días";
+        } else {
+          availability = "Disponible en 20 días";
+        }
+        
+        return availability === selectedDisponibilidad;
       });
     }
 
     // Apply search query filter
     if (query) {
+      const searchQuery = query.toLowerCase();
       filtered = filtered.filter((product) =>
-        product.nombre.toLowerCase().includes(query.toLowerCase())
+        product.nombre.toLowerCase().includes(searchQuery) ||
+        product.marca.toLowerCase().includes(searchQuery)
       );
     }
 
-    // Sort the filtered products
+    // Sort the filtered products by availability
     const sortedFiltered = sortProductsByAvailability(filtered);
     setFilteredProducts(sortedFiltered);
   }, [
@@ -278,13 +275,12 @@ export default function Filter({ products, setFilteredProducts }) {
   };
 
   const getDisponibilidad = (product) => {
-    // Verifica si el array 'tallas' tiene algún objeto con precioTalla
-    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-
-    if (hasTallas && product.encargo) {
-      return "Disponible en 3 días";
-    } else if (hasTallas) {
+    const hasStock = product.tallas.some((talla) => talla.stock > 0);
+    
+    if (hasStock) {
       return "Entrega inmediata";
+    } else if (product.encargo) {
+      return "Disponible en 3 días";
     } else {
       return "Disponible en 20 días";
     }
