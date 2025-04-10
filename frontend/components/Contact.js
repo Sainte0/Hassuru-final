@@ -68,17 +68,14 @@ export default function Contact() {
             {/* Carrusel de pasos */}
             <div className="w-full max-w-4xl mb-12">
                 <div className="relative overflow-hidden rounded-lg shadow-xl">
-                    <div className="relative h-[400px] md:h-[500px]">
+                    <div className="relative h-[500px] md:h-[600px]">
                         <Image
                             src={steps[currentStep].image}
                             alt={steps[currentStep].title}
                             fill
-                            className="object-cover"
+                            className="object-contain"
                             priority
                         />
-                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-black bg-opacity-50 text-white">
-                            <h3 className="text-xl font-semibold">{steps[currentStep].title}</h3>
-                        </div>
                     </div>
                     
                     {/* Controles del carrusel */}
@@ -102,7 +99,7 @@ export default function Contact() {
                     </button>
                     
                     {/* Indicadores de paso */}
-                    <div className="absolute bottom-16 left-0 right-0 flex justify-center space-x-2 p-2">
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 p-2">
                         {steps.map((_, index) => (
                             <button
                                 key={index}
