@@ -62,7 +62,7 @@ router.get('/categoria/:categoria', async (req, res) => {
       
       return res.status(200).json(productosFiltrados);
     } else {
-      return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
+      return res.status(400).json({ error: 'Categoría no válida.Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
   } catch (error) {
     console.error('Error en la ruta /categoria:', error);
