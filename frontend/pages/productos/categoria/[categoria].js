@@ -25,21 +25,9 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  const orderProducts = useCallback((products) => {
-    if (!Array.isArray(products)) return [];
-    
-    return [...products].sort((a, b) => {
-      const getValue = (product) => {
-        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        if (!hasTallas) return 3;
-        return product.encargo ? 2 : 1;
-      };
-      
-      return getValue(a) - getValue(b);
-    });
-  }, []);
-
   const fetchProductsByCategory = async () => {
+    if (!categoria) return;
+    
     setLoading(true);
     setError(null);
     try {
@@ -47,10 +35,10 @@ export default function Categoria() {
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
-      const orderedData = orderProducts(data);
+      const sortedData = sortProductsByAvailability(data);
       
-      setProducts(orderedData);
-      setFilteredProducts(orderedData);
+      setProducts(sortedData);
+      setFilteredProducts(sortedData);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -58,101 +46,149 @@ export default function Categoria() {
     }
   };
 
+  // Función para aplicar los filtros
+  const applyFilters = useCallback((productsToFilter, filters) => {
+    if (!productsToFilter || !Array.isArray(productsToFilter)) return [];
+
+    let filtered = [...productsToFilter];
+
+    // Filtro de marca
+    if (filters.marca) {
+      filtered = filtered.filter(product => 
+        product.marca === filters.marca
+      );
+    }
+
+    // Filtro de talla de ropa
+    if (filters.tallaRopa) {
+      filtered = filtered.filter(product => 
+        product.categoria === "ropa" && 
+        product.tallas.some(talla => talla.talla === filters.tallaRopa)
+      );
+    }
+
+    // Filtro de talla de zapatilla
+    if (filters.tallaZapatilla) {
+      filtered = filtered.filter(product => 
+        product.categoria === "zapatillas" && 
+        product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
+      );
+    }
+
+    // Filtro de accesorio
+    if (filters.accesorio) {
+      filtered = filtered.filter(product => 
+        product.categoria === "accesorios" && 
+        product.tallas.some(talla => talla.talla === filters.accesorio)
+      );
+    }
+
+    // Filtro de precio
+    if (filters.precioMin || filters.precioMax) {
+      filtered = filtered.filter(product => {
+        const precio = parseFloat(product.precio);
+        const min = filters.precioMin ? parseFloat(filters.precioMin) : -Infinity;
+        const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
+        return precio >= min && precio <= max;
+      });
+    }
+
+    // Filtro de stock
+    if (filters.stock) {
+      filtered = filtered.filter(product => 
+        product.tallas.some(talla => talla.stock > 0)
+      );
+    }
+
+    // Filtro de disponibilidad
+    if (filters.disponibilidad) {
+      filtered = filtered.filter(product => {
+        const hasStock = product.tallas.some(talla => talla.stock > 0);
+        
+        switch (filters.disponibilidad) {
+          case "Entrega inmediata":
+            return hasStock;
+          case "Disponible en 3 días":
+            return !hasStock && product.encargo;
+          case "Disponible en 20 días":
+            return !hasStock && !product.encargo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return sortProductsByAvailability(filtered);
+  }, []);
+
+  // Cargar productos cuando cambia la categoría
   useEffect(() => {
-    if (categoria) {
+    if (router.isReady) {
       fetchProductsByCategory();
-      // Set current page from URL or default to 1
-      setCurrentPage(router.query.page ? parseInt(router.query.page) : 1);
     }
-  }, [categoria]);
+  }, [categoria, router.isReady]);
 
-  // Efecto para manejar cambios en los parámetros de la URL
+  // Aplicar filtros cuando cambian los parámetros de la URL
   useEffect(() => {
-    if (products.length > 0 && router.isReady) {
-      // Aplicar filtros basados en los parámetros de la URL
-      let filtered = [...products];
-      
-      // Filtrar por talla de ropa
-      if (router.query.tallaRopa) {
-        const tallaRopa = decodeURIComponent(router.query.tallaRopa);
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "ropa" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === tallaRopa);
-        });
-      }
-      
-      // Filtrar por talla de zapatilla
-      if (router.query.tallaZapatilla) {
-        const tallaZapatilla = decodeURIComponent(router.query.tallaZapatilla);
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "zapatillas" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === tallaZapatilla);
-        });
-      }
-      
-      // Filtrar por accesorio
-      if (router.query.accesorio) {
-        const accesorio = decodeURIComponent(router.query.accesorio);
-        filtered = filtered.filter((product) => {
-          if (product.categoria !== "accesorios" || !Array.isArray(product.tallas) || product.tallas.length === 0) {
-            return false;
-          }
-          return product.tallas.some((tallaObj) => tallaObj.talla === accesorio);
-        });
-      }
-      
-      // Ordenar los productos filtrados
-      const orderedProducts = orderProducts(filtered);
-      setFilteredProducts(orderedProducts);
-    }
-  }, [router.query, products, orderProducts]);
+    if (!router.isReady || !products.length) return;
 
-  const getDisponibilidad = (product) => {
-    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+    const filters = {
+      marca: router.query.marca,
+      tallaRopa: router.query.tallaRopa,
+      tallaZapatilla: router.query.tallaZapatilla,
+      accesorio: router.query.accesorio,
+      precioMin: router.query.precioMin,
+      precioMax: router.query.precioMax,
+      stock: router.query.stock === 'true',
+      disponibilidad: router.query.disponibilidad
+    };
 
-    if (hasTallas && product.encargo) {
-      return "Disponible en 3 días";
-    } else if (hasTallas) {
-      return "Entrega inmediata";
-    } else {
-      return "Disponible en 20 días";
-    }
-  };
+    const filtered = applyFilters(products, filters);
+    setFilteredProducts(filtered);
+  }, [router.query, products, applyFilters, router.isReady]);
 
-  // Handle page changes by updating URL
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+  // Manejar cambio de página
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
     
-    // Update URL with page parameter while preserving other query parameters
-    const queryParams = { ...router.query, page };
+    // Actualizar URL con el número de página manteniendo los otros parámetros
+    const currentQuery = { ...router.query, page: pageNumber };
     router.push(
       {
         pathname: router.pathname,
-        query: queryParams,
+        query: currentQuery,
       },
       undefined,
       { shallow: true }
     );
+
+    // Scroll to top
+    window.scrollTo(0, 0);
   };
 
+  // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // Restaurar página 1 cuando cambian los filtros
+  useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+  }, [filteredProducts]);
+
+  if (!router.isReady) return null;
 
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={(newProducts) => {
-            const orderedProducts = orderProducts(newProducts);
-            setFilteredProducts(orderedProducts);
-            // Reset to page 1 when filters change
+          setFilteredProducts={(filters) => {
+            const filtered = applyFilters(products, filters);
+            setFilteredProducts(filtered);
             if (currentPage !== 1) {
               handlePageChange(1);
             }
@@ -161,19 +197,25 @@ export default function Categoria() {
       </aside>
       <section className="flex flex-col w-full lg:w-3/4">
         {loading ? (
-          <div className="flex items-center justify-center mt-[5%]"><BounceLoader color="#BE1A1D" /></div>
+          <div className="flex items-center justify-center mt-[5%]">
+            <BounceLoader color="#BE1A1D" />
+          </div>
         ) : error ? (
           <p className="text-red-500">Error: {error}</p>
         ) : currentProducts.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
-          <Card currentProducts={currentProducts} />
+          <>
+            <Card currentProducts={currentProducts} />
+            {totalPages > 1 && (
+              <Pagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </>
         )}
-        <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
       </section>
     </div>
   );
