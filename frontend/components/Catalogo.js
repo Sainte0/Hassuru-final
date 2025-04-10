@@ -36,34 +36,112 @@ export default function Catalogo() {
     }
   };
 
-  const getDisponibilidad = (product) => {
-    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+  // Función para aplicar los filtros
+  const applyFilters = (productsToFilter, filters) => {
+    let filtered = [...productsToFilter];
 
-    if (hasTallas && product.encargo) {
-      return "Disponible en 3 días";
-    } else if (hasTallas) {
-      return "Entrega inmediata";
-    } else {
-      return "Disponible en 20 días";
+    // Filtro de marca
+    if (filters.marca) {
+      filtered = filtered.filter(product => {
+        return product.marca === filters.marca;
+      });
     }
+
+    // Filtro de disponibilidad
+    if (filters.disponibilidad) {
+      filtered = filtered.filter(product => {
+        const hasStock = product.tallas.some(talla => talla.stock > 0);
+        
+        switch (filters.disponibilidad) {
+          case "Entrega inmediata":
+            return hasStock;
+          case "Disponible en 3 días":
+            return !hasStock && product.encargo;
+          case "Disponible en 20 días":
+            return !hasStock && !product.encargo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Filtro de talla de ropa
+    if (filters.tallaRopa) {
+      filtered = filtered.filter(product => 
+        product.categoria === "ropa" && 
+        product.tallas.some(talla => talla.talla === filters.tallaRopa)
+      );
+    }
+
+    // Filtro de talla de zapatilla
+    if (filters.tallaZapatilla) {
+      filtered = filtered.filter(product => 
+        product.categoria === "zapatillas" && 
+        product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
+      );
+    }
+
+    // Filtro de accesorio
+    if (filters.accesorio) {
+      filtered = filtered.filter(product => 
+        product.categoria === "accesorios" && 
+        product.tallas.some(talla => talla.talla === filters.accesorio)
+      );
+    }
+
+    // Filtro de precio
+    if (filters.precioMin || filters.precioMax) {
+      filtered = filtered.filter(product => {
+        const precio = parseFloat(product.precio);
+        const min = filters.precioMin ? parseFloat(filters.precioMin) : -Infinity;
+        const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
+        return precio >= min && precio <= max;
+      });
+    }
+
+    // Filtro de stock
+    if (filters.stock) {
+      filtered = filtered.filter(product => 
+        product.tallas.some(talla => talla.stock > 0)
+      );
+    }
+
+    // Filtro de búsqueda
+    if (filters.q) {
+      const searchQuery = filters.q.toLowerCase();
+      filtered = filtered.filter(product =>
+        product.nombre.toLowerCase().includes(searchQuery) ||
+        product.marca.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    return sortProductsByAvailability(filtered);
   };
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  // Efecto para manejar los filtros de URL y búsqueda
   useEffect(() => {
-    if (search) {
-      const searchQuery = search.toLowerCase();
-      const filtered = products.filter(product =>
-        product.nombre.toLowerCase().includes(searchQuery)
-      );
-      setFilteredProducts(filtered);
-      setCurrentPage(1);
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [search, products]);
+    if (!products.length || !router.isReady) return;
+
+    const filters = {
+      marca: router.query.marca,
+      disponibilidad: router.query.disponibilidad,
+      tallaRopa: router.query.tallaRopa,
+      tallaZapatilla: router.query.tallaZapatilla,
+      accesorio: router.query.accesorio,
+      precioMin: router.query.precioMin,
+      precioMax: router.query.precioMax,
+      stock: router.query.stock === 'true',
+      q: search
+    };
+
+    const filteredResults = applyFilters(products, filters);
+    setFilteredProducts(filteredResults);
+    setCurrentPage(1);
+  }, [router.query, search, products, router.isReady]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -75,7 +153,10 @@ export default function Catalogo() {
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={setFilteredProducts}
+          setFilteredProducts={(newFilters) => {
+            const filtered = applyFilters(products, newFilters);
+            setFilteredProducts(filtered);
+          }}
         />
       </aside>
       <section className="w-full lg:w-3/4">

@@ -164,8 +164,8 @@ export default function Filter({ products, setFilteredProducts }) {
         { shallow: true }
       );
 
-      // Apply filters
-      applyFilters(products, {
+      // Pass filters to parent component
+      setFilteredProducts({
         tallaRopa: selectedTallaRopa,
         tallaZapatilla: selectedTallaZapatilla,
         accesorio: selectedAccesorio,
@@ -307,8 +307,8 @@ export default function Filter({ products, setFilteredProducts }) {
       { shallow: true }
     );
 
-    // Resetear los productos filtrados al estado original
-    setFilteredProducts(products);
+    // Resetear los filtros
+    setFilteredProducts({});
   };
 
   // Prevenir el comportamiento por defecto del formulario
