@@ -122,7 +122,9 @@ export default function Filter({ products, setFilteredProducts }) {
 
     // Apply marca filter
     if (selectedMarca) {
-      filtered = filtered.filter((product) => product.marca === selectedMarca);
+      filtered = filtered.filter((product) => 
+        product.marca && product.marca.toLowerCase() === selectedMarca.toLowerCase()
+      );
     }
 
     // Apply talla filters
@@ -187,7 +189,8 @@ export default function Filter({ products, setFilteredProducts }) {
         if (selectedDisponibilidad === "Solo productos en stock") {
           return product.tallas.some((talla) => talla.precioTalla > 0);
         }
-        return getDisponibilidad(product) === selectedDisponibilidad;
+        const productDisponibilidad = getDisponibilidad(product);
+        return productDisponibilidad === selectedDisponibilidad;
       });
     }
 
