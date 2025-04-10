@@ -173,42 +173,11 @@ export default function Categoria() {
     }
   }, [router.query, products, applyFilters, router.isReady, currentPage, router]);
 
-  // Manejar cambio de página - SOLUCIÓN SIMPLIFICADA
-  const handlePageChange = (pageNumber) => {
-    // Actualizar el estado local
-    setCurrentPage(pageNumber);
-    
-    // Construir la URL con todos los parámetros actuales
-    const currentQuery = { ...router.query };
-    currentQuery.page = pageNumber;
-    
-    // Actualizar la URL
-    router.push(
-      {
-        pathname: router.pathname,
-        query: currentQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
-
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  // Restaurar página 1 cuando cambian los filtros
-  useEffect(() => {
-    const hasActiveFilters = Object.values(router.query).some(value => 
-      value !== undefined && value !== '' && value !== '1' && value !== 'page'
-    );
-    
-    if (hasActiveFilters && currentPage !== 1) {
-      setCurrentPage(1);
-    }
-  }, [filteredProducts, router.query, currentPage]);
 
   if (!router.isReady) return null;
 
@@ -220,9 +189,7 @@ export default function Categoria() {
           setFilteredProducts={(filters) => {
             const filtered = applyFilters(products, filters);
             setFilteredProducts(filtered);
-            if (currentPage !== 1) {
-              setCurrentPage(1);
-            }
+            setCurrentPage(1); // Reset a la página 1 cuando se aplican filtros
           }}
         />
       </aside>
@@ -242,7 +209,7 @@ export default function Categoria() {
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
-                onPageChange={handlePageChange}
+                onPageChange={setCurrentPage}
               />
             )}
           </>
