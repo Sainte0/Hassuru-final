@@ -11,13 +11,15 @@ export const useAuth = () => {
     const token = localStorage.getItem("token");
     if (!token) {
       setIsAuthenticated(false);
-      router.push("/login");
+      if (router.pathname.startsWith('/admin')) {
+        router.push("/login");
+      }
       return false;
     }
 
     // Implementar un mecanismo de caché para evitar verificaciones frecuentes
     const now = Date.now();
-    const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+    const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
     
     // Si la última verificación fue hace menos de CACHE_DURATION y no se fuerza la verificación
     if (!force && now - lastCheckTime.current < CACHE_DURATION) {
@@ -42,7 +44,9 @@ export const useAuth = () => {
         // Token expirado o inválido
         localStorage.removeItem("token");
         setIsAuthenticated(false);
-        router.push("/login");
+        if (router.pathname.startsWith('/admin')) {
+          router.push("/login");
+        }
         return false;
       }
 
@@ -57,7 +61,9 @@ export const useAuth = () => {
       console.error("Error en la verificación de autenticación:", error);
       localStorage.removeItem("token");
       setIsAuthenticated(false);
-      router.push("/login");
+      if (router.pathname.startsWith('/admin')) {
+        router.push("/login");
+      }
       return false;
     } finally {
       checkInProgress.current = false;
@@ -69,13 +75,13 @@ export const useAuth = () => {
     if (router.isReady) {
       checkAuth(true); // Forzar verificación en la carga inicial
     }
-  }, [router.isReady]);
+  }, [router.isReady, router.pathname]);
 
-  // Verificar autenticación cada 5 minutos
+  // Verificar autenticación cada 24 horas
   useEffect(() => {
     const interval = setInterval(() => {
       checkAuth(true);
-    }, 5 * 60 * 1000);
+    }, 24 * 60 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);
