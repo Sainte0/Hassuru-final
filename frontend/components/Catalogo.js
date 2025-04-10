@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import Card from "./Card";
 import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
-import { sortProductsByAvailability } from '../utils/sortProducts';
+import { sortProductsByPrice } from '../utils/sortProducts';
 
 export default function Catalogo() {
   const router = useRouter();
@@ -25,44 +25,28 @@ export default function Catalogo() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      const sortedData = sortProductsByAvailability(data);
+      const sortedData = sortProductsByPrice(data);
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
-    } catch (er) {
-      setError("No pudimos cargar los productos. Por favor, intenta más tarde.");
+    } catch (error) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
   // Función para aplicar los filtros
-  const applyFilters = (productsToFilter, filters) => {
+  const applyFilters = useCallback((productsToFilter, filters) => {
+    if (!productsToFilter || !Array.isArray(productsToFilter)) return [];
+
     let filtered = [...productsToFilter];
 
     // Filtro de marca
     if (filters.marca) {
-      filtered = filtered.filter(product => {
-        return product.marca === filters.marca;
-      });
-    }
-
-    // Filtro de disponibilidad
-    if (filters.disponibilidad) {
-      filtered = filtered.filter(product => {
-        const hasStock = product.tallas.some(talla => talla.stock > 0);
-        
-        switch (filters.disponibilidad) {
-          case "Entrega inmediata":
-            return hasStock;
-          case "Disponible en 3 días":
-            return !hasStock && product.encargo;
-          case "Disponible en 20 días":
-            return !hasStock && !product.encargo;
-          default:
-            return true;
-        }
-      });
+      filtered = filtered.filter(product => 
+        product.marca === filters.marca
+      );
     }
 
     // Filtro de talla de ropa
@@ -106,17 +90,26 @@ export default function Catalogo() {
       );
     }
 
-    // Filtro de búsqueda
-    if (filters.q) {
-      const searchQuery = filters.q.toLowerCase();
-      filtered = filtered.filter(product =>
-        product.nombre.toLowerCase().includes(searchQuery) ||
-        product.marca.toLowerCase().includes(searchQuery)
-      );
+    // Filtro de disponibilidad - Invertido: 20 días con inmediata
+    if (filters.disponibilidad) {
+      filtered = filtered.filter(product => {
+        const hasStock = product.tallas.some(talla => talla.stock > 0);
+        
+        switch (filters.disponibilidad) {
+          case "Entrega inmediata":
+            return !hasStock && !product.encargo; // Cambiado: ahora es 20 días
+          case "Disponible en 3 días":
+            return !hasStock && product.encargo;
+          case "Disponible en 20 días":
+            return hasStock; // Cambiado: ahora es inmediata
+          default:
+            return true;
+        }
+      });
     }
 
-    return sortProductsByAvailability(filtered);
-  };
+    return sortProductsByPrice(filtered);
+  }, []);
 
   useEffect(() => {
     fetchProducts();

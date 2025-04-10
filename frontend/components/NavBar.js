@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/router';
+import SearchBar from "./SearchBar";
 
 export default function Navbar() {
   const router = useRouter();
@@ -63,6 +64,12 @@ export default function Navbar() {
   const handleMarcaClick = (categoria, marca) => {
     router.push(`/productos/categoria/${categoria}?marca=${encodeURIComponent(marca)}`);
     setIsOpen(false);
+  };
+
+  const handleSearch = (query) => {
+    if (query && query.trim()) {
+      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
+    }
   };
 
   return (
@@ -164,6 +171,11 @@ export default function Navbar() {
               </Link>
             </div>
 
+            {/* Search Bar */}
+            <div className="hidden ml-auto xl:block">
+              <SearchBar onSearch={handleSearch} isHamburgerOpen={false} />
+            </div>
+
             {/* Mobile menu button */}
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -259,6 +271,11 @@ export default function Navbar() {
               >
                 Encargos
               </Link>
+              
+              {/* Mobile Search */}
+              <div className="px-4 py-2">
+                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
+              </div>
             </div>
           )}
         </div>

@@ -1,23 +1,30 @@
 export const sortProductsByAvailability = (products) => {
-  if (!Array.isArray(products)) return [];
-
-  const sortOrder = {
-    'Entrega inmediata': 1,
-    'Disponible en 3 días': 2,
-    'Disponible en 20 días': 3
-  };
-
-  const getProductAvailability = (product) => {
-    const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-    
-    if (hasTallas && !product.encargo) return 'Entrega inmediata';
-    if (hasTallas && product.encargo) return 'Disponible en 3 días';
-    return 'Disponible en 20 días';
-  };
-
+  if (!products || !Array.isArray(products)) return [];
+  
   return [...products].sort((a, b) => {
-    const availabilityA = getProductAvailability(a);
-    const availabilityB = getProductAvailability(b);
-    return sortOrder[availabilityA] - sortOrder[availabilityB];
+    // Primero ordenar por disponibilidad
+    const aHasStock = a.tallas.some(talla => talla.stock > 0);
+    const bHasStock = b.tallas.some(talla => talla.stock > 0);
+    
+    if (aHasStock && !bHasStock) return -1;
+    if (!aHasStock && bHasStock) return 1;
+    
+    // Si ambos tienen stock o ambos no tienen stock, ordenar por precio
+    const aPrice = parseFloat(a.precio);
+    const bPrice = parseFloat(b.precio);
+    
+    return aPrice - bPrice; // Ordenar de menor a mayor precio
+  });
+};
+
+// Función para ordenar productos solo por precio (menor a mayor)
+export const sortProductsByPrice = (products) => {
+  if (!products || !Array.isArray(products)) return [];
+  
+  return [...products].sort((a, b) => {
+    const aPrice = parseFloat(a.precio);
+    const bPrice = parseFloat(b.precio);
+    
+    return aPrice - bPrice; // Ordenar de menor a mayor precio
   });
 };

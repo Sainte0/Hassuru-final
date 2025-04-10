@@ -4,7 +4,7 @@ import Card from "../../../components/Card";
 import Filter from "../../../components/Filtro";
 import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
-import { sortProductsByAvailability } from '../../../utils/sortProducts';
+import { sortProductsByPrice } from '../../../utils/sortProducts';
 
 export default function Categoria() {
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function Categoria() {
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
-      const sortedData = sortProductsByAvailability(data);
+      const sortedData = sortProductsByPrice(data);
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
@@ -128,7 +128,7 @@ export default function Categoria() {
       });
     }
 
-    return sortProductsByAvailability(filtered);
+    return sortProductsByPrice(filtered);
   }, []);
 
   // Cargar productos cuando cambia la categoría
@@ -160,24 +160,20 @@ export default function Categoria() {
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters && currentPage !== 1) {
       setCurrentPage(1);
-      // Actualizar URL para reflejar la página 1
-      const queryParams = { ...router.query, page: 1 };
-      router.push(
-        {
-          pathname: router.pathname,
-          query: queryParams,
-        },
-        undefined,
-        { shallow: true }
-      );
     }
-  }, [router.query, products, applyFilters, router.isReady, currentPage, router]);
+  }, [router.query, products, applyFilters, router.isReady, currentPage]);
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0);
+  };
 
   if (!router.isReady) return null;
 
@@ -209,7 +205,7 @@ export default function Categoria() {
               <Pagination
                 totalPages={totalPages}
                 currentPage={currentPage}
-                onPageChange={setCurrentPage}
+                onPageChange={handlePageChange}
               />
             )}
           </>
