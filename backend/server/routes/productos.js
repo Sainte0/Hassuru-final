@@ -106,10 +106,14 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
+    console.log('Iniciando creación de producto...');
+    console.log('Datos recibidos:', JSON.stringify(req.body));
+    
     const { nombre, descripcion, precio, marca, categoria, tallas, colores, encargo, destacado, destacado_zapatillas } = req.body;
     
     // Validar campos requeridos
     if (!nombre || !precio || !marca || !categoria) {
+      console.error('Faltan campos requeridos');
       return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
     }
     
@@ -117,13 +121,16 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     let imageUrl = null;
     
     if (req.file) {
+      console.log('Archivo recibido:', req.file.originalname, 'Tipo:', req.file.mimetype);
       try {
         // Leer el archivo como Buffer
         const imageBuffer = fs.readFileSync(req.file.path);
+        console.log('Archivo leído correctamente, tamaño:', imageBuffer.length, 'bytes');
         
         // Subir la imagen a ImgBB
         try {
           console.log('Intentando subir imagen a ImgBB...');
+          console.log('API Key disponible:', !!process.env.IMGBB_API_KEY);
           imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
           console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
           
@@ -136,6 +143,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         } catch (error) {
           console.error('Error al subir la imagen a ImgBB:', error);
           // Si falla la subida a ImgBB, guardar en la base de datos como antes
+          console.log('Guardando imagen en la base de datos como fallback');
           imageData = {
             data: imageBuffer,
             contentType: req.file.mimetype
@@ -149,11 +157,14 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         if (req.file && req.file.path) {
           try {
             fs.unlinkSync(req.file.path);
+            console.log('Archivo temporal eliminado');
           } catch (error) {
             console.error('Error al eliminar archivo temporal:', error);
           }
         }
       }
+    } else {
+      console.log('No se recibió ningún archivo de imagen');
     }
 
     // Parsear tallas y colores si son strings JSON
@@ -162,6 +173,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     
     try {
       parsedTallas = tallas ? JSON.parse(tallas) : [];
+      console.log('Tallas parseadas:', parsedTallas);
     } catch (e) {
       console.error('Error al parsear tallas:', e);
       return res.status(400).json({ error: 'Formato de tallas inválido' });
@@ -169,6 +181,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     
     try {
       parsedColores = colores ? JSON.parse(colores) : [];
+      console.log('Colores parseados:', parsedColores);
     } catch (e) {
       console.error('Error al parsear colores:', e);
       return res.status(400).json({ error: 'Formato de colores inválido' });
@@ -176,6 +189,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
 
     // Generar un slug único para el producto
     const slug = generateUniqueSlug(nombre);
+    console.log('Slug generado:', slug);
 
     const nuevoProducto = new Producto({
       nombre,
@@ -194,7 +208,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
 
     console.log('Guardando producto en la base de datos...');
     const productoGuardado = await nuevoProducto.save();
-    console.log('Producto guardado exitosamente');
+    console.log('Producto guardado exitosamente con ID:', productoGuardado._id);
     
     res.status(201).json(productoGuardado);
   } catch (error) {
@@ -204,6 +218,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     if (req.file && req.file.path) {
       try {
         fs.unlinkSync(req.file.path);
+        console.log('Archivo temporal eliminado después de error');
       } catch (unlinkError) {
         console.error('Error al eliminar archivo temporal:', unlinkError);
       }

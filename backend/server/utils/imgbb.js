@@ -16,6 +16,8 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
     const formData = new FormData();
     formData.append('image', base64Image);
     
+    console.log('Enviando solicitud a ImgBB con API key:', apiKey);
+    
     // Make request to ImgBB API
     const response = await axios.post(
       `https://api.imgbb.com/1/upload?key=${apiKey}`,
@@ -26,6 +28,8 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
         },
       }
     );
+    
+    console.log('Respuesta de ImgBB:', JSON.stringify(response.data));
     
     // Check if upload was successful
     if (response.data && response.data.success) {
