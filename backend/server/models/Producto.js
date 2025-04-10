@@ -55,6 +55,10 @@ const ProductoSchema = new mongoose.Schema({
     contentType: {
       type: String,
       required: false,
+    },
+    url: {
+      type: String,
+      required: false,
     }
   },
   encargo: {

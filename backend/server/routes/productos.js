@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { generateUniqueSlug } = require('../utils/slugify');
 const { cacheMiddleware } = require('../utils/cache');
+const { uploadToImgBB } = require('../utils/imgbb');
 const router = express.Router();
 
 // Configuración de multer para manejar la carga de archivos
@@ -113,11 +114,32 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     }
     
     let imageData = null;
+    let imageUrl = null;
+    
     if (req.file) {
-      imageData = {
-        data: fs.readFileSync(req.file.path),
-        contentType: req.file.mimetype
-      };
+      // Leer el archivo como Buffer
+      const imageBuffer = fs.readFileSync(req.file.path);
+      
+      // Subir la imagen a ImgBB
+      try {
+        imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+        
+        // Mantener compatibilidad con el formato anterior
+        imageData = {
+          data: imageBuffer,
+          contentType: req.file.mimetype,
+          url: imageUrl
+        };
+      } catch (error) {
+        console.error('Error al subir la imagen a ImgBB:', error);
+        // Si falla la subida a ImgBB, guardar en la base de datos como antes
+        imageData = {
+          data: imageBuffer,
+          contentType: req.file.mimetype
+        };
+      }
+      
+      // Eliminar el archivo temporal
       fs.unlinkSync(req.file.path);
     }
 
@@ -178,16 +200,32 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
     const contentType = req.file.mimetype;
+    
+    // Subir la imagen a ImgBB
+    let imageUrl = null;
+    try {
+      imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+    } catch (error) {
+      console.error('Error al subir la imagen a ImgBB:', error);
+      // Si falla la subida a ImgBB, continuar con el método anterior
+    }
 
-    // Actualizar el producto con la imagen como Buffer
+    // Actualizar el producto con la imagen
+    const updateData = {
+      image: {
+        data: imageBuffer,
+        contentType: contentType
+      }
+    };
+    
+    // Si se subió correctamente a ImgBB, agregar la URL
+    if (imageUrl) {
+      updateData.image.url = imageUrl;
+    }
+
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      { 
-        image: {
-          data: imageBuffer,
-          contentType: contentType
-        }
-      },
+      updateData,
       { new: true }
     );
 
@@ -249,16 +287,32 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
     const contentType = req.file.mimetype;
+    
+    // Subir la imagen a ImgBB
+    let imageUrl = null;
+    try {
+      imageUrl = await uploadToImgBB(imageBuffer, process.env.IMGBB_API_KEY);
+    } catch (error) {
+      console.error('Error al subir la imagen a ImgBB:', error);
+      // Si falla la subida a ImgBB, continuar con el método anterior
+    }
 
     // Actualizar el producto con la imagen
+    const updateData = {
+      image: {
+        data: imageBuffer,
+        contentType: contentType
+      }
+    };
+    
+    // Si se subió correctamente a ImgBB, agregar la URL
+    if (imageUrl) {
+      updateData.image.url = imageUrl;
+    }
+
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
-      { 
-        image: {
-          data: imageBuffer,
-          contentType: contentType
-        }
-      },
+      updateData,
       { new: true }
     );
 
@@ -269,7 +323,8 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     const productoRespuesta = {
       ...productoActualizado.toObject(),
       image: {
-        contentType: productoActualizado.image.contentType
+        contentType: productoActualizado.image.contentType,
+        url: productoActualizado.image.url
       }
     };
 
@@ -308,24 +363,30 @@ router.get('/:id/image', async (req, res) => {
       producto = await Producto.findOne({ slug: req.params.id }).select('image');
     }
     
-    if (!producto || !producto.image || !producto.image.data) {
+    // Si el producto tiene una URL de imagen, redirigir a esa URL
+    if (producto && producto.image && producto.image.url) {
+      return res.redirect(producto.image.url);
+    }
+    
+    // Si no tiene URL pero tiene datos de imagen, enviar la imagen como antes
+    if (producto && producto.image && producto.image.data) {
+      // Establecer el tipo de contenido correcto
+      res.set('Content-Type', producto.image.contentType);
+      
+      // Establecer cabeceras para evitar el almacenamiento en caché
+      res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.set('Pragma', 'no-cache');
+      res.set('Expires', '0');
+      
+      // Establecer cabeceras CORS para permitir el acceso desde cualquier origen
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      
+      // Enviar la imagen como respuesta
+      res.send(producto.image.data);
+    } else {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
-
-    // Establecer el tipo de contenido correcto
-    res.set('Content-Type', producto.image.contentType);
-    
-    // Establecer cabeceras para evitar el almacenamiento en caché
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.set('Pragma', 'no-cache');
-    res.set('Expires', '0');
-    
-    // Establecer cabeceras CORS para permitir el acceso desde cualquier origen
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    
-    // Enviar la imagen como respuesta
-    res.send(producto.image.data);
   } catch (error) {
     console.error('Error al obtener la imagen:', error);
     res.status(500).json({ error: error.message });
