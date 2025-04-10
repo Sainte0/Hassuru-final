@@ -143,6 +143,8 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
         // Esperar un momento para asegurar que el modal se haya cerrado
         setTimeout(() => {
           fetchProducts();
+          // Forzar una recarga completa de la página para asegurar que todos los datos estén actualizados
+          window.location.reload();
         }, 100);
       }
     } catch (error) {
