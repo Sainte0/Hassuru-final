@@ -24,7 +24,6 @@ export default function Filter({ products, setFilteredProducts }) {
     if (router.isReady) {
       const { tallaRopa, tallaZapatilla, accesorio, precioMin, precioMax, stock, disponibilidad, marca, q } = router.query;
       
-      // Decodificar los parámetros de la URL
       if (tallaRopa) setSelectedTallaRopa(decodeURIComponent(tallaRopa));
       if (tallaZapatilla) setSelectedTallaZapatilla(decodeURIComponent(tallaZapatilla));
       if (accesorio) setSelectedAccesorio(decodeURIComponent(accesorio));
@@ -34,43 +33,128 @@ export default function Filter({ products, setFilteredProducts }) {
       if (disponibilidad) setSelectedDisponibilidad(decodeURIComponent(disponibilidad));
       if (marca) setSelectedMarca(decodeURIComponent(marca));
       if (q) setQuery(decodeURIComponent(q));
+
+      // Aplicar los filtros inmediatamente después de cargar los parámetros de la URL
+      applyFilters(products, {
+        tallaRopa: tallaRopa ? decodeURIComponent(tallaRopa) : "",
+        tallaZapatilla: tallaZapatilla ? decodeURIComponent(tallaZapatilla) : "",
+        accesorio: accesorio ? decodeURIComponent(accesorio) : "",
+        precioMin: precioMin ? decodeURIComponent(precioMin) : "",
+        precioMax: precioMax ? decodeURIComponent(precioMax) : "",
+        stock: stock === 'true',
+        disponibilidad: disponibilidad ? decodeURIComponent(disponibilidad) : "",
+        marca: marca ? decodeURIComponent(marca) : "",
+        q: q ? decodeURIComponent(q) : ""
+      });
     }
-  }, [router.isReady, router.query]);
+  }, [router.isReady, router.query, products]);
 
-  useEffect(() => {
-    const isMobile = window.innerWidth < 768;
-    if (isMobile) {
-      setShowFilters(false);
+  // Función para aplicar todos los filtros
+  const applyFilters = (productsToFilter, filters) => {
+    let filtered = [...productsToFilter];
+
+    // Filtro de marca
+    if (filters.marca) {
+      filtered = filtered.filter(product => 
+        product.marca === filters.marca
+      );
     }
-  }, []);
 
-  useEffect(() => {
-    const marcasSet = new Set();
-    products.forEach((product) => marcasSet.add(product.marca));
-    setMarcas(Array.from(marcasSet));
-  }, [products]);
+    // Filtro de talla de ropa
+    if (filters.tallaRopa) {
+      filtered = filtered.filter(product => 
+        product.categoria === "ropa" && 
+        product.tallas.some(talla => talla.talla === filters.tallaRopa)
+      );
+    }
 
-  // Update URL when filters change
+    // Filtro de talla de zapatilla
+    if (filters.tallaZapatilla) {
+      filtered = filtered.filter(product => 
+        product.categoria === "zapatillas" && 
+        product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
+      );
+    }
+
+    // Filtro de accesorio
+    if (filters.accesorio) {
+      filtered = filtered.filter(product => 
+        product.categoria === "accesorios" && 
+        product.tallas.some(talla => talla.talla === filters.accesorio)
+      );
+    }
+
+    // Filtro de precio
+    if (filters.precioMin || filters.precioMax) {
+      filtered = filtered.filter(product => {
+        const precio = parseFloat(product.precio);
+        const min = filters.precioMin ? parseFloat(filters.precioMin) : -Infinity;
+        const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
+        return precio >= min && precio <= max;
+      });
+    }
+
+    // Filtro de stock
+    if (filters.stock) {
+      filtered = filtered.filter(product => 
+        product.tallas.some(talla => talla.stock > 0)
+      );
+    }
+
+    // Filtro de disponibilidad
+    if (filters.disponibilidad) {
+      filtered = filtered.filter(product => {
+        const hasStock = product.tallas.some(talla => talla.stock > 0);
+        
+        if (filters.disponibilidad === "Solo productos en stock") {
+          return hasStock;
+        }
+
+        if (filters.disponibilidad === "Entrega inmediata") {
+          return hasStock;
+        } else if (filters.disponibilidad === "Disponible en 3 días") {
+          return !hasStock && product.encargo;
+        } else if (filters.disponibilidad === "Disponible en 20 días") {
+          return !hasStock && !product.encargo;
+        }
+        
+        return true;
+      });
+    }
+
+    // Filtro de búsqueda
+    if (filters.q) {
+      const searchQuery = filters.q.toLowerCase();
+      filtered = filtered.filter(product =>
+        product.nombre.toLowerCase().includes(searchQuery) ||
+        product.marca.toLowerCase().includes(searchQuery)
+      );
+    }
+
+    setFilteredProducts(sortProductsByAvailability(filtered));
+  };
+
+  // Update URL and apply filters when any filter changes
   useEffect(() => {
     if (router.isReady) {
       const queryParams = {};
       
-      if (selectedTallaRopa) queryParams.tallaRopa = encodeURIComponent(selectedTallaRopa);
-      if (selectedTallaZapatilla) queryParams.tallaZapatilla = encodeURIComponent(selectedTallaZapatilla);
-      if (selectedAccesorio) queryParams.accesorio = encodeURIComponent(selectedAccesorio);
-      if (precioMin) queryParams.precioMin = encodeURIComponent(precioMin);
-      if (precioMax) queryParams.precioMax = encodeURIComponent(precioMax);
+      if (selectedTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
+      if (selectedTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
+      if (selectedAccesorio) queryParams.accesorio = selectedAccesorio;
+      if (precioMin) queryParams.precioMin = precioMin;
+      if (precioMax) queryParams.precioMax = precioMax;
       if (stockOnly) queryParams.stock = 'true';
-      if (selectedDisponibilidad) queryParams.disponibilidad = encodeURIComponent(selectedDisponibilidad);
-      if (selectedMarca) queryParams.marca = encodeURIComponent(selectedMarca);
-      if (query) queryParams.q = encodeURIComponent(query);
+      if (selectedDisponibilidad) queryParams.disponibilidad = selectedDisponibilidad;
+      if (selectedMarca) queryParams.marca = selectedMarca;
+      if (query) queryParams.q = query;
       
       // Preserve the category parameter if it exists
       if (router.query.categoria) {
         queryParams.categoria = router.query.categoria;
       }
-      
-      // Update URL without triggering a page reload
+
+      // Update URL
       router.push(
         {
           pathname: router.pathname,
@@ -79,6 +163,19 @@ export default function Filter({ products, setFilteredProducts }) {
         undefined,
         { shallow: true }
       );
+
+      // Apply filters
+      applyFilters(products, {
+        tallaRopa: selectedTallaRopa,
+        tallaZapatilla: selectedTallaZapatilla,
+        accesorio: selectedAccesorio,
+        precioMin,
+        precioMax,
+        stock: stockOnly,
+        disponibilidad: selectedDisponibilidad,
+        marca: selectedMarca,
+        q: query
+      });
     }
   }, [
     selectedTallaRopa,
@@ -91,8 +188,7 @@ export default function Filter({ products, setFilteredProducts }) {
     selectedMarca,
     query,
     router.isReady,
-    router.pathname,
-    router.query.categoria
+    products
   ]);
 
   // Extract available sizes from products
@@ -100,8 +196,13 @@ export default function Filter({ products, setFilteredProducts }) {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
     const accesoriosSet = new Set();
+    const marcasSet = new Set();
 
     products.forEach((product) => {
+      if (product.marca) {
+        marcasSet.add(product.marca);
+      }
+
       if (product.categoria === "ropa") {
         product.tallas.forEach((tallaObj) => tallasRopaSet.add(tallaObj.talla));
       } else if (product.categoria === "zapatillas") {
@@ -114,105 +215,15 @@ export default function Filter({ products, setFilteredProducts }) {
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
     setAccesorios(Array.from(accesoriosSet));
+    setMarcas(Array.from(marcasSet));
   }, [products]);
 
-  // Combined filter effect - this is the main filtering logic
   useEffect(() => {
-    let filtered = [...products];
-
-    // Apply marca filter
-    if (selectedMarca) {
-      filtered = filtered.filter((product) => 
-        product.marca && product.marca === selectedMarca // Removed toLowerCase() for exact match
-      );
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setShowFilters(false);
     }
-
-    // Apply talla filters
-    if (selectedTallaRopa) {
-      filtered = filtered.filter((product) => {
-        if (product.categoria !== "ropa") return false;
-        return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaRopa);
-      });
-    }
-
-    if (selectedTallaZapatilla) {
-      filtered = filtered.filter((product) => {
-        if (product.categoria !== "zapatillas") return false;
-        return product.tallas.some((tallaObj) => tallaObj.talla === selectedTallaZapatilla);
-      });
-    }
-
-    if (selectedAccesorio) {
-      filtered = filtered.filter((product) => {
-        if (product.categoria !== "accesorios") return false;
-        return product.tallas.some((tallaObj) => tallaObj.talla === selectedAccesorio);
-      });
-    }
-
-    // Apply price filters
-    if (precioMin || precioMax) {
-      filtered = filtered.filter((product) => {
-        const precio = parseFloat(product.precio);
-        const min = precioMin ? parseFloat(precioMin) : -Infinity;
-        const max = precioMax ? parseFloat(precioMax) : Infinity;
-        return precio >= min && precio <= max;
-      });
-    }
-
-    // Apply stock filter
-    if (stockOnly) {
-      filtered = filtered.filter((product) =>
-        product.tallas.some((talla) => talla.stock > 0)
-      );
-    }
-
-    // Apply disponibilidad filter
-    if (selectedDisponibilidad) {
-      filtered = filtered.filter((product) => {
-        if (selectedDisponibilidad === "Solo productos en stock") {
-          return product.tallas.some((talla) => talla.stock > 0);
-        }
-        
-        // Determine product availability based on stock and encargo status
-        let availability;
-        const hasStock = product.tallas.some((talla) => talla.stock > 0);
-        
-        if (hasStock) {
-          availability = "Entrega inmediata";
-        } else if (product.encargo) {
-          availability = "Disponible en 3 días";
-        } else {
-          availability = "Disponible en 20 días";
-        }
-        
-        return availability === selectedDisponibilidad;
-      });
-    }
-
-    // Apply search query filter
-    if (query) {
-      const searchQuery = query.toLowerCase();
-      filtered = filtered.filter((product) =>
-        product.nombre.toLowerCase().includes(searchQuery) ||
-        product.marca.toLowerCase().includes(searchQuery)
-      );
-    }
-
-    // Sort the filtered products by availability
-    const sortedFiltered = sortProductsByAvailability(filtered);
-    setFilteredProducts(sortedFiltered);
-  }, [
-    products,
-    selectedMarca,
-    selectedTallaRopa,
-    selectedTallaZapatilla,
-    selectedAccesorio,
-    precioMin,
-    precioMax,
-    stockOnly,
-    selectedDisponibilidad,
-    query
-  ]);
+  }, []);
 
   const handleSearch = () => {
     // This function is now redundant as the filtering is handled by the useEffect
