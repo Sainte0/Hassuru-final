@@ -175,17 +175,20 @@ export default function Categoria() {
 
   // Manejar cambio de página
   const handlePageChange = (pageNumber) => {
+    // Actualizar el estado local
     setCurrentPage(pageNumber);
     
     // Actualizar URL con el número de página manteniendo los otros parámetros
     const currentQuery = { ...router.query, page: pageNumber };
+    
+    // Usar router.push con replace: true para evitar problemas de navegación
     router.push(
       {
         pathname: router.pathname,
         query: currentQuery,
       },
       undefined,
-      { shallow: true }
+      { shallow: true, scroll: false }
     );
 
     // Scroll to top
