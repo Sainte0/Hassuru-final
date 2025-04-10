@@ -93,15 +93,16 @@ export default function Catalogo() {
     // Filtro de disponibilidad - Invertido: 20 días con inmediata
     if (filters.disponibilidad) {
       filtered = filtered.filter(product => {
+        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
         const hasStock = product.tallas.some(talla => talla.stock > 0);
         
         switch (filters.disponibilidad) {
           case "Entrega inmediata":
-            return !hasStock && !product.encargo; // Cambiado: ahora es 20 días
+            return hasTallas && !product.encargo;
           case "Disponible en 3 días":
-            return !hasStock && product.encargo;
+            return hasTallas && product.encargo;
           case "Disponible en 20 días":
-            return hasStock; // Cambiado: ahora es inmediata
+            return !hasTallas;
           default:
             return true;
         }

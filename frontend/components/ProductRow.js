@@ -241,11 +241,7 @@ const ProductRow = ({
       return;
     }
 
-    // Validar el tamaño del archivo (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('La imagen no debe superar los 5MB');
-      return;
-    }
+
 
     try {
       // Mostrar un mensaje de carga
