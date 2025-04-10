@@ -9,23 +9,28 @@ const FormData = require('form-data');
  */
 const uploadToImgBB = async (imageBuffer, apiKey) => {
   try {
+    if (!apiKey) {
+      throw new Error('ImgBB API key is required');
+    }
+
     // Convert buffer to base64
     const base64Image = imageBuffer.toString('base64');
     
     // Create form data
-    const formData = new FormData();
+    const formData = new URLSearchParams();
+    formData.append('key', apiKey);
     formData.append('image', base64Image);
     
-    console.log('Enviando solicitud a ImgBB con API key:', apiKey);
+    console.log('Enviando solicitud a ImgBB...');
     
     // Make request to ImgBB API
     const response = await axios.post(
-      `https://api.imgbb.com/1/upload?key=${apiKey}`,
+      'https://api.imgbb.com/1/upload',
       formData,
       {
         headers: {
-          ...formData.getHeaders(),
-        },
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
       }
     );
     
@@ -42,6 +47,7 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
     console.error('Error uploading to ImgBB:', error.message);
     if (error.response) {
       console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
     }
     throw error;
   }

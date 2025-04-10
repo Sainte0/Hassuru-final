@@ -1,7 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const productosRoutes = require('./routes/productos');
 const stockRoutes = require('./routes/stock');
@@ -13,6 +14,14 @@ const imagesRoutes = require('./routes/images');
 const app = express();
 const PORT = process.env.PORT || 5001;
 const HOST = process.env.HOST || '0.0.0.0'; // Use 0.0.0.0 to listen on all network interfaces
+
+// Verificar variables de entorno críticas
+console.log('Verificando variables de entorno...');
+if (!process.env.IMGBB_API_KEY) {
+  console.error('ERROR: IMGBB_API_KEY no está definida en el archivo .env');
+  process.exit(1);
+}
+console.log('Variables de entorno verificadas correctamente');
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
