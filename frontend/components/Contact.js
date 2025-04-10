@@ -67,7 +67,7 @@ export default function Contact() {
             
             {/* Carrusel de pasos */}
             <div className="w-full max-w-4xl mb-12">
-                <div className="relative overflow-hidden rounded-lg shadow-xl">
+                <div className="relative overflow-hidden">
                     <div className="relative h-[500px] md:h-[600px]">
                         <Image
                             src={steps[currentStep].image}
@@ -76,40 +76,40 @@ export default function Contact() {
                             className="object-contain"
                             priority
                         />
-                    </div>
-                    
-                    {/* Controles del carrusel */}
-                    <button 
-                        onClick={prevStep}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 hover:bg-opacity-100 transition-all"
-                        aria-label="Paso anterior"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button 
-                        onClick={nextStep}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-70 rounded-full p-2 hover:bg-opacity-100 transition-all"
-                        aria-label="Siguiente paso"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                    
-                    {/* Indicadores de paso */}
-                    <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 p-2">
-                        {steps.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentStep(index)}
-                                className={`w-3 h-3 rounded-full ${
-                                    index === currentStep ? 'bg-white' : 'bg-white bg-opacity-50'
-                                }`}
-                                aria-label={`Ir al paso ${index + 1}`}
-                            />
-                        ))}
+                        
+                        {/* Controles del carrusel */}
+                        <button 
+                            onClick={prevStep}
+                            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 transition-all text-white"
+                            aria-label="Paso anterior"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button 
+                            onClick={nextStep}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 transition-all text-white"
+                            aria-label="Siguiente paso"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+                        
+                        {/* Indicadores de paso */}
+                        <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 p-2">
+                            {steps.map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentStep(index)}
+                                    className={`w-3 h-3 rounded-full ${
+                                        index === currentStep ? 'bg-white' : 'bg-white bg-opacity-50'
+                                    }`}
+                                    aria-label={`Ir al paso ${index + 1}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
