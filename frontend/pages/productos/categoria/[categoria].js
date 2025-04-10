@@ -173,26 +173,24 @@ export default function Categoria() {
     }
   }, [router.query, products, applyFilters, router.isReady, currentPage, router]);
 
-  // Manejar cambio de página
+  // Manejar cambio de página - SOLUCIÓN SIMPLIFICADA
   const handlePageChange = (pageNumber) => {
     // Actualizar el estado local
     setCurrentPage(pageNumber);
     
-    // Actualizar URL con el número de página manteniendo los otros parámetros
-    const currentQuery = { ...router.query, page: pageNumber };
+    // Construir la URL con todos los parámetros actuales
+    const currentQuery = { ...router.query };
+    currentQuery.page = pageNumber;
     
-    // Usar router.push con replace: true para evitar problemas de navegación
+    // Actualizar la URL
     router.push(
       {
         pathname: router.pathname,
         query: currentQuery,
       },
       undefined,
-      { shallow: true, scroll: false }
+      { shallow: true }
     );
-
-    // Scroll to top
-    window.scrollTo(0, 0);
   };
 
   // Calcular productos para la página actual
@@ -223,7 +221,7 @@ export default function Categoria() {
             const filtered = applyFilters(products, filters);
             setFilteredProducts(filtered);
             if (currentPage !== 1) {
-              handlePageChange(1);
+              setCurrentPage(1);
             }
           }}
         />
