@@ -9,6 +9,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
+  const [priceSort, setPriceSort] = useState(""); // Estado para el ordenamiento por precio
   const { dolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -20,6 +21,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setCategoriaFilter("");
     setNameFilter("");
     setEncargoFilter(false);  // Limpiar filtro de encargo
+    setPriceSort(""); // Limpiar ordenamiento por precio
     fetchProducts();
   };
 
@@ -31,12 +33,20 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     }
   };
 
-  const filteredProducts = editableProducts.filter((producto) => {
+  // Filtrar productos
+  let filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
     const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
     return nameMatch && categoryMatch && encargoMatch;
   });
+
+  // Ordenar productos por precio
+  if (priceSort === "asc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => a.precio - b.precio);
+  } else if (priceSort === "desc") {
+    filteredProducts = [...filteredProducts].sort((a, b) => b.precio - a.precio);
+  }
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -65,6 +75,15 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="zapatillas">Zapatillas</option>
           <option value="ropa">Ropa</option>
           <option value="accesorios">Accesorios</option>
+        </select>
+        <select
+          value={priceSort}
+          onChange={(e) => setPriceSort(e.target.value)}
+          className="w-full p-2 border rounded sm:w-auto"
+        >
+          <option value="">Ordenar por precio</option>
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
         </select>
         <div className="flex items-center gap-2">
           <input
