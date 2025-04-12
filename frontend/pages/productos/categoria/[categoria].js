@@ -14,7 +14,7 @@ export default function Categoria() {
   }
 
   if (!router.query.categoria) {
-    return <div>No se encontró la categoría</div>;
+    return <div>No se encontró la categoría </div>;
   }
 
   const [products, setProducts] = useState([]);
