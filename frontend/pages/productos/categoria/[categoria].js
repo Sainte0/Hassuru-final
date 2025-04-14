@@ -161,6 +161,28 @@ export default function Categoria() {
     }
   }, [categoria, router.isReady]);
 
+  // Efecto para manejar los filtros de URL
+  useEffect(() => {
+    if (!products.length || !router.isReady) return;
+
+    const filters = {
+      marca: router.query.marca,
+      disponibilidad: router.query.disponibilidad,
+      tallaRopa: router.query.tallaRopa,
+      tallaZapatilla: router.query.tallaZapatilla,
+      accesorio: router.query.accesorio,
+      precioMin: router.query.precioMin,
+      precioMax: router.query.precioMax,
+      stock: router.query.stock === 'true'
+    };
+
+    const filteredResults = applyFilters(products, filters);
+    setFilteredProducts(filteredResults);
+    
+    // No resetear la página cuando hay filtros activos
+    // La página se mantendrá según lo guardado en localStorage
+  }, [router.query, products, router.isReady]);
+
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
     const newQuery = { ...router.query };
@@ -180,31 +202,6 @@ export default function Categoria() {
       { shallow: true }
     );
   };
-
-  // Efecto para manejar los filtros de URL
-  useEffect(() => {
-    if (!products.length || !router.isReady) return;
-
-    const filters = {
-      marca: router.query.marca,
-      disponibilidad: router.query.disponibilidad,
-      tallaRopa: router.query.tallaRopa,
-      tallaZapatilla: router.query.tallaZapatilla,
-      accesorio: router.query.accesorio,
-      precioMin: router.query.precioMin,
-      precioMax: router.query.precioMax,
-      stock: router.query.stock === 'true'
-    };
-
-    const filteredResults = applyFilters(products, filters);
-    setFilteredProducts(filteredResults);
-    
-    // Solo resetear la página si hay filtros activos y no estamos en una página específica
-    const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
-    if (hasActiveFilters && !router.query.page) {
-      setCurrentPage(1);
-    }
-  }, [router.query, products, router.isReady]);
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
