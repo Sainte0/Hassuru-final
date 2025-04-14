@@ -139,24 +139,7 @@ export default function Categoria() {
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
-    // Mantener todos los parámetros de la URL existentes
-    const currentQuery = { ...router.query };
-    // Actualizar solo el parámetro de página
-    currentQuery.page = pageNumber;
-    
-    // Eliminar el parámetro page si es la página 1
-    if (pageNumber === 1) {
-      delete currentQuery.page;
-    }
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: currentQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
+    setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
   };
 
@@ -181,10 +164,24 @@ export default function Categoria() {
     // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
-      // Eliminar el parámetro page de la URL cuando se aplican filtros
-      const newQuery = { ...router.query };
+      setCurrentPage(1);
+    }
+  }, [router.query, products, applyFilters, router.isReady]);
+
+  // Efecto para actualizar la URL cuando cambia la página
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const newQuery = { ...router.query };
+    if (currentPage === 1) {
       delete newQuery.page;
-      router.push(
+    } else {
+      newQuery.page = currentPage.toString();
+    }
+
+    // Solo actualizar la URL si hay cambios
+    if (JSON.stringify(newQuery) !== JSON.stringify(router.query)) {
+      router.replace(
         {
           pathname: router.pathname,
           query: newQuery,
@@ -192,9 +189,8 @@ export default function Categoria() {
         undefined,
         { shallow: true }
       );
-      setCurrentPage(1);
     }
-  }, [router.query, products, applyFilters, router.isReady]);
+  }, [currentPage, router.isReady]);
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
