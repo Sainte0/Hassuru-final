@@ -22,7 +22,7 @@ export default function Detail({ product }) {
   const handleCompraClick = () => {
     if (selectedTalla || customTalla) {
       const message = selectedTalla
-        ? `Hola, quiero comprar esta prenda ${product.nombre} en el talle ${selectedTalla}`
+        ? `Hola, quiero comprar esta prenda ${product.nombre} en el talle ${selectedTalla.talla}`
         : `Hola, quiero encargar esta prenda ${product.nombre} en talle ${customTalla}`;
 
       const whatsappUrl = `https://api.whatsapp.com/send?phone=3512595858&text=${encodeURIComponent(message)}`;
@@ -90,35 +90,22 @@ export default function Detail({ product }) {
           </button>
           {showTallas && (
             <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-md shadow-md">
-              {product.tallas.map((tallaObj, index) => (
-                <button
-                  key={index}
-                  className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${selectedTalla === tallaObj.talla ? "font-bold" : ""}`}
-                  onClick={() => handleTallaSelect(tallaObj.talla)}
-                >
-                  Talla {tallaObj.talla}: ${tallaObj.precioTalla}  USD / ${(tallaObj.precioTalla * dolarBlue).toFixed(2)} ARS
-                </button>
-              ))}
-
-              <p className="px-4 py-2 text-left text-red-600">¿No encuentras el talle que buscas?</p>
-              <div className="flex items-center justify-between px-4 py-2 space-x-4">
-                <input
-                  type="text"
-                  placeholder="Ingresa tu talle"
-                  value={customTalla}
-                  onChange={(e) => setCustomTalla(e.target.value)}
-                  className="px-2 py-1 border border-gray-400 rounded-md"
-                />
-                <button
-                  onClick={() => {
-                    if (customTalla) {
-                      handleCompraClick();
-                    }
-                  }}
-                  className="px-2 py-1 text-white bg-red-500 rounded-md"
-                >
-                  PEDILO YA
-                </button>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-wrap gap-2">
+                  {product.tallas.map((talla) => (
+                    <button
+                      key={talla._id}
+                      onClick={() => handleTallaSelect(talla)}
+                      className={`px-4 py-2 border rounded-md ${
+                        selectedTalla?._id === talla._id
+                          ? "bg-red-600 text-white border-red-600"
+                          : "border-gray-300 hover:border-red-600"
+                      }`}
+                    >
+                      {talla.talla}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -149,7 +136,7 @@ export default function Detail({ product }) {
         </div>
         {selectedTalla && (
           <div className="mt-2 text-sm text-gray-600">
-            Has seleccionado la talla: <span className="font-bold">{selectedTalla}</span>
+            Has seleccionado la talla: <span className="font-bold">{selectedTalla.talla}</span>
             <button
               onClick={() => setSelectedTalla(null)}
               className="ml-2 text-sm text-red-500 hover:underline"
