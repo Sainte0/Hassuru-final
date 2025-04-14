@@ -169,7 +169,7 @@ export default function Categoria() {
     const filtered = applyFilters(products, filters);
     setFilteredProducts(filtered);
     
-    // Si hay filtros activos, volver a la página 1
+    // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
       setCurrentPage(1);

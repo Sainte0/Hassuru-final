@@ -156,13 +156,23 @@ export default function Catalogo() {
 
     const filteredResults = applyFilters(products, filters);
     setFilteredProducts(filteredResults);
-    setCurrentPage(1);
+    
+    // Solo resetear la página si hay filtros activos
+    const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
+    if (hasActiveFilters) {
+      setCurrentPage(1);
+    }
   }, [router.query, search, products, router.isReady]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row">
@@ -189,7 +199,7 @@ export default function Catalogo() {
             <Card currentProducts={currentProducts} />
             <Pagination
               currentPage={currentPage}
-              onPageChange={(page) => setCurrentPage(page)}
+              onPageChange={handlePageChange}
               totalPages={totalPages}
             />
           </>
