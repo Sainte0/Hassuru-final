@@ -4,7 +4,7 @@ import Card from "./Card";
 import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
-import { sortProductsByPrice } from '../utils/sortProducts';
+import { sortProductsByAvailability } from '../utils/sortProducts';
 
 export default function Catalogo() {
   const router = useRouter();
@@ -13,8 +13,30 @@ export default function Catalogo() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedPage = localStorage.getItem('catalog_page');
+      return savedPage ? parseInt(savedPage) : 1;
+    }
+    return 1;
+  });
   const productsPerPage = 20;
+
+  // Save current page to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('catalog_page', currentPage.toString());
+    }
+  }, [currentPage]);
+
+  // Clear page from localStorage when component unmounts
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('catalog_page');
+      }
+    };
+  }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -25,7 +47,7 @@ export default function Catalogo() {
         throw new Error("Error al cargar los productos");
       }
       const data = await response.json();
-      const sortedData = sortProductsByPrice(data);
+      const sortedData = sortProductsByAvailability(data);
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
@@ -109,7 +131,7 @@ export default function Catalogo() {
       });
     }
 
-    return sortProductsByPrice(filtered);
+    return sortProductsByAvailability(filtered);
   }, []);
 
   useEffect(() => {

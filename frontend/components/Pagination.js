@@ -73,7 +73,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
       <button
         onClick={handlePrevPage}
         disabled={currentPage === 1}
-        className={`min-w-[32px] px-1 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
+        className={`min-w-[40px] px-2 py-2 text-sm sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
           currentPage === 1
             ? "bg-gray-300 cursor-not-allowed"
             : "bg-blue-500 text-white hover:bg-blue-600"
@@ -86,7 +86,7 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
-        className={`min-w-[32px] px-1 py-1 text-xs sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
+        className={`min-w-[40px] px-2 py-2 text-sm sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
           currentPage === totalPages
             ? "bg-gray-300 cursor-not-allowed"
             : "bg-blue-500 text-white hover:bg-blue-600"

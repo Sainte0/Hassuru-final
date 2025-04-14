@@ -4,7 +4,7 @@ import Card from "../../../components/Card";
 import Filter from "../../../components/Filtro";
 import Pagination from "../../../components/Pagination";
 import { BounceLoader } from 'react-spinners';
-import { sortProductsByPrice } from '../../../utils/sortProducts';
+import { sortProductsByAvailability } from '../../../utils/sortProducts';
 
 export default function Categoria() {
   const router = useRouter();
@@ -21,9 +21,31 @@ export default function Categoria() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const savedPage = localStorage.getItem(`page_${router.query.categoria}`);
+      return savedPage ? parseInt(savedPage) : 1;
+    }
+    return 1;
+  });
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
+
+  // Save current page to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`page_${router.query.categoria}`, currentPage.toString());
+    }
+  }, [currentPage, router.query.categoria]);
+
+  // Clear page from localStorage when component unmounts
+  useEffect(() => {
+    return () => {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(`page_${router.query.categoria}`);
+      }
+    };
+  }, [router.query.categoria]);
 
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
@@ -35,7 +57,7 @@ export default function Categoria() {
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
-      const sortedData = sortProductsByPrice(data);
+      const sortedData = sortProductsByAvailability(data);
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
@@ -119,7 +141,7 @@ export default function Categoria() {
       });
     }
 
-    return sortProductsByPrice(filtered);
+    return sortProductsByAvailability(filtered);
   }, []);
 
   // Cargar productos cuando cambia la categoría
