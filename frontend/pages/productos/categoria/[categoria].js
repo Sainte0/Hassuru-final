@@ -25,41 +25,36 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Efecto para manejar la navegación inicial y hacia atrás
+  // Efecto para manejar la navegación inicial
   useEffect(() => {
     if (!router.isReady) return;
 
-    const handleRouteChange = (url) => {
-      // Si estamos volviendo a la página de categoría
-      if (url.includes('/productos/categoria/')) {
-        const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
-        if (savedPage) {
-          const page = parseInt(savedPage);
-          setCurrentPage(page);
-          const newQuery = { ...router.query, page: page.toString() };
-          router.replace(
-            {
-              pathname: router.pathname,
-              query: newQuery,
-            },
-            undefined,
-            { shallow: true }
-          );
-        }
-      }
-    };
-
-    router.events.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.isReady, categoria, router]);
+    // Recuperar la página guardada al cargar la página
+    const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
+    if (savedPage) {
+      const page = parseInt(savedPage);
+      setCurrentPage(page);
+      const newQuery = { ...router.query, page: page.toString() };
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+  }, [router.isReady, categoria]);
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
+    // Actualizar el estado local primero
     setCurrentPage(pageNumber);
+    
+    // Guardar la página en sessionStorage
     sessionStorage.setItem(`lastPage_${categoria}`, pageNumber.toString());
     
+    // Actualizar la URL
     const newQuery = { ...router.query };
     if (pageNumber === 1) {
       delete newQuery.page;
@@ -67,7 +62,8 @@ export default function Categoria() {
       newQuery.page = pageNumber.toString();
     }
 
-    router.push(
+    // Usar replace en lugar de push para evitar acumulación en el historial
+    router.replace(
       {
         pathname: router.pathname,
         query: newQuery,
@@ -75,6 +71,9 @@ export default function Categoria() {
       undefined,
       { shallow: true }
     );
+
+    // Scroll al inicio de la página
+    window.scrollTo(0, 0);
   };
 
   const fetchProductsByCategory = async () => {
