@@ -13,30 +13,16 @@ export default function Catalogo() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedPage = localStorage.getItem('catalog_page');
-      return savedPage ? parseInt(savedPage) : 1;
-    }
-    return 1;
-  });
+  const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
-  // Save current page to localStorage when it changes
+  // Actualizar currentPage cuando cambia la URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('catalog_page', currentPage.toString());
+    if (router.isReady) {
+      const page = parseInt(router.query.page) || 1;
+      setCurrentPage(page);
     }
-  }, [currentPage]);
-
-  // Clear page from localStorage when component unmounts
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('catalog_page');
-      }
-    };
-  }, []);
+  }, [router.query.page, router.isReady]);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -138,6 +124,20 @@ export default function Catalogo() {
     fetchProducts();
   }, []);
 
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    const query = { ...router.query, page: pageNumber };
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
+    window.scrollTo(0, 0);
+  };
+
   // Efecto para manejar los filtros de URL y búsqueda
   useEffect(() => {
     if (!products.length || !router.isReady) return;
@@ -160,7 +160,7 @@ export default function Catalogo() {
     // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
-      setCurrentPage(1);
+      handlePageChange(1);
     }
   }, [router.query, search, products, router.isReady]);
 
@@ -168,11 +168,6 @@ export default function Catalogo() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
-  };
 
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row">

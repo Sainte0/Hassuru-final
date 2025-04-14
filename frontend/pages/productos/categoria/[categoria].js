@@ -21,31 +21,17 @@ export default function Categoria() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedPage = localStorage.getItem(`page_${router.query.categoria}`);
-      return savedPage ? parseInt(savedPage) : 1;
-    }
-    return 1;
-  });
+  const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Save current page to localStorage when it changes
+  // Actualizar currentPage cuando cambia la URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`page_${router.query.categoria}`, currentPage.toString());
+    if (router.isReady) {
+      const page = parseInt(router.query.page) || 1;
+      setCurrentPage(page);
     }
-  }, [currentPage, router.query.categoria]);
-
-  // Clear page from localStorage when component unmounts
-  useEffect(() => {
-    return () => {
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem(`page_${router.query.categoria}`);
-      }
-    };
-  }, [router.query.categoria]);
+  }, [router.query.page, router.isReady]);
 
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
@@ -172,7 +158,7 @@ export default function Categoria() {
     // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
-      setCurrentPage(1);
+      handlePageChange(1);
     }
   }, [router.query, products, applyFilters, router.isReady]);
 
@@ -184,7 +170,15 @@ export default function Categoria() {
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    const query = { ...router.query, page: pageNumber };
+    router.push(
+      {
+        pathname: router.pathname,
+        query: query,
+      },
+      undefined,
+      { shallow: true }
+    );
     window.scrollTo(0, 0);
   };
 
