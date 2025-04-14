@@ -34,17 +34,17 @@ export default function Categoria() {
     if (savedPage) {
       const page = parseInt(savedPage);
       setCurrentPage(page);
-      const newQuery = { ...router.query, page: page.toString() };
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow: true }
-      );
     }
   }, [router.isReady, categoria]);
+
+  // Efecto para sincronizar la página con la URL
+  useEffect(() => {
+    if (router.isReady) {
+      const page = parseInt(router.query.page) || 1;
+      setCurrentPage(page);
+      sessionStorage.setItem(`lastPage_${categoria}`, page.toString());
+    }
+  }, [router.query.page, router.isReady, categoria]);
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
@@ -62,8 +62,8 @@ export default function Categoria() {
       newQuery.page = pageNumber.toString();
     }
 
-    // Usar replace en lugar de push para evitar acumulación en el historial
-    router.replace(
+    // Usar push para mantener el historial de navegación
+    router.push(
       {
         pathname: router.pathname,
         query: newQuery,
