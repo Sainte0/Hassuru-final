@@ -25,37 +25,57 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Efecto para manejar la navegación hacia atrás
+  // Efecto para manejar la navegación inicial y hacia atrás
   useEffect(() => {
-    const handlePopState = () => {
-      const savedPage = localStorage.getItem(`lastPage_${categoria}`);
-      if (savedPage) {
-        const page = parseInt(savedPage);
-        setCurrentPage(page);
-        const newQuery = { ...router.query, page: page.toString() };
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: newQuery,
-          },
-          undefined,
-          { shallow: true }
-        );
+    if (!router.isReady) return;
+
+    const handleRouteChange = (url) => {
+      // Si estamos volviendo a la página de categoría
+      if (url.includes('/productos/categoria/')) {
+        const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
+        if (savedPage) {
+          const page = parseInt(savedPage);
+          setCurrentPage(page);
+          const newQuery = { ...router.query, page: page.toString() };
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: newQuery,
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
       }
     };
 
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [categoria, router]);
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.isReady, categoria, router]);
 
-  // Actualizar currentPage cuando cambia la URL
-  useEffect(() => {
-    if (router.isReady) {
-      const page = parseInt(router.query.page) || 1;
-      setCurrentPage(page);
-      localStorage.setItem(`lastPage_${categoria}`, page.toString());
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    sessionStorage.setItem(`lastPage_${categoria}`, pageNumber.toString());
+    
+    const newQuery = { ...router.query };
+    if (pageNumber === 1) {
+      delete newQuery.page;
+    } else {
+      newQuery.page = pageNumber.toString();
     }
-  }, [router.query.page, router.isReady, categoria]);
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
@@ -178,30 +198,7 @@ export default function Categoria() {
 
     const filteredResults = applyFilters(products, filters);
     setFilteredProducts(filteredResults);
-    
-    // No resetear la página cuando hay filtros activos
-    // La página se mantendrá según lo guardado en localStorage
   }, [router.query, products, router.isReady]);
-
-  // Función para manejar el cambio de página
-  const handlePageChange = (pageNumber) => {
-    const newQuery = { ...router.query };
-    if (pageNumber === 1) {
-      delete newQuery.page;
-    } else {
-      newQuery.page = pageNumber.toString();
-    }
-
-    localStorage.setItem(`lastPage_${categoria}`, pageNumber.toString());
-    router.push(
-      {
-        pathname: router.pathname,
-        query: newQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
