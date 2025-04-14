@@ -16,11 +16,22 @@ export default function Catalogo() {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
+  // Persistir y recuperar la página actual
+  useEffect(() => {
+    if (router.isReady) {
+      const savedPage = localStorage.getItem('lastPage_catalogo');
+      const urlPage = parseInt(router.query.page) || 1;
+      const pageToSet = savedPage ? parseInt(savedPage) : urlPage;
+      setCurrentPage(pageToSet);
+    }
+  }, [router.isReady]);
+
   // Actualizar currentPage cuando cambia la URL
   useEffect(() => {
     if (router.isReady) {
       const page = parseInt(router.query.page) || 1;
       setCurrentPage(page);
+      localStorage.setItem('lastPage_catalogo', page.toString());
     }
   }, [router.query.page, router.isReady]);
 
@@ -133,6 +144,7 @@ export default function Catalogo() {
       newQuery.page = pageNumber.toString();
     }
 
+    localStorage.setItem('lastPage_catalogo', pageNumber.toString());
     router.push(
       {
         pathname: router.pathname,

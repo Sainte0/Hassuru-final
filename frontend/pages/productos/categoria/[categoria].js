@@ -25,13 +25,24 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
+  // Persistir y recuperar la página actual
+  useEffect(() => {
+    if (router.isReady) {
+      const savedPage = localStorage.getItem(`lastPage_${categoria}`);
+      const urlPage = parseInt(router.query.page) || 1;
+      const pageToSet = savedPage ? parseInt(savedPage) : urlPage;
+      setCurrentPage(pageToSet);
+    }
+  }, [router.isReady, categoria]);
+
   // Actualizar currentPage cuando cambia la URL
   useEffect(() => {
     if (router.isReady) {
       const page = parseInt(router.query.page) || 1;
       setCurrentPage(page);
+      localStorage.setItem(`lastPage_${categoria}`, page.toString());
     }
-  }, [router.query.page, router.isReady]);
+  }, [router.query.page, router.isReady, categoria]);
 
   const fetchProductsByCategory = async () => {
     if (!categoria) return;
@@ -146,6 +157,7 @@ export default function Categoria() {
       newQuery.page = pageNumber.toString();
     }
 
+    localStorage.setItem(`lastPage_${categoria}`, pageNumber.toString());
     router.push(
       {
         pathname: router.pathname,
