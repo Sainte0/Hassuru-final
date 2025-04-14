@@ -25,15 +25,28 @@ export default function Categoria() {
   const [productsPerPage] = useState(20);
   const { categoria } = router.query;
 
-  // Persistir y recuperar la página actual
+  // Efecto para manejar la navegación hacia atrás
   useEffect(() => {
-    if (router.isReady) {
+    const handlePopState = () => {
       const savedPage = localStorage.getItem(`lastPage_${categoria}`);
-      const urlPage = parseInt(router.query.page) || 1;
-      const pageToSet = savedPage ? parseInt(savedPage) : urlPage;
-      setCurrentPage(pageToSet);
-    }
-  }, [router.isReady, categoria]);
+      if (savedPage) {
+        const page = parseInt(savedPage);
+        setCurrentPage(page);
+        const newQuery = { ...router.query, page: page.toString() };
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: newQuery,
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [categoria, router]);
 
   // Actualizar currentPage cuando cambia la URL
   useEffect(() => {

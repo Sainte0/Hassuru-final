@@ -16,15 +16,28 @@ export default function Catalogo() {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 20;
 
-  // Persistir y recuperar la página actual
+  // Efecto para manejar la navegación hacia atrás
   useEffect(() => {
-    if (router.isReady) {
+    const handlePopState = () => {
       const savedPage = localStorage.getItem('lastPage_catalogo');
-      const urlPage = parseInt(router.query.page) || 1;
-      const pageToSet = savedPage ? parseInt(savedPage) : urlPage;
-      setCurrentPage(pageToSet);
-    }
-  }, [router.isReady]);
+      if (savedPage) {
+        const page = parseInt(savedPage);
+        setCurrentPage(page);
+        const newQuery = { ...router.query, page: page.toString() };
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: newQuery,
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [router]);
 
   // Actualizar currentPage cuando cambia la URL
   useEffect(() => {
