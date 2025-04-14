@@ -126,8 +126,21 @@ export default function Catalogo() {
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
+    const newQuery = { ...router.query };
+    if (pageNumber === 1) {
+      delete newQuery.page;
+    } else {
+      newQuery.page = pageNumber.toString();
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
   // Efecto para manejar los filtros de URL y búsqueda
@@ -149,36 +162,12 @@ export default function Catalogo() {
     const filteredResults = applyFilters(products, filters);
     setFilteredProducts(filteredResults);
     
-    // Solo resetear la página si hay filtros activos
+    // Solo resetear la página si hay filtros activos y no estamos en una página específica
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
-    if (hasActiveFilters) {
+    if (hasActiveFilters && !router.query.page) {
       setCurrentPage(1);
     }
   }, [router.query, search, products, router.isReady]);
-
-  // Efecto para actualizar la URL cuando cambia la página
-  useEffect(() => {
-    if (!router.isReady) return;
-
-    const newQuery = { ...router.query };
-    if (currentPage === 1) {
-      delete newQuery.page;
-    } else {
-      newQuery.page = currentPage.toString();
-    }
-
-    // Solo actualizar la URL si hay cambios
-    if (JSON.stringify(newQuery) !== JSON.stringify(router.query)) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [currentPage, router.isReady]);
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;

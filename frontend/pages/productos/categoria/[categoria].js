@@ -139,58 +139,47 @@ export default function Categoria() {
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
+    const newQuery = { ...router.query };
+    if (pageNumber === 1) {
+      delete newQuery.page;
+    } else {
+      newQuery.page = pageNumber.toString();
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   };
 
-  // Aplicar filtros cuando cambian los parámetros de la URL
+  // Efecto para manejar los filtros de URL
   useEffect(() => {
-    if (!router.isReady || !products.length) return;
+    if (!products.length || !router.isReady) return;
 
     const filters = {
       marca: router.query.marca,
+      disponibilidad: router.query.disponibilidad,
       tallaRopa: router.query.tallaRopa,
       tallaZapatilla: router.query.tallaZapatilla,
       accesorio: router.query.accesorio,
       precioMin: router.query.precioMin,
       precioMax: router.query.precioMax,
-      stock: router.query.stock === 'true',
-      disponibilidad: router.query.disponibilidad
+      stock: router.query.stock === 'true'
     };
 
-    const filtered = applyFilters(products, filters);
-    setFilteredProducts(filtered);
+    const filteredResults = applyFilters(products, filters);
+    setFilteredProducts(filteredResults);
     
-    // Solo resetear la página si hay filtros activos
+    // Solo resetear la página si hay filtros activos y no estamos en una página específica
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
-    if (hasActiveFilters) {
+    if (hasActiveFilters && !router.query.page) {
       setCurrentPage(1);
     }
-  }, [router.query, products, applyFilters, router.isReady]);
-
-  // Efecto para actualizar la URL cuando cambia la página
-  useEffect(() => {
-    if (!router.isReady) return;
-
-    const newQuery = { ...router.query };
-    if (currentPage === 1) {
-      delete newQuery.page;
-    } else {
-      newQuery.page = currentPage.toString();
-    }
-
-    // Solo actualizar la URL si hay cambios
-    if (JSON.stringify(newQuery) !== JSON.stringify(router.query)) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: newQuery,
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [currentPage, router.isReady]);
+  }, [router.query, products, router.isReady]);
 
   // Calcular productos para la página actual
   const indexOfLastProduct = currentPage * productsPerPage;
