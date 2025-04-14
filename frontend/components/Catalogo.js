@@ -126,11 +126,20 @@ export default function Catalogo() {
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
-    const query = { ...router.query, page: pageNumber };
+    // Mantener todos los parámetros de la URL existentes
+    const currentQuery = { ...router.query };
+    // Actualizar solo el parámetro de página
+    currentQuery.page = pageNumber;
+    
+    // Eliminar el parámetro page si es la página 1
+    if (pageNumber === 1) {
+      delete currentQuery.page;
+    }
+
     router.push(
       {
         pathname: router.pathname,
-        query: query,
+        query: currentQuery,
       },
       undefined,
       { shallow: true }
@@ -160,7 +169,18 @@ export default function Catalogo() {
     // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
-      handlePageChange(1);
+      // Eliminar el parámetro page de la URL cuando se aplican filtros
+      const newQuery = { ...router.query };
+      delete newQuery.page;
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow: true }
+      );
+      setCurrentPage(1);
     }
   }, [router.query, search, products, router.isReady]);
 

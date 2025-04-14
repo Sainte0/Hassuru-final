@@ -137,6 +137,29 @@ export default function Categoria() {
     }
   }, [categoria, router.isReady]);
 
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    // Mantener todos los parámetros de la URL existentes
+    const currentQuery = { ...router.query };
+    // Actualizar solo el parámetro de página
+    currentQuery.page = pageNumber;
+    
+    // Eliminar el parámetro page si es la página 1
+    if (pageNumber === 1) {
+      delete currentQuery.page;
+    }
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+    window.scrollTo(0, 0);
+  };
+
   // Aplicar filtros cuando cambian los parámetros de la URL
   useEffect(() => {
     if (!router.isReady || !products.length) return;
@@ -158,7 +181,18 @@ export default function Categoria() {
     // Solo resetear la página si hay filtros activos
     const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
     if (hasActiveFilters) {
-      handlePageChange(1);
+      // Eliminar el parámetro page de la URL cuando se aplican filtros
+      const newQuery = { ...router.query };
+      delete newQuery.page;
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow: true }
+      );
+      setCurrentPage(1);
     }
   }, [router.query, products, applyFilters, router.isReady]);
 
@@ -167,20 +201,6 @@ export default function Categoria() {
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  // Función para manejar el cambio de página
-  const handlePageChange = (pageNumber) => {
-    const query = { ...router.query, page: pageNumber };
-    router.push(
-      {
-        pathname: router.pathname,
-        query: query,
-      },
-      undefined,
-      { shallow: true }
-    );
-    window.scrollTo(0, 0);
-  };
 
   if (!router.isReady) return null;
 
