@@ -54,13 +54,17 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
       <button
         key={index}
         onClick={() => page !== '...' && handlePageChange(page)}
-        className={`px-2 py-1 text-sm sm:px-3 sm:py-1 rounded-lg ${
-          page === '...' 
+        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
+          ${page === '...' 
             ? "cursor-default"
             : currentPage === page
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-blue-500 hover:text-white"
-        }`}
+              ? "bg-red-600 text-white"
+              : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
+          }
+          sm:px-4 sm:py-2
+          md:px-5 md:py-2.5
+          lg:px-6 lg:py-3
+          text-base md:text-lg`}
         disabled={page === '...'}
       >
         {page}
@@ -69,32 +73,24 @@ export default function Pagination({ totalPages, currentPage, onPageChange }) {
   };
 
   return (
-    <div className="flex justify-center items-center mt-4 gap-1 sm:gap-2">
-      <button
-        onClick={handlePrevPage}
-        disabled={currentPage === 1}
-        className={`min-w-[40px] px-2 py-2 text-sm sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
-          currentPage === 1
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-        }`}
-      >
-        <span className="hidden sm:inline">Anterior</span>
-        <span className="sm:hidden">←</span>
-      </button>
-      {renderPageButtons()}
-      <button
-        onClick={handleNextPage}
-        disabled={currentPage === totalPages}
-        className={`min-w-[40px] px-2 py-2 text-sm sm:px-3 sm:py-1 sm:text-sm rounded-lg ${
-          currentPage === totalPages
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
-        }`}
-      >
-        <span className="hidden sm:inline">Siguiente</span>
-        <span className="sm:hidden">→</span>
-      </button>
+    <div className="flex justify-center mt-8 space-x-2">
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
+            ${currentPage === page
+              ? 'bg-red-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+            }
+            sm:px-4 sm:py-2
+            md:px-5 md:py-2.5
+            lg:px-6 lg:py-3
+            text-base md:text-lg`}
+        >
+          {page}
+        </button>
+      ))}
     </div>
   );
 }
