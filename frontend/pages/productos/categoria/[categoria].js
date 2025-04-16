@@ -33,20 +33,43 @@ export default function Categoria() {
     const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
     const urlPage = parseInt(router.query.page) || 1;
     
-    // Priorizar la página de la URL si existe, sino usar la guardada
-    if (urlPage > 1) {
-      setCurrentPage(urlPage);
-    } else if (savedPage) {
-      setCurrentPage(parseInt(savedPage));
+    // Si hay una página guardada y no hay página en la URL, actualizar la URL
+    if (savedPage && !router.query.page) {
+      const page = parseInt(savedPage);
+      if (page > 1) {
+        router.push(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, page: page.toString() },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
     }
+    
+    // Establecer la página actual
+    setCurrentPage(urlPage > 1 ? urlPage : (savedPage ? parseInt(savedPage) : 1));
   }, [router.isReady, categoria, router.query.page]);
 
   // Efecto para sincronizar la página con la URL y guardar en sessionStorage
   useEffect(() => {
     if (router.isReady && currentPage > 1) {
       sessionStorage.setItem(`lastPage_${categoria}`, currentPage.toString());
+      
+      // Asegurar que la página esté en la URL
+      if (!router.query.page || parseInt(router.query.page) !== currentPage) {
+        router.push(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, page: currentPage.toString() },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
     }
-  }, [currentPage, router.isReady, categoria]);
+  }, [currentPage, router.isReady, categoria, router.query.page]);
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
