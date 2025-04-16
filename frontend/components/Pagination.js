@@ -1,92 +1,68 @@
 import React from "react";
 
 export default function Pagination({ totalPages, currentPage, onPageChange }) {
-  const handlePageChange = (page) => {
-    onPageChange(page);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5; // Número máximo de páginas visibles
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      handlePageChange(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      handlePageChange(currentPage - 1);
-    }
-  };
-
-  const renderPageButtons = () => {
-    let pages = [];
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const maxVisible = isMobile ? 3 : 5;
-    
-    if (totalPages <= maxVisible) {
+    if (totalPages <= maxVisiblePages) {
+      // Si hay pocas páginas, mostrar todas
       for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
+        pageNumbers.push(i);
       }
     } else {
-      // Mostrar menos páginas en móvil
-      const start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-      const end = Math.min(totalPages, start + maxVisible - 1);
+      // Siempre mostrar la primera página
+      pageNumbers.push(1);
 
-      if (start > 1) {
-        pages.push(1);
-        if (start > 2) pages.push('...');
+      // Calcular el rango de páginas alrededor de la página actual
+      let startPage = Math.max(2, currentPage - 1);
+      let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+      // Ajustar el rango si estamos cerca del inicio o del final
+      if (currentPage <= 3) {
+        endPage = 4;
+      } else if (currentPage >= totalPages - 2) {
+        startPage = totalPages - 3;
       }
 
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
+      // Agregar puntos suspensivos y páginas intermedias
+      if (startPage > 2) {
+        pageNumbers.push('...');
       }
 
-      if (end < totalPages) {
-        if (end < totalPages - 1) pages.push('...');
-        pages.push(totalPages);
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
       }
+
+      if (endPage < totalPages - 1) {
+        pageNumbers.push('...');
+      }
+
+      // Siempre mostrar la última página
+      pageNumbers.push(totalPages);
     }
 
-    return pages.map((page, index) => (
-      <button
-        key={index}
-        onClick={() => page !== '...' && handlePageChange(page)}
-        className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
-          ${page === '...' 
-            ? "cursor-default"
-            : currentPage === page
-              ? "bg-red-600 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-          }
-          sm:px-4 sm:py-2
-          md:px-5 md:py-2.5
-          lg:px-6 lg:py-3
-          text-base md:text-lg`}
-        disabled={page === '...'}
-      >
-        {page}
-      </button>
-    ));
+    return pageNumbers;
   };
 
   return (
     <div className="flex justify-center mt-8 space-x-2">
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+      {getPageNumbers().map((page, index) => (
         <button
-          key={page}
-          onClick={() => onPageChange(page)}
+          key={index}
+          onClick={() => page !== '...' && onPageChange(page)}
           className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
-            ${currentPage === page
-              ? 'bg-red-600 text-white'
-              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+            ${page === '...' 
+              ? "cursor-default"
+              : currentPage === page
+                ? "bg-red-600 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
             }
             sm:px-4 sm:py-2
             md:px-5 md:py-2.5
             lg:px-6 lg:py-3
             text-base md:text-lg`}
+          disabled={page === '...'}
         >
           {page}
         </button>
