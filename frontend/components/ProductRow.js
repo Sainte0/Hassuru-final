@@ -366,6 +366,9 @@ const ProductRow = ({
   return (
     <tr className="overflow-x-auto text-gray-600">
       <td className="px-4 py-2 border">
+        {index}
+      </td>
+      <td className="px-4 py-2 border">
         <input
           type="radio"
           name="selectedProduct"
