@@ -51,7 +51,7 @@ export default function Home() {
               alt="Catalogo"
               width={600}
               height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+              style={{ objectFit: 'cover', width: '100%', height: '600px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
@@ -60,7 +60,7 @@ export default function Home() {
               alt="Encargo"
               width={620}
               height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+              style={{ objectFit: 'cover', width: '100%', height: '600px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
         </div>
