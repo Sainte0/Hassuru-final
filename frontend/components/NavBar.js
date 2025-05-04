@@ -80,7 +80,7 @@ export default function Navbar() {
             <img
               src="https://i.ibb.co/1WvGB4R/banner-3.png"
               alt="Background"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               width={1200}
               height={400}
               fetchpriority="high"
