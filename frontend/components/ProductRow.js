@@ -283,7 +283,7 @@ const ProductRow = ({
 
       // Mostrar mensaje de éxito
       toast.dismiss();
-      toast.success('Imagen actualizada con éxito ');
+      toast.success('Imagen actualizada con éxito');
     } catch (error) {
       console.error('Error:', error);
       toast.dismiss();
