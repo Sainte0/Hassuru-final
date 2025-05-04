@@ -56,7 +56,7 @@ export default function Home() {
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
             <img
-              src="https://i.ibb.co/6b2w1wz/Ropa.png"
+              src="https://i.ibb.co/hk3ppsH/Ropa.png"
               alt="Encargo"
               width={620}
               height={500}
