@@ -50,8 +50,8 @@ export default function Home() {
               src="https://i.ibb.co/8D7xdF7G/Sneackers.png"
               alt="Catalogo"
               width={600}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '600px', background: '#f3f3f3', borderRadius: '12px' }}
+              height={600}
+              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
@@ -59,8 +59,8 @@ export default function Home() {
               src="https://i.ibb.co/hk3ppsH/Ropa.png"
               alt="Encargo"
               width={620}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '600px', background: '#f3f3f3', borderRadius: '12px' }}
+              height={600}
+              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
         </div>
