@@ -46,21 +46,21 @@ export default function Home() {
       <div className="container p-4 mx-auto">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
-            <Image
-              src="/images/Sneackers.png"
+            <img
+              src="https://i.ibb.co/8D7xdF7G/Sneackers.png"
               alt="Catalogo"
               width={600}
               height={500}
-              className="object-cover w-full h-full"
+              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
-            <Image
-              src="/images/Ropa.png"
+            <img
+              src="https://i.ibb.co/6b2w1wz/Ropa.png"
               alt="Encargo"
               width={620}
               height={500}
-              className="object-cover w-full h-full"
+              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
             />
           </Link>
         </div>
