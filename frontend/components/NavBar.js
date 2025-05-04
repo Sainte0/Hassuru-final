@@ -77,15 +77,13 @@ export default function Navbar() {
       <nav className="relative p-12 shadow-md">
         <div className="absolute inset-0 w-full h-full">
           <Link href="/">
-            <Image
-              src={isMobile ? "/banner-3.png" : "/banner-3.png"}
+            <img
+              src="https://i.ibb.co/1WvGB4R/banner-3.png"
               alt="Background"
-              layout="fill"
-              objectFit="cover"
-              quality={100}
-              priority={true}
-              sizes="(max-width: 768px) 100vw, 1200px"
-              unoptimized={true}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px' }}
+              width={1200}
+              height={400}
+              fetchpriority="high"
             />
           </Link>
         </div>
