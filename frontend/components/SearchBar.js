@@ -1,121 +1,142 @@
-import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa";
-import Link from "next/link";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import useStore from "../store/store";
 
-export default function SearchBar({ isHamburgerOpen }) {
+export default function SearchBar({ onSearch, isHamburgerOpen }) {
   const [query, setQuery] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [products, setProducts] = useState([]);
+  const searchRef = useRef(null);
   const router = useRouter();
+  const { dolarBlue } = useStore();
 
-  const fetchProducts = async (searchQuery) => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/buscar/${searchQuery}?limit=10`);
-      const data = await res.json();
-      if (res.ok) {
-        setFilteredProducts(data);
-      } else {
-        setFilteredProducts([]);
-        console.error("Error al obtener productos:", data.error);
+  useEffect(() => {
+    // Sync with hamburger menu state
+    setShowResults(isHamburgerOpen);
+  }, [isHamburgerOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowResults(false);
       }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
+      const data = await response.json();
+      setProducts(data);
     } catch (error) {
-      console.error("Error en la búsqueda:", error);
-      setFilteredProducts([]);
+      console.error("Error fetching products:", error);
     }
   };
 
-  const handleInputChange = (e) => {
-    const searchQuery = e.target.value;
-    setQuery(searchQuery);
-
-    if (searchQuery.trim()) {
-      fetchProducts(searchQuery);
-    } else {
-      setFilteredProducts([]);
-    }
-  };
-
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
     if (query.trim()) {
-      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
+      onSearch(query);
+      setShowResults(false);
     }
-    setQuery("");
-    setFilteredProducts([]);
-    setIsFocused(false);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleSearch();
-    }
-  };
-
-  const handleToggleFocus = () => {
-    setIsFocused(!isFocused);
-    if (isFocused) {
-      setQuery("");
-      setFilteredProducts([]);
-    }
-  };
-
-  const handleBlur = () => {
-    if (!query) setIsFocused(false);
   };
 
   const handleProductClick = (productId) => {
-    router.push(`/producto/${productId}`);
+    router.push(`/productos/${productId}`);
+    setShowResults(false);
     setQuery("");
-    setFilteredProducts([]);
-    setIsFocused(false);
   };
 
+  const filteredProducts = products.filter((product) =>
+    product.nombre.toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <div className="relative flex items-center">
-      <div className="relative flex items-center transition-all duration-300 ease-in-out">
+    <div className="relative" ref={searchRef}>
+      <form onSubmit={handleSearch} className="flex items-center">
         <input
           type="text"
           value={query}
-          onChange={handleInputChange}
-          onFocus={() => setIsFocused(true)}
-          onBlur={handleBlur}
-          onKeyPress={handleKeyPress}
-          placeholder="Buscar..."
-          className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 ${isHamburgerOpen
-            ? "w-64 opacity-100"
-            : isFocused
-              ? "w-64 opacity-100"
-              : "w-0 opacity-0 p-0"
-            }`}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            if (e.target.value) {
+              fetchProducts();
+              setShowResults(true);
+            } else {
+              setShowResults(false);
+            }
+          }}
+          onFocus={() => {
+            if (query) {
+              fetchProducts();
+              setShowResults(true);
+            }
+          }}
+          placeholder="Buscar productos..."
+          className="w-full px-4 py-2 text-sm text-gray-900 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
         />
         <button
-          type="button"
-          className="absolute p-2 text-gray-500 transition-colors duration-300 left-2 hover:text-gray-700"
-          onClick={handleToggleFocus}
+          type="submit"
+          className="absolute right-0 top-0 h-full px-3 text-gray-500 hover:text-gray-700"
         >
-          <FaSearch />
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
         </button>
-      </div>
+      </form>
 
-      {filteredProducts.length > 0 && isFocused && (
-        <ul className="absolute left-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12">
-          {filteredProducts.map((product) => (
-            <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
-              <div 
-                onClick={() => handleProductClick(product._id)} 
-                className="cursor-pointer"
-              >
-                <p className="font-semibold text-black">{product.nombre}</p>
-                {product.descripcion && (
-                  <p className="text-sm text-gray-600 truncate">
-                    {product.descripcion}
-                  </p>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+      {showResults && query && (
+        <div className="absolute right-0 mt-2 w-[300px] bg-white rounded-md shadow-lg z-50 max-h-[400px] overflow-y-auto">
+          {filteredProducts.length > 0 ? (
+            <ul>
+              {filteredProducts.map((product) => (
+                <li
+                  key={product._id}
+                  onClick={() => handleProductClick(product._id)}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
+                >
+                  <div className="flex items-center space-x-3">
+                    {product.imagen && (
+                      <img
+                        src={product.imagen}
+                        alt={product.nombre}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {product.nombre}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        ${product.precio} USD
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        ${(product.precio * dolarBlue).toFixed(2)} ARS
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="px-4 py-2 text-sm text-gray-500">
+              No se encontraron productos
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

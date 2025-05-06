@@ -178,7 +178,7 @@ export default function Navbar() {
             <div className="md:hidden flex items-center justify-between w-full">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-md hover:bg-gray-700 focus:outline-none"
+                className="p-2 rounded-md hover:bg-gray-700 focus:outline-none z-50"
               >
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
@@ -200,7 +200,7 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="w-1/3">
+              <div className="w-32">
                 <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
               </div>
             </div>
