@@ -88,6 +88,10 @@ export default function SearchBar({ isHamburgerOpen }) {
               ? "w-64 opacity-100"
               : "w-0 opacity-0 p-0"
           }`}
+          style={{
+            transform: isFocused || isHamburgerOpen ? 'translateX(-100%)' : 'translateX(0)',
+            marginLeft: isFocused || isHamburgerOpen ? '-256px' : '0'
+          }}
         />
         <button
           type="button"
@@ -99,7 +103,11 @@ export default function SearchBar({ isHamburgerOpen }) {
       </div>
 
       {filteredProducts.length > 0 && isFocused && (
-        <ul className="absolute right-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12">
+        <ul className="absolute right-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12"
+            style={{
+              transform: 'translateX(-100%)',
+              marginLeft: '-256px'
+            }}>
           {filteredProducts.map((product) => (
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
               <div 
