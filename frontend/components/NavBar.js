@@ -174,18 +174,35 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-gray-700 focus:outline-none"
-            >
-              <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></span>
-              <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
-            </button>
+            {/* Mobile Navigation - Always Visible */}
+            <div className="md:hidden flex items-center space-x-4">
+              <Link 
+                href="/productos/talla/zapatillas"
+                className="text-sm hover:text-gray-300"
+              >
+                Zapatillas
+              </Link>
+              <Link 
+                href="/productos/talla/ropa"
+                className="text-sm hover:text-gray-300"
+              >
+                Ropa
+              </Link>
+              <div className="flex-1">
+                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
+              </div>
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 rounded-md hover:bg-gray-700 focus:outline-none"
+              >
+                <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></span>
+                <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
+                <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
+              </button>
+            </div>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* Mobile menu content */}
           {isOpen && (
             <div className="md:hidden py-4">
               <Link 
@@ -198,13 +215,6 @@ export default function Navbar() {
 
               {/* Zapatillas Mobile */}
               <div className="mb-4">
-                <Link 
-                  href="/productos/talla/zapatillas"
-                  className="block py-2 px-4 hover:bg-gray-700"
-                  onClick={() => setIsOpen(false)}
-                >
-                  ZAPATILLAS
-                </Link>
                 <div className="pl-4">
                   {marcasPorCategoria.zapatillas.map((marca, index) => (
                     <button
@@ -220,13 +230,6 @@ export default function Navbar() {
 
               {/* Ropa Mobile */}
               <div className="mb-4">
-                <Link 
-                  href="/productos/talla/ropa"
-                  className="block py-2 px-4 hover:bg-gray-700"
-                  onClick={() => setIsOpen(false)}
-                >
-                  ROPA
-                </Link>
                 <div className="pl-4">
                   {marcasPorCategoria.ropa.map((marca, index) => (
                     <button
@@ -269,11 +272,6 @@ export default function Navbar() {
               >
                 Encargos
               </Link>
-              
-              {/* Mobile Search */}
-              <div className="px-4 py-2">
-                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
-              </div>
             </div>
           )}
         </div>
