@@ -73,7 +73,7 @@ export default function Detail({ product }) {
       <div className="flex flex-col w-full p-2 space-y-4 lg:w-1/2">
         <h2 className="text-3xl font-bold text-gray-800 lg:text-4xl">{product.nombre}</h2>
         <div className="space-y-2 text-gray-800">
-          <p className="text-lg font-semibold">{product.descripcion}</p>
+          <p className="text-lg text-gray-700 leading-relaxed my-4 mx-auto md:max-w-2xl md:text-center md:font-normal md:bg-transparent md:rounded-none md:shadow-none">{product.descripcion}</p>
           <p className="text-4xl font-bold">${product.precio} USD</p>
           <p className="text-lg text-gray-400">${(product.precio * dolarBlue).toFixed(2)} ARS</p>
         </div>
