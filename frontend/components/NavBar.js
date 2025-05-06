@@ -167,11 +167,11 @@ export default function Navbar() {
               <Link href="/encargos" className="py-2 hover:text-gray-300">
                 Encargos
               </Link>
-            </div>
 
-            {/* Search Bar */}
-            <div className="hidden ml-auto xl:block">
-              <SearchBar onSearch={handleSearch} isHamburgerOpen={false} />
+              {/* Search Bar */}
+              <div className="flex items-center">
+                <SearchBar onSearch={handleSearch} isHamburgerOpen={false} />
+              </div>
             </div>
 
             {/* Mobile menu button */}
