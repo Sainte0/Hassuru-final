@@ -198,6 +198,12 @@ export default function Navbar() {
                 >
                   Ropa
                 </Link>
+                <Link 
+                  href="/productos/categoria/accesorios"
+                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
+                >
+                  Tecnología
+                </Link>
               </div>
 
               <div className="w-10">
