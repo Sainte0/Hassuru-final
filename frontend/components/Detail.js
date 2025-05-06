@@ -167,7 +167,7 @@ export default function Detail({ product }) {
             onClick={handleCompraClick}
           >
             {product.tallas && product.tallas.length > 0 ? (
-              selectedTalla ? "Comprar" : "Selecciona talles"
+              selectedTalla ? "Comprar" : "Comprar ahora"
             ) : (
               customTalla ? "Comprar" : "Encargar ahora"
             )}
