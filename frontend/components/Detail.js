@@ -91,7 +91,11 @@ export default function Detail({ product }) {
                       : "border-gray-300 hover:border-red-600"
                   }`}
                 >
-                  {talla.talla}
+                  <div className="flex flex-col items-center">
+                    <span className="font-medium">{talla.talla}</span>
+                    <span className="text-sm">${talla.precioTalla} USD</span>
+                    <span className="text-xs text-gray-500">${(talla.precioTalla * dolarBlue).toFixed(2)} ARS</span>
+                  </div>
                 </button>
               ))}
             </div>
