@@ -175,22 +175,7 @@ export default function Navbar() {
             </div>
 
             {/* Mobile Navigation - Always Visible */}
-            <div className="md:hidden flex items-center space-x-4">
-              <Link 
-                href="/productos/talla/zapatillas"
-                className="text-sm hover:text-gray-300"
-              >
-                Zapatillas
-              </Link>
-              <Link 
-                href="/productos/talla/ropa"
-                className="text-sm hover:text-gray-300"
-              >
-                Ropa
-              </Link>
-              <div className="flex-1">
-                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
-              </div>
+            <div className="md:hidden flex items-center justify-between w-full">
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-md hover:bg-gray-700 focus:outline-none"
@@ -199,6 +184,25 @@ export default function Navbar() {
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
               </button>
+
+              <div className="flex items-center space-x-4">
+                <Link 
+                  href="/productos/talla/zapatillas"
+                  className="text-sm hover:text-gray-300"
+                >
+                  Zapatillas
+                </Link>
+                <Link 
+                  href="/productos/talla/ropa"
+                  className="text-sm hover:text-gray-300"
+                >
+                  Ropa
+                </Link>
+              </div>
+
+              <div className="w-1/3">
+                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
+              </div>
             </div>
           </div>
 
