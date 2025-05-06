@@ -83,14 +83,14 @@ export default function SearchBar({ isHamburgerOpen }) {
           placeholder="Buscar..."
           className={`transition-all duration-300 ease-in-out p-2 pl-10 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 ${
             isHamburgerOpen
-              ? "w-64 opacity-100"
+              ? "w-48 opacity-100"
               : isFocused
-              ? "w-64 opacity-100"
+              ? "w-48 opacity-100"
               : "w-0 opacity-0 p-0"
           }`}
           style={{
             transform: isFocused || isHamburgerOpen ? 'translateX(-100%)' : 'translateX(0)',
-            marginLeft: isFocused || isHamburgerOpen ? '-256px' : '0'
+            marginLeft: isFocused || isHamburgerOpen ? '-192px' : '0'
           }}
         />
         <button
@@ -106,7 +106,8 @@ export default function SearchBar({ isHamburgerOpen }) {
         <ul className="absolute right-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12"
             style={{
               transform: 'translateX(-100%)',
-              marginLeft: '-256px'
+              marginLeft: '-192px',
+              width: '192px'
             }}>
           {filteredProducts.map((product) => (
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
