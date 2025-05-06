@@ -188,13 +188,13 @@ export default function Navbar() {
               <div className="flex items-center space-x-4">
                 <Link 
                   href="/productos/talla/zapatillas"
-                  className="text-sm hover:text-gray-300"
+                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
                 >
                   Zapatillas
                 </Link>
                 <Link 
                   href="/productos/talla/ropa"
-                  className="text-sm hover:text-gray-300"
+                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
                 >
                   Ropa
                 </Link>
