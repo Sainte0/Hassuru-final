@@ -66,10 +66,14 @@ export default function Home() {
         </div>
       </div>
       <div className="mt-2">
-        <Carousell dolarBlue={dolarBlue} products={destacados} title={"Destacados"} />
+        <Link href="/productos/categoria/ropa">
+          <Carousell dolarBlue={dolarBlue} products={destacados} title={"Destacados"} />
+        </Link>
       </div>
       <div className="mt-8 mb-10">
-        <Carousell dolarBlue={dolarBlue} products={zapatillas} title={"Zapatillas"} />
+        <Link href="/productos/categoria/zapatillas">
+          <Carousell dolarBlue={dolarBlue} products={zapatillas} title={"Zapatillas"} />
+        </Link>
       </div>
       <div className="container grid grid-cols-1 gap-4 px-2 mx-auto mt-8 lg:px-24 md:grid-cols-3">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (

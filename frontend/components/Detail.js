@@ -128,7 +128,7 @@ export default function Detail({ product }) {
           {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
             <p>Quedan {Object.values(product.tallas).reduce((acc, stock) => acc + stock, 0)} en stock. Ordena pronto.</p>
           ) : (
-            <p>No hay stock disponible. Pide tu talle.</p>
+            <p>Stock Disponible. Pide tu talle.</p>
           )}
         </div>
         {selectedTalla && (
@@ -155,7 +155,7 @@ export default function Detail({ product }) {
             className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 border border-gray-400 rounded-md hover:bg-green-600`}
             onClick={handleCompraClick}
           >
-            {selectedTalla || customTalla ? "Comprar" : "Consultar stock"}
+            {selectedTalla || customTalla ? "Comprar" : "Comprar ahora"}
           </button>
         </div>
         <div className="p-4 mt-6 bg-white border border-gray-300 rounded-md shadow-md">
