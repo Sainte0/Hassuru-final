@@ -38,7 +38,7 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const handleSearch = () => {
     if (query.trim()) {
-      router.push(`/catalogo?search=${encodeURIComponent(query)}`);
+      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
     }
     setQuery("");
     setFilteredProducts([]);
@@ -62,6 +62,13 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const handleBlur = () => {
     if (!query) setIsFocused(false);
+  };
+
+  const handleProductClick = (productId) => {
+    router.push(`/producto/${productId}`);
+    setQuery("");
+    setFilteredProducts([]);
+    setIsFocused(false);
   };
 
   return (
@@ -95,16 +102,17 @@ export default function SearchBar({ isHamburgerOpen }) {
         <ul className="absolute left-0 z-50 w-full bg-white border border-gray-300 rounded-md shadow-lg top-12">
           {filteredProducts.map((product) => (
             <li key={product._id} className="px-4 py-2 hover:bg-gray-100">
-              <Link href={`/producto/${product._id}`}>
-                <div onClick={handleSearch} className="cursor-pointer">
-                  <p className="font-semibold text-black">{product.nombre}</p>
-                  {product.descripcion && (
-                    <p className="text-sm text-gray-600 truncate">
-                      {product.descripcion}
-                    </p>
-                  )}
-                </div>
-              </Link>
+              <div 
+                onClick={() => handleProductClick(product._id)} 
+                className="cursor-pointer"
+              >
+                <p className="font-semibold text-black">{product.nombre}</p>
+                {product.descripcion && (
+                  <p className="text-sm text-gray-600 truncate">
+                    {product.descripcion}
+                  </p>
+                )}
+              </div>
             </li>
           ))}
         </ul>
