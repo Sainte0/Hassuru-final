@@ -200,8 +200,8 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="w-32">
-                <SearchBar onSearch={handleSearch} isHamburgerOpen={isOpen} />
+              <div className="w-10">
+                <SearchBar isHamburgerOpen={isOpen} />
               </div>
             </div>
           </div>
