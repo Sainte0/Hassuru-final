@@ -72,10 +72,11 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   // Width for expanded input
   const expandedWidth = '12rem'; // 192px
+  const expandedWidthDesktop = '18rem'; // 288px
 
   return (
     <div className="relative flex items-center" style={{ minWidth: 40 }}>
-      {/* Search input absolutely positioned, expands from right to left */}
+      {/* Mobile: input expande a la izquierda, Desktop: a la derecha */}
       <input
         type="text"
         value={query}
@@ -84,15 +85,34 @@ export default function SearchBar({ isHamburgerOpen }) {
         onBlur={handleBlur}
         onKeyPress={handleKeyPress}
         placeholder="Buscar..."
-        className="absolute right-10 top-1/2 -translate-y-1/2 transition-all duration-300 p-2 pl-3 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 bg-white"
+        className={
+          `absolute transition-all duration-300 p-2 pl-3 border border-gray-300 rounded-lg outline-none shadow-sm focus:shadow-lg text-gray-800 bg-white
+          right-10 top-1/2 -translate-y-1/2
+          md:static md:translate-y-0 md:right-auto md:left-0`
+        }
         style={{
-          width: (isFocused || isHamburgerOpen) ? expandedWidth : 0,
+          // Mobile: expande a la izquierda
+          width: (isFocused || isHamburgerOpen)
+            ? expandedWidth
+            : 0,
           opacity: (isFocused || isHamburgerOpen) ? 1 : 0,
           pointerEvents: (isFocused || isHamburgerOpen) ? 'auto' : 'none',
-          zIndex: 40
+          zIndex: 40,
+          // Desktop: expande a la derecha
+          ...(typeof window !== 'undefined' && window.innerWidth >= 768
+            ? {
+                position: 'static',
+                width: (isFocused || isHamburgerOpen) ? expandedWidthDesktop : 0,
+                minWidth: 0,
+                marginLeft: 0,
+                right: 'auto',
+                left: 0,
+                transform: 'none',
+              }
+            : {})
         }}
       />
-      {/* Search icon always visible, at the right edge */}
+      {/* Search icon siempre visible */}
       <button
         type="button"
         className="relative z-50 p-2 text-gray-500 transition-colors duration-300 bg-gray-800 rounded hover:text-gray-300"
@@ -104,15 +124,19 @@ export default function SearchBar({ isHamburgerOpen }) {
         <FaSearch />
       </button>
 
-      {/* Results dropdown, also expands from right to left */}
+      {/* Resultados: Mobile a la izquierda, Desktop a la derecha */}
       {filteredProducts.length > 0 && (isFocused || isHamburgerOpen) && (
         <ul
-          className="absolute right-10 mt-2 z-50 bg-white border border-gray-300 rounded-md shadow-lg"
+          className={
+            `absolute z-50 bg-white border border-gray-300 rounded-md shadow-lg
+            right-10 mt-2
+            md:left-0 md:right-auto md:mt-0 md:top-full`
+          }
           style={{
-            width: expandedWidth,
+            width: typeof window !== 'undefined' && window.innerWidth >= 768 ? expandedWidthDesktop : expandedWidth,
             maxHeight: 240,
             overflowY: 'auto',
-            top: '2.5rem'
+            top: typeof window !== 'undefined' && window.innerWidth >= 768 ? '2.5rem' : undefined
           }}
         >
           {filteredProducts.map((product) => (
