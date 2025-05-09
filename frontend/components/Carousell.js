@@ -35,7 +35,7 @@ export default function Carousell({ title, products, dolarBlue }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?w=300&q=75`;
     }
     
     return "/placeholder.jpg";
@@ -67,15 +67,13 @@ export default function Carousell({ title, products, dolarBlue }) {
               <Link href={getProductUrl(product)} key={product.id}>
                 <div className="flex flex-col justify-between h-full">
                   <div className="relative w-full h-[20rem]">
-                    <Image
+                    <img
                       src={getImageUrl(product)}
                       alt={product.nombre}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      priority={index < 2}
+                      width={300}
+                      height={300}
                       loading={index < 2 ? "eager" : "lazy"}
-                      quality={85}
-                      className="object-cover"
+                      className="object-cover w-full h-full"
                     />
                   </div>
                   <h3 className="text-lg font-semibold">{product.nombre}</h3>

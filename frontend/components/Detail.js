@@ -53,7 +53,7 @@ export default function Detail({ product }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?w=600&q=85`;
     }
     
     return "/placeholder.jpg";
@@ -63,14 +63,13 @@ export default function Detail({ product }) {
     <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
       <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
         <div className="relative w-full h-[500px]">
-          <Image
+          <img
             src={getImageUrl()}
             alt={product.nombre}
-            fill
-            priority
-            quality={90}
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-contain"
+            width={600}
+            height={600}
+            loading="eager"
+            className="object-contain w-full h-full"
           />
         </div>
       </div>

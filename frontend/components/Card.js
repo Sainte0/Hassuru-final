@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import useStore from "../store/store";
-import Image from "next/image";
 
 export default function Card({ currentProducts }) {
   const { dolarBlue, fetchDolarBlue } = useStore();
@@ -41,7 +40,7 @@ export default function Card({ currentProducts }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?w=300&q=75`;
     }
     
     return "/placeholder.jpg";
@@ -62,15 +61,13 @@ export default function Card({ currentProducts }) {
             <Link href={getProductUrl(product)} key={product.id}>
               <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
                 <div className="relative w-full h-[300px]">
-                  <Image
+                  <img
                     src={getImageUrl(product)}
                     alt={product.nombre}
-                    fill
-                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                    priority={index < 4}
+                    width={300}
+                    height={300}
                     loading={index < 4 ? "eager" : "lazy"}
-                    quality={85}
-                    className="object-contain"
+                    className="object-contain w-full h-full"
                   />
                 </div>
                 <div className="flex flex-col mt-2 space-y-1">
