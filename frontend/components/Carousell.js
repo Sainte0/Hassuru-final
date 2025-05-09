@@ -35,7 +35,7 @@ export default function Carousell({ title, products, dolarBlue }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?w=300&q=75`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
     }
     
     return "/placeholder.jpg";
@@ -48,34 +48,43 @@ export default function Carousell({ title, products, dolarBlue }) {
   };
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="mb-4 text-2xl font-bold">{title}</h2>
-      <div className="relative">
-        <button
-          onClick={() => handleScroll('left')}
-          className="absolute left-0 z-10 p-2 text-white transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full top-1/2 hover:bg-opacity-75"
-        >
-          <FaChevronLeft />
-        </button>
+    <div className="relative w-full">
+      <div className="container p-4 mx-auto">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
+          <div>
+            <button
+              className="p-2 text-black transform hover:scale-105"
+              onClick={() => handleScroll("left")}
+            >
+              <FaChevronLeft />
+            </button>
+            <button
+              className="p-2 text-black transform hover:scale-105"
+              onClick={() => handleScroll("right")}
+            >
+              <FaChevronRight />
+            </button>
+          </div>
+        </div>
         <div
           ref={carouselRef}
-          className="flex overflow-x-auto scrollbar-hide scroll-smooth"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex gap-4 mt-8"
+          id="carousel"
+          style={{ overflow: "hidden" }}
         >
           {products.map((product, index) => (
             <div key={index} className="flex-none w-48 sm:w-64">
               <Link href={getProductUrl(product)} key={product.id}>
                 <div className="flex flex-col justify-between h-full">
-                  <div className="relative w-full h-[20rem]">
-                    <img
-                      src={getImageUrl(product)}
-                      alt={product.nombre}
-                      width={300}
-                      height={300}
-                      loading={index < 2 ? "eager" : "lazy"}
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
+                  <img
+                    width={300}
+                    height={300}
+                    src={getImageUrl(product)}
+                    alt={product.nombre}
+                    loading="lazy"
+                    style={{ objectFit: 'cover', width: '100%', height: '20rem', marginBottom: '0.75rem' }}
+                  />
                   <h3 className="text-lg font-semibold">{product.nombre}</h3>
                   <div className="flex flex-col mt-2">
                     <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
@@ -88,12 +97,6 @@ export default function Carousell({ title, products, dolarBlue }) {
             </div>
           ))}
         </div>
-        <button
-          onClick={() => handleScroll('right')}
-          className="absolute right-0 z-10 p-2 text-white transform -translate-y-1/2 bg-black bg-opacity-50 rounded-full top-1/2 hover:bg-opacity-75"
-        >
-          <FaChevronRight />
-        </button>
       </div>
     </div>
   );
