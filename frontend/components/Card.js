@@ -90,10 +90,10 @@ export default function Card({ currentProducts }) {
           return (
             <Link href={getProductUrl(product)} key={product.id}>
               <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
-                <div className="relative w-full h-[300px] bg-gray-100">
+                <div className="relative w-full h-[300px]">
                   {!loadedImages[product._id] && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 animate-pulse">
+                      <div className="w-full h-full bg-gray-200 rounded-lg"></div>
                     </div>
                   )}
                   <img
@@ -107,7 +107,9 @@ export default function Card({ currentProducts }) {
                       width: '100%', 
                       height: '100%',
                       opacity: loadedImages[product._id] ? 1 : 0,
-                      transition: 'opacity 0.3s ease-in-out'
+                      transition: 'opacity 0.3s ease-in-out',
+                      position: 'relative',
+                      zIndex: 1
                     }}
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />

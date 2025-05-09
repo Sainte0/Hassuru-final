@@ -106,10 +106,10 @@ export default function Carousell({ title, products, dolarBlue }) {
             <div key={index} className="flex-none w-48 sm:w-64">
               <Link href={getProductUrl(product)} key={product.id}>
                 <div className="flex flex-col justify-between h-full">
-                  <div className="relative w-full h-[20rem] bg-gray-100">
+                  <div className="relative w-full h-[20rem]">
                     {!loadedImages[product._id] && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-8 h-8 border-4 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="absolute inset-0 animate-pulse">
+                        <div className="w-full h-full bg-gray-200 rounded-lg"></div>
                       </div>
                     )}
                     <img
@@ -124,7 +124,9 @@ export default function Carousell({ title, products, dolarBlue }) {
                         height: '20rem', 
                         marginBottom: '0.75rem',
                         opacity: loadedImages[product._id] ? 1 : 0,
-                        transition: 'opacity 0.3s ease-in-out'
+                        transition: 'opacity 0.3s ease-in-out',
+                        position: 'relative',
+                        zIndex: 1
                       }}
                       onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                     />
