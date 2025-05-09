@@ -41,8 +41,7 @@ export default function Card({ currentProducts }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      const timestamp = new Date().getTime();
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?t=${timestamp}`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
     }
     
     return "/placeholder.jpg";
@@ -57,19 +56,21 @@ export default function Card({ currentProducts }) {
   return (
     <div className="p-4">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {currentProducts.map((product) => {
+        {currentProducts.map((product, index) => {
           const disponibilidad = getDisponibilidad(product);
           return (
             <Link href={getProductUrl(product)} key={product.id}>
               <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
                 <div className="relative w-full h-[300px]">
-                  <img
+                  <Image
                     src={getImageUrl(product)}
                     alt={product.nombre}
-                    width={300}
-                    height={300}
-                    loading="lazy"
-                    style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                    fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                    priority={index < 4}
+                    loading={index < 4 ? "eager" : "lazy"}
+                    quality={85}
+                    className="object-contain"
                   />
                 </div>
                 <div className="flex flex-col mt-2 space-y-1">

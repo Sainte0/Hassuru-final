@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useStore from "../store/store";
+import Image from "next/image";
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
@@ -52,8 +53,7 @@ export default function Detail({ product }) {
     
     // Si la imagen es un objeto con data (nuevo formato), usar la ruta de la API
     if (product._id) {
-      const timestamp = new Date().getTime();
-      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image?t=${timestamp}`;
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
     }
     
     return "/placeholder.jpg";
@@ -62,13 +62,17 @@ export default function Detail({ product }) {
   return (
     <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
       <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
-        <img
-          src={getImageUrl()}
-          alt={product.nombre}
-          width={500}
-          height={500}
-          style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src={getImageUrl()}
+            alt={product.nombre}
+            fill
+            priority
+            quality={90}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-contain"
+          />
+        </div>
       </div>
       <div className="flex flex-col w-full p-2 space-y-4 lg:w-1/2">
         <h2 className="text-3xl font-bold text-gray-800 lg:text-4xl">{product.nombre}</h2>
@@ -79,38 +83,39 @@ export default function Detail({ product }) {
         </div>
         <div className="mt-4">
           <h3 className="mb-2 text-lg font-semibold text-gray-800">Tallas disponibles:</h3>
-          {product.tallas && product.tallas.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {product.tallas.map((talla) => (
-                <button
-                  key={talla._id}
-                  onClick={() => handleTallaSelect(talla)}
-                  className={`px-4 py-2 border rounded-md ${
-                    selectedTalla?._id === talla._id
-                      ? "bg-red-600 text-white border-red-600"
-                      : "border-gray-300 hover:border-red-600"
-                  }`}
-                >
-                  <div className="flex flex-col items-center">
-                    <span className="font-medium">{talla.talla}</span>
-                    <span className="text-sm">${talla.precioTalla} USD</span>
-                    <span className="text-xs text-gray-500">${(talla.precioTalla * dolarBlue).toFixed(2)} ARS</span>
+          <button
+            onClick={() => setShowTallas(!showTallas)}
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            {showTallas ? "Ocultar tallas" : "Ver tallas"}
+          </button>
+          {showTallas && (
+            <div className="mt-4">
+              {product.tallas && product.tallas.length > 0 ? (
+                <div className="grid grid-cols-4 gap-2">
+                  {product.tallas.map((talla, index) => (
+                    <div
+                      key={index}
+                      className="p-2 text-center border rounded cursor-pointer hover:bg-gray-100"
+                    >
+                      {talla.talla}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-yellow-600 font-medium">Te traemos el par desde Estados Unidos con demora de 20/30 días</p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={customTalla}
+                      onChange={(e) => setCustomTalla(e.target.value)}
+                      placeholder="Ingresa tu talle"
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500"
+                    />
                   </div>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-yellow-600 font-medium">Te traemos el par desde Estados Unidos con demora de 20/30 días</p>
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  value={customTalla}
-                  onChange={(e) => setCustomTalla(e.target.value)}
-                  placeholder="Ingresa tu talle"
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500"
-                />
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
