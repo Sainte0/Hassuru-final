@@ -129,9 +129,7 @@ export default function Carousell({ title, products, dolarBlue }) {
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <Link href={`/categoria/${title.toLowerCase().replace(/\s+/g, '-')}`}>
-            <h1 className="text-2xl font-bold sm:text-4xl hover:text-gray-600 transition-colors">{title}</h1>
-          </Link>
+          <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
           <div className="flex gap-2">
             <button
               className="p-2 text-black transform hover:scale-105"
