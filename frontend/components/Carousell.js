@@ -11,7 +11,6 @@ export default function Carousell({ title, products, dolarBlue }) {
   const [scrollLeft, setScrollLeft] = useState(0);
 
   useEffect(() => {
-    // Detectar si es móvil
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
@@ -32,7 +31,9 @@ export default function Carousell({ title, products, dolarBlue }) {
     return () => clearInterval(interval);
   }, [isDragging]);
 
-  const handleScroll = (direction) => {
+  const handleScroll = (e, direction) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (carouselRef.current) {
       const scrollAmount = direction === 'left' ? -300 : 300;
       carouselRef.current.scrollBy({
@@ -48,7 +49,17 @@ export default function Carousell({ title, products, dolarBlue }) {
     setScrollLeft(carouselRef.current.scrollLeft);
   };
 
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+
   const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchEnd = () => {
     setIsDragging(false);
   };
 
@@ -56,6 +67,14 @@ export default function Carousell({ title, products, dolarBlue }) {
     if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.touches[0].pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 2;
     carouselRef.current.scrollLeft = scrollLeft - walk;
   };
@@ -110,19 +129,23 @@ export default function Carousell({ title, products, dolarBlue }) {
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
+          <Link href={`/categoria/${title.toLowerCase().replace(/\s+/g, '-')}`}>
+            <h1 className="text-2xl font-bold sm:text-4xl hover:text-gray-600 transition-colors">{title}</h1>
+          </Link>
           <div className="flex gap-2">
             <button
               className="p-2 text-black transform hover:scale-105"
-              onClick={() => handleScroll("left")}
+              onClick={(e) => handleScroll(e, "left")}
               type="button"
+              onTouchStart={(e) => handleScroll(e, "left")}
             >
               <FaChevronLeft />
             </button>
             <button
               className="p-2 text-black transform hover:scale-105"
-              onClick={() => handleScroll("right")}
+              onClick={(e) => handleScroll(e, "right")}
               type="button"
+              onTouchStart={(e) => handleScroll(e, "right")}
             >
               <FaChevronRight />
             </button>
@@ -130,57 +153,55 @@ export default function Carousell({ title, products, dolarBlue }) {
         </div>
         <div
           ref={carouselRef}
-          className="flex gap-4 mt-8 cursor-grab active:cursor-grabbing"
+          className="flex gap-4 mt-8 cursor-grab active:cursor-grabbing touch-pan-x"
           id="carousel"
           style={{ overflow: "hidden" }}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onClick={(e) => e.preventDefault()}
         >
           {products.map((product, index) => (
             <div key={index} className="flex-none w-48 sm:w-64">
-              <Link href={getProductUrl(product)} key={product.id} onClick={(e) => {
-                if (isDragging) {
-                  e.preventDefault();
-                }
-              }}>
-                <div className="flex flex-col justify-between h-full">
-                  <div className="relative w-full h-[20rem]">
-                    {!loadedImages[product._id] && (
-                      <div className="absolute inset-0 animate-pulse">
-                        <div className="w-full h-full bg-gray-200 rounded-lg"></div>
-                      </div>
-                    )}
-                    <img
-                      width={300}
-                      height={300}
-                      src={getImageUrl(product)}
-                      alt={product.nombre}
-                      loading={index < (isMobile ? 2 : 4) ? "eager" : "lazy"}
-                      style={{ 
-                        objectFit: 'cover', 
-                        width: '100%', 
-                        height: '20rem', 
-                        marginBottom: '0.75rem',
-                        opacity: loadedImages[product._id] ? 1 : 0,
-                        transition: 'opacity 0.3s ease-in-out',
-                        position: 'relative',
-                        zIndex: 1,
-                        pointerEvents: 'none'
-                      }}
-                      onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
-                    />
-                  </div>
-                  <h3 className="text-lg font-semibold">{product.nombre}</h3>
-                  <div className="flex flex-col mt-2">
-                    <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
-                    </p>
-                  </div>
+              <div className="flex flex-col justify-between h-full">
+                <div className="relative w-full h-[20rem]">
+                  {!loadedImages[product._id] && (
+                    <div className="absolute inset-0 animate-pulse">
+                      <div className="w-full h-full bg-gray-200 rounded-lg"></div>
+                    </div>
+                  )}
+                  <img
+                    width={300}
+                    height={300}
+                    src={getImageUrl(product)}
+                    alt={product.nombre}
+                    loading={index < (isMobile ? 2 : 4) ? "eager" : "lazy"}
+                    style={{ 
+                      objectFit: 'cover', 
+                      width: '100%', 
+                      height: '20rem', 
+                      marginBottom: '0.75rem',
+                      opacity: loadedImages[product._id] ? 1 : 0,
+                      transition: 'opacity 0.3s ease-in-out',
+                      position: 'relative',
+                      zIndex: 1,
+                      pointerEvents: 'none'
+                    }}
+                    onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
+                  />
                 </div>
-              </Link>
+                <h3 className="text-lg font-semibold">{product.nombre}</h3>
+                <div className="flex flex-col mt-2">
+                  <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
+                  <p className="text-lg font-bold text-gray-800">
+                    {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
