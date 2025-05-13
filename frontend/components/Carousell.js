@@ -6,6 +6,9 @@ export default function Carousell({ title, products, dolarBlue }) {
   const carouselRef = useRef(null);
   const [loadedImages, setLoadedImages] = useState({});
   const [isMobile, setIsMobile] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
 
   useEffect(() => {
     // Detectar si es móvil
@@ -19,19 +22,46 @@ export default function Carousell({ title, products, dolarBlue }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      carouselRef.current.scrollBy({
-        left: 300,
-        behavior: "smooth",
-      });
+      if (!isDragging && carouselRef.current) {
+        carouselRef.current.scrollBy({
+          left: 300,
+          behavior: "smooth",
+        });
+      }
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isDragging]);
 
   const handleScroll = (direction) => {
-    carouselRef.current.scrollBy({
-      left: direction === 'left' ? -300 : 300,
-      behavior: "smooth",
-    });
+    if (carouselRef.current) {
+      const scrollAmount = direction === 'left' ? -300 : 300;
+      carouselRef.current.scrollBy({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
   };
 
   // Función para obtener la URL de la imagen
@@ -81,16 +111,18 @@ export default function Carousell({ title, products, dolarBlue }) {
       <div className="container p-4 mx-auto">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
-          <div>
+          <div className="flex gap-2">
             <button
               className="p-2 text-black transform hover:scale-105"
               onClick={() => handleScroll("left")}
+              type="button"
             >
               <FaChevronLeft />
             </button>
             <button
               className="p-2 text-black transform hover:scale-105"
               onClick={() => handleScroll("right")}
+              type="button"
             >
               <FaChevronRight />
             </button>
@@ -98,13 +130,21 @@ export default function Carousell({ title, products, dolarBlue }) {
         </div>
         <div
           ref={carouselRef}
-          className="flex gap-4 mt-8"
+          className="flex gap-4 mt-8 cursor-grab active:cursor-grabbing"
           id="carousel"
           style={{ overflow: "hidden" }}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
         >
           {products.map((product, index) => (
             <div key={index} className="flex-none w-48 sm:w-64">
-              <Link href={getProductUrl(product)} key={product.id}>
+              <Link href={getProductUrl(product)} key={product.id} onClick={(e) => {
+                if (isDragging) {
+                  e.preventDefault();
+                }
+              }}>
                 <div className="flex flex-col justify-between h-full">
                   <div className="relative w-full h-[20rem]">
                     {!loadedImages[product._id] && (
@@ -126,7 +166,8 @@ export default function Carousell({ title, products, dolarBlue }) {
                         opacity: loadedImages[product._id] ? 1 : 0,
                         transition: 'opacity 0.3s ease-in-out',
                         position: 'relative',
-                        zIndex: 1
+                        zIndex: 1,
+                        pointerEvents: 'none'
                       }}
                       onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                     />
