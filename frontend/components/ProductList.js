@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import ProductRow from "./ProductRow";
 import { MdFilterAltOff } from "react-icons/md";
 import { MdAdd } from "react-icons/md";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import AddProductModal from './AddProductModal';
 import useStore from "../store/store";
 
 const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, setSelectedProduct, fetchProducts, fetchProductsFiltered }) => {
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [nameFilter, setNameFilter] = useState("");
-  const [encargoFilter, setEncargoFilter] = useState(false); // Estado para el filtro de encargo
-  const [priceSort, setPriceSort] = useState(""); // Estado para el ordenamiento por precio
+  const [encargoFilter, setEncargoFilter] = useState(false);
+  const [priceSort, setPriceSort] = useState("");
   const { dolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 10;
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -37,7 +42,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   let filteredProducts = editableProducts.filter((producto) => {
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
-    const encargoMatch = encargoFilter ? producto.encargo === true : true; // Solo muestra productos con encargo verdadero si el filtro está activo
+    const encargoMatch = encargoFilter ? producto.encargo === true : true;
     return nameMatch && categoryMatch && encargoMatch;
   });
 
@@ -47,6 +52,21 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   } else if (priceSort === "desc") {
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio - a.precio);
   }
+
+  // Pagination calculations
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // Reset to first page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [categoriaFilter, nameFilter, encargoFilter, priceSort]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -129,11 +149,11 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
             </tr>
           </thead>
           <tbody>
-            {filteredProducts.map((producto, index) => (
+            {currentProducts.map((producto, index) => (
               <ProductRow
                 key={producto._id}
                 producto={producto}
-                index={index + 1}
+                index={indexOfFirstProduct + index + 1}
                 selectedProduct={selectedProduct}
                 handleProductSelect={handleProductSelect}
                 setEditableProducts={setEditableProducts}
@@ -145,6 +165,40 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-center gap-2 mt-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <MdChevronLeft size={24} />
+        </button>
+        
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => handlePageChange(page)}
+            className={`px-3 py-1 rounded ${
+              currentPage === page
+                ? 'bg-blue-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <MdChevronRight size={24} />
+        </button>
+      </div>
+
       <AddProductModal
         isOpen={isModalOpen}
         onClose={handleModalClose}
