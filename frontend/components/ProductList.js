@@ -167,7 +167,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex items-center justify-center gap-2 mt-4">
+      <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
@@ -176,19 +176,56 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <MdChevronLeft size={24} />
         </button>
         
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        {/* First page */}
+        {currentPage > 2 && (
           <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            className={`px-3 py-1 rounded ${
-              currentPage === page
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            onClick={() => handlePageChange(1)}
+            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
           >
-            {page}
+            1
           </button>
-        ))}
+        )}
+
+        {/* Left ellipsis */}
+        {currentPage > 3 && (
+          <span className="px-2 text-gray-500">...</span>
+        )}
+
+        {/* Page numbers */}
+        {Array.from({ length: totalPages }, (_, i) => i + 1)
+          .filter(page => {
+            if (totalPages <= 5) return true;
+            if (page === 1 || page === totalPages) return false;
+            return Math.abs(currentPage - page) <= 1;
+          })
+          .map((page) => (
+            <button
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={`px-3 py-1 rounded ${
+                currentPage === page
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+        {/* Right ellipsis */}
+        {currentPage < totalPages - 2 && (
+          <span className="px-2 text-gray-500">...</span>
+        )}
+
+        {/* Last page */}
+        {currentPage < totalPages - 1 && (
+          <button
+            onClick={() => handlePageChange(totalPages)}
+            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            {totalPages}
+          </button>
+        )}
 
         <button
           onClick={() => handlePageChange(currentPage + 1)}
@@ -197,6 +234,11 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         >
           <MdChevronRight size={24} />
         </button>
+
+        {/* Page info for mobile */}
+        <div className="w-full text-center text-sm text-gray-600 mt-2 sm:hidden">
+          Página {currentPage} de {totalPages}
+        </div>
       </div>
 
       <AddProductModal
