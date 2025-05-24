@@ -16,7 +16,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 10;
+  const productsPerPage = 20;
 
   const handleProductSelect = (id) => {
     setSelectedProduct(id);
@@ -167,77 +167,79 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <MdChevronLeft size={24} />
-        </button>
-        
-        {/* First page */}
-        {currentPage > 2 && (
+      <div className="flex flex-wrap items-center justify-between w-full gap-2 mt-4 px-4 py-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => handlePageChange(1)}
-            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            1
+            <MdChevronLeft size={24} />
           </button>
-        )}
-
-        {/* Left ellipsis */}
-        {currentPage > 3 && (
-          <span className="px-2 text-gray-500">...</span>
-        )}
-
-        {/* Page numbers */}
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter(page => {
-            if (totalPages <= 5) return true;
-            if (page === 1 || page === totalPages) return false;
-            return Math.abs(currentPage - page) <= 1;
-          })
-          .map((page) => (
+          
+          {/* First page */}
+          {currentPage > 2 && (
             <button
-              key={page}
-              onClick={() => handlePageChange(page)}
-              className={`px-3 py-1 rounded ${
-                currentPage === page
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+              onClick={() => handlePageChange(1)}
+              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
             >
-              {page}
+              1
             </button>
-          ))}
+          )}
 
-        {/* Right ellipsis */}
-        {currentPage < totalPages - 2 && (
-          <span className="px-2 text-gray-500">...</span>
-        )}
+          {/* Left ellipsis */}
+          {currentPage > 3 && (
+            <span className="px-2 text-gray-500">...</span>
+          )}
 
-        {/* Last page */}
-        {currentPage < totalPages - 1 && (
+          {/* Page numbers */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(page => {
+              if (totalPages <= 5) return true;
+              if (page === 1 || page === totalPages) return false;
+              return Math.abs(currentPage - page) <= 1;
+            })
+            .map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 rounded ${
+                  currentPage === page
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+          {/* Right ellipsis */}
+          {currentPage < totalPages - 2 && (
+            <span className="px-2 text-gray-500">...</span>
+          )}
+
+          {/* Last page */}
+          {currentPage < totalPages - 1 && (
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              {totalPages}
+            </button>
+          )}
+
           <button
-            onClick={() => handlePageChange(totalPages)}
-            className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {totalPages}
+            <MdChevronRight size={24} />
           </button>
-        )}
+        </div>
 
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <MdChevronRight size={24} />
-        </button>
-
-        {/* Page info for mobile */}
-        <div className="w-full text-center text-sm text-gray-600 mt-2 sm:hidden">
-          Página {currentPage} de {totalPages}
+        {/* Page info */}
+        <div className="text-sm text-gray-600">
+          Mostrando {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} productos
         </div>
       </div>
 
