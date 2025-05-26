@@ -10,36 +10,90 @@ export default function Home() {
   const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
 
   useEffect(() => {
+    console.log('Estado inicial de Home:', {
+      loading,
+      error,
+      productsCount: products?.length,
+      dolarBlue,
+      tiktokLinksCount: tiktokLinks?.length
+    });
+
     // Función para inicializar los datos
     const initializeData = async () => {
+      console.log('Iniciando carga de datos en Home...');
       try {
         // Obtener productos
+        console.log('Iniciando fetchProducts...');
         await fetchProducts();
+        console.log('Productos cargados en Home:', {
+          total: products?.length,
+          destacados: products?.filter(p => p.destacado).length,
+          zapatillas: products?.filter(p => p.destacado_zapatillas).length,
+          categorias: [...new Set(products?.map(p => p.categoria))]
+        });
         
-        // Obtener valor del dólar blue (solo si no está en caché)
+        // Obtener valor del dólar blue
         const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
         const now = Date.now();
+        console.log('Estado del dólar blue:', {
+          ultimaActualizacion: lastUpdate,
+          tiempoTranscurrido: now - parseInt(lastUpdate || 0),
+          necesitaActualizacion: !lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000
+        });
+
         if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
+          console.log('Actualizando dólar blue...');
           await fetchDolarBlue();
+          console.log('Dólar Blue actualizado:', dolarBlue);
         }
         
-        // Obtener enlaces de TikTok (solo si no hay datos)
+        // Obtener enlaces de TikTok
+        console.log('Estado de TikTok links:', {
+          hayLinks: tiktokLinks?.length > 0,
+          cantidadLinks: tiktokLinks?.length
+        });
+
         if (!tiktokLinks.length) {
+          console.log('Cargando links de TikTok...');
           await fetchTikTokLinks();
+          console.log('Links de TikTok cargados:', tiktokLinks);
         }
       } catch (error) {
-        console.error("Error al inicializar datos:", error);
+        console.error("Error detallado al inicializar datos:", {
+          mensaje: error.message,
+          stack: error.stack,
+          tipo: error.name
+        });
       }
     };
     
     initializeData();
   }, []);
 
-  if (loading) return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) {
+    console.log('Home en estado de carga...');
+    return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;
+  }
+  
+  if (error) {
+    console.error('Error en Home:', error);
+    return <div>Error: {error}</div>;
+  }
 
   const destacados = products.filter((product) => product.destacado === true);
   const zapatillas = products.filter((product) => product.destacado_zapatillas === true);
+
+  console.log('Resumen de productos en Home:', {
+    total: products.length,
+    destacados: {
+      cantidad: destacados.length,
+      productos: destacados.map(p => ({ id: p._id, nombre: p.nombre }))
+    },
+    zapatillas: {
+      cantidad: zapatillas.length,
+      productos: zapatillas.map(p => ({ id: p._id, nombre: p.nombre }))
+    }
+  });
 
   return (
     <main>

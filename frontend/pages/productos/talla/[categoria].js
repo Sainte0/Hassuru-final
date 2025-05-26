@@ -16,17 +16,37 @@ export default function TallaSelector() {
   const [loading, setLoading] = useState(true);
   const [availableTallas, setAvailableTallas] = useState([]);
 
-  // Fetch products and extract available sizes
   useEffect(() => {
+    console.log('Estado inicial de selección de talla:', {
+      categoria,
+      selectedTalla,
+      loading,
+      error,
+      tallasDisponibles: availableTallas.length
+    });
+
     const fetchProducts = async () => {
-      if (!categoria) return;
+      if (!categoria) {
+        console.log('No hay categoría seleccionada');
+        return;
+      }
       
+      console.log('Iniciando carga de productos para tallas:', categoria);
       setLoading(true);
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
         if (!response.ok) throw new Error("Error al cargar los productos");
         
         const products = await response.json();
+        console.log('Productos cargados para tallas:', {
+          categoria,
+          totalProductos: products.length,
+          productos: products.map(p => ({
+            id: p._id,
+            nombre: p.nombre,
+            tallas: p.tallas
+          }))
+        });
         
         // Extract available sizes based on category
         const tallasSet = new Set();
@@ -41,6 +61,12 @@ export default function TallaSelector() {
           }
         });
         
+        console.log('Tallas únicas encontradas:', {
+          categoria,
+          totalTallas: tallasSet.size,
+          tallas: Array.from(tallasSet)
+        });
+        
         // Convert Set to Array and sort
         const tallasArray = Array.from(tallasSet);
         
@@ -49,6 +75,10 @@ export default function TallaSelector() {
           // Sort clothing sizes: XS, S, M, L, XL, XXL, OS
           const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
           tallasArray.sort((a, b) => tallaOrder.indexOf(a) - tallaOrder.indexOf(b));
+          console.log('Tallas de ropa ordenadas:', {
+            categoria,
+            orden: tallasArray
+          });
         } else if (categoria === "zapatillas") {
           // Sort shoe sizes numerically
           tallasArray.sort((a, b) => {
@@ -57,11 +87,19 @@ export default function TallaSelector() {
             };
             return parseTalla(a) - parseTalla(b);
           });
+          console.log('Tallas de zapatillas ordenadas:', {
+            categoria,
+            orden: tallasArray
+          });
         }
         
         setAvailableTallas(tallasArray);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error('Error al cargar tallas:', {
+          mensaje: error.message,
+          stack: error.stack,
+          categoria
+        });
         setError("Error al cargar las tallas disponibles");
       } finally {
         setLoading(false);
@@ -72,6 +110,12 @@ export default function TallaSelector() {
   }, [categoria]);
 
   const handleTallaSelect = (talla) => {
+    console.log('Selección de talla:', {
+      talla,
+      categoria,
+      tallaActual: selectedTalla
+    });
+    
     setSelectedTalla(talla);
     setError("");
 
@@ -87,6 +131,11 @@ export default function TallaSelector() {
     
     // Construir la URL y redirigir
     const url = `/productos/categoria/${categoria}?${paramName}=${encodeURIComponent(talla)}`;
+    console.log('Redirección:', {
+      url,
+      parametro: paramName,
+      valor: talla
+    });
     router.push(url);
   };
 
@@ -98,10 +147,12 @@ export default function TallaSelector() {
   };
 
   if (!categoria) {
+    console.log('Esperando categoría...');
     return <div className="container py-10 mx-auto">Cargando...</div>;
   }
 
   if (loading) {
+    console.log('Cargando tallas para categoría:', categoria);
     return (
       <div className="container flex items-center justify-center py-10 mx-auto">
         <BounceLoader color="#BE1A1D" />
@@ -110,6 +161,10 @@ export default function TallaSelector() {
   }
 
   if (error) {
+    console.error('Error en selección de talla:', {
+      error,
+      categoria
+    });
     return (
       <div className="container py-10 mx-auto">
         <div className="max-w-2xl mx-auto text-center">
@@ -126,6 +181,10 @@ export default function TallaSelector() {
   }
 
   if (availableTallas.length === 0) {
+    console.log('No hay tallas disponibles:', {
+      categoria,
+      productosCargados: true
+    });
     return (
       <div className="container py-10 mx-auto">
         <div className="max-w-2xl mx-auto text-center">
@@ -140,6 +199,12 @@ export default function TallaSelector() {
       </div>
     );
   }
+
+  console.log('Renderizando selector de tallas:', {
+    categoria,
+    totalTallas: availableTallas.length,
+    tallaSeleccionada: selectedTalla
+  });
 
   return (
     <div className="container py-10 mx-auto">

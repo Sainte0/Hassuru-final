@@ -10,10 +10,12 @@ export default function Categoria() {
   const router = useRouter();
   
   if (router.isFallback) {
+    console.log('Página en estado de fallback');
     return <div>Cargando...</div>;
   }
 
   if (!router.query.categoria) {
+    console.log('No se encontró la categoría en la URL');
     return <div>No se encontró la categoría </div>;
   }
 
@@ -27,16 +29,32 @@ export default function Categoria() {
 
   // Efecto para manejar la navegación inicial
   useEffect(() => {
-    if (!router.isReady) return;
+    if (!router.isReady) {
+      console.log('Router no está listo aún');
+      return;
+    }
+
+    console.log('Estado inicial de navegación:', {
+      categoria,
+      queryParams: router.query,
+      currentPage
+    });
 
     // Recuperar la página guardada al cargar la página
     const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
     const urlPage = parseInt(router.query.page) || 1;
     
+    console.log('Información de paginación:', {
+      paginaGuardada: savedPage,
+      paginaURL: urlPage,
+      paginaActual: currentPage
+    });
+
     // Si hay una página guardada y no hay página en la URL, actualizar la URL
     if (savedPage && !router.query.page) {
       const page = parseInt(savedPage);
       if (page > 1) {
+        console.log('Actualizando URL con página guardada:', page);
         router.push(
           {
             pathname: router.pathname,
@@ -106,8 +124,12 @@ export default function Categoria() {
   };
 
   const fetchProductsByCategory = async () => {
-    if (!categoria) return;
+    if (!categoria) {
+      console.log('No hay categoría para cargar productos');
+      return;
+    }
     
+    console.log('Iniciando carga de productos para categoría:', categoria);
     setLoading(true);
     setError(null);
     try {
@@ -115,11 +137,32 @@ export default function Categoria() {
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
+      console.log('Productos cargados por categoría:', {
+        categoria,
+        totalProductos: data.length,
+        productos: data.map(p => ({
+          id: p._id,
+          nombre: p.nombre,
+          categoria: p.categoria,
+          marca: p.marca,
+          precio: p.precio
+        }))
+      });
+      
       const sortedData = sortProductsByAvailability(data);
+      console.log('Productos ordenados:', {
+        total: sortedData.length,
+        orden: sortedData.map(p => p.nombre)
+      });
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
     } catch (error) {
+      console.error('Error al cargar productos:', {
+        mensaje: error.message,
+        stack: error.stack,
+        categoria
+      });
       setError(error.message);
     } finally {
       setLoading(false);
@@ -128,7 +171,15 @@ export default function Categoria() {
 
   // Función para aplicar los filtros
   const applyFilters = useCallback((productsToFilter, filters) => {
-    if (!productsToFilter || !Array.isArray(productsToFilter)) return [];
+    if (!productsToFilter || !Array.isArray(productsToFilter)) {
+      console.log('No hay productos para filtrar o no es un array');
+      return [];
+    }
+
+    console.log('Aplicando filtros:', {
+      filtros: filters,
+      totalProductos: productsToFilter.length
+    });
 
     let filtered = [...productsToFilter];
 
@@ -137,6 +188,11 @@ export default function Categoria() {
       filtered = filtered.filter(product => 
         product.marca === filters.marca
       );
+      console.log('Después de filtrar por marca:', {
+        marca: filters.marca,
+        productosRestantes: filtered.length,
+        productos: filtered.map(p => p.nombre)
+      });
     }
 
     // Filtro de talla de ropa
@@ -145,6 +201,7 @@ export default function Categoria() {
         product.categoria === "ropa" && 
         product.tallas.some(talla => talla.talla === filters.tallaRopa)
       );
+      console.log('Después de filtrar por talla ropa:', filtered);
     }
 
     // Filtro de talla de zapatilla
@@ -153,6 +210,7 @@ export default function Categoria() {
         product.categoria === "zapatillas" && 
         product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
       );
+      console.log('Después de filtrar por talla zapatilla:', filtered);
     }
 
     // Filtro de accesorio
@@ -161,6 +219,7 @@ export default function Categoria() {
         product.categoria === "accesorios" && 
         product.tallas.some(talla => talla.talla === filters.accesorio)
       );
+      console.log('Después de filtrar por accesorio:', filtered);
     }
 
     // Filtro de precio
@@ -171,6 +230,7 @@ export default function Categoria() {
         const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
         return precio >= min && precio <= max;
       });
+      console.log('Después de filtrar por precio:', filtered);
     }
 
     // Filtro de stock
@@ -178,9 +238,10 @@ export default function Categoria() {
       filtered = filtered.filter(product => 
         product.tallas.some(talla => talla.stock > 0)
       );
+      console.log('Después de filtrar por stock:', filtered);
     }
 
-    // Filtro de disponibilidad - Invertido: 20 días con inmediata
+    // Filtro de disponibilidad
     if (filters.disponibilidad) {
       filtered = filtered.filter(product => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -197,9 +258,20 @@ export default function Categoria() {
             return true;
         }
       });
+      console.log('Después de filtrar por disponibilidad:', filtered);
     }
 
-    return sortProductsByAvailability(filtered);
+    const sortedResults = sortProductsByAvailability(filtered);
+    console.log('Resultados finales:', {
+      totalFiltrado: sortedResults.length,
+      productos: sortedResults.map(p => ({
+        id: p._id,
+        nombre: p.nombre,
+        marca: p.marca,
+        precio: p.precio
+      }))
+    });
+    return sortedResults;
   }, []);
 
   // Cargar productos cuando cambia la categoría
@@ -234,7 +306,19 @@ export default function Categoria() {
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  if (!router.isReady) return null;
+  console.log('Estado de paginación:', {
+    paginaActual: currentPage,
+    totalPaginas: totalPages,
+    productosPorPagina: productsPerPage,
+    productosEnPaginaActual: currentProducts.length,
+    rango: `${indexOfFirstProduct + 1}-${indexOfLastProduct}`,
+    totalProductos: filteredProducts.length
+  });
+
+  if (!router.isReady) {
+    console.log('Router no está listo, esperando...');
+    return null;
+  }
 
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row pb-20">
