@@ -5,17 +5,7 @@ import useStore from "../store/store";
 export default function Card({ currentProducts }) {
   const { dolarBlue, fetchDolarBlue } = useStore();
   const [loadedImages, setLoadedImages] = useState({});
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    // Detectar si es móvil
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const [visibleProducts, setVisibleProducts] = useState([]);
 
   useEffect(() => {
     fetchDolarBlue();
@@ -28,26 +18,35 @@ export default function Card({ currentProducts }) {
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
 
-  // Precargar imágenes solo de los productos de la página actual
+  // Implementar Intersection Observer para cargar imágenes solo cuando son visibles
   useEffect(() => {
-    const preloadImages = async () => {
-      // Limpiar el estado de imágenes cargadas
-      setLoadedImages({});
-      
-      // Precargar solo las imágenes de los productos de la página actual
-      const imagePromises = currentProducts.map((product) => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.src = getImageUrl(product);
-          img.onload = () => {
-            setLoadedImages(prev => ({ ...prev, [product._id]: true }));
-            resolve();
-          };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const productId = entry.target.dataset.productId;
+            setVisibleProducts(prev => {
+              if (!prev.includes(productId)) {
+                return [...prev, productId];
+              }
+              return prev;
+            });
+          }
         });
-      });
-      await Promise.all(imagePromises);
+      },
+      {
+        rootMargin: '50px 0px',
+        threshold: 0.1
+      }
+    );
+
+    // Observar todos los contenedores de productos
+    const productContainers = document.querySelectorAll('.product-container');
+    productContainers.forEach(container => observer.observe(container));
+
+    return () => {
+      productContainers.forEach(container => observer.unobserve(container));
     };
-    preloadImages();
   }, [currentProducts]);
 
   const getDisponibilidad = (product) => {
@@ -91,32 +90,38 @@ export default function Card({ currentProducts }) {
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {currentProducts.map((product) => {
           const disponibilidad = getDisponibilidad(product);
+          const isVisible = visibleProducts.includes(product._id);
+          
           return (
             <Link href={getProductUrl(product)} key={product._id}>
-              <div className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
+              <div 
+                className="flex flex-col h-[500px] transition-transform transform hover:scale-105 product-container"
+                data-product-id={product._id}
+              >
                 <div className="relative w-full h-[300px]">
                   {!loadedImages[product._id] && (
                     <div className="absolute inset-0 animate-pulse">
                       <div className="w-full h-full bg-gray-200 rounded-lg"></div>
                     </div>
                   )}
-                  <img
-                    src={getImageUrl(product)}
-                    alt={product.nombre}
-                    width={300}
-                    height={300}
-                    loading="lazy"
-                    style={{ 
-                      objectFit: 'contain', 
-                      width: '100%', 
-                      height: '100%',
-                      opacity: loadedImages[product._id] ? 1 : 0,
-                      transition: 'opacity 0.3s ease-in-out',
-                      position: 'relative',
-                      zIndex: 1
-                    }}
-                    onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
-                  />
+                  {isVisible && (
+                    <img
+                      src={getImageUrl(product)}
+                      alt={product.nombre}
+                      width={300}
+                      height={300}
+                      style={{ 
+                        objectFit: 'contain', 
+                        width: '100%', 
+                        height: '100%',
+                        opacity: loadedImages[product._id] ? 1 : 0,
+                        transition: 'opacity 0.3s ease-in-out',
+                        position: 'relative',
+                        zIndex: 1
+                      }}
+                      onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
+                    />
+                  )}
                 </div>
                 
                 <h3 className="text-lg font-semibold">{product.nombre}</h3>
