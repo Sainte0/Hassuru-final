@@ -39,7 +39,7 @@ export default function SearchBar({ isHamburgerOpen }) {
     if (query.trim()) {
       // Redirigir al catálogo con el filtro de búsqueda
       router.push({
-        pathname: '/productos',
+        pathname: '/catalogo',
         query: { q: query.trim() }
       });
     }
