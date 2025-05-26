@@ -28,10 +28,14 @@ export default function Card({ currentProducts }) {
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
 
-  // Precargar imágenes
+  // Precargar imágenes solo de los productos de la página actual
   useEffect(() => {
     const preloadImages = async () => {
-      const imagePromises = currentProducts.slice(0, isMobile ? 4 : 8).map((product) => {
+      // Limpiar el estado de imágenes cargadas
+      setLoadedImages({});
+      
+      // Precargar solo las imágenes de los productos de la página actual
+      const imagePromises = currentProducts.map((product) => {
         return new Promise((resolve) => {
           const img = new Image();
           img.src = getImageUrl(product);
@@ -44,7 +48,7 @@ export default function Card({ currentProducts }) {
       await Promise.all(imagePromises);
     };
     preloadImages();
-  }, [currentProducts, isMobile]);
+  }, [currentProducts]);
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
@@ -85,11 +89,11 @@ export default function Card({ currentProducts }) {
   return (
     <div className="p-4">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {currentProducts.map((product, index) => {
+        {currentProducts.map((product) => {
           const disponibilidad = getDisponibilidad(product);
           return (
-            <Link href={getProductUrl(product)} key={product.id}>
-              <div key={product._id} className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
+            <Link href={getProductUrl(product)} key={product._id}>
+              <div className="flex flex-col h-[500px] transition-transform transform hover:scale-105">
                 <div className="relative w-full h-[300px]">
                   {!loadedImages[product._id] && (
                     <div className="absolute inset-0 animate-pulse">
@@ -101,7 +105,7 @@ export default function Card({ currentProducts }) {
                     alt={product.nombre}
                     width={300}
                     height={300}
-                    loading={index < (isMobile ? 4 : 8) ? "eager" : "lazy"}
+                    loading="lazy"
                     style={{ 
                       objectFit: 'contain', 
                       width: '100%', 
@@ -114,18 +118,17 @@ export default function Card({ currentProducts }) {
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
                 </div>
-                <div className="flex flex-col mt-2 space-y-1">
-                  <h3 className="text-lg font-semibold">{product.nombre}</h3>
-                  <h5 className="text-sm leading-relaxed text-gray-500">
-                    {product.description}
-                  </h5>
-                  <div className="flex flex-col">
-                    <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      ${(product.precio * dolarBlue).toFixed(2)} ARS
-                    </p>
-                    <span className={disponibilidad.color}>{disponibilidad.message}</span>
-                  </div>
+                
+                <h3 className="text-lg font-semibold">{product.nombre}</h3>
+                <h5 className="text-sm leading-relaxed text-gray-500">
+                  {product.description}
+                </h5>
+                <div className="flex flex-col">
+                  <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
+                  <p className="text-lg font-bold text-gray-800">
+                    ${(product.precio * dolarBlue).toFixed(2)} ARS
+                  </p>
+                  <span className={disponibilidad.color}>{disponibilidad.message}</span>
                 </div>
               </div>
             </Link>
