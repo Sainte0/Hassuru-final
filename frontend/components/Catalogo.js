@@ -8,7 +8,6 @@ import { sortProductsByAvailability } from '../utils/sortProducts';
 
 export default function Catalogo() {
   const router = useRouter();
-  const { search } = router.query;
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,81 +47,57 @@ export default function Catalogo() {
     }
   }, [router.query.page, router.isReady]);
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
-      if (!response.ok) {
-        throw new Error("Error al cargar los productos");
-      }
-      const data = await response.json();
-      const sortedData = sortProductsByAvailability(data);
-      
-      setProducts(sortedData);
-      setFilteredProducts(sortedData);
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Función para aplicar los filtros
+  // Función para aplicar filtros
   const applyFilters = useCallback((productsToFilter, filters) => {
-    if (!productsToFilter || !Array.isArray(productsToFilter)) return [];
-
     let filtered = [...productsToFilter];
 
     // Filtro de marca
     if (filters.marca) {
-      filtered = filtered.filter(product => 
-        product.marca === filters.marca
-      );
+      filtered = filtered.filter(product => product.marca === filters.marca);
     }
 
     // Filtro de talla de ropa
     if (filters.tallaRopa) {
       filtered = filtered.filter(product => 
-        product.categoria === "ropa" && 
-        product.tallas.some(talla => talla.talla === filters.tallaRopa)
+        product.categoria === 'ropa' && 
+        product.tallas.some(t => t.talla === filters.tallaRopa)
       );
     }
 
     // Filtro de talla de zapatilla
     if (filters.tallaZapatilla) {
       filtered = filtered.filter(product => 
-        product.categoria === "zapatillas" && 
-        product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
+        product.categoria === 'zapatillas' && 
+        product.tallas.some(t => t.talla === filters.tallaZapatilla)
       );
     }
 
     // Filtro de accesorio
     if (filters.accesorio) {
       filtered = filtered.filter(product => 
-        product.categoria === "accesorios" && 
-        product.tallas.some(talla => talla.talla === filters.accesorio)
+        product.categoria === 'accesorios' && 
+        product.tallas.some(t => t.talla === filters.accesorio)
       );
     }
 
-    // Filtro de precio
-    if (filters.precioMin || filters.precioMax) {
-      filtered = filtered.filter(product => {
-        const precio = parseFloat(product.precio);
-        const min = filters.precioMin ? parseFloat(filters.precioMin) : -Infinity;
-        const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
-        return precio >= min && precio <= max;
-      });
+    // Filtro de precio mínimo
+    if (filters.precioMin) {
+      filtered = filtered.filter(product => product.precio >= parseFloat(filters.precioMin));
+    }
+
+    // Filtro de precio máximo
+    if (filters.precioMax) {
+      filtered = filtered.filter(product => product.precio <= parseFloat(filters.precioMax));
     }
 
     // Filtro de stock
     if (filters.stock) {
       filtered = filtered.filter(product => 
-        product.tallas.some(talla => talla.stock > 0)
+        product.tallas.some(t => t.stock > 0)
       );
     }
 
-    // Filtro de disponibilidad - Invertido: 20 días con inmediata
+    // Filtro de disponibilidad
     if (filters.disponibilidad) {
       filtered = filtered.filter(product => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -141,10 +116,37 @@ export default function Catalogo() {
       });
     }
 
+    // Filtro de búsqueda
+    if (filters.q) {
+      const searchQuery = filters.q.toLowerCase();
+      filtered = filtered.filter(product =>
+        product.nombre.toLowerCase().includes(searchQuery) ||
+        (product.marca && product.marca.toLowerCase().includes(searchQuery))
+      );
+    }
+
     return sortProductsByAvailability(filtered);
   }, []);
 
+  // Cargar productos
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
+        if (!response.ok) {
+          throw new Error('Error al cargar los productos');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProducts();
   }, []);
 
@@ -161,7 +163,7 @@ export default function Catalogo() {
       precioMin: router.query.precioMin,
       precioMax: router.query.precioMax,
       stock: router.query.stock === 'true',
-      q: search
+      q: router.query.q
     };
 
     const filteredResults = applyFilters(products, filters);
@@ -169,7 +171,7 @@ export default function Catalogo() {
     
     // No resetear la página cuando hay filtros activos
     // La página se mantendrá según lo guardado en localStorage
-  }, [router.query, search, products, router.isReady]);
+  }, [router.query, products, router.isReady, applyFilters]);
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {

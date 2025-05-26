@@ -37,7 +37,11 @@ export default function SearchBar({ isHamburgerOpen }) {
 
   const handleSearch = () => {
     if (query.trim()) {
-      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
+      // Redirigir al catálogo con el filtro de búsqueda
+      router.push({
+        pathname: '/productos',
+        query: { q: query.trim() }
+      });
     }
     setQuery("");
     setFilteredProducts([]);
