@@ -377,14 +377,6 @@ const ProductRow = ({
       <td className="px-4 py-2 border">
         {index}
       </td>
-      <td className="px-4 py-2 border">
-        <input
-          type="radio"
-          name="selectedProduct"
-          onChange={() => handleProductSelect(producto._id)}
-          checked={selectedProduct === producto._id}
-        />
-      </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
           <input
@@ -428,9 +420,9 @@ const ProductRow = ({
             onChange={(e) => handleProductChange(e, "categoria", producto)}
             className="w-full p-1 border"
           >
+            <option value="zapatillas">Zapatillas</option>
             <option value="ropa">Ropa</option>
             <option value="accesorios">Accesorios</option>
-            <option value="zapatillas">Zapatillas</option>
           </select>
         ) : (
           producto.categoria
@@ -438,139 +430,93 @@ const ProductRow = ({
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
-          <div className="flex flex-col">
-            <input
-              type="text"
-              value={producto.precio}
-              onChange={(e) => handleProductChange(e, "precio", producto)}
-              className="w-full p-1 mb-2 border"
-              placeholder="Precio en USD"
-            />
-            {dolarBlue ? (
-              <label className="w-full p-1">
-                {(producto.precio * dolarBlue).toFixed(2)} ARS
-              </label>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
-          </div>
+          <input
+            type="number"
+            value={producto.precio}
+            onChange={(e) => handleProductChange(e, "precio", producto)}
+            className="w-full p-1 border"
+          />
         ) : (
           <div>
-            <p>{producto.precio} USD</p>
-            {dolarBlue ? (
-              <p>{(producto.precio * dolarBlue).toFixed(2)} ARS</p>
-            ) : (
-              <p>Cargando cotización...</p>
-            )}
+            <p>${producto.precio} USD</p>
+            <p>${(producto.precio * dolarBlue).toFixed(2)} ARS</p>
           </div>
         )}
       </td>
       <td className="px-2 py-2 border">
-        {selectedProduct === producto._id ? (
-          <div>
-            {producto.tallas.map((tallaObj, tallaIndex) => (
-              <div
-                key={tallaIndex}
-                className="flex flex-col sm:flex-row items-center mb-2 sm:mb-1"
-              >
-                <input
-                  type="text"
-                  value={tallaObj.talla}
-                  onChange={(e) => handleTallaChange(e, tallaIndex)}
-                  className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
-                />
-                <input
-                  type="number"
-                  value={tallaObj.precioTalla}
-                  onChange={(e) => handleTallaChange(e, tallaIndex)}
-                  className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
-                  min="0"
-                  placeholder="Precio"
-                />
+        <div className="flex flex-col gap-1">
+          {producto.tallas.map((talla, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <span>{talla.talla}</span>
+              {selectedProduct === producto._id && (
                 <button
-                  onClick={() => handleDeleteTalla(tallaIndex)}
-                  className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-red-500 rounded"
+                  onClick={() => handleDeleteTalla(index)}
+                  className="p-1 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
                 </button>
-              </div>
-            ))}
-            <div className="flex flex-col sm:flex-row mt-2">
+              )}
+            </div>
+          ))}
+          {selectedProduct === producto._id && (
+            <div className="flex gap-2">
               <input
                 type="text"
                 value={newTalla}
                 onChange={(e) => setNewTalla(e.target.value)}
                 placeholder="Nueva talla"
-                className="w-full sm:w-24 p-1 mb-2 sm:mb-0 sm:mr-2 border"
+                className="w-20 p-1 border"
               />
               <input
                 type="number"
                 value={newStock}
                 onChange={(e) => setNewStock(e.target.value)}
                 placeholder="Precio"
-                className="w-full sm:w-24 p-1 mb-2 sm:mb-0 border"
-                min="0"
+                className="w-20 p-1 border"
               />
               <button
                 onClick={handleAddTalla}
-                className="px-2 py-1 mt-2 sm:mt-0 ml-0 sm:ml-2 text-white bg-blue-500 rounded"
+                className="p-1 text-white bg-blue-500 rounded"
               >
                 <IoAddCircleOutline />
               </button>
             </div>
-          </div>
-        ) : (
-          <div>
-            {producto.tallas.map((tallaObj, tallaIndex) => (
-              <div key={tallaIndex}>
-                {tallaObj.talla}: ${tallaObj.precioTalla}
-              </div>
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </td>
       <td className="px-2 py-2 border">
-        {selectedProduct === producto._id ? (
-          <div>
-            {producto.colores.map((color, index) => (
-              <div key={index} className="flex items-center mb-1">
-                <input
-                  type="text"
-                  value={color.color}
-                  onChange={(e) => handleColorChange(e, index)}
-                  className="w-1/2 p-1 border"
-                />
+        <div className="flex flex-col gap-1">
+          {producto.colores.map((color, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <span>{color.color}</span>
+              {selectedProduct === producto._id && (
                 <button
                   onClick={() => handleDeleteColor(index)}
-                  className="px-2 py-1 ml-2 text-white bg-red-500 rounded"
+                  className="p-1 text-white bg-red-500 rounded"
                 >
                   <RiDeleteBin5Line />
                 </button>
-              </div>
-            ))}
-            <div className="mt-2">
+              )}
+            </div>
+          ))}
+          {selectedProduct === producto._id && (
+            <div className="flex gap-2">
               <input
                 type="text"
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
                 placeholder="Nuevo color"
-                className="w-1/2 p-1 mr-2 border"
+                className="w-full p-1 border"
               />
               <button
                 onClick={handleAddColor}
-                className="px-2 py-1 mt-2 text-white bg-blue-500 rounded"
+                className="p-1 text-white bg-blue-500 rounded"
               >
                 <IoAddCircleOutline />
               </button>
             </div>
-          </div>
-        ) : (
-          <div>
-            {producto.colores.map((color, index) => (
-              <div key={index}>{color.color}</div>
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </td>
       <td className="px-4 py-2 border">
         <div className="relative w-16 h-16">
@@ -623,7 +569,7 @@ const ProductRow = ({
               onChange={handleDestacadoZapatillasChange}
               className="mr-2"
             />
-            Destacado Zapatillas
+            Destacado Z
           </label>
         ) : producto.destacado_zapatillas ? (
           "Sí"
@@ -649,7 +595,7 @@ const ProductRow = ({
         )}
       </td>
       <td className="px-2 py-2 text-center border">
-        {selectedProduct === producto._id && (
+        {selectedProduct === producto._id ? (
           <div>
             <button
               onClick={() => handleProductUpdate(producto)}
@@ -664,6 +610,13 @@ const ProductRow = ({
               Cancelar
             </button>
           </div>
+        ) : (
+          <button
+            onClick={() => handleProductSelect(producto._id)}
+            className="px-2 py-1 text-white bg-blue-500 rounded"
+          >
+            Editar
+          </button>
         )}
         <button
           onClick={handleProductDelete}
@@ -671,32 +624,6 @@ const ProductRow = ({
         >
           Eliminar
         </button>
-      </td>
-      <td className="px-2 py-2 text-center border">
-        {selectedProduct === producto._id && (
-          <div>
-            <button
-              onClick={handleOpenSizeModal}
-              className="px-2 py-1 text-white bg-blue-500 rounded"
-            >
-              Editar Tallas
-            </button>
-            <SizeSelectionModal
-              isOpen={isSizeModalOpen}
-              onClose={() => setIsSizeModalOpen(false)}
-              selectedSizes={selectedSizes}
-              setSelectedSizes={setSelectedSizes}
-              sizePrices={sizePrices}
-              setSizePrices={setSizePrices}
-            />
-            <button
-              onClick={handleUpdateSizes}
-              className="px-2 py-1 text-white bg-green-500 rounded"
-            >
-              Guardar Cambios
-            </button>
-          </div>
-        )}
       </td>
     </tr>
   );
