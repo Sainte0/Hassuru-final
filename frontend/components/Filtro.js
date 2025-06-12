@@ -399,7 +399,7 @@ export default function Filter({ products, setFilteredProducts }) {
               </div>
               {tallasRopa.length > 0 && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
+                  <label className="block mb-1 font-medium text-gray-700">Talla de Ropa </label>
                   {Array.from(new Set(tallasRopa))
                     .sort((a, b) => {
                       const tallaOrder = ["XS","S", "M", "L", "XL", "XXL" , "OS"];
