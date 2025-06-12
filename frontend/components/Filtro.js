@@ -8,9 +8,6 @@ export default function Filter({ products, setFilteredProducts }) {
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
   const [selectedTallaZapatilla, setSelectedTallaZapatilla] = useState("");
   const [selectedAccesorio, setSelectedAccesorio] = useState("");
-  const [precioMin, setPrecioMin] = useState("");
-  const [precioMax, setPrecioMax] = useState("");
-  const [stockOnly, setStockOnly] = useState(false);
   const [selectedDisponibilidad, setSelectedDisponibilidad] = useState("");
   const [tallasRopa, setTallasRopa] = useState([]);
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
@@ -24,6 +21,8 @@ export default function Filter({ products, setFilteredProducts }) {
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedCategoria, setSelectedCategoria] = useState("");
+  const [precioMin, setPrecioMin] = useState("");
+  const [precioMax, setPrecioMax] = useState("");
 
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -376,12 +375,6 @@ export default function Filter({ products, setFilteredProducts }) {
                 <button type="button" onClick={() => handleSelectAccesorio(selectedAccesorio)} className="text-red-500">X</button>
               </div>
             )}
-            {stockOnly && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Solo en stock</span>
-                <button type="button" onClick={() => setStockOnly(false)} className="text-red-500">X</button>
-              </div>
-            )}
             {selectedDisponibilidad && (
               <div className="flex items-center mb-2">
                 <span className="mr-2 text-gray-600">Disponibilidad: {selectedDisponibilidad}</span>
@@ -398,6 +391,14 @@ export default function Filter({ products, setFilteredProducts }) {
               <div className="flex items-center mb-2">
                 <span className="mr-2 text-gray-600">Búsqueda: {query}</span>
                 <button type="button" onClick={() => setQuery("")} className="text-red-500">X</button>
+              </div>
+            )}
+            {(precioMin || precioMax) && (
+              <div className="flex items-center mb-2">
+                <span className="mr-2 text-gray-600">
+                  Precio: {precioMin ? `$${precioMin}` : '$0'} - {precioMax ? `$${precioMax}` : 'Max'}
+                </span>
+                <button type="button" onClick={() => { setPrecioMin(""); setPrecioMax(""); }} className="text-red-500">X</button>
               </div>
             )}
           </div>
@@ -565,17 +566,25 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
 
-              {/* Filtro de Stock */}
+              {/* Filtro de Precios */}
               <div className="mb-4">
-                <label className="flex items-center">
+                <label className="block mb-1 font-medium text-gray-700">Precio</label>
+                <div className="flex gap-2">
                   <input
-                    type="checkbox"
-                    checked={stockOnly}
-                    onChange={(e) => setStockOnly(e.target.checked)}
-                    className="mr-2"
+                    type="number"
+                    value={precioMin}
+                    onChange={(e) => setPrecioMin(e.target.value)}
+                    placeholder="Min"
+                    className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
                   />
-                  <span className="text-gray-700">Solo en stock</span>
-                </label>
+                  <input
+                    type="number"
+                    value={precioMax}
+                    onChange={(e) => setPrecioMax(e.target.value)}
+                    placeholder="Max"
+                    className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
+                  />
+                </div>
               </div>
 
               <div className="mt-4">
