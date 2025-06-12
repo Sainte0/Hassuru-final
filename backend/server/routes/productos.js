@@ -116,6 +116,9 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       console.error('Faltan campos requeridos');
       return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
     }
+
+    // Asegurarse de que marca sea un array
+    const marcasArray = Array.isArray(marca) ? marca : [marca];
     
     let imageUrl = null;
     
@@ -183,7 +186,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       slug,
       descripcion,
       precio: parseFloat(precio),
-      marca,
+      marca: marcasArray,
       categoria,
       tallas: parsedTallas,
       colores: parsedColores,

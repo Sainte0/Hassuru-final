@@ -19,7 +19,7 @@ const ProductoSchema = new mongoose.Schema({
     required: [true, 'El precio es obligatorio'],
   },
   marca: {
-    type: String,
+    type: [String],
     required: [true, 'La marca del producto es obligatoria'],
   },
   categoria: {

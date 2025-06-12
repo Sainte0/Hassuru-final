@@ -37,14 +37,19 @@ export default function Navbar() {
 
         productos.forEach(producto => {
           if (producto.categoria && producto.marca) {
-            // Solo agregar la marca si el producto pertenece a esa categoría
-            if (producto.categoria === "zapatillas") {
-              marcasPorCat.zapatillas.add(producto.marca);
-            } else if (producto.categoria === "ropa") {
-              marcasPorCat.ropa.add(producto.marca);
-            } else if (producto.categoria === "accesorios") {
-              marcasPorCat.accesorios.add(producto.marca);
-            }
+            // Manejar el array de marcas
+            const marcas = Array.isArray(producto.marca) ? producto.marca : [producto.marca];
+            
+            // Agregar cada marca a su categoría correspondiente
+            marcas.forEach(marca => {
+              if (producto.categoria === "zapatillas") {
+                marcasPorCat.zapatillas.add(marca);
+              } else if (producto.categoria === "ropa") {
+                marcasPorCat.ropa.add(marca);
+              } else if (producto.categoria === "accesorios") {
+                marcasPorCat.accesorios.add(marca);
+              }
+            });
           }
         });
 
@@ -95,6 +100,14 @@ export default function Navbar() {
             <div className="hidden md:flex space-x-8 w-full justify-center">
               <Link href="/" className="py-2 hover:text-gray-300">
                 Inicio
+              </Link>
+
+              {/* Enlaces directos a categorías */}
+              <Link href="/productos/talla/zapatillas" className="py-2 hover:text-gray-300">
+                Zapatillas
+              </Link>
+              <Link href="/productos/talla/ropa" className="py-2 hover:text-gray-300">
+                Ropa
               </Link>
 
               {/* Stock Dropdown */}

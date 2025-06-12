@@ -7,7 +7,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [product, setProduct] = useState({
     nombre: '',
     descripcion: '',
-    marca: '',
+    marca: [],
     categoria: '',
     precio: '',
     tallas: [],
@@ -22,6 +22,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   const [tallaInput, setTallaInput] = useState('');
   const [precioTalla, setPrecioTalla] = useState(''); // Nuevo estado para el precio de la talla
   const [colorInput, setColorInput] = useState('');
+  const [marcaInput, setMarcaInput] = useState('');
 
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -88,6 +89,23 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
       }));
       setColorInput('');
     }
+  };
+
+  const handleAddMarca = () => {
+    if (marcaInput && !product.marca.includes(marcaInput)) {
+      setProduct((prev) => ({
+        ...prev,
+        marca: [...prev.marca, marcaInput],
+      }));
+      setMarcaInput('');
+    }
+  };
+
+  const handleRemoveMarca = (marcaToRemove) => {
+    setProduct((prev) => ({
+      ...prev,
+      marca: prev.marca.filter((marca) => marca !== marcaToRemove),
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -214,15 +232,41 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             onChange={handleInputChange}
             className="w-full p-2 mb-4 border"
           />
-          <input
-            type="text"
-            name="marca"
-            placeholder="Marca"
-            value={product.marca}
-            onChange={handleInputChange}
-            required
-            className="w-full p-2 mb-4 border"
-          />
+          <div className="mb-4">
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={marcaInput}
+                onChange={(e) => setMarcaInput(e.target.value)}
+                placeholder="Agregar marca"
+                className="flex-1 p-2 border"
+              />
+              <button
+                type="button"
+                onClick={handleAddMarca}
+                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+              >
+                Agregar
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {product.marca.map((marca, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded"
+                >
+                  <span>{marca}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarca(marca)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
           <select
             name="categoria"
             value={product.categoria}

@@ -15,9 +15,14 @@ export default function Filter({ products, setFilteredProducts }) {
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
   const [accesorios, setAccesorios] = useState([]);
   const [selectedMarca, setSelectedMarca] = useState("");
-  const [marcas, setMarcas] = useState([]);
+  const [marcas, setMarcas] = useState({
+    zapatillas: [],
+    ropa: [],
+    accesorios: []
+  });
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
+  const [selectedCategoria, setSelectedCategoria] = useState("");
 
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -52,6 +57,11 @@ export default function Filter({ products, setFilteredProducts }) {
   // Función para aplicar todos los filtros
   const applyFilters = (productsToFilter, filters) => {
     let filtered = [...productsToFilter];
+
+    // Filtrar por categoría
+    if (selectedCategoria) {
+      filtered = filtered.filter(product => product.categoria === selectedCategoria);
+    }
 
     // Filtro de marca
     if (filters.marca) {
@@ -194,11 +204,25 @@ export default function Filter({ products, setFilteredProducts }) {
     const tallasRopaSet = new Set();
     const tallasZapatillaSet = new Set();
     const accesoriosSet = new Set();
-    const marcasSet = new Set();
+    const marcasPorCategoria = {
+      zapatillas: new Set(),
+      ropa: new Set(),
+      accesorios: new Set()
+    };
 
     products.forEach((product) => {
-      if (product.marca) {
-        marcasSet.add(product.marca);
+      if (product.marca && product.categoria) {
+        // Manejar el array de marcas
+        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        marcas.forEach(marca => {
+          if (product.categoria === "zapatillas") {
+            marcasPorCategoria.zapatillas.add(marca);
+          } else if (product.categoria === "ropa") {
+            marcasPorCategoria.ropa.add(marca);
+          } else if (product.categoria === "accesorios") {
+            marcasPorCategoria.accesorios.add(marca);
+          }
+        });
       }
 
       if (product.categoria === "ropa") {
@@ -213,7 +237,11 @@ export default function Filter({ products, setFilteredProducts }) {
     setTallasRopa(Array.from(tallasRopaSet));
     setTallasZapatilla(Array.from(tallasZapatillaSet));
     setAccesorios(Array.from(accesoriosSet));
-    setMarcas(Array.from(marcasSet));
+    setMarcas({
+      zapatillas: Array.from(marcasPorCategoria.zapatillas).sort(),
+      ropa: Array.from(marcasPorCategoria.ropa).sort(),
+      accesorios: Array.from(marcasPorCategoria.accesorios).sort()
+    });
   }, [products]);
 
   useEffect(() => {
@@ -315,6 +343,14 @@ export default function Filter({ products, setFilteredProducts }) {
     handleSearch();
   };
 
+  const handleSelectCategoria = (categoria) => {
+    if (selectedCategoria === categoria) {
+      setSelectedCategoria("");
+    } else {
+      setSelectedCategoria(categoria);
+    }
+  };
+
   return (
     <main className="px-4 font-semibold md:px-12">
       <form onSubmit={handleFormSubmit}>
@@ -377,24 +413,138 @@ export default function Filter({ products, setFilteredProducts }) {
           {showFilters && (
             <>
               <div className="mb-4">
-                <label className="block mb-1 font-medium">Marca</label>
+                <label className="block mb-1 font-medium">Categoría</label>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectCategoria("zapatillas")}
+                    className={`px-3 py-1 rounded ${
+                      selectedCategoria === "zapatillas"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    Zapatillas
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectCategoria("ropa")}
+                    className={`px-3 py-1 rounded ${
+                      selectedCategoria === "ropa"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    Ropa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectCategoria("accesorios")}
+                    className={`px-3 py-1 rounded ${
+                      selectedCategoria === "accesorios"
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    Accesorios
+                  </button>
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1 font-medium">Marcas</label>
                 <div className="overflow-auto max-h-32">
-                  {marcas.map((marca, index) => (
-                    <div key={index} className="mb-2 mr-2">
-                      <input
-                        type="radio"
-                        id={`marca-${marca}`}
-                        name="marca"
-                        value={marca}
-                        checked={selectedMarca === marca}
-                        onChange={() => handleSelectMarca(marca)}
-                        className="mr-1"
-                      />
-                      <label htmlFor={`marca-${marca}`} className="p-2 bg-white rounded cursor-pointer">
-                        {marca}
-                      </label>
-                    </div>
-                  ))}
+                  {selectedCategoria ? (
+                    // Mostrar marcas de la categoría seleccionada
+                    marcas[selectedCategoria].map((marca, index) => (
+                      <div key={index} className="mb-2 mr-2">
+                        <input
+                          type="radio"
+                          id={`marca-${marca}`}
+                          name="marca"
+                          value={marca}
+                          checked={selectedMarca === marca}
+                          onChange={() => handleSelectMarca(marca)}
+                          className="mr-1"
+                        />
+                        <label htmlFor={`marca-${marca}`} className="p-2 bg-white rounded cursor-pointer">
+                          {marca}
+                        </label>
+                      </div>
+                    ))
+                  ) : (
+                    // Mostrar todas las marcas agrupadas por categoría
+                    <>
+                      {marcas.zapatillas.length > 0 && (
+                        <div className="mb-2">
+                          <h4 className="font-medium text-gray-700">Zapatillas</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {marcas.zapatillas.map((marca, index) => (
+                              <div key={index} className="mb-1">
+                                <input
+                                  type="radio"
+                                  id={`marca-zapatillas-${marca}`}
+                                  name="marca"
+                                  value={marca}
+                                  checked={selectedMarca === marca}
+                                  onChange={() => handleSelectMarca(marca)}
+                                  className="mr-1"
+                                />
+                                <label htmlFor={`marca-zapatillas-${marca}`} className="p-2 bg-white rounded cursor-pointer">
+                                  {marca}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {marcas.ropa.length > 0 && (
+                        <div className="mb-2">
+                          <h4 className="font-medium text-gray-700">Ropa</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {marcas.ropa.map((marca, index) => (
+                              <div key={index} className="mb-1">
+                                <input
+                                  type="radio"
+                                  id={`marca-ropa-${marca}`}
+                                  name="marca"
+                                  value={marca}
+                                  checked={selectedMarca === marca}
+                                  onChange={() => handleSelectMarca(marca)}
+                                  className="mr-1"
+                                />
+                                <label htmlFor={`marca-ropa-${marca}`} className="p-2 bg-white rounded cursor-pointer">
+                                  {marca}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {marcas.accesorios.length > 0 && (
+                        <div className="mb-2">
+                          <h4 className="font-medium text-gray-700">Accesorios</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {marcas.accesorios.map((marca, index) => (
+                              <div key={index} className="mb-1">
+                                <input
+                                  type="radio"
+                                  id={`marca-accesorios-${marca}`}
+                                  name="marca"
+                                  value={marca}
+                                  checked={selectedMarca === marca}
+                                  onChange={() => handleSelectMarca(marca)}
+                                  className="mr-1"
+                                />
+                                <label htmlFor={`marca-accesorios-${marca}`} className="p-2 bg-white rounded cursor-pointer">
+                                  {marca}
+                                </label>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
               {tallasRopa.length > 0 && (

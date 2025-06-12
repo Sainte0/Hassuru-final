@@ -33,6 +33,7 @@ const ProductRow = ({
   const { checkAuth } = useAuth();
   const router = useRouter();
   const hasFetchedRef = useRef(false);
+  const [newMarca, setNewMarca] = useState("");
 
   useEffect(() => {
     fetchDolarBlue();
@@ -365,6 +366,25 @@ const ProductRow = ({
     setIsSizeModalOpen(false);
   };
 
+  const handleAddMarca = (producto) => {
+    if (newMarca && !producto.marca.includes(newMarca)) {
+      const updatedProduct = {
+        ...producto,
+        marca: [...producto.marca, newMarca],
+      };
+      handleProductChange({ target: { value: updatedProduct.marca } }, "marca", updatedProduct);
+      setNewMarca("");
+    }
+  };
+
+  const handleRemoveMarca = (producto, marcaToRemove) => {
+    const updatedProduct = {
+      ...producto,
+      marca: producto.marca.filter((marca) => marca !== marcaToRemove),
+    };
+    handleProductChange({ target: { value: updatedProduct.marca } }, "marca", updatedProduct);
+  };
+
   return (
     <tr className="overflow-x-auto text-gray-600">
       <td className="px-4 py-2 border">
@@ -403,14 +423,52 @@ const ProductRow = ({
       </td>
       <td className="px-2 py-2 border">
         {selectedProduct === producto._id ? (
-          <input
-            type="text"
-            value={producto.marca}
-            onChange={(e) => handleProductChange(e, "marca", producto)}
-            className="w-full p-1 border"
-          />
+          <div>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={newMarca}
+                onChange={(e) => setNewMarca(e.target.value)}
+                placeholder="Agregar marca"
+                className="flex-1 p-1 border"
+              />
+              <button
+                type="button"
+                onClick={() => handleAddMarca(producto)}
+                className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+              >
+                +
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {producto.marca.map((marca, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded"
+                >
+                  <span>{marca}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarca(producto, marca)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
-          producto.marca
+          <div className="flex flex-wrap gap-1">
+            {producto.marca.map((marca, index) => (
+              <span
+                key={index}
+                className="px-2 py-0.5 text-sm bg-gray-100 rounded"
+              >
+                {marca}
+              </span>
+            ))}
+          </div>
         )}
       </td>
       <td className="px-2 py-2 border">
