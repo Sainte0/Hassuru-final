@@ -124,7 +124,9 @@ export default function Catalogo() {
       const searchQuery = filters.q.toLowerCase();
       filtered = filtered.filter(product =>
         product.nombre.toLowerCase().includes(searchQuery) ||
-        (product.marca && product.marca.toLowerCase().includes(searchQuery)) ||
+        (Array.isArray(product.marca) 
+          ? product.marca.some(m => m.toLowerCase().includes(searchQuery))
+          : product.marca.toLowerCase().includes(searchQuery)) ||
         (product.descripcion && product.descripcion.toLowerCase().includes(searchQuery))
       );
     }
