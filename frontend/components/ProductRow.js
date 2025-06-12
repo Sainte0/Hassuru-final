@@ -534,28 +534,56 @@ const ProductRow = ({
             </div>
           ))}
           {selectedProduct === producto._id && (
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newTalla}
-                onChange={(e) => setNewTalla(e.target.value)}
-                placeholder="Nueva talla"
-                className="w-20 p-1 border"
-              />
-              <input
-                type="number"
-                value={newStock}
-                onChange={(e) => setNewStock(e.target.value)}
-                placeholder="Precio"
-                className="w-20 p-1 border"
-              />
+            <>
+              <div className="flex gap-2 mb-2">
+                <input
+                  type="text"
+                  value={newTalla}
+                  onChange={(e) => setNewTalla(e.target.value)}
+                  placeholder="Nueva talla"
+                  className="w-20 p-1 border"
+                />
+                <input
+                  type="number"
+                  value={newStock}
+                  onChange={(e) => setNewStock(e.target.value)}
+                  placeholder="Precio"
+                  className="w-20 p-1 border"
+                />
+                <button
+                  onClick={handleAddTalla}
+                  className="p-1 text-white bg-blue-500 rounded"
+                >
+                  <IoAddCircleOutline />
+                </button>
+              </div>
               <button
-                onClick={handleAddTalla}
-                className="p-1 text-white bg-blue-500 rounded"
+                type="button"
+                onClick={handleOpenSizeModal}
+                className="px-2 py-1 mb-2 text-white bg-blue-600 rounded hover:bg-blue-700"
               >
-                <IoAddCircleOutline />
+                Seleccionar tallas
               </button>
-            </div>
+              <SizeSelectionModal
+                isOpen={isSizeModalOpen}
+                onClose={() => setIsSizeModalOpen(false)}
+                selectedSizes={selectedSizes}
+                setSelectedSizes={setSelectedSizes}
+                sizePrices={sizePrices}
+                setSizePrices={setSizePrices}
+              />
+              {isSizeModalOpen && (
+                <div className="flex justify-end mt-2">
+                  <button
+                    type="button"
+                    onClick={handleUpdateSizes}
+                    className="px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700"
+                  >
+                    Guardar tallas seleccionadas
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </td>
