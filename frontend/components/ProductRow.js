@@ -368,11 +368,12 @@ const ProductRow = ({
 
   const handleAddMarca = (producto) => {
     if (newMarca && !producto.marca.includes(newMarca)) {
+      const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
       const updatedProduct = {
         ...producto,
-        marca: Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca],
+        marca: updatedMarca,
       };
-      handleProductChange({ target: { value: updatedProduct.marca } }, "marca", updatedProduct);
+      handleProductChange({ target: { value: updatedMarca } }, "marca", updatedProduct);
       setNewMarca("");
     }
   };
