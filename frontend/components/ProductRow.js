@@ -370,7 +370,7 @@ const ProductRow = ({
     if (newMarca && !producto.marca.includes(newMarca)) {
       const updatedProduct = {
         ...producto,
-        marca: [...producto.marca, newMarca],
+        marca: Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca],
       };
       handleProductChange({ target: { value: updatedProduct.marca } }, "marca", updatedProduct);
       setNewMarca("");
@@ -380,7 +380,9 @@ const ProductRow = ({
   const handleRemoveMarca = (producto, marcaToRemove) => {
     const updatedProduct = {
       ...producto,
-      marca: producto.marca.filter((marca) => marca !== marcaToRemove),
+      marca: Array.isArray(producto.marca) 
+        ? producto.marca.filter((marca) => marca !== marcaToRemove)
+        : [],
     };
     handleProductChange({ target: { value: updatedProduct.marca } }, "marca", updatedProduct);
   };
@@ -441,7 +443,7 @@ const ProductRow = ({
               </button>
             </div>
             <div className="flex flex-wrap gap-1">
-              {producto.marca.map((marca, index) => (
+              {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded"
@@ -455,19 +457,34 @@ const ProductRow = ({
                     ×
                   </button>
                 </div>
-              ))}
+              )) : (
+                <div className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+                  <span>{producto.marca}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarca(producto, producto.marca)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ) : (
           <div className="flex flex-wrap gap-1">
-            {producto.marca.map((marca, index) => (
+            {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
               <span
                 key={index}
                 className="px-2 py-0.5 text-sm bg-gray-100 rounded"
               >
                 {marca}
               </span>
-            ))}
+            )) : (
+              <span className="px-2 py-0.5 text-sm bg-gray-100 rounded">
+                {producto.marca}
+              </span>
+            )}
           </div>
         )}
       </td>

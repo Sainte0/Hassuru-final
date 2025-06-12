@@ -53,7 +53,10 @@ export default function Catalogo() {
 
     // Filtro de marca
     if (filters.marca) {
-      filtered = filtered.filter(product => product.marca === filters.marca);
+      filtered = filtered.filter(product => {
+        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        return marcas.includes(filters.marca);
+      });
     }
 
     // Filtro de talla de ropa

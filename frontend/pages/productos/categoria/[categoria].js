@@ -185,9 +185,10 @@ export default function Categoria() {
 
     // Filtro de marca
     if (filters.marca) {
-      filtered = filtered.filter(product => 
-        product.marca === filters.marca
-      );
+      filtered = filtered.filter(product => {
+        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        return marcas.includes(filters.marca);
+      });
       console.log('Después de filtrar por marca:', {
         marca: filters.marca,
         productosRestantes: filtered.length,
