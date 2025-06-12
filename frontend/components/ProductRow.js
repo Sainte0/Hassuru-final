@@ -572,17 +572,15 @@ const ProductRow = ({
                 sizePrices={sizePrices}
                 setSizePrices={setSizePrices}
               />
-              {isSizeModalOpen && (
-                <div className="flex justify-end mt-2">
-                  <button
-                    type="button"
-                    onClick={handleUpdateSizes}
-                    className="px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700"
-                  >
-                    Guardar tallas seleccionadas
-                  </button>
-                </div>
-              )}
+              <div className="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onClick={handleUpdateSizes}
+                  className="px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700"
+                >
+                  Guardar tallas seleccionadas
+                </button>
+              </div>
             </>
           )}
         </div>
