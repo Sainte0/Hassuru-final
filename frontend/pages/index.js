@@ -80,19 +80,25 @@ export default function Home() {
     return <div>Error: {error}</div>;
   }
 
-  const destacados = products.filter((product) => product.destacado === true);
-  const zapatillas = products.filter((product) => product.destacado_zapatillas === true);
-  
   // Obtener últimos productos por categoría
   const ultimosRopa = products
     .filter(product => product.categoria === 'ropa')
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 4);
+    .slice(0, 6);
 
   const ultimosZapatillas = products
     .filter(product => product.categoria === 'zapatillas')
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 4);
+    .slice(0, 6);
+
+  // Obtener destacados
+  const destacados = products
+    .filter((product) => product.destacado === true)
+    .slice(0, 6);
+    
+  const zapatillas = products
+    .filter((product) => product.destacado_zapatillas === true)
+    .slice(0, 6);
 
   console.log('Resumen de productos en Home:', {
     total: products.length,

@@ -130,7 +130,7 @@ export default function Carousell({ title, products, dolarBlue }) {
       <div className="container p-4 mx-auto">
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 md:hidden">
             <button
               className="p-2 text-black transform hover:scale-105"
               onClick={(e) => handleScroll(e, "left")}
@@ -149,66 +149,86 @@ export default function Carousell({ title, products, dolarBlue }) {
             </button>
           </div>
         </div>
-        <div
-          ref={carouselRef}
-          className="flex gap-4 mt-8 cursor-grab active:cursor-grabbing touch-pan-x"
-          id="carousel"
-          style={{ overflow: "hidden" }}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
+        
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-6 gap-4">
           {products.map((product, index) => (
-            <div key={index} className="flex-none w-48 sm:w-64">
-              <Link 
-                href={getProductUrl(product)} 
-                onClick={(e) => {
-                  if (isDragging) {
-                    e.preventDefault();
-                  }
-                }}
-                className="block"
-              >
-                <div className="flex flex-col justify-between h-full">
-                  <div className="relative w-full h-[20rem]">
-                    {!loadedImages[product._id] && (
-                      <div className="absolute inset-0 animate-pulse">
-                        <div className="w-full h-full bg-gray-200 rounded-lg"></div>
-                      </div>
-                    )}
-                    <img
-                      width={300}
-                      height={300}
-                      src={getImageUrl(product)}
-                      alt={product.nombre}
-                      loading={index < (isMobile ? 2 : 4) ? "eager" : "lazy"}
-                      style={{ 
-                        objectFit: 'cover', 
-                        width: '100%', 
-                        height: '20rem', 
-                        marginBottom: '0.75rem',
-                        opacity: loadedImages[product._id] ? 1 : 0,
-                        transition: 'opacity 0.3s ease-in-out',
-                        position: 'relative',
-                        zIndex: 1
-                      }}
-                      onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
-                    />
-                  </div>
-                  <h3 className="text-lg font-semibold">{product.nombre}</h3>
-                  <div className="flex flex-col mt-2">
-                    <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                    <p className="text-lg font-bold text-gray-800">
-                      {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
-                    </p>
-                  </div>
+            <Link href={`/producto/${product._id}`} key={product._id}>
+              <div className="flex flex-col justify-between h-full transition-transform transform hover:scale-105">
+                <div className="relative w-full h-[15rem]">
+                  {!loadedImages[product._id] && (
+                    <div className="absolute inset-0 animate-pulse">
+                      <div className="w-full h-full bg-gray-200 rounded-lg"></div>
+                    </div>
+                  )}
+                  <img
+                    width={300}
+                    height={300}
+                    src={getImageUrl(product)}
+                    alt={product.nombre}
+                    loading={index < 6 ? "eager" : "lazy"}
+                    style={{ 
+                      objectFit: 'cover', 
+                      width: '100%', 
+                      height: '15rem', 
+                      marginBottom: '0.75rem',
+                      opacity: loadedImages[product._id] ? 1 : 0,
+                      transition: 'opacity 0.3s ease-in-out',
+                      position: 'relative',
+                      zIndex: 1
+                    }}
+                    onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
+                  />
                 </div>
-              </Link>
-            </div>
+                <h3 className="text-sm font-semibold line-clamp-2">{product.nombre}</h3>
+                <div className="flex flex-col mt-2">
+                  <p className="text-sm font-bold text-gray-800">${product.precio} USD</p>
+                  <p className="text-sm font-bold text-gray-800">
+                    {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex overflow-x-auto md:hidden scrollbar-hide" ref={carouselRef}>
+          {products.map((product, index) => (
+            <Link href={`/producto/${product._id}`} key={product._id}>
+              <div className="flex flex-col justify-between h-full min-w-[200px] mx-2 transition-transform transform hover:scale-105">
+                <div className="relative w-full h-[15rem]">
+                  {!loadedImages[product._id] && (
+                    <div className="absolute inset-0 animate-pulse">
+                      <div className="w-full h-full bg-gray-200 rounded-lg"></div>
+                    </div>
+                  )}
+                  <img
+                    width={300}
+                    height={300}
+                    src={getImageUrl(product)}
+                    alt={product.nombre}
+                    loading={index < 2 ? "eager" : "lazy"}
+                    style={{ 
+                      objectFit: 'cover', 
+                      width: '100%', 
+                      height: '15rem', 
+                      marginBottom: '0.75rem',
+                      opacity: loadedImages[product._id] ? 1 : 0,
+                      transition: 'opacity 0.3s ease-in-out',
+                      position: 'relative',
+                      zIndex: 1
+                    }}
+                    onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
+                  />
+                </div>
+                <h3 className="text-sm font-semibold line-clamp-2">{product.nombre}</h3>
+                <div className="flex flex-col mt-2">
+                  <p className="text-sm font-bold text-gray-800">${product.precio} USD</p>
+                  <p className="text-sm font-bold text-gray-800">
+                    {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
+                  </p>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
