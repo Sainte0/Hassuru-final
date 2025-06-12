@@ -209,10 +209,7 @@ export default function Catalogo() {
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={(newFilters) => {
-            const filtered = applyFilters(products, newFilters);
-            setFilteredProducts(filtered);
-          }}
+          setFilteredProducts={setFilteredProducts}
         />
       </aside>
       <section className="w-full lg:w-3/4">

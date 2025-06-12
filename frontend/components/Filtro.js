@@ -54,6 +54,14 @@ export default function Filter({ products, setFilteredProducts }) {
     });
   };
 
+  // Efecto para aplicar filtros cuando cambian los valores
+  useEffect(() => {
+    if (products.length > 0) {
+      const filteredProducts = applyFilters(products);
+      setFilteredProducts(filteredProducts);
+    }
+  }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, products]);
+
   // Update URL and apply filters when any filter changes
   useEffect(() => {
     if (router.isReady) {
@@ -209,7 +217,7 @@ export default function Filter({ products, setFilteredProducts }) {
   const handleSearch = () => {
     // Aplicar los filtros actuales
     const filteredProducts = applyFilters(products);
-    setFilteredProducts(sortProductsByAvailability(filteredProducts));
+    setFilteredProducts(filteredProducts);
   };
 
   const resetFilters = () => {
@@ -225,12 +233,27 @@ export default function Filter({ products, setFilteredProducts }) {
       pathname: router.pathname,
       query: {},
     });
+    // Resetear los productos filtrados
+    setFilteredProducts(products);
   };
 
   // Prevenir el comportamiento por defecto del formulario
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    handleSearch();
+    const queryParams = {};
+    if (selectedMarca) queryParams.marca = selectedMarca;
+    if (selectedTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
+    if (selectedTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
+    if (selectedAccesorio) queryParams.accesorio = selectedAccesorio;
+    if (selectedDisponibilidad) queryParams.disponibilidad = selectedDisponibilidad;
+    if (query) queryParams.q = query;
+    if (precioMin) queryParams.min = precioMin;
+    if (precioMax) queryParams.max = precioMax;
+
+    router.push({
+      pathname: router.pathname,
+      query: queryParams,
+    });
   };
 
   const handleSelectCategoria = (categoria) => {
@@ -327,10 +350,10 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               </div>
 
-              {/* Filtro de Tallas de Ropa - Solo mostrar si estamos en la categoría ropa */}
-              {categoria === 'ropa' && tallasRopa.length > 0 && (
+              {/* Filtro de Tallas de Ropa */}
+              {categoria === 'ropa' && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Talla de Ropa</label>
+                  <label className="block mb-1 font-medium text-gray-700">Tallas de Ropa</label>
                   <div className="overflow-auto max-h-32">
                     {Array.from(new Set(tallasRopa))
                       .sort((a, b) => {
@@ -357,10 +380,10 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               )}
 
-              {/* Filtro de Tallas de Zapatillas - Solo mostrar si estamos en la categoría zapatillas */}
-              {categoria === 'zapatillas' && tallasZapatilla.length > 0 && (
+              {/* Filtro de Tallas de Zapatillas */}
+              {categoria === 'zapatillas' && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Talla de Zapatillas</label>
+                  <label className="block mb-1 font-medium text-gray-700">Tallas de Zapatillas</label>
                   <div className="overflow-auto max-h-32">
                     {Array.from(new Set(tallasZapatilla))
                       .sort((a, b) => {
@@ -391,8 +414,8 @@ export default function Filter({ products, setFilteredProducts }) {
                 </div>
               )}
 
-              {/* Filtro de Accesorios - Solo mostrar si estamos en la categoría accesorios */}
-              {categoria === 'accesorios' && accesorios.length > 0 && (
+              {/* Filtro de Tecnología (Accesorios) */}
+              {categoria === 'accesorios' && (
                 <div className="mb-4">
                   <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
                   <div className="overflow-auto max-h-32">
@@ -463,14 +486,28 @@ export default function Filter({ products, setFilteredProducts }) {
                   <input
                     type="number"
                     value={precioMin}
-                    onChange={(e) => setPrecioMin(e.target.value)}
+                    onChange={(e) => {
+                      setPrecioMin(e.target.value);
+                      const queryParams = { ...router.query, min: e.target.value };
+                      router.push({
+                        pathname: router.pathname,
+                        query: queryParams,
+                      }, undefined, { shallow: true });
+                    }}
                     placeholder="Min"
                     className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
                   />
                   <input
                     type="number"
                     value={precioMax}
-                    onChange={(e) => setPrecioMax(e.target.value)}
+                    onChange={(e) => {
+                      setPrecioMax(e.target.value);
+                      const queryParams = { ...router.query, max: e.target.value };
+                      router.push({
+                        pathname: router.pathname,
+                        query: queryParams,
+                      }, undefined, { shallow: true });
+                    }}
                     placeholder="Max"
                     className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
                   />
