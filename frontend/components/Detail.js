@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import useStore from "../store/store";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { toast } from "react-hot-toast";
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [customTalla, setCustomTalla] = useState("");
   const { dolarBlue, fetchDolarBlue } = useStore();
+  const router = useRouter();
+  const [relatedProducts, setRelatedProducts] = useState([]);
 
   useEffect(() => {
     fetchDolarBlue();
@@ -18,6 +22,27 @@ export default function Detail({ product }) {
     
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
+
+  useEffect(() => {
+    const fetchRelatedProducts = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
+        const allProducts = await response.json();
+        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        const related = allProducts.filter(p => 
+          p._id !== product._id && 
+          marcas.some(marca => Array.isArray(p.marca) ? p.marca.includes(marca) : p.marca === marca)
+        );
+        setRelatedProducts(related);
+      } catch (error) {
+        console.error("Error al cargar productos relacionados:", error);
+      }
+    };
+
+    if (product) {
+      fetchRelatedProducts();
+    }
+  }, [product]);
 
   const handleCompraClick = () => {
     if (selectedTalla || customTalla) {
@@ -198,6 +223,36 @@ export default function Detail({ product }) {
           </ul>
         </div>
       </div>
+
+      {/* Sección de productos relacionados */}
+      {relatedProducts.length > 0 && (
+        <div className="mt-12">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800">Productos relacionados</h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {relatedProducts.map((relatedProduct) => (
+              <div key={relatedProduct._id} className="p-4 transition duration-200 border rounded-lg hover:shadow-lg">
+                <div className="relative w-full h-48 mb-4">
+                  <Image
+                    src={relatedProduct.image?.url || "/placeholder.jpg"}
+                    alt={relatedProduct.nombre}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-lg"
+                  />
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-800">{relatedProduct.nombre}</h3>
+                <p className="mb-2 text-gray-600">${relatedProduct.precio} USD</p>
+                <button
+                  onClick={() => router.push(`/producto/${relatedProduct._id}`)}
+                  className="w-full px-4 py-2 text-white transition duration-200 bg-red-500 rounded hover:bg-red-600"
+                >
+                  Ver detalle
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
