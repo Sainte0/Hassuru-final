@@ -96,7 +96,7 @@ export default function Navbar() {
       <nav className="relative bg-gray-800 text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation  */}
             <div className="hidden md:flex space-x-8 w-full justify-center">
               <Link href="/" className="py-2 hover:text-gray-300">
                 Inicio
