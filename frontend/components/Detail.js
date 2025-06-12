@@ -233,9 +233,39 @@ export default function Detail({ product }) {
             {relatedProducts.slice(0, 6).map((relatedProduct) => {
               // Calcular precio en pesos
               const precioPesos = dolarBlue ? Math.round(relatedProduct.precio * dolarBlue) : null;
+              // Determinar disponibilidad y estilos
+              let disponibilidad = relatedProduct.disponibilidad || "Sin info";
+              let disponibilidadLabel = disponibilidad;
+              let disponibilidadClass = "bg-gray-300 text-black";
+              if (
+                disponibilidad === "Entrega inmediata" ||
+                (!relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Entrega inmediata";
+                disponibilidadClass = "bg-green-500 text-white";
+              } else if (
+                disponibilidad === "Disponible en 3 días" ||
+                (relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Disponible en 3 días";
+                disponibilidadClass = "bg-yellow-400 text-gray-900";
+              } else if (
+                disponibilidad === "Disponible en 20 días" ||
+                (!Array.isArray(relatedProduct.tallas) || relatedProduct.tallas.length === 0)
+              ) {
+                disponibilidadLabel = "Disponible en 20 días";
+                disponibilidadClass = "bg-red-500 text-white";
+              }
               return (
-                <div key={relatedProduct._id} className="min-w-[220px] max-w-[220px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white">
-                  <div className="relative w-full h-40 mb-4">
+                <div
+                  key={relatedProduct._id}
+                  className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white cursor-pointer"
+                  onClick={() => router.push(`/producto/${relatedProduct._id}`)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyPress={e => { if (e.key === 'Enter') router.push(`/producto/${relatedProduct._id}`); }}
+                >
+                  <div className="relative w-full h-64 mb-4">
                     <Image
                       src={relatedProduct.image?.url || "/placeholder.jpg"}
                       alt={relatedProduct.nombre}
@@ -249,9 +279,7 @@ export default function Detail({ product }) {
                   {precioPesos && (
                     <p className="mb-2 text-gray-600">${precioPesos.toLocaleString("es-AR")} ARS</p>
                   )}
-                  <div className="w-full px-4 py-2 text-center text-sm font-medium rounded bg-gray-100 text-gray-700 border border-gray-300">
-                    {relatedProduct.disponibilidad || "Sin info"}
-                  </div>
+                  <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
                 </div>
               );
             })}
