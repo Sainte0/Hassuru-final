@@ -82,6 +82,17 @@ export default function Home() {
 
   const destacados = products.filter((product) => product.destacado === true);
   const zapatillas = products.filter((product) => product.destacado_zapatillas === true);
+  
+  // Obtener últimos productos por categoría
+  const ultimosRopa = products
+    .filter(product => product.categoria === 'ropa')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
+
+  const ultimosZapatillas = products
+    .filter(product => product.categoria === 'zapatillas')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
 
   console.log('Resumen de productos en Home:', {
     total: products.length,
@@ -119,16 +130,20 @@ export default function Home() {
           </Link>
         </div>
       </div>
-      <div className="mt-2">
+
+      {/* Últimos productos por categoría */}
+      <div className="mt-8">
         <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={destacados} title={"Destacados"} />
+          <Carousell dolarBlue={dolarBlue} products={ultimosRopa} title={"Últimos en Ropa"} />
         </Link>
       </div>
-      <div className="mt-8 mb-10">
+      <div className="mt-2">
         <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={zapatillas} title={"Zapatillas"} />
+          <Carousell dolarBlue={dolarBlue} products={ultimosZapatillas} title={"Últimos en Zapatillas"} />
         </Link>
       </div>
+
+      {/* TikToks */}
       <div className="container grid grid-cols-1 gap-4 px-2 mx-auto mt-8 lg:px-24 md:grid-cols-3">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (
           <iframe
@@ -142,6 +157,19 @@ export default function Home() {
           ></iframe>
         ))}
       </div>
+
+      {/* Destacados */}
+      <div className="mt-8">
+        <Link href="/productos/categoria/ropa">
+          <Carousell dolarBlue={dolarBlue} products={destacados} title={"Destacados"} />
+        </Link>
+      </div>
+      <div className="mt-2">
+        <Link href="/productos/categoria/zapatillas">
+          <Carousell dolarBlue={dolarBlue} products={zapatillas} title={"Zapatillas"} />
+        </Link>
+      </div>
+
       <div className="mb-4">
         <Newsletter />
       </div>
