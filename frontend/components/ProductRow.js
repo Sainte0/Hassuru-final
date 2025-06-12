@@ -373,7 +373,11 @@ const ProductRow = ({
         ...producto,
         marca: updatedMarca,
       };
-      handleProductChange({ target: { value: updatedMarca } }, "marca", updatedProduct);
+      setEditableProducts((prevProducts) =>
+        prevProducts.map((prod) =>
+          prod._id === producto._id ? updatedProduct : prod
+        )
+      );
       setNewMarca("");
     }
   };
