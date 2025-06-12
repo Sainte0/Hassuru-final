@@ -145,6 +145,7 @@ export default function Catalogo() {
         }
         const data = await response.json();
         setProducts(data);
+        setFilteredProducts(data);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -166,17 +167,14 @@ export default function Catalogo() {
       tallaRopa: router.query.tallaRopa,
       tallaZapatilla: router.query.tallaZapatilla,
       accesorio: router.query.accesorio,
-      precioMin: router.query.precioMin,
-      precioMax: router.query.precioMax,
+      precioMin: router.query.min,
+      precioMax: router.query.max,
       stock: router.query.stock === 'true',
       q: router.query.q
     };
 
     const filteredResults = applyFilters(products, filters);
-    setFilteredProducts(filteredResults);
-    
-    // No resetear la página cuando hay filtros activos
-    // La página se mantendrá según lo guardado en localStorage
+    setFilteredProducts(filteredResults || []);
   }, [router.query, products, router.isReady, applyFilters]);
 
   // Función para manejar el cambio de página
@@ -201,15 +199,19 @@ export default function Catalogo() {
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const currentProducts = Array.isArray(filteredProducts) 
+    ? filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+    : [];
+  const totalPages = Math.ceil((Array.isArray(filteredProducts) ? filteredProducts.length : 0) / productsPerPage);
 
   return (
     <div className="container flex flex-col py-10 mx-auto lg:flex-row">
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={setFilteredProducts}
+          setFilteredProducts={(newFiltered) => {
+            setFilteredProducts(Array.isArray(newFiltered) ? newFiltered : []);
+          }}
         />
       </aside>
       <section className="w-full lg:w-3/4">
