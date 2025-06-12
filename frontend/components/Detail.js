@@ -228,28 +228,32 @@ export default function Detail({ product }) {
       {relatedProducts.length > 0 && (
         <div className="mt-12">
           <h2 className="mb-6 text-2xl font-bold text-gray-800">Productos relacionados</h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {relatedProducts.map((relatedProduct) => (
-              <div key={relatedProduct._id} className="p-4 transition duration-200 border rounded-lg hover:shadow-lg">
-                <div className="relative w-full h-48 mb-4">
-                  <Image
-                    src={relatedProduct.image?.url || "/placeholder.jpg"}
-                    alt={relatedProduct.nombre}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-lg"
-                  />
+          <div className="flex gap-6 overflow-x-auto pb-2">
+            {relatedProducts.slice(0, 6).map((relatedProduct) => {
+              // Calcular precio en pesos
+              const precioPesos = dolarBlue ? Math.round(relatedProduct.precio * dolarBlue) : null;
+              return (
+                <div key={relatedProduct._id} className="min-w-[220px] max-w-[220px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white">
+                  <div className="relative w-full h-40 mb-4">
+                    <Image
+                      src={relatedProduct.image?.url || "/placeholder.jpg"}
+                      alt={relatedProduct.nombre}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-800 truncate">{relatedProduct.nombre}</h3>
+                  <p className="mb-1 text-gray-600">USD ${relatedProduct.precio}</p>
+                  {precioPesos && (
+                    <p className="mb-2 text-gray-600">${precioPesos.toLocaleString("es-AR")} ARS</p>
+                  )}
+                  <div className="w-full px-4 py-2 text-center text-sm font-medium rounded bg-gray-100 text-gray-700 border border-gray-300">
+                    {relatedProduct.disponibilidad || "Sin info"}
+                  </div>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-800">{relatedProduct.nombre}</h3>
-                <p className="mb-2 text-gray-600">${relatedProduct.precio} USD</p>
-                <button
-                  onClick={() => router.push(`/producto/${relatedProduct._id}`)}
-                  className="w-full px-4 py-2 text-white transition duration-200 bg-red-500 rounded hover:bg-red-600"
-                >
-                  Ver detalle
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
