@@ -19,6 +19,8 @@ const ProductRow = ({
   setEditableProducts,
   fetchProducts,
   setSelectedProduct,
+  isSelected,
+  onSelect
 }) => {
   const [newTalla, setNewTalla] = useState("");
   const [newStock, setNewStock] = useState(0);
@@ -365,6 +367,13 @@ const ProductRow = ({
 
   return (
     <tr className="overflow-x-auto text-gray-600">
+      <td className="px-4 py-2 border">
+        <input
+          type="checkbox"
+          checked={isSelected}
+          onChange={onSelect}
+        />
+      </td>
       <td className="px-4 py-2 border">
         {index}
       </td>

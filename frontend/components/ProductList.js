@@ -11,6 +11,9 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   const [nameFilter, setNameFilter] = useState("");
   const [encargoFilter, setEncargoFilter] = useState(false);
   const [priceSort, setPriceSort] = useState("");
+  const [availabilityFilter, setAvailabilityFilter] = useState("");
+  const [duplicateFilter, setDuplicateFilter] = useState("");
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const { dolarBlue } = useStore();
   const [isModalOpen, setModalOpen] = useState(false);
   
@@ -22,17 +25,60 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     setSelectedProduct(id);
   };
 
+  const handleMultipleSelect = (id) => {
+    setSelectedProducts(prev => {
+      if (prev.includes(id)) {
+        return prev.filter(productId => productId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedProducts.length === currentProducts.length) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(currentProducts.map(product => product._id));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedProducts.length === 0) return;
+    
+    if (window.confirm(`¿Estás seguro de que deseas eliminar ${selectedProducts.length} productos?`)) {
+      try {
+        const token = localStorage.getItem("token");
+        const deletePromises = selectedProducts.map(id =>
+          fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          })
+        );
+        
+        await Promise.all(deletePromises);
+        setSelectedProducts([]);
+        fetchProducts();
+      } catch (error) {
+        console.error('Error al eliminar productos:', error);
+      }
+    }
+  };
+
   const handleRemoveFilters = () => {
     setCategoriaFilter("");
     setNameFilter("");
-    setEncargoFilter(false);  // Limpiar filtro de encargo
-    setPriceSort(""); // Limpiar ordenamiento por precio
+    setEncargoFilter(false);
+    setPriceSort("");
+    setAvailabilityFilter("");
+    setDuplicateFilter("");
     fetchProducts();
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    // Refresh the product list when the modal is closed
     if (typeof fetchProducts === 'function') {
       fetchProducts();
     }
@@ -43,7 +89,29 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
     const encargoMatch = encargoFilter ? producto.encargo === true : true;
-    return nameMatch && categoryMatch && encargoMatch;
+    
+    // Filtro de disponibilidad
+    let availabilityMatch = true;
+    if (availabilityFilter) {
+      const hasTallas = producto.tallas && producto.tallas.length > 0;
+      if (availabilityFilter === 'inmediata' && (!hasTallas || producto.encargo)) availabilityMatch = false;
+      if (availabilityFilter === '3dias' && (!hasTallas || !producto.encargo)) availabilityMatch = false;
+      if (availabilityFilter === '20dias' && hasTallas) availabilityMatch = false;
+    }
+    
+    // Filtro de duplicados
+    let duplicateMatch = true;
+    if (duplicateFilter) {
+      const duplicates = editableProducts.filter(p => 
+        p._id !== producto._id && 
+        ((duplicateFilter === 'nombre' && p.nombre === producto.nombre) ||
+         (duplicateFilter === 'imagen' && p.image && producto.image && 
+          p.image.url === producto.image.url))
+      );
+      duplicateMatch = duplicates.length > 0;
+    }
+    
+    return nameMatch && categoryMatch && encargoMatch && availabilityMatch && duplicateMatch;
   });
 
   // Ordenar productos por precio
@@ -66,7 +134,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   // Reset to first page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [categoriaFilter, nameFilter, encargoFilter, priceSort]);
+  }, [categoriaFilter, nameFilter, encargoFilter, priceSort, availabilityFilter, duplicateFilter]);
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
@@ -78,6 +146,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         <MdAdd className="mr-2" />
         Agregar Producto
       </button>
+
+      {/* Filtros */}
       <form onSubmit={(e) => e.preventDefault()} className="flex flex-col items-center gap-4 mb-6 sm:flex-row">
         <input
           type="text"
@@ -105,35 +175,61 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <option value="asc">Menor a mayor</option>
           <option value="desc">Mayor a menor</option>
         </select>
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="encargoFilter"
-            checked={encargoFilter}
-            onChange={() => setEncargoFilter(!encargoFilter)} // Actualización correcta de encargoFilter
-            className="w-4 h-4"
-          />
-          <label htmlFor="encargoFilter">Filtrar por Encargo</label>
-        </div>
-        <button
-          type="button"
-          onClick={handleRemoveFilters}
-          className="w-full p-2 text-center text-white bg-red-500 rounded sm:w-auto"
+        <select
+          value={availabilityFilter}
+          onChange={(e) => setAvailabilityFilter(e.target.value)}
+          className="w-full p-2 border rounded sm:w-auto"
         >
-          <MdFilterAltOff className="inline-block mr-1" />
-          <span className="hidden md:inline-block">Remover Filtros</span>
+          <option value="">Disponibilidad</option>
+          <option value="inmediata">Entrega inmediata</option>
+          <option value="3dias">Disponible en 3 días</option>
+          <option value="20dias">Disponible en 20 días</option>
+        </select>
+        <select
+          value={duplicateFilter}
+          onChange={(e) => setDuplicateFilter(e.target.value)}
+          className="w-full p-2 border rounded sm:w-auto"
+        >
+          <option value="">Filtrar duplicados</option>
+          <option value="nombre">Por nombre</option>
+          <option value="imagen">Por imagen</option>
+        </select>
+        <button
+          onClick={handleRemoveFilters}
+          className="flex items-center p-2 text-white transition duration-200 bg-gray-500 rounded hover:bg-gray-600"
+        >
+          <MdFilterAltOff className="mr-2" />
+          Limpiar filtros
         </button>
-        <div className="flex items-center p-2 text-center bg-blue-100 rounded sm:w-auto">
-          <span className="hidden mr-2 text-lg font-bold text-green-500 md:inline-block">Dólar Blue:</span>
-          <span className="text-lg font-semibold">${dolarBlue}</span>
-        </div>
       </form>
+
+      {/* Acciones en lote */}
+      {selectedProducts.length > 0 && (
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-sm text-gray-600">
+            {selectedProducts.length} productos seleccionados
+          </span>
+          <button
+            onClick={handleBulkDelete}
+            className="px-4 py-2 text-white transition duration-200 bg-red-500 rounded hover:bg-red-600"
+          >
+            Eliminar seleccionados
+          </button>
+        </div>
+      )}
+
       <div className="overflow-x-auto">
         <table className="w-full text-left table-auto">
           <thead className="text-base">
             <tr className="text-gray-700 bg-gray-100">
+              <th className="px-2 py-2">
+                <input
+                  type="checkbox"
+                  checked={selectedProducts.length === currentProducts.length}
+                  onChange={handleSelectAll}
+                />
+              </th>
               <th className="px-2 py-2">#</th>
-              <th className="px-2 py-2">Seleccionar</th>
               <th className="px-4 py-2">Nombre</th>
               <th className="px-4 py-2">Descripción</th>
               <th className="px-4 py-2">Marca</th>
@@ -160,6 +256,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                 fetchProducts={fetchProducts}
                 editableProducts={editableProducts}
                 setSelectedProduct={setSelectedProduct}
+                isSelected={selectedProducts.includes(producto._id)}
+                onSelect={() => handleMultipleSelect(producto._id)}
               />
             ))}
           </tbody>
@@ -167,7 +265,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
 
       {/* Pagination Controls */}
-      <div className="flex flex-wrap items-center justify-between w-full gap-2 mt-4 px-4 py-3 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -176,8 +274,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           >
             <MdChevronLeft size={24} />
           </button>
-          
-          {/* First page */}
+
           {currentPage > 2 && (
             <button
               onClick={() => handlePageChange(1)}
@@ -187,38 +284,34 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
             </button>
           )}
 
-          {/* Left ellipsis */}
-          {currentPage > 3 && (
-            <span className="px-2 text-gray-500">...</span>
+          {currentPage > 3 && <span>...</span>}
+
+          {currentPage > 1 && (
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              {currentPage - 1}
+            </button>
           )}
 
-          {/* Page numbers */}
-          {Array.from({ length: totalPages }, (_, i) => i + 1)
-            .filter(page => {
-              if (totalPages <= 5) return true;
-              if (page === 1 || page === totalPages) return false;
-              return Math.abs(currentPage - page) <= 1;
-            })
-            .map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === page
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+          <button
+            className="px-3 py-1 text-white bg-blue-500 rounded"
+          >
+            {currentPage}
+          </button>
 
-          {/* Right ellipsis */}
-          {currentPage < totalPages - 2 && (
-            <span className="px-2 text-gray-500">...</span>
+          {currentPage < totalPages && (
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+            >
+              {currentPage + 1}
+            </button>
           )}
 
-          {/* Last page */}
+          {currentPage < totalPages - 2 && <span>...</span>}
+
           {currentPage < totalPages - 1 && (
             <button
               onClick={() => handlePageChange(totalPages)}
