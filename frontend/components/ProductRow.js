@@ -160,12 +160,12 @@ const ProductRow = ({
 
   const handleProductUpdate = async (producto) => {
     try {
-      // Mostrar un mensaje de carga
       toast.loading("Actualizando producto...");
-
-      // Preparar los datos del producto para la actualización
-      const updatedProduct = { ...producto };
-      
+      // Convertir marcas a string separado por comas antes de enviar
+      const updatedProduct = { 
+        ...producto, 
+        marca: Array.isArray(producto.marca) ? producto.marca.join(', ') : producto.marca 
+      };
       // Enviar la actualización al servidor
       const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
         method: "PUT",
@@ -175,29 +175,18 @@ const ProductRow = ({
         },
         body: JSON.stringify(updatedProduct),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al actualizar el producto");
       }
-
-      // Obtener el producto actualizado
       const updatedProductData = await response.json();
-      
-      // Actualizar el estado local con el producto actualizado
       setEditableProducts(prevProducts =>
         prevProducts.map(prod =>
           prod._id === producto._id ? updatedProductData : prod
         )
       );
-
-      // Actualizar la lista de productos
       fetchProducts();
-      
-      // Cerrar el modo de edición
       setSelectedProduct(null);
-      
-      // Mostrar mensaje de éxito
       toast.dismiss();
       toast.success("Producto actualizado con éxito");
     } catch (error) {
