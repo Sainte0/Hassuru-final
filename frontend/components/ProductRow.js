@@ -435,7 +435,29 @@ const ProductRow = ({
               <input
                 type="text"
                 value={newMarca}
-                onChange={(e) => setNewMarca(e.target.value)}
+                onChange={e => {
+                  const value = e.target.value;
+                  if (value.includes(',')) {
+                    const marcas = value.split(',').map(m => m.trim()).filter(Boolean);
+                    marcas.forEach(marca => {
+                      if (marca && !producto.marca.includes(marca)) {
+                        const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, marca] : [marca];
+                        const updatedProduct = {
+                          ...producto,
+                          marca: updatedMarca,
+                        };
+                        setEditableProducts(prevProducts =>
+                          prevProducts.map(prod =>
+                            prod._id === producto._id ? updatedProduct : prod
+                          )
+                        );
+                      }
+                    });
+                    setNewMarca('');
+                  } else {
+                    setNewMarca(value);
+                  }
+                }}
                 placeholder="Agregar marca"
                 className="flex-1 p-1 border"
               />
