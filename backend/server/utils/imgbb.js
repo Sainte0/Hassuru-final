@@ -19,7 +19,12 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
       throw new Error('ImgBB API key is required');
     }
 
+    if (!imageBuffer || imageBuffer.length === 0) {
+      throw new Error('No se proporcionó una imagen válida');
+    }
+
     console.log('Usando API key:', finalApiKey.substring(0, 5) + '...');
+    console.log('Tamaño de la imagen:', imageBuffer.length, 'bytes');
 
     // Convert buffer to base64
     const base64Image = imageBuffer.toString('base64');
@@ -38,7 +43,8 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        },
+        timeout: 30000 // 30 segundos de timeout
       }
     );
     
@@ -56,6 +62,7 @@ const uploadToImgBB = async (imageBuffer, apiKey) => {
     if (error.response) {
       console.error('Response data:', error.response.data);
       console.error('Response status:', error.response.status);
+      throw new Error(`Error al subir la imagen a ImgBB: ${error.response.data.error?.message || error.response.data.error || error.message}`);
     }
     throw error;
   }
