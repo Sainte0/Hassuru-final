@@ -50,6 +50,18 @@ const ProductRow = ({
     }
   }, [producto]);
 
+  useEffect(() => {
+    if (producto && typeof producto.marca === 'string') {
+      const marcas = producto.marca.split(',').map(m => m.trim()).filter(Boolean);
+      const updatedProduct = { ...producto, marca: marcas };
+      setEditableProducts(prevProducts =>
+        prevProducts.map(prod =>
+          prod._id === producto._id ? updatedProduct : prod
+        )
+      );
+    }
+  }, [producto]);
+
   const handleTallaChange = (e, tallaIndex) => {
     const { value } = e.target;
     const updatedProduct = {
@@ -367,18 +379,20 @@ const ProductRow = ({
   };
 
   const handleAddMarca = (producto) => {
-    if (newMarca && !producto.marca.includes(newMarca)) {
-      const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
+    if (newMarca) {
+      const nuevasMarcas = newMarca.split(',').map(m => m.trim()).filter(Boolean);
+      const marcasActuales = Array.isArray(producto.marca) ? producto.marca : (producto.marca ? [producto.marca] : []);
+      const marcasUnicas = Array.from(new Set([...marcasActuales, ...nuevasMarcas]));
       const updatedProduct = {
         ...producto,
-        marca: updatedMarca,
+        marca: marcasUnicas,
       };
-      setEditableProducts((prevProducts) =>
-        prevProducts.map((prod) =>
+      setEditableProducts(prevProducts =>
+        prevProducts.map(prod =>
           prod._id === producto._id ? updatedProduct : prod
         )
       );
-      setNewMarca("");
+      setNewMarca('');
     }
   };
 
@@ -439,19 +453,7 @@ const ProductRow = ({
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
                     e.preventDefault();
-                    if (newMarca && !producto.marca.includes(newMarca)) {
-                      const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
-                      const updatedProduct = {
-                        ...producto,
-                        marca: updatedMarca,
-                      };
-                      setEditableProducts(prevProducts =>
-                        prevProducts.map(prod =>
-                          prod._id === producto._id ? updatedProduct : prod
-                        )
-                      );
-                      setNewMarca('');
-                    }
+                    handleAddMarca(producto);
                   }
                 }}
                 placeholder="Agregar marca"
@@ -459,21 +461,7 @@ const ProductRow = ({
               />
               <button
                 type="button"
-                onClick={() => {
-                  if (newMarca && !producto.marca.includes(newMarca)) {
-                    const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
-                    const updatedProduct = {
-                      ...producto,
-                      marca: updatedMarca,
-                    };
-                    setEditableProducts(prevProducts =>
-                      prevProducts.map(prod =>
-                        prod._id === producto._id ? updatedProduct : prod
-                      )
-                    );
-                    setNewMarca('');
-                  }
-                }}
+                onClick={() => handleAddMarca(producto)}
                 className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600"
               >
                 Agregar
