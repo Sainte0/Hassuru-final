@@ -92,7 +92,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     
     // Filtro de disponibilidad
     let availabilityMatch = true;
-    if (availabilityFilter) {
+    if (availabilityFilter && producto._id !== selectedProduct) {
       const hasTallas = producto.tallas && producto.tallas.length > 0;
       if (availabilityFilter === 'inmediata' && (!hasTallas || producto.encargo)) availabilityMatch = false;
       if (availabilityFilter === '3dias' && (!hasTallas || !producto.encargo)) availabilityMatch = false;
