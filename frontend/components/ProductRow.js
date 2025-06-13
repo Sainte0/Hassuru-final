@@ -435,28 +435,23 @@ const ProductRow = ({
               <input
                 type="text"
                 value={newMarca}
-                onChange={e => {
-                  const value = e.target.value;
-                  if (value.includes(',')) {
-                    const marcas = value.split(',').map(m => m.trim()).filter(Boolean);
-                    const nuevasMarcas = Array.isArray(producto.marca) ? [...producto.marca] : (producto.marca ? [producto.marca] : []);
-                    marcas.forEach(marca => {
-                      if (marca && !nuevasMarcas.includes(marca)) {
-                        nuevasMarcas.push(marca);
-                      }
-                    });
-                    const updatedProduct = {
-                      ...producto,
-                      marca: nuevasMarcas,
-                    };
-                    setEditableProducts(prevProducts =>
-                      prevProducts.map(prod =>
-                        prod._id === producto._id ? updatedProduct : prod
-                      )
-                    );
-                    setNewMarca('');
-                  } else {
-                    setNewMarca(value);
+                onChange={e => setNewMarca(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (newMarca && !producto.marca.includes(newMarca)) {
+                      const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
+                      const updatedProduct = {
+                        ...producto,
+                        marca: updatedMarca,
+                      };
+                      setEditableProducts(prevProducts =>
+                        prevProducts.map(prod =>
+                          prod._id === producto._id ? updatedProduct : prod
+                        )
+                      );
+                      setNewMarca('');
+                    }
                   }
                 }}
                 placeholder="Agregar marca"
@@ -464,15 +459,29 @@ const ProductRow = ({
               />
               <button
                 type="button"
-                onClick={() => handleAddMarca(producto)}
+                onClick={() => {
+                  if (newMarca && !producto.marca.includes(newMarca)) {
+                    const updatedMarca = Array.isArray(producto.marca) ? [...producto.marca, newMarca] : [newMarca];
+                    const updatedProduct = {
+                      ...producto,
+                      marca: updatedMarca,
+                    };
+                    setEditableProducts(prevProducts =>
+                      prevProducts.map(prod =>
+                        prod._id === producto._id ? updatedProduct : prod
+                      )
+                    );
+                    setNewMarca('');
+                  }
+                }}
                 className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600"
               >
-                +
+                Agregar
               </button>
             </div>
-            <div className="flex flex-wrap items-center gap-1">
-              {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
-                <div key={index} className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+            <div className="flex flex-wrap gap-2">
+              {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
+                <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded">
                   <span>{marca}</span>
                   <button
                     type="button"
@@ -481,34 +490,17 @@ const ProductRow = ({
                   >
                     ×
                   </button>
-                  {index < producto.marca.length - 1 && <span className="text-gray-400">,</span>}
                 </div>
-              )) : (
-                <div className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
-                  <span>{producto.marca}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveMarca(producto, producto.marca)}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
+              ))}
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap items-center gap-1">
-            {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
-              <div key={index} className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+          <div className="flex flex-wrap gap-2">
+            {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
+              <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded">
                 <span>{marca}</span>
-                {index < producto.marca.length - 1 && <span className="text-gray-400">,</span>}
               </div>
-            )) : (
-              <div className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
-                <span>{producto.marca}</span>
-              </div>
-            )}
+            ))}
           </div>
         )}
       </td>
