@@ -161,10 +161,10 @@ const ProductRow = ({
   const handleProductUpdate = async (producto) => {
     try {
       toast.loading("Actualizando producto...");
-      // Convertir marcas a string separado por comas antes de enviar
+      // Convertir marcas a string separado por guion antes de enviar
       const updatedProduct = { 
         ...producto, 
-        marca: Array.isArray(producto.marca) ? producto.marca.join(', ') : producto.marca 
+        marca: Array.isArray(producto.marca) ? producto.marca.join(' - ') : producto.marca 
       };
       // Enviar la actualización al servidor
       const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
