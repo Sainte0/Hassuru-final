@@ -31,13 +31,23 @@ export default function Detail({ product }) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
         const allProducts = await response.json();
         const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        // Productos de la misma marca con entrega disponible
         const related = allProducts.filter(p => 
           p._id !== product._id && 
-          marcas.some(marca => Array.isArray(p.marca) ? p.marca.includes(marca) : p.marca === marca)
+          marcas.some(marca => Array.isArray(p.marca) ? p.marca.includes(marca) : p.marca === marca) &&
+          Array.isArray(p.tallas) && p.tallas.length > 0 && !p.encargo
         );
-        // Filtrar solo los de entrega inmediata
-        const entregaInmediata = related.filter(p => Array.isArray(p.tallas) && p.tallas.length > 0 && !p.encargo);
-        setRelatedProducts(entregaInmediata);
+        if (related.length > 0) {
+          setRelatedProducts(related.slice(0, 6));
+        } else {
+          // Si no hay, mostrar productos de otras marcas con entrega disponible
+          const otrosDisponibles = allProducts.filter(p => 
+            p._id !== product._id &&
+            (!marcas.some(marca => Array.isArray(p.marca) ? p.marca.includes(marca) : p.marca === marca)) &&
+            Array.isArray(p.tallas) && p.tallas.length > 0 && !p.encargo
+          );
+          setRelatedProducts(otrosDisponibles.slice(0, 6));
+        }
       } catch (error) {
         console.error("Error al cargar productos relacionados:", error);
       } finally {
