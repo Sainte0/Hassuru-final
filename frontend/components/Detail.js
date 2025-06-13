@@ -11,6 +11,7 @@ export default function Detail({ product }) {
   const { dolarBlue, fetchDolarBlue } = useStore();
   const router = useRouter();
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [loadingRelated, setLoadingRelated] = useState(true);
 
   useEffect(() => {
     fetchDolarBlue();
@@ -25,6 +26,7 @@ export default function Detail({ product }) {
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
+      setLoadingRelated(true);
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
         const allProducts = await response.json();
@@ -33,9 +35,13 @@ export default function Detail({ product }) {
           p._id !== product._id && 
           marcas.some(marca => Array.isArray(p.marca) ? p.marca.includes(marca) : p.marca === marca)
         );
-        setRelatedProducts(related);
+        // Filtrar solo los de entrega inmediata
+        const entregaInmediata = related.filter(p => Array.isArray(p.tallas) && p.tallas.length > 0 && !p.encargo);
+        setRelatedProducts(entregaInmediata);
       } catch (error) {
         console.error("Error al cargar productos relacionados:", error);
+      } finally {
+        setLoadingRelated(false);
       }
     };
 
@@ -86,22 +92,24 @@ export default function Detail({ product }) {
 
   return (
     <>
-      <div className="container py-10 mx-auto sm:flex sm:flex-col lg:flex-row lg:space-x-10">
-        <div className="px-2 mb-6 lg:w-1/2 sm:w-full lg:mb-0">
-          <div className="relative w-full h-[500px]">
+      {/* Imagen principal a todo el ancho */}
+      <div className="container py-10 mx-auto">
+        <div className="w-full mb-8">
+          <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px]">
             <img
               src={getImageUrl()}
               alt={product.nombre}
-              width={600}
-              height={600}
+              width={1200}
+              height={800}
               loading="eager"
-              className="object-contain w-full h-full"
+              className="object-contain w-full h-full rounded-xl bg-white"
             />
           </div>
         </div>
-        <div className="flex flex-col w-full p-2 space-y-4 lg:w-1/2">
-          <h2 className="text-3xl font-bold text-gray-800 lg:text-4xl">{product.nombre}</h2>
-          <div className="space-y-2 text-gray-800">
+        {/* Detalle del producto */}
+        <div className="flex flex-col w-full p-2 space-y-4 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-800 lg:text-4xl text-center mb-2">{product.nombre}</h2>
+          <div className="space-y-2 text-gray-800 text-center">
             <p className="text-sm text-gray-500 mb-2">{product.descripcion}</p>
             <p className="text-4xl font-bold">${product.precio} USD</p>
             <p className="text-lg text-gray-400">${(product.precio * dolarBlue).toFixed(2)} ARS</p>
@@ -202,6 +210,7 @@ export default function Detail({ product }) {
               )}
             </button>
           </div>
+          {/* Medios de pago */}
           <div className="p-4 mt-6 bg-white border border-gray-300 rounded-md shadow-md">
             <h3 className="text-lg font-semibold text-gray-800">Medios de pago disponibles:</h3>
             <ul className="mt-2 space-y-2 text-gray-700">
@@ -225,64 +234,74 @@ export default function Detail({ product }) {
           </div>
         </div>
       </div>
-      {/* Sección de productos relacionados DEBAJO del detalle */}
-      {relatedProducts.length > 0 && (
-        <div className="container mt-12 mx-auto">
+      {/* Sección de productos relacionados más cerca del detalle */}
+      {(loadingRelated || relatedProducts.length > 0) && (
+        <div className="container mt-8 mx-auto">
           <h2 className="mb-6 text-2xl font-bold text-gray-800">Productos relacionados</h2>
           <div className="flex gap-6 overflow-x-auto pb-2">
-            {relatedProducts.slice(0, 6).map((relatedProduct) => {
-              // Calcular precio en pesos
-              const precioPesos = dolarBlue ? Math.round(relatedProduct.precio * dolarBlue) : null;
-              // Determinar disponibilidad y estilos
-              let disponibilidad = relatedProduct.disponibilidad || "Sin info";
-              let disponibilidadLabel = disponibilidad;
-              let disponibilidadClass = "bg-gray-300 text-black";
-              if (
-                disponibilidad === "Entrega inmediata" ||
-                (!relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
-              ) {
-                disponibilidadLabel = "Entrega inmediata";
-                disponibilidadClass = "bg-green-500 text-white";
-              } else if (
-                disponibilidad === "Disponible en 3 días" ||
-                (relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
-              ) {
-                disponibilidadLabel = "Disponible en 3 días";
-                disponibilidadClass = "bg-yellow-400 text-gray-900";
-              } else if (
-                disponibilidad === "Disponible en 20 días" ||
-                (!Array.isArray(relatedProduct.tallas) || relatedProduct.tallas.length === 0)
-              ) {
-                disponibilidadLabel = "Disponible en 20 días";
-                disponibilidadClass = "bg-red-500 text-white";
-              }
-              return (
-                <div
-                  key={relatedProduct._id}
-                  className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white cursor-pointer"
-                  onClick={() => router.push(`/producto/${relatedProduct._id}`)}
-                  tabIndex={0}
-                  role="button"
-                  onKeyPress={e => { if (e.key === 'Enter') router.push(`/producto/${relatedProduct._id}`); }}
-                >
-                  <div className="relative w-full h-64 mb-4">
-                    <Image
-                      src={relatedProduct.image?.url || "/placeholder.jpg"}
-                      alt={relatedProduct.nombre}
-                      layout="fill"
-                      objectFit="cover"
-                      className="rounded-lg"
-                    />
+            {loadingRelated
+              ? Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={idx} className="min-w-[240px] max-w-[240px] p-4 border rounded-lg flex-shrink-0 bg-gray-200 animate-pulse">
+                    <div className="w-full h-64 mb-4 bg-gray-300 rounded-lg" />
+                    <div className="h-5 w-3/4 mb-2 bg-gray-300 rounded" />
+                    <div className="h-4 w-1/2 mb-1 bg-gray-300 rounded" />
+                    <div className="h-4 w-2/3 mb-2 bg-gray-300 rounded" />
+                    <div className="h-8 w-full bg-gray-300 rounded" />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold text-gray-800 truncate">{relatedProduct.nombre}</h3>
-                  <p className="mb-1 text-gray-600">USD ${relatedProduct.precio}</p>
-                  {precioPesos && (
-                    <p className="mb-2 text-gray-600">${precioPesos.toLocaleString("es-AR")} ARS</p>
-                  )}
-                  <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
-                </div>
-              );
-            })}
+                ))
+              : relatedProducts.slice(0, 6).map((relatedProduct) => {
+                  // Calcular precio en pesos
+                  const precioPesos = dolarBlue ? Math.round(relatedProduct.precio * dolarBlue) : null;
+                  // Determinar disponibilidad y estilos
+                  let disponibilidad = relatedProduct.disponibilidad || "Sin info";
+                  let disponibilidadLabel = disponibilidad;
+                  let disponibilidadClass = "bg-gray-300 text-black";
+                  if (
+                    disponibilidad === "Entrega inmediata" ||
+                    (!relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
+                  ) {
+                    disponibilidadLabel = "Entrega inmediata";
+                    disponibilidadClass = "bg-green-500 text-white";
+                  } else if (
+                    disponibilidad === "Disponible en 3 días" ||
+                    (relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
+                  ) {
+                    disponibilidadLabel = "Disponible en 3 días";
+                    disponibilidadClass = "bg-yellow-400 text-gray-900";
+                  } else if (
+                    disponibilidad === "Disponible en 20 días" ||
+                    (!Array.isArray(relatedProduct.tallas) || relatedProduct.tallas.length === 0)
+                  ) {
+                    disponibilidadLabel = "Disponible en 20 días";
+                    disponibilidadClass = "bg-red-500 text-white";
+                  }
+                  return (
+                    <div
+                      key={relatedProduct._id}
+                      className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white cursor-pointer"
+                      onClick={() => router.push(`/producto/${relatedProduct._id}`)}
+                      tabIndex={0}
+                      role="button"
+                      onKeyPress={e => { if (e.key === 'Enter') router.push(`/producto/${relatedProduct._id}`); }}
+                    >
+                      <div className="relative w-full h-64 mb-4">
+                        <Image
+                          src={relatedProduct.image?.url || "/placeholder.jpg"}
+                          alt={relatedProduct.nombre}
+                          layout="fill"
+                          objectFit="cover"
+                          className="rounded-lg"
+                        />
+                      </div>
+                      <h3 className="mb-2 text-lg font-semibold text-gray-800 truncate">{relatedProduct.nombre}</h3>
+                      <p className="mb-1 text-gray-600">USD ${relatedProduct.precio}</p>
+                      {precioPesos && (
+                        <p className="mb-2 text-gray-600">${precioPesos.toLocaleString("es-AR")} ARS</p>
+                      )}
+                      <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       )}
