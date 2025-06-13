@@ -470,12 +470,46 @@ const ProductRow = ({
                 +
               </button>
             </div>
-            <div className="mb-1 text-sm text-gray-800">
-              {Array.isArray(producto.marca) ? producto.marca.join(', ') : producto.marca}
+            <div className="flex flex-wrap items-center gap-1">
+              {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
+                <div key={index} className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+                  <span>{marca}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarca(producto, marca)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                  {index < producto.marca.length - 1 && <span className="text-gray-400">,</span>}
+                </div>
+              )) : (
+                <div className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+                  <span>{producto.marca}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveMarca(producto, producto.marca)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ) : (
-          <span className="text-sm text-gray-800">{Array.isArray(producto.marca) ? producto.marca.join(', ') : producto.marca}</span>
+          <div className="flex flex-wrap items-center gap-1">
+            {Array.isArray(producto.marca) ? producto.marca.map((marca, index) => (
+              <div key={index} className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+                <span>{marca}</span>
+                {index < producto.marca.length - 1 && <span className="text-gray-400">,</span>}
+              </div>
+            )) : (
+              <div className="flex items-center gap-1 px-2 py-0.5 text-sm bg-gray-100 rounded">
+                <span>{producto.marca}</span>
+              </div>
+            )}
+          </div>
         )}
       </td>
       <td className="px-2 py-2 border">
