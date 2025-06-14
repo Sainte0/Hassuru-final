@@ -161,10 +161,10 @@ const ProductRow = ({
   const handleProductUpdate = async (producto) => {
     try {
       toast.loading("Actualizando producto...");
-      // Convertir marcas a string separado por guion antes de enviar
+      // Enviar las marcas como array
       const updatedProduct = { 
         ...producto, 
-        marca: Array.isArray(producto.marca) ? producto.marca.join(' - ') : producto.marca 
+        marca: Array.isArray(producto.marca) ? producto.marca : [producto.marca]
       };
       // Enviar la actualización al servidor
       const response = await fetch(`${URL1}/api/productos/${producto._id}`, {
@@ -369,9 +369,8 @@ const ProductRow = ({
 
   const handleAddMarca = (producto) => {
     if (newMarca) {
-      const nuevasMarcas = newMarca.split(',').map(m => m.trim()).filter(Boolean);
       const marcasActuales = Array.isArray(producto.marca) ? producto.marca : (producto.marca ? [producto.marca] : []);
-      const marcasUnicas = Array.from(new Set([...marcasActuales, ...nuevasMarcas]));
+      const marcasUnicas = Array.from(new Set([...marcasActuales, newMarca.trim()]));
       const updatedProduct = {
         ...producto,
         marca: marcasUnicas,

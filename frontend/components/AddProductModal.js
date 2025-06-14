@@ -92,10 +92,10 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   };
 
   const handleAddMarca = () => {
-    if (marcaInput && !product.marca.includes(marcaInput)) {
+    if (marcaInput.trim() && !product.marca.includes(marcaInput.trim())) {
       setProduct((prev) => ({
         ...prev,
-        marca: [...prev.marca, marcaInput],
+        marca: [...prev.marca, marcaInput.trim()],
       }));
       setMarcaInput('');
     }
