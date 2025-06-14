@@ -127,7 +127,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
     const productoAEnviar = {
       nombre: product.nombre,
       descripcion: product.descripcion,
-      marca: product.marca,
+      marca: Array.isArray(product.marca) ? product.marca : [product.marca],
       categoria: product.categoria,
       precio: parseFloat(product.precio),
       tallas: product.tallas.map((talla) => ({

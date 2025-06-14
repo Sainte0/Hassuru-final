@@ -118,7 +118,16 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     }
 
     // Asegurarse de que marca sea un array
-    const marcasArray = Array.isArray(marca) ? marca : [marca];
+    let marcasArray;
+    try {
+      // Si marca es un string JSON, intentar parsearlo
+      marcasArray = typeof marca === 'string' ? JSON.parse(marca) : marca;
+      // Asegurarse de que sea un array
+      marcasArray = Array.isArray(marcasArray) ? marcasArray : [marcasArray];
+    } catch (e) {
+      // Si falla el parseo, tratar marca como un string simple
+      marcasArray = [marca];
+    }
     
     let imageUrl = null;
     
