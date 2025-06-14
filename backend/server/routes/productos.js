@@ -278,7 +278,7 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
 
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
-    const { image, nombre, ...updatedData } = req.body;
+    const { image, nombre, marca, ...updatedData } = req.body;
     
     // Si se está actualizando el nombre, actualizar también el slug
     if (nombre) {
@@ -287,10 +287,15 @@ router.put('/:id', authMiddleware, async (req, res) => {
         updatedData.slug = generateUniqueSlug(nombre, req.params.id);
       }
     }
+
+    // Asegurarse de que marca sea un array
+    if (marca) {
+      updatedData.marca = Array.isArray(marca) ? marca : [marca];
+    }
     
     const productoActualizado = await Producto.findByIdAndUpdate(
       req.params.id, 
-      updatedData, 
+      { ...updatedData, nombre }, 
       { new: true }
     );
     if (!productoActualizado) {
