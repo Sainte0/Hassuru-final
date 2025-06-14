@@ -41,7 +41,7 @@ const useStore = create((set) => ({
       const formData = new FormData();
       
       Object.keys(productoAEnviar).forEach(key => {
-        if (key === 'tallas' || key === 'colores') {
+        if (key === 'tallas' || key === 'colores' || key === 'marca') {
           formData.append(key, JSON.stringify(productoAEnviar[key]));
         } else if (key === 'encargo' || key === 'destacado' || key === 'destacado_zapatillas') {
           formData.append(key, productoAEnviar[key].toString());

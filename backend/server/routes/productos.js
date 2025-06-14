@@ -117,17 +117,40 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
     }
 
-    // Asegurarse de que marca sea un array
-    let marcasArray;
+    // Procesar las marcas para asegurar que sean elementos individuales
+    let marcasArray = [];
     try {
       // Si marca es un string JSON, intentar parsearlo
-      marcasArray = typeof marca === 'string' ? JSON.parse(marca) : marca;
-      // Asegurarse de que sea un array
-      marcasArray = Array.isArray(marcasArray) ? marcasArray : [marcasArray];
+      const marcasProcesadas = typeof marca === 'string' ? JSON.parse(marca) : marca;
+      
+      // Asegurarse de que cada marca sea un elemento individual
+      if (Array.isArray(marcasProcesadas)) {
+        marcasArray = marcasProcesadas
+          .map(m => m.toString().trim())
+          .filter(Boolean)
+          .filter((m, index, self) => self.indexOf(m) === index); // Eliminar duplicados
+      } else if (typeof marcasProcesadas === 'string') {
+        // Si es un string, dividirlo por comas y procesar cada parte
+        marcasArray = marcasProcesadas
+          .split(',')
+          .map(m => m.trim())
+          .filter(Boolean)
+          .filter((m, index, self) => self.indexOf(m) === index); // Eliminar duplicados
+      } else {
+        marcasArray = [marcasProcesadas.toString().trim()];
+      }
     } catch (e) {
-      // Si falla el parseo, tratar marca como un string simple
-      marcasArray = [marca];
+      console.error('Error al procesar marcas:', e);
+      // Si falla el parseo, tratar marca como un string simple y dividirlo
+      marcasArray = marca
+        .toString()
+        .split(',')
+        .map(m => m.trim())
+        .filter(Boolean)
+        .filter((m, index, self) => self.indexOf(m) === index); // Eliminar duplicados
     }
+
+    console.log('Marcas procesadas:', marcasArray);
     
     let imageUrl = null;
     

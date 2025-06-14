@@ -92,11 +92,24 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   };
 
   const handleAddMarca = () => {
-    if (marcaInput.trim() && !product.marca.includes(marcaInput.trim())) {
-      setProduct((prev) => ({
-        ...prev,
-        marca: [...prev.marca, marcaInput.trim()],
-      }));
+    if (marcaInput.trim()) {
+      // Dividir por comas si hay múltiples marcas
+      const nuevasMarcas = marcaInput
+        .split(',')
+        .map(m => m.trim())
+        .filter(Boolean);
+
+      // Filtrar marcas duplicadas
+      const marcasUnicas = nuevasMarcas.filter(
+        marca => !product.marca.includes(marca)
+      );
+
+      if (marcasUnicas.length > 0) {
+        setProduct((prev) => ({
+          ...prev,
+          marca: [...prev.marca, ...marcasUnicas],
+        }));
+      }
       setMarcaInput('');
     }
   };
