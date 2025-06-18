@@ -74,6 +74,12 @@ export default function Checkout() {
       console.log('Checkout - pago:', pago);
       console.log('Checkout - productosToSend:', productosToSend);
       console.log('Checkout - envioData:', envioData);
+      const telefonoCompleto = telefono.prefijo + telefono.numero;
+      console.log('Enviando datosPersonales:', {
+        nombre: datos.nombre,
+        email: datos.email,
+        telefono: telefonoCompleto
+      });
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -82,7 +88,7 @@ export default function Checkout() {
           datosPersonales: {
             nombre: datos.nombre,
             email: datos.email,
-            telefono: telefono.prefijo + telefono.numero
+            telefono: telefonoCompleto
           },
           envio: envioData,
           pago
