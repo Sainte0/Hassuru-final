@@ -126,7 +126,7 @@ export default function Detail({ product }) {
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full rounded-xl bg-white"
+                className="object-contain w-full h-full rounded-xl bg-white "
               />
             </div>
           </div>
