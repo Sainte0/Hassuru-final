@@ -13,8 +13,6 @@ const useStore = create((set) => ({
   filteredProducts: [],
   tiktokLinks: [],
   homeProducts: {
-    destacados: [],
-    zapatillas: [],
     ultimosRopa: [],
     ultimosZapatillas: []
   },
@@ -245,16 +243,6 @@ const useStore = create((set) => ({
   fetchHomeProducts: async () => {
     set({ loading: true });
     try {
-      // Fetch destacados
-      const destacadosResponse = await fetch(`${URL}/api/productos/destacados`);
-      if (!destacadosResponse.ok) throw new Error('Error al cargar productos destacados');
-      const destacados = await destacadosResponse.json();
-
-      // Fetch destacados zapatillas
-      const zapatillasResponse = await fetch(`${URL}/api/productos/destacados-zapatillas`);
-      if (!zapatillasResponse.ok) throw new Error('Error al cargar zapatillas destacadas');
-      const zapatillas = await zapatillasResponse.json();
-
       // Fetch últimos en ropa
       const ultimosRopaResponse = await fetch(`${URL}/api/productos/ultimos/ropa`);
       if (!ultimosRopaResponse.ok) throw new Error('Error al cargar últimos en ropa');
@@ -267,8 +255,6 @@ const useStore = create((set) => ({
 
       set({ 
         homeProducts: {
-          destacados,
-          zapatillas,
           ultimosRopa,
           ultimosZapatillas
         }

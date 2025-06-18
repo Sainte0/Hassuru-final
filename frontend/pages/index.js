@@ -26,8 +26,6 @@ export default function Home() {
         console.log('Iniciando fetchHomeProducts...');
         await fetchHomeProducts();
         console.log('Productos cargados en Home:', {
-          destacados: homeProducts.destacados?.length,
-          zapatillas: homeProducts.zapatillas?.length,
           ultimosRopa: homeProducts.ultimosRopa?.length,
           ultimosZapatillas: homeProducts.ultimosZapatillas?.length
         });
@@ -117,31 +115,20 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* TikToks */}
-      <div className="mt-8">
+      {/* TikToks en horizontal */}
+      <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (
-          <iframe
-            key={index}
-            src={linkObj.link}
-            width="100%"
-            height="750"
-            style={{ border: "none" }}
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; accelerometer; gyroscope;"
-            allowFullScreen
-          ></iframe>
+          <div key={index} className="w-full aspect-[9/16]">
+            <iframe
+              src={linkObj.link}
+              width="100%"
+              height="100%"
+              style={{ border: "none" }}
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; accelerometer; gyroscope;"
+              allowFullScreen
+            ></iframe>
+          </div>
         ))}
-      </div>
-
-      {/* Destacados */}
-      <div className="mt-8">
-        <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.destacados} title={"Destacados"} />
-        </Link>
-      </div>
-      <div className="mt-2">
-        <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.zapatillas} title={"Zapatillas"} />
-        </Link>
       </div>
 
       <div className="mb-4">
