@@ -445,4 +445,56 @@ router.get('/:id/image', async (req, res) => {
   }
 });
 
+// Get destacados (limit 6)
+router.get('/destacados', async (req, res) => {
+  try {
+    const productos = await Producto.find({ destacado: true })
+      .sort({ createdAt: -1 })
+      .limit(6);
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener productos destacados:', error);
+    res.status(500).json({ error: 'Error al obtener productos destacados' });
+  }
+});
+
+// Get destacados zapatillas (limit 6)
+router.get('/destacados-zapatillas', async (req, res) => {
+  try {
+    const productos = await Producto.find({ destacado_zapatillas: true })
+      .sort({ createdAt: -1 })
+      .limit(6);
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener zapatillas destacadas:', error);
+    res.status(500).json({ error: 'Error al obtener zapatillas destacadas' });
+  }
+});
+
+// Get últimos en ropa (limit 6)
+router.get('/ultimos/ropa', async (req, res) => {
+  try {
+    const productos = await Producto.find({ categoria: 'ropa' })
+      .sort({ createdAt: -1 })
+      .limit(6);
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener últimos productos de ropa:', error);
+    res.status(500).json({ error: 'Error al obtener últimos productos de ropa' });
+  }
+});
+
+// Get últimos en zapatillas (limit 6)
+router.get('/ultimos/zapatillas', async (req, res) => {
+  try {
+    const productos = await Producto.find({ categoria: 'zapatillas' })
+      .sort({ createdAt: -1 })
+      .limit(6);
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener últimos productos de zapatillas:', error);
+    res.status(500).json({ error: 'Error al obtener últimos productos de zapatillas' });
+  }
+});
+
 module.exports = router;

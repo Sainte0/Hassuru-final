@@ -7,13 +7,13 @@ import useStore from "../store/store";
 import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
-  const { loading, error, products, fetchProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
+  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
 
   useEffect(() => {
     console.log('Estado inicial de Home:', {
       loading,
       error,
-      productsCount: products?.length,
+      homeProducts,
       dolarBlue,
       tiktokLinksCount: tiktokLinks?.length
     });
@@ -22,14 +22,14 @@ export default function Home() {
     const initializeData = async () => {
       console.log('Iniciando carga de datos en Home...');
       try {
-        // Obtener productos
-        console.log('Iniciando fetchProducts...');
-        await fetchProducts();
+        // Obtener productos de la home
+        console.log('Iniciando fetchHomeProducts...');
+        await fetchHomeProducts();
         console.log('Productos cargados en Home:', {
-          total: products?.length,
-          destacados: products?.filter(p => p.destacado).length,
-          zapatillas: products?.filter(p => p.destacado_zapatillas).length,
-          categorias: [...new Set(products?.map(p => p.categoria))]
+          destacados: homeProducts.destacados?.length,
+          zapatillas: homeProducts.zapatillas?.length,
+          ultimosRopa: homeProducts.ultimosRopa?.length,
+          ultimosZapatillas: homeProducts.ultimosZapatillas?.length
         });
         
         // Obtener valor del dólar blue
@@ -80,38 +80,6 @@ export default function Home() {
     return <div>Error: {error}</div>;
   }
 
-  // Obtener últimos productos por categoría
-  const ultimosRopa = products
-    .filter(product => product.categoria === 'ropa')
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 6);
-
-  const ultimosZapatillas = products
-    .filter(product => product.categoria === 'zapatillas')
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 6);
-
-  // Obtener destacados
-  const destacados = products
-    .filter((product) => product.destacado === true)
-    .slice(0, 6);
-    
-  const zapatillas = products
-    .filter((product) => product.destacado_zapatillas === true)
-    .slice(0, 6);
-
-  console.log('Resumen de productos en Home:', {
-    total: products.length,
-    destacados: {
-      cantidad: destacados.length,
-      productos: destacados.map(p => ({ id: p._id, nombre: p.nombre }))
-    },
-    zapatillas: {
-      cantidad: zapatillas.length,
-      productos: zapatillas.map(p => ({ id: p._id, nombre: p.nombre }))
-    }
-  });
-
   return (
     <main>
       <div className="container p-4 mx-auto">
@@ -140,17 +108,17 @@ export default function Home() {
       {/* Últimos productos por categoría */}
       <div className="mt-8">
         <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={ultimosRopa} title={"Últimos en Ropa"} />
+          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Últimos en Ropa"} />
         </Link>
       </div>
       <div className="mt-2">
         <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={ultimosZapatillas} title={"Últimos en Zapatillas"} />
+          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Últimos en Zapatillas"} />
         </Link>
       </div>
 
       {/* TikToks */}
-      <div className="container grid grid-cols-1 gap-4 px-2 mx-auto mt-8 lg:px-24 md:grid-cols-3">
+      <div className="mt-8">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (
           <iframe
             key={index}
@@ -167,12 +135,12 @@ export default function Home() {
       {/* Destacados */}
       <div className="mt-8">
         <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={destacados} title={"Destacados"} />
+          <Carousell dolarBlue={dolarBlue} products={homeProducts.destacados} title={"Destacados"} />
         </Link>
       </div>
       <div className="mt-2">
         <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={zapatillas} title={"Zapatillas"} />
+          <Carousell dolarBlue={dolarBlue} products={homeProducts.zapatillas} title={"Zapatillas"} />
         </Link>
       </div>
 

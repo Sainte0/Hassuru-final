@@ -12,6 +12,12 @@ const useStore = create((set) => ({
   error: null,
   filteredProducts: [],
   tiktokLinks: [],
+  homeProducts: {
+    destacados: [],
+    zapatillas: [],
+    ultimosRopa: [],
+    ultimosZapatillas: []
+  },
 
   fetchProducts: async () => {
     set({ loading: true });
@@ -231,6 +237,45 @@ const useStore = create((set) => ({
     } catch (error) {
       set({ error: error.message });
       console.error('Error al buscar productos:', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchHomeProducts: async () => {
+    set({ loading: true });
+    try {
+      // Fetch destacados
+      const destacadosResponse = await fetch(`${URL}/api/productos/destacados`);
+      if (!destacadosResponse.ok) throw new Error('Error al cargar productos destacados');
+      const destacados = await destacadosResponse.json();
+
+      // Fetch destacados zapatillas
+      const zapatillasResponse = await fetch(`${URL}/api/productos/destacados-zapatillas`);
+      if (!zapatillasResponse.ok) throw new Error('Error al cargar zapatillas destacadas');
+      const zapatillas = await zapatillasResponse.json();
+
+      // Fetch últimos en ropa
+      const ultimosRopaResponse = await fetch(`${URL}/api/productos/ultimos/ropa`);
+      if (!ultimosRopaResponse.ok) throw new Error('Error al cargar últimos en ropa');
+      const ultimosRopa = await ultimosRopaResponse.json();
+
+      // Fetch últimos en zapatillas
+      const ultimosZapatillasResponse = await fetch(`${URL}/api/productos/ultimos/zapatillas`);
+      if (!ultimosZapatillasResponse.ok) throw new Error('Error al cargar últimos en zapatillas');
+      const ultimosZapatillas = await ultimosZapatillasResponse.json();
+
+      set({ 
+        homeProducts: {
+          destacados,
+          zapatillas,
+          ultimosRopa,
+          ultimosZapatillas
+        }
+      });
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al cargar productos de la home:', error);
     } finally {
       set({ loading: false });
     }
