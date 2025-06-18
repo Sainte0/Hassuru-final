@@ -32,7 +32,7 @@ const LATAM_PREFIXES = [
 export default function Checkout() {
   const { cart, clearCart, addToCart, removeFromCart } = useCartStore();
   const [step, setStep] = useState(0);
-  const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '' });
+  const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '', dni: '' });
   const [envio, setEnvio] = useState({ tipo: 'envio', direccion: '', calle: '', numero: '', piso: '', ciudad: '', provincia: '', codigoPostal: '', pais: '' });
   const [pago, setPago] = useState('usdt');
   const [loading, setLoading] = useState(false);
@@ -134,15 +134,27 @@ export default function Checkout() {
                     <div className="font-semibold text-gray-900 break-words text-xs sm:text-base">{item.nombre}</div>
                     <div className="text-xs sm:text-sm text-gray-500 break-words">Talle: {item.talle}</div>
                     <div className="flex items-center gap-1 sm:gap-2 mt-1">
-                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" onClick={() => addToCart({ ...item, cantidad: -1 })} disabled={item.cantidad <= 1}>-</button>
+                      <button 
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" 
+                        onClick={() => {
+                          if (item.cantidad > 1) {
+                            addToCart({ ...item, cantidad: -1 });
+                          }
+                        }}
+                      >-</button>
                       <span className="px-2 font-medium text-xs sm:text-base">{item.cantidad}</span>
-                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" onClick={() => addToCart({ ...item, cantidad: 1 })}>+</button>
-                      <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs sm:text-base" onClick={() => removeFromCart(item.productoId, item.talle)}>Eliminar</button>
+                      <button 
+                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" 
+                        onClick={() => addToCart({ ...item, cantidad: 1 })}
+                      >+</button>
+                      <button 
+                        className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs sm:text-base" 
+                        onClick={() => removeFromCart(item.productoId, item.talle)}
+                      >Eliminar</button>
                     </div>
                   </div>
                   <div className="text-right min-w-[70px] sm:min-w-[90px]">
                     <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
-                    <div className="text-[10px] sm:text-xs text-gray-500 break-words">${item.precioARS?.toFixed(2)} ARS</div>
                   </div>
                 </div>
               ))}
@@ -152,10 +164,19 @@ export default function Checkout() {
             </div>
           )}
         </div>
+        <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+          <div className="flex items-center">
+            <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
+          </div>
+        </div>
         {step === 0 && (
           <div className="space-y-2">
             <input className="w-full border p-2" placeholder="Nombre" value={datos.nombre} onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} />
             <input className="w-full border p-2" placeholder="Email" value={datos.email} onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} />
+            <input className="w-full border p-2" placeholder="DNI" value={datos.dni} onChange={e => setDatos(d => ({ ...d, dni: e.target.value }))} />
             <div className="flex">
               <select className="border p-2" value={telefono.prefijo} onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}>
                 {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
@@ -206,7 +227,7 @@ export default function Checkout() {
                 </div>
                 {pago === 'usdt' && (
                   <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
-                    <p>• Aceptamos USDT en las redes TRC20 y ERC20</p>
+                    <p>• Aceptamos USDT en las redes TRC20 y BEP20</p>
                     <p>• También aceptamos otras criptomonedas principales</p>
                     <p>• El precio se fija al momento del pago</p>
                   </div>
@@ -291,14 +312,6 @@ export default function Checkout() {
               {dolarBlue && (
                 <p>${(cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0) * dolarBlue).toFixed(2)} ARS</p>
               )}
-            </div>
-          </div>
-          <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
-            <div className="flex items-center">
-              <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
             </div>
           </div>
           <div className="mt-6">
