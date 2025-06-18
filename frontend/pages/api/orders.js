@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// Permite que BACKEND_URL sea solo la base, sin /api/orders
+const BACKEND_BASE = process.env.BACKEND_URL || 'http://localhost:3001/api';
+
 export default async function handler(req, res) {
-  const backendUrl = process.env.BACKEND_URL ;
+  // Determina la ruta final según el método
+  let backendUrl = BACKEND_BASE;
+  if (req.method === 'POST' || req.method === 'GET') {
+    backendUrl += '/orders';
+  } else if (req.method === 'PUT') {
+    const { id } = req.query;
+    backendUrl += `/orders/${id}/estado`;
+  }
   try {
     if (req.method === 'POST') {
       console.log('URL DEL BACKEND:', backendUrl);
@@ -17,9 +27,8 @@ export default async function handler(req, res) {
       return res.status(response.status).json(response.data);
     }
     if (req.method === 'PUT') {
-      const { id } = req.query;
       const token = req.headers.authorization;
-      const response = await axios.put(`${backendUrl}/${id}/estado`, req.body, { headers: { Authorization: token } });
+      const response = await axios.put(backendUrl, req.body, { headers: { Authorization: token } });
       return res.status(response.status).json(response.data);
     }
     res.setHeader('Allow', ['POST', 'GET', 'PUT']);
