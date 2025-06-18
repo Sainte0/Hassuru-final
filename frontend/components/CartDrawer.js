@@ -6,6 +6,10 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
   const { removeFromCart } = useCartStore();
   const { dolarBlue } = useStore();
 
+  // Calcular totales
+  const totalUSD = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const totalARS = dolarBlue ? (totalUSD * dolarBlue) : null;
+
   return (
     <div className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex justify-between items-center p-4 border-b">
@@ -38,6 +42,9 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
         )}
       </div>
       <div className="p-4 border-t">
+        <div className="mb-2 text-right font-bold">
+          Total: ${totalUSD.toFixed(2)} USD{dolarBlue && ` / $${totalARS.toFixed(2)} ARS`}
+        </div>
         <button className="w-full bg-black text-white py-2 rounded" onClick={onProceed} disabled={cart.length === 0}>
           Proceder al pedido
         </button>

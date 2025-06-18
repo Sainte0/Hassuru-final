@@ -194,8 +194,8 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile Navigation - Always Visible */}
-            <div className="md:hidden flex items-center justify-between w-full">
+            {/* Mobile Navigation - Solo menú y searchbar */}
+            <div className="md:hidden flex items-center justify-between w-full relative">
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-md hover:bg-gray-700 focus:outline-none z-50"
@@ -204,23 +204,23 @@ export default function Navbar() {
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
               </button>
-              <div className="flex items-center space-x-4">
-                <Link href="/productos/talla/zapatillas" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Zapatillas</Link>
-                <Link href="/productos/talla/ropa" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Ropa</Link>
-                <Link href="/productos/categoria/accesorios" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Tecnología</Link>
-              </div>
-              <div className="w-10">
-                <SearchBar isHamburgerOpen={isOpen} />
+              <div className="flex-1 flex justify-center">
+                <div className="w-full max-w-xs">
+                  <SearchBar isHamburgerOpen={isOpen} />
+                </div>
               </div>
               {/* Carrito flotante en mobile */}
               <button
                 className="fixed bottom-6 right-6 bg-black text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50"
                 onClick={() => setOpen(true)}
+                style={{ zIndex: 100 }}
               >
-                🛒
-                {cartCount > 0 && (
-                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
-                )}
+                <span className="relative">
+                  🛒
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5" style={{minWidth:'1.5rem',textAlign:'center'}}>{cartCount}</span>
+                  )}
+                </span>
               </button>
             </div>
             {/* Carrito desktop */}
