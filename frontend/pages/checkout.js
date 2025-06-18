@@ -45,6 +45,11 @@ export default function Checkout() {
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
+    if (!telefono.numero || telefono.numero.trim().length < 6) {
+      setError('Por favor, ingresa un teléfono válido.');
+      setLoading(false);
+      return;
+    }
     try {
       let envioData;
       if (envio.tipo === 'envio') {
@@ -74,7 +79,10 @@ export default function Checkout() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productos: productosToSend,
-          datosPersonales: { ...datos, telefono: telefono.prefijo + telefono.numero },
+          datosPersonales: {
+            ...datos,
+            telefono: telefono.prefijo + telefono.numero
+          },
           envio: envioData,
           pago
         })
