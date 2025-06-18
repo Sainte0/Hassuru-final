@@ -114,40 +114,40 @@ export default function Checkout() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-        <h1 className="text-3xl font-extrabold mb-6 text-center text-gray-900 tracking-tight">Finalizar pedido</h1>
-        <div className="mb-8 flex space-x-2">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 tracking-tight">Finalizar pedido</h1>
+        <div className="mb-6 sm:mb-8 flex space-x-2">
           {pasos.map((p, i) => (
-            <div key={i} className={`flex-1 text-center py-3 rounded-lg font-semibold text-base transition-all duration-200 ${i === step ? 'bg-black text-white shadow' : 'bg-gray-200 text-gray-600'}`}>{p}</div>
+            <div key={i} className={`flex-1 text-center py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-base transition-all duration-200 ${i === step ? 'bg-black text-white shadow' : 'bg-gray-200 text-gray-600'}`}>{p}</div>
           ))}
         </div>
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Resumen del carrito</h2>
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-gray-800">Resumen del carrito</h2>
           {cart.length === 0 ? (
             <p className="text-gray-500">El carrito está vacío.</p>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4 overflow-x-auto">
               {cart.map(item => (
-                <div key={item.productoId + '-' + item.talle} className="flex items-center border rounded-lg p-3 bg-gray-50 shadow-sm">
-                  <img src={item.imagen} alt={item.nombre} className="w-16 h-16 object-cover rounded-lg mr-3 border" />
-                  <div className="flex-1">
-                    <div className="font-semibold text-gray-900">{item.nombre}</div>
-                    <div className="text-sm text-gray-500">Talle: {item.talle}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition" onClick={() => addToCart({ ...item, cantidad: -1 })} disabled={item.cantidad <= 1}>-</button>
-                      <span className="px-2 font-medium">{item.cantidad}</span>
-                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition" onClick={() => addToCart({ ...item, cantidad: 1 })}>+</button>
-                      <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition" onClick={() => removeFromCart(item.productoId, item.talle)}>Eliminar</button>
+                <div key={item.productoId + '-' + item.talle} className="flex items-center border rounded-lg p-2 sm:p-3 bg-gray-50 shadow-sm min-w-[260px] sm:min-w-0">
+                  <img src={item.imagen} alt={item.nombre} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg mr-2 sm:mr-3 border" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-gray-900 break-words text-xs sm:text-base">{item.nombre}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 break-words">Talle: {item.talle}</div>
+                    <div className="flex items-center gap-1 sm:gap-2 mt-1">
+                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" onClick={() => addToCart({ ...item, cantidad: -1 })} disabled={item.cantidad <= 1}>-</button>
+                      <span className="px-2 font-medium text-xs sm:text-base">{item.cantidad}</span>
+                      <button className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" onClick={() => addToCart({ ...item, cantidad: 1 })}>+</button>
+                      <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs sm:text-base" onClick={() => removeFromCart(item.productoId, item.talle)}>Eliminar</button>
                     </div>
                   </div>
-                  <div className="text-right min-w-[90px]">
-                    <div className="font-bold text-gray-900">${item.precio} USD</div>
-                    <div className="text-xs text-gray-500">${item.precioARS?.toFixed(2)} ARS</div>
+                  <div className="text-right min-w-[70px] sm:min-w-[90px]">
+                    <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 break-words">${item.precioARS?.toFixed(2)} ARS</div>
                   </div>
                 </div>
               ))}
-              <div className="text-right font-bold mt-4 text-lg border-t pt-4">
-                Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span>{dolarBlue && <span className="text-gray-500"> / ${totalARS.toFixed(2)} ARS</span>}
+              <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t pt-3 sm:pt-4">
+                Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span>{dolarBlue ? <span className="text-gray-500"> / ${totalARS.toFixed(2)} ARS</span> : ''}
               </div>
             </div>
           )}
@@ -188,11 +188,92 @@ export default function Checkout() {
           </div>
         )}
         {step === 2 && (
-          <div className="space-y-2">
-            <div>
-              <label><input type="radio" checked={pago === 'usdt'} onChange={() => setPago('usdt')} /> USDT</label>
-              <label className="ml-4"><input type="radio" checked={pago === 'transferencia'} onChange={() => setPago('transferencia')} /> Transferencia</label>
-              <label className="ml-4"><input type="radio" checked={pago === 'efectivo'} onChange={() => setPago('efectivo')} /> Efectivo</label>
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">Método de pago</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'usdt' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('usdt')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl">₮</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">USDT / Crypto</h4>
+                      <p className="text-sm text-gray-600">Pago en criptomonedas</p>
+                    </div>
+                  </div>
+                  <input type="radio" checked={pago === 'usdt'} onChange={() => setPago('usdt')} className="w-5 h-5 text-green-500" />
+                </div>
+                {pago === 'usdt' && (
+                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                    <p>• Aceptamos USDT en las redes TRC20 y ERC20</p>
+                    <p>• También aceptamos otras criptomonedas principales</p>
+                    <p>• El precio se fija al momento del pago</p>
+                  </div>
+                )}
+              </div>
+
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'transferencia' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('transferencia')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl">💸</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Transferencia Bancaria</h4>
+                      <p className="text-sm text-gray-600">Pago en USD o ARS</p>
+                    </div>
+                  </div>
+                  <input type="radio" checked={pago === 'transferencia'} onChange={() => setPago('transferencia')} className="w-5 h-5 text-blue-500" />
+                </div>
+                {pago === 'transferencia' && (
+                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                    <p>• Transferencia en USD desde cuentas internacionales</p>
+                    <p>• Transferencia en pesos argentinos</p>
+                    <p>• Zelle y Cashapp disponibles</p>
+                  </div>
+                )}
+              </div>
+
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'efectivo' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('efectivo')}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-xl">💵</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900">Efectivo</h4>
+                      <p className="text-sm text-gray-600">Pago en persona</p>
+                    </div>
+                  </div>
+                  <input type="radio" checked={pago === 'efectivo'} onChange={() => setPago('efectivo')} className="w-5 h-5 text-purple-500" />
+                </div>
+                {pago === 'efectivo' && (
+                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                    <p>• Disponible en Córdoba Capital</p>
+                    <p>• Disponible en Buenos Aires</p>
+                    <p>• Coordinamos punto de encuentro seguro</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h4 className="font-semibold text-gray-900 mb-2">Información importante</h4>
+              <ul className="text-sm text-gray-600 space-y-2">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Los precios están en USD y se convierten a ARS al momento del pago</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Te contactaremos para coordinar el pago y la entrega</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span>Envíos gratis a todo el país</span>
+                </li>
+              </ul>
             </div>
           </div>
         )}

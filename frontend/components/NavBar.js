@@ -206,13 +206,15 @@ export default function Navbar() {
               </button>
               <div className="flex-1 flex justify-center">
                 <div className="w-full max-w-xs">
-                  <SearchBar isHamburgerOpen={isOpen} />
+                  <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 px-4 py-2 border-b border-gray-700 flex items-center" style={{boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
+                    <SearchBar isHamburgerOpen={isOpen} placeholder="Buscar productos, marcas, etc." />
+                  </div>
                 </div>
               </div>
               {/* Carrito flotante en mobile */}
               <button
                 className="fixed bottom-6 right-6 bg-black text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50"
-                onClick={() => setOpen(true)}
+                onClick={() => setOpen(open => !open)}
                 style={{ zIndex: 100 }}
               >
                 <span className="relative">
