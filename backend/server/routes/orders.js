@@ -7,6 +7,14 @@ const router = express.Router();
 // Ultra simple: guardar pedido tal cual llega
 router.post('/', async (req, res) => {
   try {
+    // Fix: Si el body llega como string, parsea a objeto
+    if (typeof req.body === 'string') {
+      try {
+        req.body = JSON.parse(req.body);
+      } catch (e) {
+        return res.status(400).json({ error: 'Body malformado' });
+      }
+    }
     console.log('BODY RECIBIDO EN BACKEND:', req.body);
     const order = new Order(req.body);
     await order.save();
