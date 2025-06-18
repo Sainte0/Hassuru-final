@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 export default async function handler(req, res) {
-  const backendUrl = process.env.BACKEND_URL || 'http://localhost:3001/api/orders';
+  const backendUrl = process.env.BACKEND_URL ;
   try {
     if (req.method === 'POST') {
+      console.log('URL DEL BACKEND:', backendUrl);
       console.log('BODY ENVIADO AL BACKEND:', req.body);
       const response = await axios.post(backendUrl, req.body, {
         headers: { 'Content-Type': 'application/json' }
