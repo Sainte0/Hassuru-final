@@ -10,6 +10,7 @@ const adminRoutes = require('./routes/admin');
 const tiktokRoutes = require('./routes/tiktoks');
 const suscriptoresRoutes = require('./routes/suscriptores');
 const imagesRoutes = require('./routes/images');
+const ordersRoutes = require('./routes/orders');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -38,6 +39,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/tiktoks', tiktokRoutes);
 app.use('/api/suscriptores', suscriptoresRoutes);
 app.use('/api/images', imagesRoutes);
+app.use('/api/orders', ordersRoutes);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
