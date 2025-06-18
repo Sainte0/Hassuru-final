@@ -83,7 +83,7 @@ export default function Checkout() {
         email: datos.email,
         telefono: telefonoCompleto
       });
-      const res = await fetch('https://web-production-73e61.up.railway.app/api/orders', {
+      const res = await fetch('https://web-production-ffe2.up.railway.app/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -121,6 +121,14 @@ export default function Checkout() {
             <div key={i} className={`flex-1 text-center py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-base transition-all duration-200 ${i === step ? 'bg-black text-white shadow' : 'bg-gray-200 text-gray-600'}`}>{p}</div>
           ))}
         </div>
+        <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+          <div className="flex items-center">
+            <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
+          </div>
+        </div>
         <div className="mb-6 sm:mb-8">
           <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-gray-800">Resumen del carrito</h2>
           {cart.length === 0 ? (
@@ -155,23 +163,18 @@ export default function Checkout() {
                   </div>
                   <div className="text-right min-w-[70px] sm:min-w-[90px]">
                     <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500">${(item.precio * dolarBlue).toFixed(2)} ARS</div>
                   </div>
                 </div>
               ))}
               <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t pt-3 sm:pt-4">
-                Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span>{dolarBlue ? <span className="text-gray-500"> / ${totalARS.toFixed(2)} ARS</span> : ''}
+                <div>Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span></div>
+                <div className="text-gray-500">${totalARS.toFixed(2)} ARS</div>
               </div>
             </div>
           )}
         </div>
-        <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-          <div className="flex items-center">
-            <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
-          </div>
-        </div>
+       
         {step === 0 && (
           <div className="space-y-2">
             <input className="w-full border p-2" placeholder="Nombre" value={datos.nombre} onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} />
@@ -302,26 +305,15 @@ export default function Checkout() {
         <div className="flex justify-between mt-6">
           {step > 0 && <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleBack}>Atrás</button>}
           {step < 2 && <button className="px-4 py-2 bg-black text-white rounded" onClick={handleNext}>Siguiente</button>}
-          {step === 2 && <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={handleSubmit} disabled={loading}>{loading ? 'Enviando...' : 'Realizar pedido'}</button>}
-        </div>
-        <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
-          <div className="flex justify-between text-base font-medium text-gray-900">
-            <p>Subtotal</p>
-            <div className="flex flex-col items-end">
-              <p>${cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0).toFixed(2)} USD</p>
-              {dolarBlue && (
-                <p>${(cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0) * dolarBlue).toFixed(2)} ARS</p>
-              )}
-            </div>
-          </div>
-          <div className="mt-6">
-            <button
-              onClick={handleSubmit}
-              className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800"
+          {step === 2 && pago && (
+            <button 
+              className="px-4 py-2 bg-green-600 text-white rounded" 
+              onClick={handleSubmit} 
+              disabled={loading}
             >
-              Realizar pedido
+              {loading ? 'Enviando...' : 'Realizar pedido'}
             </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

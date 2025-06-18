@@ -12,7 +12,7 @@ export default function PedidosAdmin() {
 
   useEffect(() => {
     if (!token) return;
-    fetch('https://web-production-73e61.up.railway.app/api/orders', {
+    fetch('https://web-production-ffe2.up.railway.app/api/orders', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
