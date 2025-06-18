@@ -281,7 +281,34 @@ export default function Checkout() {
         <div className="flex justify-between mt-6">
           {step > 0 && <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleBack}>Atrás</button>}
           {step < 2 && <button className="px-4 py-2 bg-black text-white rounded" onClick={handleNext}>Siguiente</button>}
-          {step === 2 && <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={handleSubmit} disabled={loading}>{loading ? 'Enviando...' : 'Confirmar pedido'}</button>}
+          {step === 2 && <button className="px-4 py-2 bg-green-600 text-white rounded" onClick={handleSubmit} disabled={loading}>{loading ? 'Enviando...' : 'Realizar pedido'}</button>}
+        </div>
+        <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
+          <div className="flex justify-between text-base font-medium text-gray-900">
+            <p>Subtotal</p>
+            <div className="flex flex-col items-end">
+              <p>${cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0).toFixed(2)} USD</p>
+              {dolarBlue && (
+                <p>${(cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0) * dolarBlue).toFixed(2)} ARS</p>
+              )}
+            </div>
+          </div>
+          <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4">
+            <div className="flex items-center">
+              <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
+            </div>
+          </div>
+          <div className="mt-6">
+            <button
+              onClick={handleSubmit}
+              className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800"
+            >
+              Realizar pedido
+            </button>
+          </div>
         </div>
       </div>
     </div>

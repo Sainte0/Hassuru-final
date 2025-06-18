@@ -3,7 +3,7 @@ import { useCartStore } from '../store/cartStore';
 import useStore from '../store/store';
 
 export default function CartDrawer({ open, onClose, cart, onProceed }) {
-  const { removeFromCart } = useCartStore();
+  const { removeFromCart, updateQuantity } = useCartStore();
   const { dolarBlue } = useStore();
 
   // Calcular totales
@@ -12,6 +12,14 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
     const itemTotal = item.precio * item.cantidad;
     return acc + (dolarBlue ? itemTotal * dolarBlue : 0);
   }, 0);
+
+  const handleUpdateQuantity = (itemId, newQuantity) => {
+    if (newQuantity > 0) {
+      updateQuantity(itemId, newQuantity);
+    } else {
+      removeFromCart(itemId);
+    }
+  };
 
   return (
     <div className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
@@ -53,21 +61,35 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                               <p className="ml-4">${item.precio} USD</p>
                             </div>
                             <p className="mt-1 text-sm text-gray-500">{item.marca}</p>
+                            {item.talle && <p className="mt-1 text-sm text-gray-500">Talle: {item.talle}</p>}
                           </div>
                           <div className="flex-1 flex items-end justify-between text-sm">
-                            <div className="flex items-center">
+                            <div className="flex items-center space-x-4">
                               <button
-                                onClick={() => onUpdateQuantity(item._id, Math.max(0, item.cantidad - 1))}
-                                className="text-gray-500 hover:text-gray-700"
+                                onClick={() => handleUpdateQuantity(item._id, item.cantidad - 1)}
+                                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
                               >
-                                -
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                                </svg>
                               </button>
-                              <span className="mx-2 text-gray-500">Cantidad: {item.cantidad}</span>
+                              <span className="text-gray-500">Cantidad: {item.cantidad}</span>
                               <button
-                                onClick={() => onUpdateQuantity(item._id, item.cantidad + 1)}
-                                className="text-gray-500 hover:text-gray-700"
+                                onClick={() => handleUpdateQuantity(item._id, item.cantidad + 1)}
+                                className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
                               >
-                                +
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => removeFromCart(item._id)}
+                                className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
+                                title="Eliminar"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
                               </button>
                             </div>
                             <div className="flex flex-col items-end">
@@ -95,7 +117,6 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                   )}
                 </div>
               </div>
-              <p className="mt-0.5 text-sm text-gray-500">Envío e impuestos calculados al finalizar la compra.</p>
               <div className="mt-6">
                 <button
                   onClick={onProceed}
