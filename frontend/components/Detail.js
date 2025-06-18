@@ -3,6 +3,7 @@ import useStore from "../store/store";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
+import { useCartStore } from '../store/cartStore';
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
@@ -12,6 +13,7 @@ export default function Detail({ product }) {
   const router = useRouter();
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
+  const addToCart = useCartStore(state => state.addToCart);
 
   useEffect(() => {
     fetchDolarBlue();
@@ -61,16 +63,27 @@ export default function Detail({ product }) {
   }, [product]);
 
   const handleCompraClick = () => {
-    if (selectedTalla || customTalla) {
-      const message = selectedTalla
-        ? `Hola, quiero comprar esta prenda ${product.nombre} en el talle ${selectedTalla.talla}`
-        : `Hola, quiero encargar esta prenda ${product.nombre} en talle ${customTalla}`;
-
+    if (selectedTalla) {
+      addToCart({
+        productoId: product._id,
+        nombre: product.nombre,
+        cantidad: 1,
+        imagen: product.image?.url || product.image || '/placeholder.jpg',
+        precio: selectedTalla.precioTalla,
+        precioARS: (selectedTalla.precioTalla * dolarBlue),
+        talle: selectedTalla.talla
+      });
+      toast.success('Producto añadido al carrito');
+      return;
+    }
+    if (customTalla) {
+      // Si es encargo personalizado, sigue el flujo de WhatsApp
+      const message = `Hola, quiero encargar esta prenda ${product.nombre} en talle ${customTalla}`;
       const whatsappUrl = `https://api.whatsapp.com/send?phone=3512595858&text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, "_blank");
-    } else {
-      setShowTallas(true);
+      return;
     }
+    setShowTallas(true);
   };
 
   const handleTallaSelect = (talla) => {
@@ -215,7 +228,7 @@ export default function Detail({ product }) {
                 onClick={handleCompraClick}
               >
                 {product.tallas && product.tallas.length > 0 ? (
-                  selectedTalla ? "Comprar" : "Comprar ahora"
+                  selectedTalla ? "Añadir al carrito" : "Comprar ahora"
                 ) : (
                   customTalla ? "Comprar" : "Encargar ahora"
                 )}
