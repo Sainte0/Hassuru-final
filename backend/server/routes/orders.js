@@ -7,6 +7,7 @@ const router = express.Router();
 // Ultra simple: guardar pedido tal cual llega
 router.post('/', async (req, res) => {
   try {
+    console.log('BODY RECIBIDO EN BACKEND:', req.body);
     const order = new Order(req.body);
     await order.save();
     res.status(201).json(order);
