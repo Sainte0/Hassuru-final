@@ -55,11 +55,18 @@ export default function Checkout() {
       } else {
         envioData = { tipo: 'retiro', direccion: '' };
       }
+      const productosToSend = cart.map(item => ({
+        productoId: item.productoId,
+        nombre: item.nombre,
+        cantidad: item.cantidad,
+        precio: item.precio,
+        imagen: item.imagen
+      }));
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productos: cart,
+          productos: productosToSend,
           datosPersonales: { ...datos, telefono: telefono.prefijo + telefono.numero },
           envio: envioData,
           pago
