@@ -16,7 +16,15 @@ export default function PedidosAdmin() {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
-      .then(setOrders)
+      .then(data => {
+        if (Array.isArray(data)) {
+          setOrders(data);
+        } else if (data && data.error) {
+          setError(data.error);
+        } else {
+          setError('Error inesperado al cargar pedidos');
+        }
+      })
       .catch(e => setError('Error al cargar pedidos'))
       .finally(() => setLoading(false));
   }, [token]);
