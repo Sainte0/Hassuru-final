@@ -4,11 +4,13 @@ import { useRouter } from "next/router";
 export const useAuth = () => {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
   const lastCheckTime = useRef(0);
   const checkInProgress = useRef(false);
 
   const checkAuth = async (force = false) => {
     const token = localStorage.getItem("token");
+    setToken(token);
     if (!token) {
       setIsAuthenticated(false);
       if (router.pathname.startsWith('/admin')) {
@@ -44,6 +46,7 @@ export const useAuth = () => {
         // Token expirado o inválido
         localStorage.removeItem("token");
         setIsAuthenticated(false);
+        setToken(null);
         if (router.pathname.startsWith('/admin')) {
           router.push("/login");
         }
@@ -61,6 +64,7 @@ export const useAuth = () => {
       console.error("Error en la verificación de autenticación:", error);
       localStorage.removeItem("token");
       setIsAuthenticated(false);
+      setToken(null);
       if (router.pathname.startsWith('/admin')) {
         router.push("/login");
       }
@@ -86,5 +90,5 @@ export const useAuth = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return { isAuthenticated, checkAuth };
+  return { isAuthenticated, checkAuth, token };
 };
