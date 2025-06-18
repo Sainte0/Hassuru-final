@@ -12,7 +12,7 @@ export default function PedidosAdmin() {
 
   useEffect(() => {
     if (!token) return;
-    fetch('/api/orders', {
+    fetch('https://web-production-73e61.up.railway.app/api/orders', {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -32,7 +32,7 @@ export default function PedidosAdmin() {
   const cambiarEstado = async (id, estado) => {
     setChanging(id);
     try {
-      await fetch(`/api/orders/${id}/estado`, {
+      await fetch(`https://web-production-73e61.up.railway.app/api/orders/${id}/estado`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
