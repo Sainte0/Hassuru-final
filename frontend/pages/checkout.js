@@ -46,17 +46,27 @@ export default function Checkout() {
     setLoading(true);
     setError('');
     try {
+      let envioData;
+      if (envio.tipo === 'envio') {
+        envioData = {
+          tipo: 'envio',
+          direccion: `${envio.calle} ${envio.numero}${envio.piso ? ', ' + envio.piso : ''}, ${envio.ciudad}, ${envio.provincia}, ${envio.codigoPostal}, ${envio.pais}`
+        };
+      } else {
+        envioData = { tipo: 'retiro', direccion: '' };
+      }
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productos: cart,
           datosPersonales: { ...datos, telefono: telefono.prefijo + telefono.numero },
-          envio,
+          envio: envioData,
           pago
         })
       });
       if (!res.ok) throw new Error('Error al crear el pedido');
+      localStorage.setItem('lastCart', JSON.stringify(cart));
       clearCart();
       router.push('/pedido-exitoso');
     } catch (e) {
@@ -73,6 +83,29 @@ export default function Checkout() {
         {pasos.map((p, i) => (
           <div key={i} className={`flex-1 text-center py-2 rounded ${i === step ? 'bg-black text-white' : 'bg-gray-200'}`}>{p}</div>
         ))}
+      </div>
+      <div className="mb-6">
+        <h2 className="text-lg font-bold mb-2">Resumen del carrito</h2>
+        {cart.length === 0 ? (
+          <p>El carrito está vacío.</p>
+        ) : (
+          <div className="space-y-2">
+            {cart.map(item => (
+              <div key={item.productoId + '-' + item.talle} className="flex items-center border rounded p-2">
+                <img src={item.imagen} alt={item.nombre} className="w-12 h-12 object-cover rounded mr-2" />
+                <div className="flex-1">
+                  <div className="font-semibold">{item.nombre}</div>
+                  <div className="text-sm text-gray-500">Talle: {item.talle}</div>
+                  <div className="text-sm">Cantidad: {item.cantidad}</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold">${item.precio} USD</div>
+                  <div className="text-xs text-gray-500">${item.precioARS?.toFixed(2)} ARS</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {step === 0 && (
         <div className="space-y-2">

@@ -228,10 +228,12 @@ export default function Navbar() {
               </div>
             </div>
 
-            <button
-              className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center"
-              onClick={() => setOpen(true)}
-            >🛒</button>
+            {!isMobile && (
+              <button
+                className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center"
+                onClick={() => setOpen(true)}
+              >🛒</button>
+            )}
           </div>
 
           {/* Mobile menu content */}
