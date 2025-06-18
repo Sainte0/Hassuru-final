@@ -80,7 +80,8 @@ export default function Checkout() {
         body: JSON.stringify({
           productos: productosToSend,
           datosPersonales: {
-            ...datos,
+            nombre: datos.nombre,
+            email: datos.email,
             telefono: telefono.prefijo + telefono.numero
           },
           envio: envioData,
@@ -142,7 +143,7 @@ export default function Checkout() {
             <select className="border p-2" value={telefono.prefijo} onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}>
               {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
             </select>
-            <input className="flex-1 border p-2" placeholder="Teléfono" value={telefono.numero} onChange={e => setTelefono(t => ({ ...t, numero: e.target.value }))} />
+            <input className="flex-1 border p-2" placeholder="Teléfono" value={telefono.numero} onChange={e => setTelefono(t => ({ ...t, numero: e.target.value }))} required />
           </div>
         </div>
       )}
