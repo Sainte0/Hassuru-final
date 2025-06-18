@@ -1,14 +1,27 @@
 const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
+const mongoose = require('mongoose');
 const router = express.Router();
 
 // Crear pedido
 router.post('/', async (req, res) => {
   try {
     console.log('Pedido recibido:', JSON.stringify(req.body, null, 2));
+    if (!Array.isArray(req.body.productos) || req.body.productos.length === 0) {
+      return res.status(400).json({ error: 'La orden debe tener al menos un producto.' });
+    }
+    // Validar productoId
+    for (const prod of req.body.productos) {
+      if (!prod.productoId || !mongoose.Types.ObjectId.isValid(prod.productoId)) {
+        console.error('ProductoId inválido:', prod.productoId);
+        return res.status(400).json({ error: `ProductoId inválido: ${prod.productoId}` });
+      }
+    }
+    console.log('Todos los productoId son válidos.');
     const order = new Order(req.body);
     await order.save();
+    console.log('Pedido guardado correctamente');
     res.status(201).json(order);
   } catch (error) {
     console.error('Error al guardar pedido:', error);

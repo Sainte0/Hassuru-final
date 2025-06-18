@@ -18,7 +18,7 @@ const HOST = process.env.HOST || '0.0.0.0'; // Use 0.0.0.0 to listen on all netw
 
 // Verificar variables de entorno críticas
 console.log('Verificando variables de entorno...');
-console.log('IMGBB_API_KEY disponible:', !!process.env.IMGBB_API_KEY);
+console.log('IMGBB_API_KEY disponible:', !!process.env.FALLBACK_API_KEY);
 console.log('MONGODB_URI disponible:', !!process.env.MONGODB_URI);
 
 // No es necesario verificar IMGBB_API_KEY ya que ahora usamos una hardcodeada como respaldo

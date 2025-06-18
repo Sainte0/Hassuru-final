@@ -62,6 +62,13 @@ export default function Checkout() {
         precio: item.precio,
         imagen: item.imagen
       }));
+      console.log('Checkout - productos en cart:', cart);
+      console.log('Checkout - datos personales:', datos);
+      console.log('Checkout - telefono:', telefono);
+      console.log('Checkout - envio:', envio);
+      console.log('Checkout - pago:', pago);
+      console.log('Checkout - productosToSend:', productosToSend);
+      console.log('Checkout - envioData:', envioData);
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
