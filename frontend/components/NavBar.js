@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/router';
-import SearchBar from "./SearchBar";
 import CartDrawer from './CartDrawer';
 import { useCartStore } from '../store/cartStore';
 import WhatsButton from './Whatsbutton';
@@ -44,10 +43,7 @@ export default function Navbar() {
 
         productos.forEach(producto => {
           if (producto.categoria && producto.marca) {
-            // Manejar el array de marcas
             const marcas = Array.isArray(producto.marca) ? producto.marca : [producto.marca];
-            
-            // Agregar cada marca a su categoría correspondiente
             marcas.forEach(marca => {
               if (producto.categoria === "zapatillas") {
                 marcasPorCat.zapatillas.add(marca);
@@ -76,12 +72,6 @@ export default function Navbar() {
   const handleMarcaClick = (categoria, marca) => {
     router.push(`/productos/categoria/${categoria}?marca=${encodeURIComponent(marca)}`);
     setIsOpen(false);
-  };
-
-  const handleSearch = (query) => {
-    if (query && query.trim()) {
-      router.push(`/productos?q=${encodeURIComponent(query.trim())}`);
-    }
   };
 
   return (
@@ -187,14 +177,9 @@ export default function Navbar() {
               <Link href="/encargos" className="py-2 hover:text-gray-300">
                 Encargos
               </Link>
-
-              {/* Search Bar */}
-              <div className="flex items-center">
-                <SearchBar onSearch={handleSearch} isHamburgerOpen={false} />
-              </div>
             </div>
 
-            {/* Mobile Navigation - Solo menú y searchbar */}
+            {/* Mobile Navigation */}
             <div className="md:hidden flex items-center justify-between w-full relative">
               <button
                 onClick={() => setIsOpen(!isOpen)}
@@ -203,26 +188,6 @@ export default function Navbar() {
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
-              </button>
-              <div className="flex-1 flex justify-center">
-                <div className="w-full max-w-xs">
-                  <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 px-4 py-2 border-b border-gray-700 flex items-center" style={{boxShadow:'0 2px 8px rgba(0,0,0,0.08)'}}>
-                    <SearchBar isHamburgerOpen={isOpen} placeholder="Buscar productos, marcas, etc." />
-                  </div>
-                </div>
-              </div>
-              {/* Carrito flotante en mobile */}
-              <button
-                className="fixed bottom-6 right-6 bg-black text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50"
-                onClick={() => setOpen(open => !open)}
-                style={{ zIndex: 100 }}
-              >
-                <span className="relative">
-                  🛒
-                  {cartCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2 py-0.5" style={{minWidth:'1.5rem',textAlign:'center'}}>{cartCount}</span>
-                  )}
-                </span>
               </button>
             </div>
             {/* Carrito desktop */}
