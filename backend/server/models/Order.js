@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const ProductoPedidoSchema = new mongoose.Schema({
-  productoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Producto', required: true },
+  productoId: { type: String, required: true },
   nombre: String,
   cantidad: Number,
   precio: Number,
