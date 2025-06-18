@@ -73,9 +73,21 @@ export default function SearchBar() {
     setShowResults(false);
   };
 
+  const getImageUrl = (product) => {
+    if (!product.image && !product.imagen) return "/placeholder.jpg";
+    const img = product.image || product.imagen;
+    if (typeof img === 'string' && img.includes('cloudinary')) {
+      return img;
+    }
+    if (product._id) {
+      return `${process.env.NEXT_PUBLIC_URL || "http://localhost:5001"}/api/productos/${product._id}/image`;
+    }
+    return "/placeholder.jpg";
+  };
+
   return (
-    <div className="w-full bg-white border-b border-gray-200" ref={searchRef}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-white" ref={searchRef}>
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="relative">
           <div className="flex items-center">
             <input
@@ -85,7 +97,7 @@ export default function SearchBar() {
               onFocus={() => setIsFocused(true)}
               onKeyPress={handleKeyPress}
               placeholder="Buscar productos, marcas, etc."
-              className="w-full py-3 pl-4 pr-12 text-gray-900 placeholder-gray-500 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              className="w-full py-4 pl-4 pr-12 text-gray-900 placeholder-gray-500 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
             />
             <button
               onClick={handleSearch}
@@ -106,12 +118,10 @@ export default function SearchBar() {
                     className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer"
                   >
                     <div className="flex-shrink-0 w-12 h-12 relative">
-                      <Image
-                        src={product.imagen || '/placeholder.jpg'}
+                      <img
+                        src={getImageUrl(product)}
                         alt={product.nombre}
-                        layout="fill"
-                        objectFit="cover"
-                        className="rounded-md"
+                        className="object-cover w-full h-full rounded-md"
                       />
                     </div>
                     <div className="ml-4 flex-1">
