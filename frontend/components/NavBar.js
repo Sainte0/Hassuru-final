@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import SearchBar from "./SearchBar";
+import CartDrawer from './CartDrawer';
+import { useCartStore } from '../store/cartStore';
 
 export default function Navbar() {
   const router = useRouter();
@@ -13,6 +15,8 @@ export default function Navbar() {
     ropa: [],
     accesorios: []
   });
+  const { cart } = useCartStore();
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -223,6 +227,11 @@ export default function Navbar() {
                 <SearchBar isHamburgerOpen={isOpen} />
               </div>
             </div>
+
+            <button
+              className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center"
+              onClick={() => setOpen(true)}
+            >🛒</button>
           </div>
 
           {/* Mobile menu content */}
@@ -299,6 +308,7 @@ export default function Navbar() {
           )}
         </div>
       </nav>
+      <CartDrawer open={open} onClose={() => setOpen(false)} cart={cart} onProceed={() => { setOpen(false); window.location.href = '/checkout'; }} />
     </>
   );
 }
