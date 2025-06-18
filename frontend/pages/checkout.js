@@ -29,7 +29,7 @@ const LATAM_PREFIXES = [
 ];
 
 export default function Checkout() {
-  const { cart, clearCart } = useCartStore();
+  const { cart, clearCart, addToCart, removeFromCart } = useCartStore();
   const [step, setStep] = useState(0);
   const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '' });
   const [envio, setEnvio] = useState({ tipo: 'envio', direccion: '', calle: '', numero: '', piso: '', ciudad: '', provincia: '', codigoPostal: '', pais: '' });
@@ -96,7 +96,12 @@ export default function Checkout() {
                 <div className="flex-1">
                   <div className="font-semibold">{item.nombre}</div>
                   <div className="text-sm text-gray-500">Talle: {item.talle}</div>
-                  <div className="text-sm">Cantidad: {item.cantidad}</div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <button className="px-2 py-1 bg-gray-200 rounded" onClick={() => addToCart({ ...item, cantidad: -1 })} disabled={item.cantidad <= 1}>-</button>
+                    <span className="px-2">{item.cantidad}</span>
+                    <button className="px-2 py-1 bg-gray-200 rounded" onClick={() => addToCart({ ...item, cantidad: 1 })}>+</button>
+                    <button className="ml-2 px-2 py-1 bg-red-500 text-white rounded" onClick={() => removeFromCart(item.productoId, item.talle)}>Eliminar</button>
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className="font-bold">${item.precio} USD</div>
