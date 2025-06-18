@@ -5,7 +5,8 @@ const ProductoPedidoSchema = new mongoose.Schema({
   nombre: String,
   cantidad: Number,
   precio: Number,
-  imagen: String
+  imagen: String,
+  talle: String
 });
 
 const OrderSchema = new mongoose.Schema({

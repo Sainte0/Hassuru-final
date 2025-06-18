@@ -17,6 +17,14 @@ const Sidebar = ({ categoriasDisponibles }) => {
               Agregar Producto
             </button>
           </li>
+          <li>
+            <a
+              href="/admin/pedidos"
+              className="block w-full px-4 py-2 text-white transition duration-300 bg-green-500 rounded hover:bg-green-600 text-center"
+            >
+              Ver pedidos
+            </a>
+          </li>
         </ul>
       </div>
       <AddProductModal
