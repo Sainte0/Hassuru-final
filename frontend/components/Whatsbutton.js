@@ -11,7 +11,7 @@ export default function WhatsButton() {
   return (
     <button
       onClick={handleClick}
-      className="fixed left-6 bottom-20 md:bottom-6 md:left-6 z-50 w-14 h-14 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 shadow-lg text-white text-3xl md:w-16 md:h-16"
+      className="fixed left-6 bottom-6 z-50 w-14 h-14 flex items-center justify-center rounded-full bg-green-500 hover:bg-green-600 shadow-lg text-white text-3xl md:w-16 md:h-16"
       aria-label="Contáctanos por WhatsApp"
       style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.15)' }}
     >

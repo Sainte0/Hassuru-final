@@ -1,6 +1,11 @@
 import React from 'react';
+import { useCartStore } from '../store/cartStore';
+import useStore from '../store/store';
 
 export default function CartDrawer({ open, onClose, cart, onProceed }) {
+  const { removeFromCart } = useCartStore();
+  const { dolarBlue } = useStore();
+
   return (
     <div className={`fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
       <div className="flex justify-between items-center p-4 border-b">
@@ -12,13 +17,22 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
           <p>El carrito está vacío.</p>
         ) : (
           cart.map(item => (
-            <div key={item.productoId} className="flex items-center mb-4">
+            <div key={item.productoId + '-' + (item.talle || '')} className="flex items-center mb-4 border-b pb-2">
               <img src={item.imagen} alt={item.nombre} className="w-16 h-16 object-cover rounded mr-2" />
               <div className="flex-1">
                 <div className="font-semibold">{item.nombre}</div>
-                <div>Cantidad: {item.cantidad}</div>
-                <div className="text-sm text-gray-500">${item.precio}</div>
+                {item.talle && <div className="text-sm text-gray-500">Talle: {item.talle}</div>}
+                <div className="text-sm">Cantidad: {item.cantidad}</div>
+                <div className="text-sm text-gray-800 font-bold">${item.precio} USD</div>
+                {dolarBlue && <div className="text-xs text-gray-500">${(item.precio * dolarBlue).toFixed(2)} ARS</div>}
               </div>
+              <button
+                className="ml-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                onClick={() => removeFromCart(item.productoId, item.talle)}
+                title="Eliminar"
+              >
+                &times;
+              </button>
             </div>
           ))
         )}

@@ -2,6 +2,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 
 // API key hardcodeada como respaldo
+const FALLBACK_API_KEY = '7c6b4d2e62f314d959eef4a6384b8da4';
 
 /**
  * Uploads an image to ImgBB and returns the URL

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import SearchBar from "./SearchBar";
 import CartDrawer from './CartDrawer';
 import { useCartStore } from '../store/cartStore';
+import WhatsButton from './Whatsbutton';
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function Navbar() {
   });
   const { cart } = useCartStore();
   const [open, setOpen] = useState(false);
+  const cartCount = cart.reduce((acc, item) => acc + item.cantidad, 0);
+  const [expandedCat, setExpandedCat] = useState(null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 768px)");
@@ -201,115 +204,73 @@ export default function Navbar() {
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white ${isOpen ? 'transform -rotate-45 -translate-y-1.5' : ''}`}></span>
               </button>
-
               <div className="flex items-center space-x-4">
-                <Link 
-                  href="/productos/talla/zapatillas"
-                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
-                >
-                  Zapatillas
-                </Link>
-                <Link 
-                  href="/productos/talla/ropa"
-                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
-                >
-                  Ropa
-                </Link>
-                <Link 
-                  href="/productos/categoria/accesorios"
-                  className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all"
-                >
-                  Tecnología
-                </Link>
+                <Link href="/productos/talla/zapatillas" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Zapatillas</Link>
+                <Link href="/productos/talla/ropa" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Ropa</Link>
+                <Link href="/productos/categoria/accesorios" className="text-base px-3 py-2 rounded-md hover:text-gray-300 active:bg-gray-700 focus:bg-gray-700 transition-all">Tecnología</Link>
               </div>
-
               <div className="w-10">
                 <SearchBar isHamburgerOpen={isOpen} />
               </div>
+              {/* Carrito flotante en mobile */}
+              <button
+                className="fixed bottom-6 right-6 bg-black text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg z-50"
+                onClick={() => setOpen(true)}
+              >
+                🛒
+                {cartCount > 0 && (
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
+                )}
+              </button>
             </div>
-
+            {/* Carrito desktop */}
             {!isMobile && (
               <button
-                className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center"
+                className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center relative"
                 onClick={() => setOpen(true)}
-              >🛒</button>
+              >
+                🛒
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-2 py-0.5">{cartCount}</span>
+                )}
+              </button>
             )}
           </div>
-
-          {/* Mobile menu content */}
+          {/* Mobile menu content con acordeón de categorías/marcas */}
           {isOpen && (
             <div className="md:hidden py-4">
-              <Link 
-                href="/"
-                className="block py-2 px-4 hover:bg-gray-700"
-                onClick={() => setIsOpen(false)}
-              >
-                Inicio
-              </Link>
-
-              {/* Zapatillas Mobile */}
-              <div className="mb-4">
-                <div className="pl-4">
-                  {marcasPorCategoria.zapatillas.map((marca, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleMarcaClick('zapatillas', marca)}
-                      className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
-                    >
-                      {marca}
-                    </button>
-                  ))}
+              <Link href="/" className="block py-2 px-4 hover:bg-gray-700" onClick={() => setIsOpen(false)}>Inicio</Link>
+              {/* Categorías con acordeón */}
+              {['zapatillas', 'ropa', 'accesorios'].map(cat => (
+                <div key={cat} className="mb-2">
+                  <button
+                    className="block w-full py-2 px-4 text-left font-bold hover:bg-gray-700"
+                    onClick={() => setExpandedCat(expandedCat === cat ? null : cat)}
+                  >
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </button>
+                  {expandedCat === cat && (
+                    <div className="pl-4">
+                      {marcasPorCategoria[cat].map((marca, index) => (
+                        <button
+                          key={index}
+                          onClick={() => { handleMarcaClick(cat, marca); setIsOpen(false); }}
+                          className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
+                        >
+                          {marca}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-
-              {/* Ropa Mobile */}
-              <div className="mb-4">
-                <div className="pl-4">
-                  {marcasPorCategoria.ropa.map((marca, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleMarcaClick('ropa', marca)}
-                      className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
-                    >
-                      {marca}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Tecnología Mobile */}
-              <div className="mb-4">
-                <Link 
-                  href="/productos/categoria/accesorios"
-                  className="block py-2 px-4 hover:bg-gray-700"
-                  onClick={() => setIsOpen(false)}
-                >
-                  TECNOLOGÍA
-                </Link>
-                <div className="pl-4">
-                  {marcasPorCategoria.accesorios.map((marca, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleMarcaClick('accesorios', marca)}
-                      className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
-                    >
-                      {marca}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <Link 
-                href="/encargos" 
-                className="block py-2 px-4 hover:bg-gray-700"
-                onClick={() => setIsOpen(false)}
-              >
-                Encargos
-              </Link>
+              ))}
+              <Link href="/encargos" className="block py-2 px-4 hover:bg-gray-700" onClick={() => setIsOpen(false)}>Encargos</Link>
             </div>
           )}
         </div>
       </nav>
+      {/* Botón de WhatsApp flotante a la izquierda (solo mobile) */}
+      {isMobile && <WhatsButton />}
       <CartDrawer open={open} onClose={() => setOpen(false)} cart={cart} onProceed={() => { setOpen(false); window.location.href = '/checkout'; }} />
     </>
   );
