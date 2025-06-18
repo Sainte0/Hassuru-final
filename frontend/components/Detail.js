@@ -228,7 +228,7 @@ export default function Detail({ product }) {
                 onClick={handleCompraClick}
               >
                 {product.tallas && product.tallas.length > 0 ? (
-                  selectedTalla ? "Añadir al carrito" : "Comprar ahora"
+                  selectedTalla ? "Añadir al carrito" : "Seleccionar talla"
                 ) : (
                   customTalla ? "Comprar" : "Encargar ahora"
                 )}
