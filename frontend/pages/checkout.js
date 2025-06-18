@@ -80,7 +80,7 @@ export default function Checkout() {
         email: datos.email,
         telefono: telefonoCompleto
       });
-      const res = await fetch('/api/orders', {
+      const res = await fetch('https://web-production-73e61.up.railway.app/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
