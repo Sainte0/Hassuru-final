@@ -1,10 +1,18 @@
 const { createClient } = require('@supabase/supabase-js');
 const { optimizeImage } = require('./imageOptimizer');
 
-// Configuración de Supabase - Claves hardcodeadas temporalmente
-const SUPABASE_URL = 'https://jicmcavibffwjfgzknpq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppY21jYXZpYmZmd2pmZ3prbnBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTAyNzU0MjYsImV4cCI6MjA2NTg1MTQyNn0.b6FtiWe8wsoZkiFedXLdztBxIJ91E4OCT3c0T1BqWI4';
-const SUPABASE_SERVICE_ROLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImppY21jYXZpYmZmd2pmZ3prbnBxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDI3NTQyNiwiZXhwIjoyMDY1ODUxNDI2fQ.ZAIfYDPcvC9eDOkq1GfQAiYF53_T9JIVIMw5J9eYEP8';
+// Configuración de Supabase desde variables de entorno
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Verificar que las variables de entorno estén configuradas
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.error('❌ Error: Variables de entorno de Supabase no configuradas');
+  console.error('   SUPABASE_URL:', SUPABASE_URL ? '✅ Configurada' : '❌ Faltante');
+  console.error('   SUPABASE_SERVICE_ROLE_KEY:', SUPABASE_SERVICE_ROLE_KEY ? '✅ Configurada' : '❌ Faltante');
+  throw new Error('Configuración de Supabase incompleta. Verifica las variables de entorno.');
+}
 
 // Crear cliente de Supabase con service role key para operaciones de administración
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
@@ -13,6 +21,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
     persistSession: false
   }
 });
+
+console.log('✅ Cliente de Supabase configurado correctamente');
+console.log('   URL:', SUPABASE_URL);
+console.log('   Service Role Key:', SUPABASE_SERVICE_ROLE_KEY ? '✅ Configurada' : '❌ Faltante');
 
 /**
  * Uploads an image to Supabase Storage and returns the URL
@@ -24,10 +36,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
  */
 const uploadToSupabase = async (imageBuffer, fileName, bucketName = 'product-images', optimizationOptions = {}) => {
   try {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase configuration is missing. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
-    }
-
     if (!imageBuffer || imageBuffer.length === 0) {
       throw new Error('No se proporcionó una imagen válida');
     }
@@ -116,10 +124,6 @@ const uploadToSupabase = async (imageBuffer, fileName, bucketName = 'product-ima
  */
 const deleteFromSupabase = async (fileName, bucketName = 'product-images') => {
   try {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase configuration is missing');
-    }
-
     console.log('Eliminando archivo de Supabase Storage:', fileName);
 
     const { error } = await supabase.storage
@@ -146,10 +150,6 @@ const deleteFromSupabase = async (fileName, bucketName = 'product-images') => {
  */
 const listFiles = async (bucketName = 'product-images') => {
   try {
-    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase configuration is missing');
-    }
-
     const { data, error } = await supabase.storage
       .from(bucketName)
       .list();
