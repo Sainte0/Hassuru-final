@@ -200,7 +200,7 @@ export default function Checkout() {
             </div>
             {envio.tipo === 'envio' && (
               <div className="space-y-2">
-                <input className="w-full border p-2" placeholder="Calle test" value={envio.calle} onChange={e => setEnvio({ ...envio, calle: e.target.value })} />
+                <input className="w-full border p-2" placeholder="Calle" value={envio.calle} onChange={e => setEnvio({ ...envio, calle: e.target.value })} />
                 <input className="w-full border p-2" placeholder="Número" value={envio.numero} onChange={e => setEnvio({ ...envio, numero: e.target.value })} />
                 <input className="w-full border p-2" placeholder="Piso/Depto (opcional)" value={envio.piso} onChange={e => setEnvio({ ...envio, piso: e.target.value })} />
                 <input className="w-full border p-2" placeholder="Ciudad" value={envio.ciudad} onChange={e => setEnvio({ ...envio, ciudad: e.target.value })} />
