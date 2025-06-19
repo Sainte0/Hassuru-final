@@ -96,10 +96,14 @@ router.get('/destacados-zapatillas', async (req, res) => {
   }
 });
 
-// Get últimos en ropa (limit 6)
+// Get últimos en ropa (limit 6) - solo entrega inmediata
 router.get('/ultimos/ropa', async (req, res) => {
   try {
-    const productos = await Producto.find({ categoria: 'ropa' })
+    const productos = await Producto.find({ 
+      categoria: 'ropa',
+      encargo: false,
+      tallas: { $exists: true, $ne: [] }
+    })
       .sort({ createdAt: -1 })
       .limit(6);
     res.json(productos);
@@ -109,10 +113,14 @@ router.get('/ultimos/ropa', async (req, res) => {
   }
 });
 
-// Get últimos en zapatillas (limit 6)
+// Get últimos en zapatillas (limit 6) - solo entrega inmediata
 router.get('/ultimos/zapatillas', async (req, res) => {
   try {
-    const productos = await Producto.find({ categoria: 'zapatillas' })
+    const productos = await Producto.find({ 
+      categoria: 'zapatillas',
+      encargo: false,
+      tallas: { $exists: true, $ne: [] }
+    })
       .sort({ createdAt: -1 })
       .limit(6);
     res.json(productos);
