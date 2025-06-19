@@ -14,7 +14,8 @@ const OrderSchema = new mongoose.Schema({
   datosPersonales: {
     nombre: String,
     email: String,
-    telefono: String
+    telefono: String,
+    dni: String
   },
   envio: {
     tipo: { type: String, enum: ['envio', 'retiro'], required: true },
