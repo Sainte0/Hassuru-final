@@ -3,7 +3,7 @@ import { useCartStore } from '../store/cartStore';
 import useStore from '../store/store';
 
 export default function CartDrawer({ open, onClose, cart, onProceed }) {
-  const { removeFromCart, updateQuantity } = useCartStore();
+  const { removeFromCart, addToCart } = useCartStore();
   const { dolarBlue } = useStore();
 
   // Calcular totales
@@ -15,7 +15,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
 
   const handleUpdateQuantity = (itemId, newQuantity) => {
     if (newQuantity > 0) {
-      updateQuantity(itemId, newQuantity);
+      addToCart(itemId, newQuantity);
     } else {
       removeFromCart(itemId);
     }
@@ -58,7 +58,6 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                           <div>
                             <div className="flex justify-between text-base font-medium text-gray-900">
                               <h3>{item.nombre}</h3>
-                              <p className="ml-4">${item.precio} USD</p>
                             </div>
                             <p className="mt-1 text-sm text-gray-500">{item.marca}</p>
                             {item.talle && <p className="mt-1 text-sm text-gray-500">Talle: {item.talle}</p>}
@@ -66,8 +65,13 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                           <div className="flex-1 flex items-end justify-between text-sm">
                             <div className="flex items-center space-x-4">
                               <button
-                                onClick={() => handleUpdateQuantity(item._id, item.cantidad - 1)}
+                                onClick={() => {
+                                  if (item.cantidad > 1) {
+                                    addToCart({ ...item, cantidad: -1 });
+                                  }
+                                }}
                                 className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
+                                disabled={item.cantidad <= 1}
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
@@ -75,7 +79,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                               </button>
                               <span className="text-gray-500">Cantidad: {item.cantidad}</span>
                               <button
-                                onClick={() => handleUpdateQuantity(item._id, item.cantidad + 1)}
+                                onClick={() => addToCart({ ...item, cantidad: 1 })}
                                 className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
                               >
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +87,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => removeFromCart(item._id)}
+                                onClick={() => removeFromCart(item.productoId, item.talle)}
                                 className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
                                 title="Eliminar"
                               >
@@ -92,10 +96,10 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                                 </svg>
                               </button>
                             </div>
-                            <div className="flex flex-col items-end">
-                              <p className="text-gray-500">${(item.precio * item.cantidad).toFixed(2)} USD</p>
+                            <div className="flex flex-col items-end space-y-1">
+                              <p className="text-gray-900 font-medium">${(item.precio * item.cantidad).toFixed(2)} USD</p>
                               {dolarBlue && (
-                                <p className="text-gray-500">${(item.precio * item.cantidad * dolarBlue).toFixed(2)} ARS</p>
+                                <p className="text-gray-500 text-xs">${(item.precio * item.cantidad * dolarBlue).toFixed(2)} ARS</p>
                               )}
                             </div>
                           </div>

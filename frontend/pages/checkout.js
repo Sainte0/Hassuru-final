@@ -177,7 +177,7 @@ export default function Checkout() {
                   <div className="text-right min-w-[70px] sm:min-w-[90px]">
                     <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
                     {dolarBlue && (
-                      <div className="text-[10px] sm:text-xs text-gray-500">
+                      <div className="text-[10px] sm:text-xs text-gray-500 mt-1">
                         ${(item.precio * dolarBlue).toFixed(2)} ARS
                       </div>
                     )}
@@ -187,7 +187,7 @@ export default function Checkout() {
               <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t pt-3 sm:pt-4">
                 <div>Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span></div>
                 {dolarBlue && (
-                  <div className="text-gray-500">${totalARS.toFixed(2)} ARS</div>
+                  <div className="text-gray-500 mt-1">${totalARS.toFixed(2)} ARS</div>
                 )}
               </div>
             </div>
