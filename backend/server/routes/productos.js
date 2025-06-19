@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { generateUniqueSlug } = require('../utils/slugify');
 const { cacheMiddleware } = require('../utils/cache');
-const { uploadToImgBB } = require('../utils/imgbb');
+const { uploadToSupabase } = require('../utils/supabase');
 const router = express.Router();
 
 // Configuración de multer para manejar la carga de archivos
@@ -221,15 +221,32 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         const imageBuffer = fs.readFileSync(req.file.path);
         console.log('Archivo leído correctamente, tamaño:', imageBuffer.length, 'bytes');
         
-        // Subir la imagen a ImgBB
+        // Subir la imagen a Supabase con optimización automática
         try {
-          console.log('Intentando subir imagen a ImgBB...');
-          // No pasamos la API key, usará la hardcodeada como respaldo
-          imageUrl = await uploadToImgBB(imageBuffer);
-          console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
+          console.log('Intentando subir imagen a Supabase...');
+          imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+          console.log('Imagen subida exitosamente a Supabase:', imageUrl);
+          
+          // Obtener metadata de la imagen optimizada
+          const sharp = require('sharp');
+          const optimizedBuffer = await sharp(imageBuffer)
+            .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+            .png({ compressionLevel: 9, quality: 60 })
+            .toBuffer();
+          
+          const imageMetadata = {
+            url: imageUrl,
+            size: optimizedBuffer.length,
+            source: 'optimized',
+            updatedAt: new Date()
+          };
+          
+          // Usar metadata en lugar de solo URL
+          imageUrl = imageMetadata;
+          
         } catch (error) {
-          console.error('Error al subir la imagen a ImgBB:', error);
-          return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+          console.error('Error al subir la imagen a Supabase:', error);
+          return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
         } finally {
           // Eliminar el archivo temporal
           if (req.file && req.file.path) {
@@ -320,16 +337,32 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
     
-    // Subir la imagen a ImgBB
+    // Subir la imagen a Supabase con optimización automática
     let imageUrl = null;
+    let imageMetadata = null;
+    
     try {
-      console.log('Intentando subir imagen a ImgBB...');
-      // No pasamos la API key, usará la hardcodeada como respaldo
-      imageUrl = await uploadToImgBB(imageBuffer);
-      console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
+      console.log('Intentando subir imagen a Supabase...');
+      imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+      console.log('Imagen subida exitosamente a Supabase:', imageUrl);
+      
+      // Obtener metadata de la imagen optimizada
+      const sharp = require('sharp');
+      const optimizedBuffer = await sharp(imageBuffer)
+        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .png({ compressionLevel: 9, quality: 60 })
+        .toBuffer();
+      
+      imageMetadata = {
+        url: imageUrl,
+        size: optimizedBuffer.length,
+        source: 'optimized',
+        updatedAt: new Date()
+      };
+      
     } catch (error) {
-      console.error('Error al subir la imagen a ImgBB:', error);
-      return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+      console.error('Error al subir la imagen a Supabase:', error);
+      return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
     } finally {
       // Eliminar el archivo temporal
       try {
@@ -339,11 +372,11 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
       }
     }
 
-    // Actualizar el producto con la URL de la imagen
+    // Actualizar el producto con la metadata de la imagen
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
       { 
-        image: { url: imageUrl }
+        image: imageMetadata
       },
       { new: true }
     );
@@ -422,16 +455,15 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Leer el archivo como Buffer
     const imageBuffer = fs.readFileSync(req.file.path);
     
-    // Subir la imagen a ImgBB
+    // Subir la imagen a Supabase
     let imageUrl = null;
     try {
-      console.log('Intentando subir imagen a ImgBB...');
-      // No pasamos la API key, usará la hardcodeada como respaldo
-      imageUrl = await uploadToImgBB(imageBuffer);
-      console.log('Imagen subida exitosamente a ImgBB:', imageUrl);
+      console.log('Intentando subir imagen a Supabase...');
+      imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+      console.log('Imagen subida exitosamente a Supabase:', imageUrl);
     } catch (error) {
-      console.error('Error al subir la imagen a ImgBB:', error);
-      return res.status(500).json({ error: 'Error al subir la imagen a ImgBB: ' + error.message });
+      console.error('Error al subir la imagen a Supabase:', error);
+      return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
     } finally {
       // Eliminar el archivo temporal
       try {

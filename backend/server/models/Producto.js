@@ -51,6 +51,19 @@ const ProductoSchema = new mongoose.Schema({
     url: {
       type: String,
       required: false,
+    },
+    size: {
+      type: Number,
+      required: false,
+    },
+    source: {
+      type: String,
+      enum: ['original', 'optimized', 'converted'],
+      required: false,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
     }
   },
   encargo: {

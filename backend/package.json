@@ -5,9 +5,12 @@
   "main": "server/dbconfig.js",
   "scripts": {
     "start": "node server/dbconfig.js",
-    "dev": "nodemon server/dbconfig.js"
+    "dev": "nodemon server/dbconfig.js",
+    "migrate-images": "node scripts/migrate-images.js",
+    "check-images": "node check-images.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.50.0",
     "axios": "^1.8.4",
     "backend": "file:",
     "bcryptjs": "^2.4.3",
@@ -18,7 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.1",
     "multer": "^1.4.5-lts.1",
-    "node-cache": "^5.1.2"
+    "node-cache": "^5.1.2",
+    "sharp": "^0.34.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

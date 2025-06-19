@@ -20,6 +20,8 @@ const HOST = process.env.HOST || '0.0.0.0'; // Use 0.0.0.0 to listen on all netw
 console.log('Verificando variables de entorno...');
 console.log('IMGBB_API_KEY disponible:', !!process.env.FALLBACK_API_KEY);
 console.log('MONGODB_URI disponible:', !!process.env.MONGODB_URI);
+console.log('SUPABASE_URL disponible:', !!process.env.SUPABASE_URL);
+console.log('SUPABASE_SERVICE_ROLE_KEY disponible:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 // No es necesario verificar IMGBB_API_KEY ya que ahora usamos una hardcodeada como respaldo
 
