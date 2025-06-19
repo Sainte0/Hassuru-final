@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCartStore } from '../store/cartStore';
 import { useRouter } from 'next/router';
 import useStore from '../store/store';
@@ -39,7 +39,18 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const router = useRouter();
   const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
-  const { dolarBlue } = useStore();
+  const { dolarBlue, fetchDolarBlue } = useStore();
+
+  useEffect(() => {
+    fetchDolarBlue();
+    
+    // Actualizar el valor cada 5 minutos
+    const interval = setInterval(() => {
+      fetchDolarBlue();
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, [fetchDolarBlue]);
 
   const handleNext = () => setStep(s => s + 1);
   const handleBack = () => setStep(s => s - 1);
@@ -81,7 +92,8 @@ export default function Checkout() {
       console.log('Enviando datosPersonales:', {
         nombre: datos.nombre,
         email: datos.email,
-        telefono: telefonoCompleto
+        telefono: telefonoCompleto,
+        dni: datos.dni
       });
       const res = await fetch('https://web-production-ffe2.up.railway.app/api/orders', {
         method: 'POST',
@@ -91,7 +103,8 @@ export default function Checkout() {
           datosPersonales: {
             nombre: datos.nombre,
             email: datos.email,
-            telefono: telefonoCompleto
+            telefono: telefonoCompleto,
+            dni: datos.dni
           },
           envio: envioData,
           pago
@@ -163,13 +176,19 @@ export default function Checkout() {
                   </div>
                   <div className="text-right min-w-[70px] sm:min-w-[90px]">
                     <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
-                    <div className="text-[10px] sm:text-xs text-gray-500">${(item.precio * dolarBlue).toFixed(2)} ARS</div>
+                    {dolarBlue && (
+                      <div className="text-[10px] sm:text-xs text-gray-500">
+                        ${(item.precio * dolarBlue).toFixed(2)} ARS
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
               <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t pt-3 sm:pt-4">
                 <div>Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span></div>
-                <div className="text-gray-500">${totalARS.toFixed(2)} ARS</div>
+                {dolarBlue && (
+                  <div className="text-gray-500">${totalARS.toFixed(2)} ARS</div>
+                )}
               </div>
             </div>
           )}
