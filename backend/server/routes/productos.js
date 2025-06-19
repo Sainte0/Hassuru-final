@@ -212,7 +212,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
 
     console.log('Marcas procesadas:', marcasArray);
     
-    let imageUrl = null;
+    let imageData = null;
     
     if (req.file) {
       console.log('Archivo recibido:', req.file.originalname, 'Tipo:', req.file.mimetype);
@@ -224,7 +224,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         // Subir la imagen a Supabase con optimización automática
         try {
           console.log('Intentando subir imagen a Supabase...');
-          imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+          const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
           console.log('Imagen subida exitosamente a Supabase:', imageUrl);
           
           // Obtener metadata de la imagen optimizada
@@ -234,15 +234,13 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
             .png({ compressionLevel: 9, quality: 60 })
             .toBuffer();
           
-          const imageMetadata = {
+          // Crear objeto de imagen con metadata
+          imageData = {
             url: imageUrl,
             size: optimizedBuffer.length,
             source: 'optimized',
             updatedAt: new Date()
           };
-          
-          // Usar metadata en lugar de solo URL
-          imageUrl = imageMetadata;
           
         } catch (error) {
           console.error('Error al subir la imagen a Supabase:', error);
@@ -302,7 +300,7 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       encargo: encargo === 'true',
       destacado: destacado === 'true',
       destacado_zapatillas: destacado_zapatillas === 'true',
-      image: imageUrl ? { url: imageUrl } : null
+      image: imageData
     });
 
     console.log('Guardando producto en la base de datos...');
@@ -338,12 +336,11 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     const imageBuffer = fs.readFileSync(req.file.path);
     
     // Subir la imagen a Supabase con optimización automática
-    let imageUrl = null;
-    let imageMetadata = null;
+    let imageData = null;
     
     try {
       console.log('Intentando subir imagen a Supabase...');
-      imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+      const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
       console.log('Imagen subida exitosamente a Supabase:', imageUrl);
       
       // Obtener metadata de la imagen optimizada
@@ -353,7 +350,7 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
         .png({ compressionLevel: 9, quality: 60 })
         .toBuffer();
       
-      imageMetadata = {
+      imageData = {
         url: imageUrl,
         size: optimizedBuffer.length,
         source: 'optimized',
@@ -376,7 +373,7 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
       { 
-        image: imageMetadata
+        image: imageData
       },
       { new: true }
     );
@@ -456,11 +453,26 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     const imageBuffer = fs.readFileSync(req.file.path);
     
     // Subir la imagen a Supabase
-    let imageUrl = null;
+    let imageData = null;
     try {
       console.log('Intentando subir imagen a Supabase...');
-      imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
+      const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
       console.log('Imagen subida exitosamente a Supabase:', imageUrl);
+      
+      // Obtener metadata de la imagen optimizada
+      const sharp = require('sharp');
+      const optimizedBuffer = await sharp(imageBuffer)
+        .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+        .png({ compressionLevel: 9, quality: 60 })
+        .toBuffer();
+      
+      imageData = {
+        url: imageUrl,
+        size: optimizedBuffer.length,
+        source: 'optimized',
+        updatedAt: new Date()
+      };
+      
     } catch (error) {
       console.error('Error al subir la imagen a Supabase:', error);
       return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
@@ -477,7 +489,7 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     const productoActualizado = await Producto.findByIdAndUpdate(
       id,
       { 
-        image: { url: imageUrl }
+        image: imageData
       },
       { new: true }
     );
