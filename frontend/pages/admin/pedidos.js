@@ -32,7 +32,7 @@ export default function PedidosAdmin() {
   const cambiarEstado = async (id, estado) => {
     setChanging(id);
     try {
-      await fetch(`https://web-production-73e61.up.railway.app/api/orders/${id}/estado`, {
+      await fetch(`https://web-production-ffe2.up.railway.app/api/orders/${id}/estado`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -74,6 +74,7 @@ export default function PedidosAdmin() {
                     <div className="font-semibold">{order.datosPersonales?.nombre}</div>
                     <div className="text-xs text-gray-500">{order.datosPersonales?.email}</div>
                     <div className="text-xs text-gray-500">{order.datosPersonales?.telefono}</div>
+                    <div className="text-xs text-gray-500">DNI: {order.datosPersonales?.dni}</div>
                   </td>
                   <td className="p-2 align-top min-w-[220px]">
                     {order.productos.map(p => (
