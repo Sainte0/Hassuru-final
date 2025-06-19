@@ -2,6 +2,9 @@ import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
 
 const URL = process.env.NEXT_PUBLIC_URL;
+console.log('NEXT_PUBLIC_URL:', process.env.NEXT_PUBLIC_URL);
+console.log('URL variable:', URL);
+
 const getToken = () => `Bearer ${localStorage.getItem('token')}`;
 
 const useStore = create((set) => ({
