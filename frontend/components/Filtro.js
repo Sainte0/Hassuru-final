@@ -235,7 +235,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       query: {},
     });
     // Resetear los productos filtrados - ahora manejado por el servidor
-    // setFilteredProducts(products);
+    if (onFiltersChange) {
+      onFiltersChange({});
+    }
   };
 
   // Prevenir el comportamiento por defecto del formulario

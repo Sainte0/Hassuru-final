@@ -142,11 +142,11 @@ export default function Categoria() {
         limit: productsPerPage.toString()
       });
 
-      // Agregar filtros si existen
+      // Agregar todos los filtros al servidor
       if (filters.marca) queryParams.append('marca', filters.marca);
-      if (filters.tallaRopa) queryParams.append('talla', filters.tallaRopa);
-      if (filters.tallaZapatilla) queryParams.append('talla', filters.tallaZapatilla);
-      if (filters.accesorio) queryParams.append('talla', filters.accesorio);
+      if (filters.tallaRopa) queryParams.append('tallaRopa', filters.tallaRopa);
+      if (filters.tallaZapatilla) queryParams.append('tallaZapatilla', filters.tallaZapatilla);
+      if (filters.accesorio) queryParams.append('accesorio', filters.accesorio);
       if (filters.disponibilidad) queryParams.append('disponibilidad', filters.disponibilidad);
       if (filters.precioMin) queryParams.append('precioMin', filters.precioMin);
       if (filters.precioMax) queryParams.append('precioMax', filters.precioMax);
@@ -175,14 +175,14 @@ export default function Categoria() {
         totalPaginas: data.pagination?.totalPages || 0
       });
       
-      const sortedData = sortProductsByAvailability(data.productos);
-      console.log('Productos ordenados:', {
-        total: sortedData.length,
-        orden: sortedData.map(p => p.nombre)
+      // Los productos ya vienen ordenados del servidor, no necesitamos ordenarlos aquí
+      console.log('Productos recibidos del servidor (ya ordenados):', {
+        total: data.productos.length,
+        orden: data.productos.map(p => p.nombre)
       });
       
-      setProducts(sortedData);
-      setFilteredProducts(sortedData);
+      setProducts(data.productos);
+      setFilteredProducts(data.productos);
       
       // Actualizar paginación
       if (data.pagination) {
@@ -203,114 +203,9 @@ export default function Categoria() {
     }
   }, [categoria, productsPerPage]);
 
-  // Función para aplicar los filtros
-  const applyFilters = useCallback((productsToFilter, filters) => {
-    if (!productsToFilter || !Array.isArray(productsToFilter)) {
-      console.log('No hay productos para filtrar o no es un array');
-      return [];
-    }
-
-    console.log('Aplicando filtros:', {
-      filtros: filters,
-      totalProductos: productsToFilter.length
-    });
-
-    let filtered = [...productsToFilter];
-
-    // Filtro de marca
-    if (filters.marca) {
-      filtered = filtered.filter(product => {
-        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
-        return marcas.includes(filters.marca);
-      });
-      console.log('Después de filtrar por marca:', {
-        marca: filters.marca,
-        productosRestantes: filtered.length,
-        productos: filtered.map(p => p.nombre)
-      });
-    }
-
-    // Filtro de talla de ropa
-    if (filters.tallaRopa) {
-      filtered = filtered.filter(product => 
-        product.categoria === "ropa" && 
-        product.tallas.some(talla => talla.talla === filters.tallaRopa)
-      );
-      console.log('Después de filtrar por talla ropa:', filtered);
-    }
-
-    // Filtro de talla de zapatilla
-    if (filters.tallaZapatilla) {
-      filtered = filtered.filter(product => 
-        product.categoria === "zapatillas" && 
-        product.tallas.some(talla => talla.talla === filters.tallaZapatilla)
-      );
-      console.log('Después de filtrar por talla zapatilla:', filtered);
-    }
-
-    // Filtro de accesorio
-    if (filters.accesorio) {
-      filtered = filtered.filter(product => 
-        product.categoria === "accesorios" && 
-        product.tallas.some(talla => talla.talla === filters.accesorio)
-      );
-      console.log('Después de filtrar por accesorio:', filtered);
-    }
-
-    // Filtro de precio
-    if (filters.precioMin || filters.precioMax) {
-      filtered = filtered.filter(product => {
-        const precio = parseFloat(product.precio);
-        const min = filters.precioMin ? parseFloat(filters.precioMin) : -Infinity;
-        const max = filters.precioMax ? parseFloat(filters.precioMax) : Infinity;
-        return precio >= min && precio <= max;
-      });
-      console.log('Después de filtrar por precio:', filtered);
-    }
-
-    // Filtro de stock
-    if (filters.stock) {
-      filtered = filtered.filter(product => 
-        product.tallas.some(talla => talla.stock > 0)
-      );
-      console.log('Después de filtrar por stock:', filtered);
-    }
-
-    // Filtro de disponibilidad
-    if (filters.disponibilidad) {
-      filtered = filtered.filter(product => {
-        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        const hasStock = product.tallas.some(talla => talla.stock > 0);
-        
-        switch (filters.disponibilidad) {
-          case "Entrega inmediata":
-            return hasTallas && !product.encargo;
-          case "Disponible en 3 días":
-            return hasTallas && product.encargo;
-          case "Disponible en 20 días":
-            return !hasTallas;
-          default:
-            return true;
-        }
-      });
-      console.log('Después de filtrar por disponibilidad:', filtered);
-    }
-
-    const sortedResults = sortProductsByAvailability(filtered);
-    console.log('Resultados finales:', {
-      totalFiltrado: sortedResults.length,
-      productos: sortedResults.map(p => ({
-        id: p._id,
-        nombre: p.nombre,
-        marca: p.marca,
-        precio: p.precio
-      }))
-    });
-    return sortedResults;
-  }, []);
-
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
+    console.log('🔄 Cambiando filtros:', filters);
     setCurrentFilters(filters);
     setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
     // Llamar fetchProductsByCategory directamente para evitar dependencias circulares

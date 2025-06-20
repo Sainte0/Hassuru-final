@@ -29,7 +29,19 @@ router.get('/categoria/:categoria', async (req, res) => {
     console.log('🔍 Query:', req.query);
     
     const { categoria } = req.params;
-    const { page = 1, limit = 20, marca, talla, disponibilidad, precioMin, precioMax, q } = req.query;
+    const { 
+      page = 1, 
+      limit = 20, 
+      marca, 
+      talla, 
+      disponibilidad, 
+      precioMin, 
+      precioMax, 
+      q,
+      tallaRopa,
+      tallaZapatilla,
+      accesorio
+    } = req.query;
     
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
     const categoriaLower = categoria ? categoria.toLowerCase() : null;
@@ -43,30 +55,31 @@ router.get('/categoria/:categoria', async (req, res) => {
         categoria: { $regex: new RegExp(categoria, 'i') }
       };
 
-      console.log('🔍 Query de filtro:', JSON.stringify(filterQuery, null, 2));
+      console.log('🔍 Query de filtro inicial:', JSON.stringify(filterQuery, null, 2));
 
       // Filtro por marca
       if (marca) {
         filterQuery.marca = { $in: [marca] };
       }
 
-      // Filtro por talla
-      if (talla) {
-        filterQuery['tallas.talla'] = talla;
+      // Filtro por talla (compatibilidad con diferentes tipos)
+      if (talla || tallaRopa || tallaZapatilla || accesorio) {
+        const tallaToUse = talla || tallaRopa || tallaZapatilla || accesorio;
+        filterQuery['tallas.talla'] = tallaToUse;
       }
 
       // Filtro por disponibilidad
       if (disponibilidad) {
         switch (disponibilidad) {
-          case 'inmediata':
+          case 'Entrega inmediata':
             filterQuery.encargo = false;
             filterQuery.tallas = { $exists: true, $ne: [] };
             break;
-          case '3dias':
+          case 'Disponible en 3 días':
             filterQuery.encargo = true;
             filterQuery.tallas = { $exists: true, $ne: [] };
             break;
-          case '20dias':
+          case 'Disponible en 20 días':
             filterQuery.tallas = { $exists: false };
             break;
         }
@@ -87,6 +100,8 @@ router.get('/categoria/:categoria', async (req, res) => {
         ];
       }
 
+      console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
+
       // Calcular skip para paginación
       const skip = (parseInt(page) - 1) * parseInt(limit);
 
@@ -96,7 +111,6 @@ router.get('/categoria/:categoria', async (req, res) => {
       const [productos, total] = await Promise.all([
         Producto.find(filterQuery)
           .select('-image.data')
-          .sort({ createdAt: -1 })
           .skip(skip)
           .limit(parseInt(limit))
           .lean(),
@@ -106,10 +120,38 @@ router.get('/categoria/:categoria', async (req, res) => {
       console.log('📦 Productos encontrados:', productos.length);
       console.log('📊 Total de productos:', total);
 
+      // Ordenar productos por disponibilidad y precio
+      const productosOrdenados = productos.sort((a, b) => {
+        // Función para determinar el grupo de disponibilidad
+        const getAvailabilityGroup = (product) => {
+          const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+          const hasStock = product.tallas.some(talla => talla.stock > 0);
+          
+          if (hasTallas && !product.encargo) return 1; // Entrega inmediata
+          if (hasTallas && product.encargo) return 2; // Disponible en 3 días
+          if (!hasTallas) return 3; // Disponible en 20 días
+          return 4; // Otros casos
+        };
+
+        // Primero ordenar por grupo de disponibilidad
+        const aGroup = getAvailabilityGroup(a);
+        const bGroup = getAvailabilityGroup(b);
+        
+        if (aGroup !== bGroup) {
+          return aGroup - bGroup;
+        }
+        
+        // Si están en el mismo grupo, ordenar por precio
+        const aPrice = parseFloat(a.precio);
+        const bPrice = parseFloat(b.precio);
+        
+        return aPrice - bPrice; // Ordenar de menor a mayor precio
+      });
+
       const totalPages = Math.ceil(total / parseInt(limit));
       
       const response = {
-        productos,
+        productos: productosOrdenados,
         pagination: {
           currentPage: parseInt(page),
           totalPages,
