@@ -1,8 +1,19 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Solo inicializar Resend si existe la API key
+let resend = null;
+if (process.env.RESEND_API_KEY) {
+  resend = new Resend(process.env.RESEND_API_KEY);
+} else {
+  console.log('RESEND_API_KEY no configurada, emails deshabilitados');
+}
 
 async function sendOrderReceiptEmail({ to, order }) {
+  if (!resend) {
+    console.log('Resend no configurado, saltando envío de email al cliente');
+    return;
+  }
+
   // Construir el HTML del comprobante
   const productosHtml = order.productos.map(p => `
     <tr>
@@ -45,6 +56,11 @@ async function sendOrderReceiptEmail({ to, order }) {
 }
 
 async function sendNewOrderNotification({ order }) {
+  if (!resend) {
+    console.log('Resend no configurado, saltando envío de notificación a Hassuru');
+    return;
+  }
+
   const hassuruEmail = process.env.HASSURU_EMAIL || 'hassuru.ar@gmail.com';
   
   // Construir el HTML de la notificación
