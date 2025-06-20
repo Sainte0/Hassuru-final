@@ -34,83 +34,23 @@ export default function TallaSelector() {
       console.log('Iniciando carga de productos para tallas:', categoria);
       setLoading(true);
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
-        if (!response.ok) throw new Error("Error al cargar los productos");
+        // Usar la nueva ruta específica para tallas
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}/tallas`);
+        if (!response.ok) throw new Error("Error al cargar las tallas");
         
-        const data = await response.json();
+        const tallasArray = await response.json();
         
-        // Verificar la estructura de la respuesta
-        let products;
-        if (data.productos && Array.isArray(data.productos)) {
-          // Nueva estructura: { productos: [...], pagination: {...} }
-          products = data.productos;
-        } else if (Array.isArray(data)) {
-          // Estructura antigua: array directo
-          products = data;
-        } else {
-          throw new Error("Formato de respuesta inesperado del servidor");
+        // Verificar que la respuesta sea un array
+        if (!Array.isArray(tallasArray)) {
+          console.error('La respuesta no es un array:', tallasArray);
+          throw new Error("Formato de tallas inválido");
         }
         
-        console.log('Productos cargados para tallas:', {
+        console.log('Tallas cargadas:', {
           categoria,
-          totalProductos: products.length,
-          productos: products.map(p => ({
-            id: p._id,
-            nombre: p.nombre,
-            tallas: p.tallas
-          }))
+          totalTallas: tallasArray.length,
+          tallas: tallasArray
         });
-        
-        // Extract available sizes based on category
-        const tallasSet = new Set();
-        
-        // Asegurar que products sea un array antes de usar forEach
-        if (!Array.isArray(products)) {
-          console.error('Products no es un array:', products);
-          throw new Error("Formato de productos inválido");
-        }
-        
-        products.forEach(product => {
-          if (product.tallas && Array.isArray(product.tallas)) {
-            product.tallas.forEach(tallaObj => {
-              if (tallaObj.talla) {
-                tallasSet.add(tallaObj.talla);
-              }
-            });
-          }
-        });
-        
-        console.log('Tallas únicas encontradas:', {
-          categoria,
-          totalTallas: tallasSet.size,
-          tallas: Array.from(tallasSet)
-        });
-        
-        // Convert Set to Array and sort
-        const tallasArray = Array.from(tallasSet);
-        
-        // Sort sizes based on category
-        if (categoria === "ropa") {
-          // Sort clothing sizes: XS, S, M, L, XL, XXL, OS
-          const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
-          tallasArray.sort((a, b) => tallaOrder.indexOf(a) - tallaOrder.indexOf(b));
-          console.log('Tallas de ropa ordenadas:', {
-            categoria,
-            orden: tallasArray
-          });
-        } else if (categoria === "zapatillas") {
-          // Sort shoe sizes numerically
-          tallasArray.sort((a, b) => {
-            const parseTalla = (talla) => {
-              return parseFloat(talla.replace(",", "."));
-            };
-            return parseTalla(a) - parseTalla(b);
-          });
-          console.log('Tallas de zapatillas ordenadas:', {
-            categoria,
-            orden: tallasArray
-          });
-        }
         
         setAvailableTallas(tallasArray);
       } catch (error) {

@@ -190,6 +190,74 @@ router.get('/categoria/:categoria', async (req, res) => {
   }
 });
 
+// Ruta para obtener todas las tallas de una categoría (sin paginación)
+router.get('/categoria/:categoria/tallas', async (req, res) => {
+  try {
+    console.log('🔍 Ruta /categoria/:categoria/tallas llamada');
+    console.log('📋 Parámetros:', req.params);
+    
+    const { categoria } = req.params;
+    
+    const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
+    const categoriaLower = categoria ? categoria.toLowerCase() : null;
+    
+    if (!categoriaLower || !categoriasValidas.includes(categoriaLower)) {
+      return res.status(400).json({ error: 'Categoría no válida' });
+    }
+
+    // Obtener TODOS los productos de la categoría sin paginación
+    const productos = await Producto.find({
+      categoria: { $regex: new RegExp(categoria, 'i') }
+    }).select('tallas').lean();
+
+    console.log('📦 Productos encontrados para tallas:', productos.length);
+
+    // Extraer todas las tallas únicas
+    const tallasSet = new Set();
+    
+    productos.forEach(producto => {
+      if (producto.tallas && Array.isArray(producto.tallas)) {
+        producto.tallas.forEach(talla => {
+          if (talla.talla) {
+            tallasSet.add(talla.talla);
+          }
+        });
+      }
+    });
+
+    const tallasArray = Array.from(tallasSet);
+    
+    // Ordenar tallas según la categoría
+    if (categoria === "ropa") {
+      // Ordenar tallas de ropa: XS, S, M, L, XL, XXL, OS
+      const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
+      tallasArray.sort((a, b) => tallaOrder.indexOf(a) - tallaOrder.indexOf(b));
+    } else if (categoria === "zapatillas") {
+      // Ordenar tallas de zapatillas numéricamente
+      tallasArray.sort((a, b) => {
+        const parseTalla = (talla) => {
+          return parseFloat(talla.replace(",", "."));
+        };
+        return parseTalla(a) - parseTalla(b);
+      });
+    } else {
+      // Para accesorios, ordenar alfabéticamente
+      tallasArray.sort();
+    }
+
+    console.log('📤 Enviando tallas:', {
+      categoria,
+      totalTallas: tallasArray.length,
+      tallas: tallasArray
+    });
+
+    res.status(200).json(tallasArray);
+  } catch (error) {
+    console.error('💥 Error en la ruta /categoria/:categoria/tallas:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Ruta para obtener opciones de filtro de una categoría
 router.get('/categoria/:categoria/filtros', async (req, res) => {
   try {
