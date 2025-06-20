@@ -7,6 +7,9 @@ export default function Card({ currentProducts }) {
   const [loadedImages, setLoadedImages] = useState({});
   const [visibleProducts, setVisibleProducts] = useState([]);
 
+  // Asegurar que currentProducts sea siempre un array
+  const safeCurrentProducts = Array.isArray(currentProducts) ? currentProducts : [];
+
   useEffect(() => {
     fetchDolarBlue();
     
@@ -47,7 +50,7 @@ export default function Card({ currentProducts }) {
     return () => {
       productContainers.forEach(container => observer.unobserve(container));
     };
-  }, [currentProducts]);
+  }, [safeCurrentProducts]);
 
   const getDisponibilidad = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
@@ -88,7 +91,7 @@ export default function Card({ currentProducts }) {
   return (
     <div className="p-4">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {currentProducts.map((product) => {
+        {safeCurrentProducts.map((product) => {
           const disponibilidad = getDisponibilidad(product);
           const isVisible = visibleProducts.includes(product._id);
           

@@ -72,12 +72,12 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   // Efecto para aplicar filtros cuando cambian los valores
-  useEffect(() => {
-    if (products.length > 0) {
-      const filteredProducts = applyFilters(products);
-      setFilteredProducts(filteredProducts);
-    }
-  }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, products]);
+  // useEffect(() => {
+  //   if (products.length > 0) {
+  //     const filteredProducts = applyFilters(products);
+  //     setFilteredProducts(filteredProducts);
+  //   }
+  // }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, products]);
 
   // Update URL and apply filters when any filter changes
   useEffect(() => {
@@ -108,17 +108,19 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         { shallow: true }
       );
 
-      // Pass filters to parent component
-      setFilteredProducts({
-        tallaRopa: selectedTallaRopa,
-        tallaZapatilla: selectedTallaZapatilla,
-        accesorio: selectedAccesorio,
-        precioMin,
-        precioMax,
-        disponibilidad: selectedDisponibilidad,
-        marca: selectedMarca,
-        q: query
-      });
+      // Pass filters to parent component via onFiltersChange
+      if (onFiltersChange) {
+        onFiltersChange({
+          tallaRopa: selectedTallaRopa,
+          tallaZapatilla: selectedTallaZapatilla,
+          accesorio: selectedAccesorio,
+          precioMin,
+          precioMax,
+          disponibilidad: selectedDisponibilidad,
+          marca: selectedMarca,
+          q: query
+        });
+      }
     }
   }, [
     selectedTallaRopa,
@@ -130,7 +132,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     selectedMarca,
     query,
     router.isReady,
-    products
+    onFiltersChange
   ]);
 
   // Extract available sizes from products
@@ -232,9 +234,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSearch = () => {
-    // Aplicar los filtros actuales
-    const filteredProducts = applyFilters(products);
-    setFilteredProducts(filteredProducts);
+    // Aplicar los filtros actuales - ahora manejado por el servidor
+    // const filteredProducts = applyFilters(products);
+    // setFilteredProducts(filteredProducts);
   };
 
   const resetFilters = () => {
@@ -250,8 +252,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       pathname: router.pathname,
       query: {},
     });
-    // Resetear los productos filtrados
-    setFilteredProducts(products);
+    // Resetear los productos filtrados - ahora manejado por el servidor
+    // setFilteredProducts(products);
   };
 
   // Prevenir el comportamiento por defecto del formulario

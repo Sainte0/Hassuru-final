@@ -121,11 +121,14 @@ export default function Categoria() {
       { shallow: true }
     );
 
+    // Cargar productos para la nueva página
+    fetchProductsByCategory(currentFilters);
+
     // Scroll al inicio de la página
     window.scrollTo(0, 0);
   };
 
-  const fetchProductsByCategory = async (filters = {}) => {
+  const fetchProductsByCategory = useCallback(async (filters = {}) => {
     if (!categoria) {
       console.log('No hay categoría para cargar productos');
       return;
@@ -200,7 +203,7 @@ export default function Categoria() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [categoria, currentPage, productsPerPage]);
 
   // Función para aplicar los filtros
   const applyFilters = useCallback((productsToFilter, filters) => {
@@ -313,7 +316,7 @@ export default function Categoria() {
     setCurrentFilters(filters);
     setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
     fetchProductsByCategory(filters);
-  }, [categoria, currentPage, productsPerPage]);
+  }, [categoria, fetchProductsByCategory]);
 
   // Cargar productos cuando cambia la categoría
   useEffect(() => {
@@ -341,19 +344,15 @@ export default function Categoria() {
     setFilteredProducts(filteredResults);
   }, [router.query, products, router.isReady]);
 
-  // Calcular productos para la página actual
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  // Asegurar que filteredProducts sea siempre un array
+  const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
 
   console.log('Estado de paginación:', {
     paginaActual: currentPage,
-    totalPaginas: totalPages,
+    totalPaginas: pagination?.totalPages || 0,
     productosPorPagina: productsPerPage,
-    productosEnPaginaActual: currentProducts.length,
-    rango: `${indexOfFirstProduct + 1}-${indexOfLastProduct}`,
-    totalProductos: filteredProducts.length
+    productosEnPaginaActual: safeFilteredProducts.length,
+    totalProductos: pagination?.totalProducts || 0
   });
 
   if (!router.isReady) {
@@ -377,17 +376,14 @@ export default function Categoria() {
           </div>
         ) : error ? (
           <p className="text-red-500">Error: {error}</p>
-        ) : filteredProducts.length === 0 ? (
+        ) : safeFilteredProducts.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
           <>
-            <Card currentProducts={filteredProducts} />
+            <Card currentProducts={safeFilteredProducts} />
             <Pagination
               pagination={pagination}
-              onPageChange={(page) => {
-                setCurrentPage(page);
-                fetchProductsByCategory(currentFilters);
-              }}
+              onPageChange={handlePageChange}
             />
           </>
         )}
