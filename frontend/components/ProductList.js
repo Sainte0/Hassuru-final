@@ -121,6 +121,16 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio - a.precio);
   }
 
+  // Ordenar duplicados juntos cuando el filtro está activo
+  if (duplicateFilter === 'nombre') {
+    filteredProducts = [...filteredProducts].sort((a, b) => {
+      if (a.nombre === b.nombre) {
+        return 0; // Mantener orden original si son iguales
+      }
+      return a.nombre.localeCompare(b.nombre);
+    });
+  }
+
   // Pagination calculations
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
