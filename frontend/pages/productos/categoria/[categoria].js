@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import Card from "../../../components/Card";
 import Filter from "../../../components/Filtro";
@@ -28,6 +28,13 @@ export default function Categoria() {
   const [currentFilters, setCurrentFilters] = useState({});
   const [pagination, setPagination] = useState(null);
   const { categoria } = router.query;
+  
+  // Usar ref para evitar dependencias circulares
+  const currentPageRef = useRef(currentPage);
+  currentPageRef.current = currentPage;
+  
+  // Flag para evitar múltiples llamadas simultáneas
+  const isLoadingRef = useRef(false);
 
   // Efecto para manejar la navegación inicial
   useEffect(() => {
@@ -72,25 +79,6 @@ export default function Categoria() {
     setCurrentPage(urlPage > 1 ? urlPage : (savedPage ? parseInt(savedPage) : 1));
   }, [router.isReady, categoria, router.query.page]);
 
-  // Efecto para sincronizar la página con la URL y guardar en sessionStorage
-  useEffect(() => {
-    if (router.isReady && currentPage > 1) {
-      sessionStorage.setItem(`lastPage_${categoria}`, currentPage.toString());
-      
-      // Asegurar que la página esté en la URL
-      if (!router.query.page || parseInt(router.query.page) !== currentPage) {
-        router.push(
-          {
-            pathname: router.pathname,
-            query: { ...router.query, page: currentPage.toString() },
-          },
-          undefined,
-          { shallow: true }
-        );
-      }
-    }
-  }, [currentPage, router.isReady, categoria, router.query.page]);
-
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
     // Actualizar el estado local primero
@@ -122,7 +110,9 @@ export default function Categoria() {
     );
 
     // Cargar productos para la nueva página
-    fetchProductsByCategory(currentFilters);
+    setTimeout(() => {
+      fetchProductsByCategory(currentFilters);
+    }, 0);
 
     // Scroll al inicio de la página
     window.scrollTo(0, 0);
@@ -134,14 +124,21 @@ export default function Categoria() {
       return;
     }
     
+    // Evitar múltiples llamadas simultáneas
+    if (isLoadingRef.current) {
+      console.log('Ya hay una carga en progreso, saltando...');
+      return;
+    }
+    
     console.log('Iniciando carga de productos para categoría:', categoria, 'con filtros:', filters);
+    isLoadingRef.current = true;
     setLoading(true);
     setError(null);
     
     try {
       // Construir query parameters
       const queryParams = new URLSearchParams({
-        page: currentPage.toString(),
+        page: currentPageRef.current.toString(),
         limit: productsPerPage.toString()
       });
 
@@ -202,8 +199,9 @@ export default function Categoria() {
       setError(error.message);
     } finally {
       setLoading(false);
+      isLoadingRef.current = false;
     }
-  }, [categoria, currentPage, productsPerPage]);
+  }, [categoria, productsPerPage]);
 
   // Función para aplicar los filtros
   const applyFilters = useCallback((productsToFilter, filters) => {
@@ -315,34 +313,21 @@ export default function Categoria() {
   const handleFiltersChange = useCallback((filters) => {
     setCurrentFilters(filters);
     setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
-    fetchProductsByCategory(filters);
-  }, [categoria, fetchProductsByCategory]);
+    // Llamar fetchProductsByCategory directamente para evitar dependencias circulares
+    setTimeout(() => {
+      fetchProductsByCategory(filters);
+    }, 0);
+  }, [categoria]);
 
   // Cargar productos cuando cambia la categoría
   useEffect(() => {
     if (router.isReady) {
-      fetchProductsByCategory();
+      // Llamar fetchProductsByCategory directamente para evitar dependencias circulares
+      setTimeout(() => {
+        fetchProductsByCategory();
+      }, 0);
     }
   }, [categoria, router.isReady]);
-
-  // Efecto para manejar los filtros de URL
-  useEffect(() => {
-    if (!products.length || !router.isReady) return;
-
-    const filters = {
-      marca: router.query.marca,
-      disponibilidad: router.query.disponibilidad,
-      tallaRopa: router.query.tallaRopa,
-      tallaZapatilla: router.query.tallaZapatilla,
-      accesorio: router.query.accesorio,
-      precioMin: router.query.precioMin,
-      precioMax: router.query.precioMax,
-      stock: router.query.stock === 'true'
-    };
-
-    const filteredResults = applyFilters(products, filters);
-    setFilteredProducts(filteredResults);
-  }, [router.query, products, router.isReady]);
 
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];

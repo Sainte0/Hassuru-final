@@ -39,23 +39,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     }
   }, [router.isReady, router.query]);
 
-  // Efecto para notificar cambios de filtros al componente padre
-  useEffect(() => {
-    if (onFiltersChange) {
-      const filters = {
-        marca: selectedMarca,
-        tallaRopa: selectedTallaRopa,
-        tallaZapatilla: selectedTallaZapatilla,
-        accesorio: selectedAccesorio,
-        disponibilidad: selectedDisponibilidad,
-        q: query,
-        precioMin,
-        precioMax
-      };
-      onFiltersChange(filters);
-    }
-  }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, onFiltersChange]);
-
   // Función para aplicar todos los filtros
   const applyFilters = (products) => {
     return products.filter((product) => {
@@ -131,8 +114,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     selectedDisponibilidad,
     selectedMarca,
     query,
-    router.isReady,
-    onFiltersChange
+    router.isReady
   ]);
 
   // Extract available sizes from products
