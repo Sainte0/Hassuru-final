@@ -21,45 +21,29 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Rutas específicas primero
-router.get('/buscar/:termino', async (req, res) => {
-  try {
-    const { termino } = req.params;
-    
-    if (!termino || termino.trim() === '') {
-      return res.status(400).json({ error: 'Debes proporcionar un término para buscar.' });
-    }
-
-    const searchRegex = new RegExp(termino, 'i');
-    const productosFiltrados = await Producto.find({
-      $or: [
-        { nombre: { $regex: searchRegex } },
-        { descripcion: { $regex: searchRegex } }
-      ]
-    })
-    .select('-image.data')
-    .lean();
-      
-    res.status(200).json(productosFiltrados);
-  } catch (error) {
-    console.error('Error al filtrar productos:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
+// Ruta de categoría PRIMERO (antes de buscar)
 router.get('/categoria/:categoria', async (req, res) => {
   try {
+    console.log('🔍 Ruta /categoria/:categoria llamada');
+    console.log('📋 Parámetros:', req.params);
+    console.log('🔍 Query:', req.query);
+    
     const { categoria } = req.params;
     const { page = 1, limit = 20, marca, talla, disponibilidad, precioMin, precioMax, q } = req.query;
     
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
     const categoriaLower = categoria ? categoria.toLowerCase() : null;
     
+    console.log('🏷️ Categoría recibida:', categoria);
+    console.log('✅ Categoría válida:', categoriasValidas.includes(categoriaLower));
+    
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       // Construir filtros
       let filterQuery = {
         categoria: { $regex: new RegExp(categoria, 'i') }
       };
+
+      console.log('🔍 Query de filtro:', JSON.stringify(filterQuery, null, 2));
 
       // Filtro por marca
       if (marca) {
@@ -106,6 +90,8 @@ router.get('/categoria/:categoria', async (req, res) => {
       // Calcular skip para paginación
       const skip = (parseInt(page) - 1) * parseInt(limit);
 
+      console.log('📊 Paginación - Skip:', skip, 'Limit:', limit);
+
       // Ejecutar consulta con paginación
       const [productos, total] = await Promise.all([
         Producto.find(filterQuery)
@@ -117,9 +103,12 @@ router.get('/categoria/:categoria', async (req, res) => {
         Producto.countDocuments(filterQuery)
       ]);
 
+      console.log('📦 Productos encontrados:', productos.length);
+      console.log('📊 Total de productos:', total);
+
       const totalPages = Math.ceil(total / parseInt(limit));
       
-      res.status(200).json({
+      const response = {
         productos,
         pagination: {
           currentPage: parseInt(page),
@@ -129,12 +118,46 @@ router.get('/categoria/:categoria', async (req, res) => {
           hasNextPage: parseInt(page) < totalPages,
           hasPrevPage: parseInt(page) > 1
         }
+      };
+
+      console.log('📤 Enviando respuesta:', {
+        productosCount: response.productos.length,
+        pagination: response.pagination
       });
+      
+      res.status(200).json(response);
     } else {
+      console.log('❌ Categoría no válida:', categoria);
       return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
   } catch (error) {
-    console.error('Error en la ruta /categoria:', error);
+    console.error('💥 Error en la ruta /categoria:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Rutas específicas después
+router.get('/buscar/:termino', async (req, res) => {
+  try {
+    const { termino } = req.params;
+    
+    if (!termino || termino.trim() === '') {
+      return res.status(400).json({ error: 'Debes proporcionar un término para buscar.' });
+    }
+
+    const searchRegex = new RegExp(termino, 'i');
+    const productosFiltrados = await Producto.find({
+      $or: [
+        { nombre: { $regex: searchRegex } },
+        { descripcion: { $regex: searchRegex } }
+      ]
+    })
+    .select('-image.data')
+    .lean();
+      
+    res.status(200).json(productosFiltrados);
+  } catch (error) {
+    console.error('Error al filtrar productos:', error);
     res.status(500).json({ error: error.message });
   }
 });
