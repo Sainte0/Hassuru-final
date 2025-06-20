@@ -69,8 +69,27 @@ export default function Navbar() {
     fetchMarcas();
   }, []);
 
-  const handleMarcaClick = (categoria, marca) => {
-    router.push(`/productos/categoria/${categoria}?marca=${marca}`);
+  const handleMarcaClick = async (categoria, marca) => {
+    try {
+      // Cerrar el menú mobile primero
+      setIsOpen(false);
+      
+      // Pequeño delay para asegurar que el menú se cierre antes de navegar
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Navegar a la categoría con el filtro de marca
+      await router.push(`/productos/categoria/${categoria}?marca=${encodeURIComponent(marca)}`);
+      
+      console.log('✅ Navegación completada:', {
+        categoria,
+        marca,
+        url: `/productos/categoria/${categoria}?marca=${encodeURIComponent(marca)}`
+      });
+    } catch (error) {
+      console.error('❌ Error en navegación:', error);
+      // Si hay error, intentar navegación simple
+      router.push(`/productos/categoria/${categoria}?marca=${encodeURIComponent(marca)}`);
+    }
   };
 
   return (
@@ -220,7 +239,7 @@ export default function Navbar() {
                       {marcasPorCategoria[cat].map((marca, index) => (
                         <button
                           key={index}
-                          onClick={() => { handleMarcaClick(cat, marca); setIsOpen(false); }}
+                          onClick={() => handleMarcaClick(cat, marca)}
                           className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
                         >
                           {marca}

@@ -238,7 +238,7 @@ export default function Categoria() {
     }, 100); // Pequeño delay para asegurar que la URL se actualice
   }, [categoria, router]);
 
-  // Cargar productos cuando cambia la categoría
+  // Cargar productos cuando se carga la página
   useEffect(() => {
     if (router.isReady) {
       // Llamar fetchProductsByCategory directamente para evitar dependencias circulares
@@ -247,6 +247,40 @@ export default function Categoria() {
       }, 0);
     }
   }, [categoria, router.isReady]);
+
+  // Procesar filtros de la URL cuando se carga la página
+  useEffect(() => {
+    if (router.isReady && categoria) {
+      console.log('🔍 Procesando filtros de la URL:', router.query);
+      
+      // Extraer filtros de la URL
+      const urlFilters = {
+        marca: router.query.marca || '',
+        tallaRopa: router.query.tallaRopa || '',
+        tallaZapatilla: router.query.tallaZapatilla || '',
+        accesorio: router.query.accesorio || '',
+        disponibilidad: router.query.disponibilidad || '',
+        precioMin: router.query.precioMin || router.query.min || '',
+        precioMax: router.query.precioMax || router.query.max || '',
+        q: router.query.q || ''
+      };
+
+      console.log('📋 Filtros extraídos de la URL:', urlFilters);
+      
+      // Solo actualizar si hay filtros en la URL y son diferentes a los actuales
+      const hasUrlFilters = Object.values(urlFilters).some(value => value !== '');
+      
+      if (hasUrlFilters) {
+        console.log('🔄 Aplicando filtros de la URL');
+        setCurrentFilters(urlFilters);
+        
+        // Cargar productos con los filtros de la URL
+        setTimeout(() => {
+          fetchProductsByCategory(urlFilters);
+        }, 100);
+      }
+    }
+  }, [router.isReady, categoria, router.query.marca, router.query.tallaRopa, router.query.tallaZapatilla, router.query.accesorio, router.query.disponibilidad, router.query.precioMin, router.query.precioMax, router.query.min, router.query.max, router.query.q]);
 
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];

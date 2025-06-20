@@ -29,15 +29,57 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Initialize filters from URL parameters
   useEffect(() => {
     if (router.isReady) {
+      console.log('🔍 Inicializando filtros desde URL:', router.query);
       const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max } = router.query;
-      if (marca) setSelectedMarca(marca);
-      if (tallaRopa) setSelectedTallaRopa(tallaRopa);
-      if (tallaZapatilla) setSelectedTallaZapatilla(tallaZapatilla);
-      if (accesorio) setSelectedAccesorio(accesorio);
-      if (disponibilidad) setSelectedDisponibilidad(disponibilidad);
-      if (q) setQuery(q);
-      if (min) setPrecioMin(min);
-      if (max) setPrecioMax(max);
+      
+      let filtersApplied = false;
+      
+      if (marca) {
+        console.log('✅ Aplicando filtro de marca:', marca);
+        setSelectedMarca(marca);
+        filtersApplied = true;
+      }
+      if (tallaRopa) {
+        console.log('✅ Aplicando filtro de talla ropa:', tallaRopa);
+        setSelectedTallaRopa(tallaRopa);
+        filtersApplied = true;
+      }
+      if (tallaZapatilla) {
+        console.log('✅ Aplicando filtro de talla zapatilla:', tallaZapatilla);
+        setSelectedTallaZapatilla(tallaZapatilla);
+        filtersApplied = true;
+      }
+      if (accesorio) {
+        console.log('✅ Aplicando filtro de accesorio:', accesorio);
+        setSelectedAccesorio(accesorio);
+        filtersApplied = true;
+      }
+      if (disponibilidad) {
+        console.log('✅ Aplicando filtro de disponibilidad:', disponibilidad);
+        setSelectedDisponibilidad(disponibilidad);
+        filtersApplied = true;
+      }
+      if (q) {
+        console.log('✅ Aplicando filtro de búsqueda:', q);
+        setQuery(q);
+        filtersApplied = true;
+      }
+      if (min) {
+        console.log('✅ Aplicando filtro de precio mínimo:', min);
+        setPrecioMin(min);
+        filtersApplied = true;
+      }
+      if (max) {
+        console.log('✅ Aplicando filtro de precio máximo:', max);
+        setPrecioMax(max);
+        filtersApplied = true;
+      }
+      
+      if (filtersApplied) {
+        console.log('🎯 Filtros aplicados desde URL correctamente');
+      } else {
+        console.log('ℹ️ No hay filtros en la URL');
+      }
     }
   }, [router.isReady, router.query]);
 
