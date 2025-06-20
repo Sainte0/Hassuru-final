@@ -125,7 +125,6 @@ router.get('/categoria/:categoria', async (req, res) => {
         // Función para determinar el grupo de disponibilidad
         const getAvailabilityGroup = (product) => {
           const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-          const hasStock = product.tallas.some(talla => talla.stock > 0);
           
           if (hasTallas && !product.encargo) return 1; // Entrega inmediata
           if (hasTallas && product.encargo) return 2; // Disponible en 3 días
@@ -142,10 +141,20 @@ router.get('/categoria/:categoria', async (req, res) => {
         }
         
         // Si están en el mismo grupo, ordenar por precio
-        const aPrice = parseFloat(a.precio);
-        const bPrice = parseFloat(b.precio);
+        const aPrice = parseFloat(a.precio) || 0;
+        const bPrice = parseFloat(b.precio) || 0;
         
         return aPrice - bPrice; // Ordenar de menor a mayor precio
+      });
+
+      console.log('📊 Productos ordenados por disponibilidad y precio:', {
+        total: productosOrdenados.length,
+        muestra: productosOrdenados.slice(0, 5).map(p => ({
+          nombre: p.nombre,
+          precio: p.precio,
+          encargo: p.encargo,
+          tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0
+        }))
       });
 
       const totalPages = Math.ceil(total / parseInt(limit));
@@ -174,6 +183,80 @@ router.get('/categoria/:categoria', async (req, res) => {
     }
   } catch (error) {
     console.error('💥 Error en la ruta /categoria:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para obtener opciones de filtro de una categoría
+router.get('/categoria/:categoria/filtros', async (req, res) => {
+  try {
+    console.log('🔍 Ruta /categoria/:categoria/filtros llamada');
+    console.log('📋 Parámetros:', req.params);
+    
+    const { categoria } = req.params;
+    
+    const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
+    const categoriaLower = categoria ? categoria.toLowerCase() : null;
+    
+    if (!categoriaLower || !categoriasValidas.includes(categoriaLower)) {
+      return res.status(400).json({ error: 'Categoría no válida' });
+    }
+
+    // Obtener todos los productos de la categoría para extraer opciones de filtro
+    const productos = await Producto.find({
+      categoria: { $regex: new RegExp(categoria, 'i') }
+    }).select('marca tallas precio encargo').lean();
+
+    // Extraer opciones de filtro
+    const marcas = new Set();
+    const tallas = new Set();
+    const precios = [];
+
+    productos.forEach(producto => {
+      // Marca
+      if (producto.marca) {
+        const marcasArray = Array.isArray(producto.marca) ? producto.marca : [producto.marca];
+        marcasArray.forEach(marca => marcas.add(marca));
+      }
+
+      // Tallas
+      if (producto.tallas && Array.isArray(producto.tallas)) {
+        producto.tallas.forEach(talla => {
+          if (talla.talla) {
+            tallas.add(talla.talla);
+          }
+        });
+      }
+
+      // Precios
+      if (producto.precio) {
+        precios.push(parseFloat(producto.precio));
+      }
+    });
+
+    const response = {
+      marcas: Array.from(marcas).sort(),
+      tallas: Array.from(tallas).sort(),
+      precios: {
+        min: precios.length > 0 ? Math.min(...precios) : 0,
+        max: precios.length > 0 ? Math.max(...precios) : 0
+      },
+      disponibilidad: [
+        'Entrega inmediata',
+        'Disponible en 3 días',
+        'Disponible en 20 días'
+      ]
+    };
+
+    console.log('📤 Enviando opciones de filtro:', {
+      marcasCount: response.marcas.length,
+      tallasCount: response.tallas.length,
+      precioRange: response.precios
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('💥 Error en la ruta /categoria/:categoria/filtros:', error);
     res.status(500).json({ error: error.message });
   }
 });

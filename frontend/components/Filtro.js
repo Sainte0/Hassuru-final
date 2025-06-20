@@ -23,6 +23,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   const [selectedCategoria, setSelectedCategoria] = useState("");
   const [precioMin, setPrecioMin] = useState("");
   const [precioMax, setPrecioMax] = useState("");
+  const [filterOptions, setFilterOptions] = useState(null);
+  const [loadingFilters, setLoadingFilters] = useState(false);
 
   // Initialize filters from URL parameters
   useEffect(() => {
@@ -38,6 +40,43 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (max) setPrecioMax(max);
     }
   }, [router.isReady, router.query]);
+
+  // Función para cargar opciones de filtro desde el servidor
+  const loadFilterOptions = async (categoria) => {
+    if (!categoria) return;
+    
+    setLoadingFilters(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}/filtros`);
+      if (response.ok) {
+        const data = await response.json();
+        setFilterOptions(data);
+        
+        // Actualizar las opciones de filtro según la categoría
+        if (categoria === 'ropa') {
+          setTallasRopa(data.tallas);
+          setMarcas(prev => ({ ...prev, ropa: data.marcas }));
+        } else if (categoria === 'zapatillas') {
+          setTallasZapatilla(data.tallas);
+          setMarcas(prev => ({ ...prev, zapatillas: data.marcas }));
+        } else if (categoria === 'accesorios') {
+          setAccesorios(data.tallas);
+          setMarcas(prev => ({ ...prev, accesorios: data.marcas }));
+        }
+      }
+    } catch (error) {
+      console.error('Error al cargar opciones de filtro:', error);
+    } finally {
+      setLoadingFilters(false);
+    }
+  };
+
+  // Cargar opciones de filtro cuando cambia la categoría
+  useEffect(() => {
+    if (router.isReady && categoria) {
+      loadFilterOptions(categoria);
+    }
+  }, [router.isReady, categoria]);
 
   // Función para aplicar todos los filtros
   const applyFilters = (products) => {
@@ -116,51 +155,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     query,
     router.isReady
   ]);
-
-  // Extract available sizes from products
-  useEffect(() => {
-    const tallasRopaSet = new Set();
-    const tallasZapatillaSet = new Set();
-    const accesoriosSet = new Set();
-    const marcasPorCategoria = {
-      zapatillas: new Set(),
-      ropa: new Set(),
-      accesorios: new Set()
-    };
-
-    products.forEach((product) => {
-      if (product.marca && product.categoria) {
-        // Manejar el array de marcas
-        const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
-        marcas.forEach(marca => {
-          if (product.categoria === "zapatillas") {
-            marcasPorCategoria.zapatillas.add(marca);
-          } else if (product.categoria === "ropa") {
-            marcasPorCategoria.ropa.add(marca);
-          } else if (product.categoria === "accesorios") {
-            marcasPorCategoria.accesorios.add(marca);
-          }
-        });
-      }
-
-      if (product.categoria === "ropa") {
-        product.tallas.forEach((tallaObj) => tallasRopaSet.add(tallaObj.talla));
-      } else if (product.categoria === "zapatillas") {
-        product.tallas.forEach((tallaObj) => tallasZapatillaSet.add(tallaObj.talla));
-      } else if (product.categoria === "accesorios") {
-        product.tallas.forEach((tallaObj) => accesoriosSet.add(tallaObj.talla));
-      }
-    });
-
-    setTallasRopa(Array.from(tallasRopaSet));
-    setTallasZapatilla(Array.from(tallasZapatillaSet));
-    setAccesorios(Array.from(accesoriosSet));
-    setMarcas({
-      zapatillas: Array.from(marcasPorCategoria.zapatillas).sort(),
-      ropa: Array.from(marcasPorCategoria.ropa).sort(),
-      accesorios: Array.from(marcasPorCategoria.accesorios).sort()
-    });
-  }, [products]);
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
