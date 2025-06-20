@@ -43,25 +43,51 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
 
   // Función para cargar opciones de filtro desde el servidor
   const loadFilterOptions = async (categoria) => {
-    if (!categoria) return;
-    
     setLoadingFilters(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}/filtros`);
+      let response;
+      
+      // Detectar si estamos en el catálogo o en una categoría específica
+      const isCatalogo = router.pathname === '/catalogo';
+      
+      if (isCatalogo) {
+        // Cargar opciones de filtro para el catálogo
+        response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/catalogo/filtros`);
+      } else if (categoria) {
+        // Cargar opciones de filtro para una categoría específica
+        response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}/filtros`);
+      } else {
+        console.log('No se pudo determinar la ruta para cargar filtros');
+        return;
+      }
+      
       if (response.ok) {
         const data = await response.json();
         setFilterOptions(data);
         
-        // Actualizar las opciones de filtro según la categoría
-        if (categoria === 'ropa') {
-          setTallasRopa(data.tallas);
-          setMarcas(prev => ({ ...prev, ropa: data.marcas }));
-        } else if (categoria === 'zapatillas') {
-          setTallasZapatilla(data.tallas);
-          setMarcas(prev => ({ ...prev, zapatillas: data.marcas }));
-        } else if (categoria === 'accesorios') {
-          setAccesorios(data.tallas);
-          setMarcas(prev => ({ ...prev, accesorios: data.marcas }));
+        if (isCatalogo) {
+          // Para el catálogo, cargar todas las opciones
+          setTallasRopa(data.tallas?.ropa || []);
+          setTallasZapatilla(data.tallas?.zapatillas || []);
+          setAccesorios(data.tallas?.accesorios || []);
+          setMarcas(prev => ({ 
+            ...prev, 
+            ropa: data.marcas || [],
+            zapatillas: data.marcas || [],
+            accesorios: data.marcas || []
+          }));
+        } else if (categoria) {
+          // Para categorías específicas, cargar solo las opciones relevantes
+          if (categoria === 'ropa') {
+            setTallasRopa(data.tallas || []);
+            setMarcas(prev => ({ ...prev, ropa: data.marcas || [] }));
+          } else if (categoria === 'zapatillas') {
+            setTallasZapatilla(data.tallas || []);
+            setMarcas(prev => ({ ...prev, zapatillas: data.marcas || [] }));
+          } else if (categoria === 'accesorios') {
+            setAccesorios(data.tallas || []);
+            setMarcas(prev => ({ ...prev, accesorios: data.marcas || [] }));
+          }
         }
       }
     } catch (error) {
@@ -71,12 +97,15 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     }
   };
 
-  // Cargar opciones de filtro cuando cambia la categoría
+  // Cargar opciones de filtro cuando cambia la categoría o cuando se carga el catálogo
   useEffect(() => {
-    if (router.isReady && categoria) {
-      loadFilterOptions(categoria);
+    if (router.isReady) {
+      const isCatalogo = router.pathname === '/catalogo';
+      if (isCatalogo || categoria) {
+        loadFilterOptions(categoria);
+      }
     }
-  }, [router.isReady, categoria]);
+  }, [router.isReady, categoria, router.pathname]);
 
   // Función para aplicar todos los filtros
   const applyFilters = (products) => {
