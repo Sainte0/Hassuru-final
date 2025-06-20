@@ -353,28 +353,124 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           </button>
           {showFilters && (
             <>
-              {/* Filtro de Marcas */}
+              {/* Filtro de Marca */}
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-gray-700">Marca</label>
                 <div className="overflow-auto max-h-32">
-                  {marcas[categoria || 'zapatillas'].sort().map((marca, index) => (
-                    <div key={index} className="flex items-center mb-2">
-                      <input
-                        type="radio"
-                        id={`marca-${marca}`}
-                        name="marca"
-                        value={marca}
-                        checked={selectedMarca === marca}
-                        onChange={() => handleSelectMarca(marca)}
-                        className="mr-2"
-                      />
-                      <label htmlFor={`marca-${marca}`} className="text-gray-600 cursor-pointer">
-                        {marca}
-                      </label>
-                    </div>
-                  ))}
+                  {Array.from(new Set([...marcas.zapatillas, ...marcas.ropa, ...marcas.accesorios]))
+                    .sort()
+                    .map((marca, index) => (
+                      <div key={index} className="flex items-center mb-2">
+                        <input
+                          type="radio"
+                          id={`marca-${marca}`}
+                          name="marca"
+                          value={marca}
+                          checked={selectedMarca === marca}
+                          onChange={() => handleSelectMarca(marca)}
+                          className="mr-2"
+                        />
+                        <label htmlFor={`marca-${marca}`} className="text-gray-600 cursor-pointer">
+                          {marca}
+                        </label>
+                      </div>
+                    ))}
                 </div>
               </div>
+
+              {/* Filtros de Tallas para el Catálogo */}
+              {router.pathname === '/catalogo' && (
+                <>
+                  {/* Filtro de Tallas de Ropa */}
+                  {tallasRopa.length > 0 && (
+                    <div className="mb-4">
+                      <label className="block mb-1 font-medium text-gray-700">Tallas de Ropa</label>
+                      <div className="overflow-auto max-h-32">
+                        {Array.from(new Set(tallasRopa))
+                          .sort((a, b) => {
+                            const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
+                            return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
+                          })
+                          .map((talla, index) => (
+                            <div key={index} className="flex items-center mb-2">
+                              <input
+                                type="radio"
+                                id={`talla-ropa-${talla}`}
+                                name="tallaRopa"
+                                value={talla}
+                                checked={selectedTallaRopa === talla}
+                                onChange={() => handleSelectTallaRopa(talla)}
+                                className="mr-2"
+                              />
+                              <label htmlFor={`talla-ropa-${talla}`} className="text-gray-600 cursor-pointer">
+                                {talla}
+                              </label>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Filtro de Tallas de Zapatillas */}
+                  {tallasZapatilla.length > 0 && (
+                    <div className="mb-4">
+                      <label className="block mb-1 font-medium text-gray-700">Tallas de Zapatillas</label>
+                      <div className="overflow-auto max-h-32">
+                        {Array.from(new Set(tallasZapatilla))
+                          .sort((a, b) => {
+                            const parseTalla = (talla) => {
+                              const parts = talla.split(" ");
+                              const numericPart = parseFloat(parts[0].replace(",", "."));
+                              return numericPart;
+                            };
+                            return parseTalla(a) - parseTalla(b);
+                          })
+                          .map((talla, index) => (
+                            <div key={index} className="flex items-center mb-2">
+                              <input
+                                type="radio"
+                                id={`talla-zapatilla-${talla}`}
+                                name="tallaZapatilla"
+                                value={talla}
+                                checked={selectedTallaZapatilla === talla}
+                                onChange={() => handleSelectTallaZapatilla(talla)}
+                                className="mr-2"
+                              />
+                              <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 cursor-pointer">
+                                {talla}
+                              </label>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Filtro de Tecnología (Accesorios) */}
+                  {accesorios.length > 0 && (
+                    <div className="mb-4">
+                      <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
+                      <div className="overflow-auto max-h-32">
+                        {accesorios.map((accesorio, index) => (
+                          <div key={index} className="flex items-center mb-2">
+                            <input
+                              type="radio"
+                              id={`accesorio-${accesorio}`}
+                              name="accesorio"
+                              value={accesorio}
+                              checked={selectedAccesorio === accesorio}
+                              onChange={() => handleSelectAccesorio(accesorio)}
+                              className="mr-2"
+                            />
+                            <label htmlFor={`accesorio-${accesorio}`} className="text-gray-600 cursor-pointer">
+                              {accesorio}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
               {/* Filtro de Tallas de Ropa */}
               {categoria === 'ropa' && (
