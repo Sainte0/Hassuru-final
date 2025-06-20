@@ -102,26 +102,15 @@ router.get('/categoria/:categoria', async (req, res) => {
 
       console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
 
-      // Calcular skip para paginación
-      const skip = (parseInt(page) - 1) * parseInt(limit);
+      // Obtener TODOS los productos de la categoría para ordenamiento correcto
+      const todosLosProductos = await Producto.find(filterQuery)
+        .select('-image.data')
+        .lean();
 
-      console.log('📊 Paginación - Skip:', skip, 'Limit:', limit);
+      console.log('📦 Todos los productos encontrados:', todosLosProductos.length);
 
-      // Ejecutar consulta con paginación
-      const [productos, total] = await Promise.all([
-        Producto.find(filterQuery)
-          .select('-image.data')
-          .skip(skip)
-          .limit(parseInt(limit))
-          .lean(),
-        Producto.countDocuments(filterQuery)
-      ]);
-
-      console.log('📦 Productos encontrados:', productos.length);
-      console.log('📊 Total de productos:', total);
-
-      // Ordenar productos por disponibilidad y precio
-      const productosOrdenados = productos.sort((a, b) => {
+      // Ordenar TODOS los productos por disponibilidad y precio
+      const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
         // Función para determinar el grupo de disponibilidad
         const getAvailabilityGroup = (product) => {
           const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -147,20 +136,34 @@ router.get('/categoria/:categoria', async (req, res) => {
         return aPrice - bPrice; // Ordenar de menor a mayor precio
       });
 
-      console.log('📊 Productos ordenados por disponibilidad y precio:', {
-        total: productosOrdenados.length,
-        muestra: productosOrdenados.slice(0, 5).map(p => ({
+      console.log('📊 Todos los productos ordenados por disponibilidad y precio:', {
+        total: todosLosProductosOrdenados.length,
+        muestra: todosLosProductosOrdenados.slice(0, 10).map(p => ({
           nombre: p.nombre,
           precio: p.precio,
           encargo: p.encargo,
-          tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0
+          tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0,
+          grupo: (() => {
+            const hasTallas = Array.isArray(p.tallas) && p.tallas.length > 0;
+            if (hasTallas && !p.encargo) return 'Entrega inmediata';
+            if (hasTallas && p.encargo) return 'Disponible en 3 días';
+            if (!hasTallas) return 'Disponible en 20 días';
+            return 'Otros';
+          })()
         }))
       });
 
+      // Calcular skip para paginación
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+      const productosDeLaPagina = todosLosProductosOrdenados.slice(skip, skip + parseInt(limit));
+
+      console.log('📊 Paginación - Skip:', skip, 'Limit:', limit, 'Productos en página:', productosDeLaPagina.length);
+
+      const total = todosLosProductosOrdenados.length;
       const totalPages = Math.ceil(total / parseInt(limit));
-      
+
       const response = {
-        productos: productosOrdenados,
+        productos: productosDeLaPagina,
         pagination: {
           currentPage: parseInt(page),
           totalPages,
