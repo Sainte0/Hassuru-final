@@ -80,7 +80,7 @@ export default function Home() {
             {/* Redes sociales */}
             <div className="flex justify-center space-x-4">
               <a 
-                href="https://www.instagram.com/hassuru" 
+                href="https://www.instagram.com/hassuru.ar/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
@@ -88,7 +88,7 @@ export default function Home() {
                 📱 Instagram
               </a>
               <a 
-                href="https://wa.me/5491112345678" 
+                href="https://wa.me/5493512595858" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="bg-green-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-all duration-300 transform hover:scale-105"
