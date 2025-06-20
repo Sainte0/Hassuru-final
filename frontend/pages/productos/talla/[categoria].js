@@ -37,7 +37,20 @@ export default function TallaSelector() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
         if (!response.ok) throw new Error("Error al cargar los productos");
         
-        const products = await response.json();
+        const data = await response.json();
+        
+        // Verificar la estructura de la respuesta
+        let products;
+        if (data.productos && Array.isArray(data.productos)) {
+          // Nueva estructura: { productos: [...], pagination: {...} }
+          products = data.productos;
+        } else if (Array.isArray(data)) {
+          // Estructura antigua: array directo
+          products = data;
+        } else {
+          throw new Error("Formato de respuesta inesperado del servidor");
+        }
+        
         console.log('Productos cargados para tallas:', {
           categoria,
           totalProductos: products.length,
@@ -50,6 +63,12 @@ export default function TallaSelector() {
         
         // Extract available sizes based on category
         const tallasSet = new Set();
+        
+        // Asegurar que products sea un array antes de usar forEach
+        if (!Array.isArray(products)) {
+          console.error('Products no es un array:', products);
+          throw new Error("Formato de productos inválido");
+        }
         
         products.forEach(product => {
           if (product.tallas && Array.isArray(product.tallas)) {
@@ -180,10 +199,11 @@ export default function TallaSelector() {
     );
   }
 
-  if (availableTallas.length === 0) {
+  if (!Array.isArray(availableTallas) || availableTallas.length === 0) {
     console.log('No hay tallas disponibles:', {
       categoria,
-      productosCargados: true
+      productosCargados: true,
+      availableTallas
     });
     return (
       <div className="container py-10 mx-auto">
@@ -214,7 +234,7 @@ export default function TallaSelector() {
         {error && <p className="mb-4 text-red-500">{error}</p>}
         
         <div className="grid grid-cols-3 gap-4 mb-8 sm:grid-cols-4 md:grid-cols-5 justify-items-center">
-          {availableTallas.map((talla) => {
+          {Array.isArray(availableTallas) && availableTallas.map((talla) => {
             // Formatear la talla para mostrar con imágenes de banderas
             let formattedTalla = talla;
             if (categoria === "zapatillas" && talla.includes("|")) {
