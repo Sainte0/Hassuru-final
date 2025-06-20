@@ -21,6 +21,250 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Ruta para el catálogo con filtros y paginación (DEBE IR PRIMERO)
+router.get('/catalogo', async (req, res) => {
+  try {
+    console.log('🔍 Ruta /catalogo llamada');
+    console.log('📋 Query:', req.query);
+    
+    const { 
+      page = 1, 
+      limit = 20, 
+      marca, 
+      talla, 
+      disponibilidad, 
+      precioMin, 
+      precioMax, 
+      q,
+      tallaRopa,
+      tallaZapatilla,
+      accesorio,
+      categoria
+    } = req.query;
+    
+    // Construir filtros
+    let filterQuery = {};
+
+    console.log('🔍 Query de filtro inicial:', JSON.stringify(filterQuery, null, 2));
+
+    // Filtro por categoría
+    if (categoria) {
+      filterQuery.categoria = { $regex: new RegExp(categoria, 'i') };
+    }
+
+    // Filtro por marca
+    if (marca) {
+      filterQuery.marca = { $in: [marca] };
+    }
+
+    // Filtro por talla (compatibilidad con diferentes tipos)
+    if (talla || tallaRopa || tallaZapatilla || accesorio) {
+      const tallaToUse = talla || tallaRopa || tallaZapatilla || accesorio;
+      filterQuery['tallas.talla'] = tallaToUse;
+    }
+
+    // Filtro por disponibilidad
+    if (disponibilidad) {
+      switch (disponibilidad) {
+        case 'Entrega inmediata':
+          filterQuery.encargo = false;
+          filterQuery.tallas = { $exists: true, $ne: [] };
+          break;
+        case 'Disponible en 3 días':
+          filterQuery.encargo = true;
+          filterQuery.tallas = { $exists: true, $ne: [] };
+          break;
+        case 'Disponible en 20 días':
+          filterQuery.tallas = { $exists: false };
+          break;
+      }
+    }
+
+    // Filtro por precio
+    if (precioMin || precioMax) {
+      filterQuery.precio = {};
+      if (precioMin) filterQuery.precio.$gte = parseFloat(precioMin);
+      if (precioMax) filterQuery.precio.$lte = parseFloat(precioMax);
+    }
+
+    // Filtro por búsqueda
+    if (q) {
+      filterQuery.$or = [
+        { nombre: { $regex: new RegExp(q, 'i') } },
+        { descripcion: { $regex: new RegExp(q, 'i') } }
+      ];
+    }
+
+    console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
+
+    // Obtener TODOS los productos que coincidan con los filtros
+    const todosLosProductos = await Producto.find(filterQuery)
+      .select('-image.data')
+      .lean();
+
+    console.log('📦 Todos los productos encontrados:', todosLosProductos.length);
+
+    // Ordenar TODOS los productos por disponibilidad y precio
+    const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
+      // Función para determinar el grupo de disponibilidad
+      const getAvailabilityGroup = (product) => {
+        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
+        
+        if (hasTallas && !product.encargo) return 1; // Entrega inmediata
+        if (hasTallas && product.encargo) return 2; // Disponible en 3 días
+        if (!hasTallas) return 3; // Disponible en 20 días
+        return 4; // Otros casos
+      };
+
+      // Primero ordenar por grupo de disponibilidad
+      const aGroup = getAvailabilityGroup(a);
+      const bGroup = getAvailabilityGroup(b);
+      
+      if (aGroup !== bGroup) {
+        return aGroup - bGroup;
+      }
+      
+      // Si están en el mismo grupo, ordenar por precio
+      const aPrice = parseFloat(a.precio) || 0;
+      const bPrice = parseFloat(b.precio) || 0;
+      
+      return aPrice - bPrice; // Ordenar de menor a mayor precio
+    });
+
+    console.log('📊 Todos los productos ordenados por disponibilidad y precio:', {
+      total: todosLosProductosOrdenados.length,
+      muestra: todosLosProductosOrdenados.slice(0, 10).map(p => ({
+        nombre: p.nombre,
+        precio: p.precio,
+        encargo: p.encargo,
+        tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0,
+        grupo: (() => {
+          const hasTallas = Array.isArray(p.tallas) && p.tallas.length > 0;
+          if (hasTallas && !p.encargo) return 'Entrega inmediata';
+          if (hasTallas && p.encargo) return 'Disponible en 3 días';
+          if (!hasTallas) return 'Disponible en 20 días';
+          return 'Otros';
+        })()
+      }))
+    });
+
+    // Calcular skip para paginación
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const productosDeLaPagina = todosLosProductosOrdenados.slice(skip, skip + parseInt(limit));
+
+    console.log('📊 Paginación - Skip:', skip, 'Limit:', limit, 'Productos en página:', productosDeLaPagina.length);
+
+    const total = todosLosProductosOrdenados.length;
+    const totalPages = Math.ceil(total / parseInt(limit));
+
+    const response = {
+      productos: productosDeLaPagina,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages,
+        totalProducts: total,
+        productsPerPage: parseInt(limit),
+        hasNextPage: parseInt(page) < totalPages,
+        hasPrevPage: parseInt(page) > 1
+      }
+    };
+
+    console.log('📤 Enviando respuesta del catálogo:', {
+      productosCount: response.productos.length,
+      pagination: response.pagination
+    });
+    
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('💥 Error en la ruta /catalogo:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Ruta para obtener opciones de filtro del catálogo (DEBE IR DESPUÉS DE /catalogo)
+router.get('/catalogo/filtros', async (req, res) => {
+  try {
+    console.log('🔍 Ruta /catalogo/filtros llamada');
+    
+    // Obtener todos los productos para extraer opciones de filtro
+    const productos = await Producto.find({})
+      .select('marca categoria tallas precio encargo')
+      .lean();
+
+    // Extraer marcas únicas
+    const marcasSet = new Set();
+    productos.forEach(producto => {
+      if (producto.marca) {
+        const marcas = Array.isArray(producto.marca) ? producto.marca : [producto.marca];
+        marcas.forEach(marca => marcasSet.add(marca));
+      }
+    });
+
+    // Extraer tallas únicas por categoría
+    const tallasPorCategoria = {
+      zapatillas: new Set(),
+      ropa: new Set(),
+      accesorios: new Set()
+    };
+
+    productos.forEach(producto => {
+      if (producto.categoria && Array.isArray(producto.tallas)) {
+        producto.tallas.forEach(talla => {
+          if (talla.talla) {
+            if (producto.categoria === 'zapatillas') {
+              tallasPorCategoria.zapatillas.add(talla.talla);
+            } else if (producto.categoria === 'ropa') {
+              tallasPorCategoria.ropa.add(talla.talla);
+            } else if (producto.categoria === 'accesorios') {
+              tallasPorCategoria.accesorios.add(talla.talla);
+            }
+          }
+        });
+      }
+    });
+
+    // Ordenar tallas
+    const ordenarTallas = (tallas) => {
+      return Array.from(tallas).sort((a, b) => {
+        const parseTalla = (talla) => {
+          const match = talla.match(/(\d+)/);
+          return match ? parseInt(match[1]) : 0;
+        };
+
+        const aNum = parseTalla(a);
+        const bNum = parseTalla(b);
+
+        if (aNum !== bNum) {
+          return aNum - bNum;
+        }
+
+        return a.localeCompare(b);
+      });
+    };
+
+    const response = {
+      marcas: Array.from(marcasSet).sort(),
+      tallas: {
+        zapatillas: ordenarTallas(tallasPorCategoria.zapatillas),
+        ropa: ordenarTallas(tallasPorCategoria.ropa),
+        accesorios: ordenarTallas(tallasPorCategoria.accesorios)
+      }
+    };
+
+    console.log('📊 Opciones de filtro extraídas:', {
+      totalMarcas: response.marcas.length,
+      totalTallasZapatillas: response.tallas.zapatillas.length,
+      totalTallasRopa: response.tallas.ropa.length,
+      totalTallasAccesorios: response.tallas.accesorios.length
+    });
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error('💥 Error en la ruta /catalogo/filtros:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Ruta de categoría PRIMERO (antes de buscar)
 router.get('/categoria/:categoria', async (req, res) => {
   try {
@@ -841,250 +1085,6 @@ router.get('/:id/image', async (req, res) => {
     }
   } catch (error) {
     console.error('Error al obtener la imagen:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Ruta para el catálogo con filtros y paginación
-router.get('/catalogo', async (req, res) => {
-  try {
-    console.log('🔍 Ruta /catalogo llamada');
-    console.log('📋 Query:', req.query);
-    
-    const { 
-      page = 1, 
-      limit = 20, 
-      marca, 
-      talla, 
-      disponibilidad, 
-      precioMin, 
-      precioMax, 
-      q,
-      tallaRopa,
-      tallaZapatilla,
-      accesorio,
-      categoria
-    } = req.query;
-    
-    // Construir filtros
-    let filterQuery = {};
-
-    console.log('🔍 Query de filtro inicial:', JSON.stringify(filterQuery, null, 2));
-
-    // Filtro por categoría
-    if (categoria) {
-      filterQuery.categoria = { $regex: new RegExp(categoria, 'i') };
-    }
-
-    // Filtro por marca
-    if (marca) {
-      filterQuery.marca = { $in: [marca] };
-    }
-
-    // Filtro por talla (compatibilidad con diferentes tipos)
-    if (talla || tallaRopa || tallaZapatilla || accesorio) {
-      const tallaToUse = talla || tallaRopa || tallaZapatilla || accesorio;
-      filterQuery['tallas.talla'] = tallaToUse;
-    }
-
-    // Filtro por disponibilidad
-    if (disponibilidad) {
-      switch (disponibilidad) {
-        case 'Entrega inmediata':
-          filterQuery.encargo = false;
-          filterQuery.tallas = { $exists: true, $ne: [] };
-          break;
-        case 'Disponible en 3 días':
-          filterQuery.encargo = true;
-          filterQuery.tallas = { $exists: true, $ne: [] };
-          break;
-        case 'Disponible en 20 días':
-          filterQuery.tallas = { $exists: false };
-          break;
-      }
-    }
-
-    // Filtro por precio
-    if (precioMin || precioMax) {
-      filterQuery.precio = {};
-      if (precioMin) filterQuery.precio.$gte = parseFloat(precioMin);
-      if (precioMax) filterQuery.precio.$lte = parseFloat(precioMax);
-    }
-
-    // Filtro por búsqueda
-    if (q) {
-      filterQuery.$or = [
-        { nombre: { $regex: new RegExp(q, 'i') } },
-        { descripcion: { $regex: new RegExp(q, 'i') } }
-      ];
-    }
-
-    console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
-
-    // Obtener TODOS los productos que coincidan con los filtros
-    const todosLosProductos = await Producto.find(filterQuery)
-      .select('-image.data')
-      .lean();
-
-    console.log('📦 Todos los productos encontrados:', todosLosProductos.length);
-
-    // Ordenar TODOS los productos por disponibilidad y precio
-    const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
-      // Función para determinar el grupo de disponibilidad
-      const getAvailabilityGroup = (product) => {
-        const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
-        
-        if (hasTallas && !product.encargo) return 1; // Entrega inmediata
-        if (hasTallas && product.encargo) return 2; // Disponible en 3 días
-        if (!hasTallas) return 3; // Disponible en 20 días
-        return 4; // Otros casos
-      };
-
-      // Primero ordenar por grupo de disponibilidad
-      const aGroup = getAvailabilityGroup(a);
-      const bGroup = getAvailabilityGroup(b);
-      
-      if (aGroup !== bGroup) {
-        return aGroup - bGroup;
-      }
-      
-      // Si están en el mismo grupo, ordenar por precio
-      const aPrice = parseFloat(a.precio) || 0;
-      const bPrice = parseFloat(b.precio) || 0;
-      
-      return aPrice - bPrice; // Ordenar de menor a mayor precio
-    });
-
-    console.log('📊 Todos los productos ordenados por disponibilidad y precio:', {
-      total: todosLosProductosOrdenados.length,
-      muestra: todosLosProductosOrdenados.slice(0, 10).map(p => ({
-        nombre: p.nombre,
-        precio: p.precio,
-        encargo: p.encargo,
-        tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0,
-        grupo: (() => {
-          const hasTallas = Array.isArray(p.tallas) && p.tallas.length > 0;
-          if (hasTallas && !p.encargo) return 'Entrega inmediata';
-          if (hasTallas && p.encargo) return 'Disponible en 3 días';
-          if (!hasTallas) return 'Disponible en 20 días';
-          return 'Otros';
-        })()
-      }))
-    });
-
-    // Calcular skip para paginación
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const productosDeLaPagina = todosLosProductosOrdenados.slice(skip, skip + parseInt(limit));
-
-    console.log('📊 Paginación - Skip:', skip, 'Limit:', limit, 'Productos en página:', productosDeLaPagina.length);
-
-    const total = todosLosProductosOrdenados.length;
-    const totalPages = Math.ceil(total / parseInt(limit));
-
-    const response = {
-      productos: productosDeLaPagina,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages,
-        totalProducts: total,
-        productsPerPage: parseInt(limit),
-        hasNextPage: parseInt(page) < totalPages,
-        hasPrevPage: parseInt(page) > 1
-      }
-    };
-
-    console.log('📤 Enviando respuesta del catálogo:', {
-      productosCount: response.productos.length,
-      pagination: response.pagination
-    });
-    
-    res.status(200).json(response);
-  } catch (error) {
-    console.error('💥 Error en la ruta /catalogo:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Ruta para obtener opciones de filtro del catálogo
-router.get('/catalogo/filtros', async (req, res) => {
-  try {
-    console.log('🔍 Ruta /catalogo/filtros llamada');
-    
-    // Obtener todos los productos para extraer opciones de filtro
-    const productos = await Producto.find({})
-      .select('marca categoria tallas precio encargo')
-      .lean();
-
-    // Extraer marcas únicas
-    const marcasSet = new Set();
-    productos.forEach(producto => {
-      if (producto.marca) {
-        const marcas = Array.isArray(producto.marca) ? producto.marca : [producto.marca];
-        marcas.forEach(marca => marcasSet.add(marca));
-      }
-    });
-
-    // Extraer tallas únicas por categoría
-    const tallasPorCategoria = {
-      zapatillas: new Set(),
-      ropa: new Set(),
-      accesorios: new Set()
-    };
-
-    productos.forEach(producto => {
-      if (producto.categoria && Array.isArray(producto.tallas)) {
-        producto.tallas.forEach(talla => {
-          if (talla.talla) {
-            if (producto.categoria === 'zapatillas') {
-              tallasPorCategoria.zapatillas.add(talla.talla);
-            } else if (producto.categoria === 'ropa') {
-              tallasPorCategoria.ropa.add(talla.talla);
-            } else if (producto.categoria === 'accesorios') {
-              tallasPorCategoria.accesorios.add(talla.talla);
-            }
-          }
-        });
-      }
-    });
-
-    // Ordenar tallas
-    const ordenarTallas = (tallas) => {
-      return Array.from(tallas).sort((a, b) => {
-        const parseTalla = (talla) => {
-          const match = talla.match(/(\d+)/);
-          return match ? parseInt(match[1]) : 0;
-        };
-
-        const aNum = parseTalla(a);
-        const bNum = parseTalla(b);
-
-        if (aNum !== bNum) {
-          return aNum - bNum;
-        }
-
-        return a.localeCompare(b);
-      });
-    };
-
-    const response = {
-      marcas: Array.from(marcasSet).sort(),
-      tallas: {
-        zapatillas: ordenarTallas(tallasPorCategoria.zapatillas),
-        ropa: ordenarTallas(tallasPorCategoria.ropa),
-        accesorios: ordenarTallas(tallasPorCategoria.accesorios)
-      }
-    };
-
-    console.log('📊 Opciones de filtro extraídas:', {
-      totalMarcas: response.marcas.length,
-      totalTallasZapatillas: response.tallas.zapatillas.length,
-      totalTallasRopa: response.tallas.ropa.length,
-      totalTallasAccesorios: response.tallas.accesorios.length
-    });
-
-    res.status(200).json(response);
-  } catch (error) {
-    console.error('💥 Error en la ruta /catalogo/filtros:', error);
     res.status(500).json({ error: error.message });
   }
 });
