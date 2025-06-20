@@ -16,7 +16,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     // Validar que tallas sea un arreglo con los campos correctos
     if (!Array.isArray(tallas) || !tallas.every(talla => talla.talla && talla.precioTalla)) {
       return res.status(400).json({
-        error: 'El campo tallas debe ser un arreglo con objetos que incluyan talla y precioTalla',
+        error: 'El campo tallas debe ser un arreglo con objetos que incluyan talla y precioTalla ',
       });
     }
 
