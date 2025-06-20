@@ -25,6 +25,8 @@ export default function Categoria() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(20);
+  const [currentFilters, setCurrentFilters] = useState({});
+  const [pagination, setPagination] = useState(null);
   const { categoria } = router.query;
 
   // Efecto para manejar la navegación inicial
@@ -123,33 +125,57 @@ export default function Categoria() {
     window.scrollTo(0, 0);
   };
 
-  const fetchProductsByCategory = async () => {
+  const fetchProductsByCategory = async (filters = {}) => {
     if (!categoria) {
       console.log('No hay categoría para cargar productos');
       return;
     }
     
-    console.log('Iniciando carga de productos para categoría:', categoria);
+    console.log('Iniciando carga de productos para categoría:', categoria, 'con filtros:', filters);
     setLoading(true);
     setError(null);
+    
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}`);
+      // Construir query parameters
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: productsPerPage.toString()
+      });
+
+      // Agregar filtros si existen
+      if (filters.marca) queryParams.append('marca', filters.marca);
+      if (filters.tallaRopa) queryParams.append('talla', filters.tallaRopa);
+      if (filters.tallaZapatilla) queryParams.append('talla', filters.tallaZapatilla);
+      if (filters.accesorio) queryParams.append('talla', filters.accesorio);
+      if (filters.disponibilidad) queryParams.append('disponibilidad', filters.disponibilidad);
+      if (filters.precioMin) queryParams.append('precioMin', filters.precioMin);
+      if (filters.precioMax) queryParams.append('precioMax', filters.precioMax);
+      if (filters.q) queryParams.append('q', filters.q);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}?${queryParams}`);
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
+      console.log('📥 Datos recibidos del servidor:', data);
+      console.log('📊 Tipo de data:', typeof data);
+      console.log('📦 Tipo de data.productos:', typeof data.productos);
+      console.log('🔍 Es array data.productos?', Array.isArray(data.productos));
+      
+      // Verificar que data tenga la estructura esperada
+      if (!data || !data.productos || !Array.isArray(data.productos)) {
+        console.error('❌ Estructura de datos inesperada:', data);
+        throw new Error('Formato de respuesta inválido del servidor');
+      }
+      
       console.log('Productos cargados por categoría:', {
         categoria,
-        totalProductos: data.length,
-        productos: data.map(p => ({
-          id: p._id,
-          nombre: p.nombre,
-          categoria: p.categoria,
-          marca: p.marca,
-          precio: p.precio
-        }))
+        totalProductos: data.pagination?.totalProducts || 0,
+        productosEnPagina: data.productos.length,
+        paginaActual: data.pagination?.currentPage || 1,
+        totalPaginas: data.pagination?.totalPages || 0
       });
       
-      const sortedData = sortProductsByAvailability(data);
+      const sortedData = sortProductsByAvailability(data.productos);
       console.log('Productos ordenados:', {
         total: sortedData.length,
         orden: sortedData.map(p => p.nombre)
@@ -157,6 +183,13 @@ export default function Categoria() {
       
       setProducts(sortedData);
       setFilteredProducts(sortedData);
+      
+      // Actualizar paginación
+      if (data.pagination) {
+        setCurrentPage(data.pagination.currentPage);
+        setPagination(data.pagination);
+      }
+      
     } catch (error) {
       console.error('Error al cargar productos:', {
         mensaje: error.message,
@@ -275,6 +308,13 @@ export default function Categoria() {
     return sortedResults;
   }, []);
 
+  // Función para manejar cambios de filtros
+  const handleFiltersChange = useCallback((filters) => {
+    setCurrentFilters(filters);
+    setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
+    fetchProductsByCategory(filters);
+  }, [categoria, currentPage, productsPerPage]);
+
   // Cargar productos cuando cambia la categoría
   useEffect(() => {
     if (router.isReady) {
@@ -326,11 +366,8 @@ export default function Categoria() {
       <aside className="w-full mb-6 lg:w-1/4 lg:mb-0">
         <Filter
           products={products}
-          setFilteredProducts={(filters) => {
-            const filtered = applyFilters(products, filters);
-            setFilteredProducts(filtered);
-            setCurrentPage(1); // Reset a la página 1 cuando se aplican filtros
-          }}
+          setFilteredProducts={setFilteredProducts}
+          onFiltersChange={handleFiltersChange}
         />
       </aside>
       <section className="flex flex-col w-full lg:w-3/4">
@@ -340,18 +377,18 @@ export default function Categoria() {
           </div>
         ) : error ? (
           <p className="text-red-500">Error: {error}</p>
-        ) : currentProducts.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <p>No hay productos disponibles.</p>
         ) : (
           <>
-            <Card currentProducts={currentProducts} />
-            {totalPages > 1 && (
-              <Pagination
-                totalPages={totalPages}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
-            )}
+            <Card currentProducts={filteredProducts} />
+            <Pagination
+              pagination={pagination}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                fetchProductsByCategory(currentFilters);
+              }}
+            />
           </>
         )}
       </section>

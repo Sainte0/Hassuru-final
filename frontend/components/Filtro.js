@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { sortProductsByAvailability } from '../utils/sortProducts';
 
-export default function Filter({ products, setFilteredProducts }) {
+export default function Filter({ products, setFilteredProducts, onFiltersChange }) {
   const router = useRouter();
   const { categoria } = router.query;
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
@@ -38,6 +38,23 @@ export default function Filter({ products, setFilteredProducts }) {
       if (max) setPrecioMax(max);
     }
   }, [router.isReady, router.query]);
+
+  // Efecto para notificar cambios de filtros al componente padre
+  useEffect(() => {
+    if (onFiltersChange) {
+      const filters = {
+        marca: selectedMarca,
+        tallaRopa: selectedTallaRopa,
+        tallaZapatilla: selectedTallaZapatilla,
+        accesorio: selectedAccesorio,
+        disponibilidad: selectedDisponibilidad,
+        q: query,
+        precioMin,
+        precioMax
+      };
+      onFiltersChange(filters);
+    }
+  }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, onFiltersChange]);
 
   // Función para aplicar todos los filtros
   const applyFilters = (products) => {

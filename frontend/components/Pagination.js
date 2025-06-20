@@ -1,72 +1,96 @@
-import React from "react";
+import React from 'react';
 
-export default function Pagination({ totalPages, currentPage, onPageChange }) {
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5; // Número máximo de páginas visibles
+const Pagination = ({ pagination, onPageChange }) => {
+  if (!pagination || pagination.totalPages <= 1) {
+    return null;
+  }
 
+  const { currentPage, totalPages, hasNextPage, hasPrevPage } = pagination;
+
+  const generatePageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
     if (totalPages <= maxVisiblePages) {
-      // Si hay pocas páginas, mostrar todas
       for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
+        pages.push(i);
       }
     } else {
-      // Siempre mostrar la primera página
-      pageNumbers.push(1);
-
-      // Calcular el rango de páginas alrededor de la página actual
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, currentPage + 1);
-
-      // Ajustar el rango si estamos cerca del inicio o del final
       if (currentPage <= 3) {
-        endPage = 4;
+        for (let i = 1; i <= 4; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
       } else if (currentPage >= totalPages - 2) {
-        startPage = totalPages - 3;
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push('...');
+        pages.push(totalPages);
       }
-
-      // Agregar puntos suspensivos y páginas intermedias
-      if (startPage > 2) {
-        pageNumbers.push('...');
-      }
-
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (endPage < totalPages - 1) {
-        pageNumbers.push('...');
-      }
-
-      // Siempre mostrar la última página
-      pageNumbers.push(totalPages);
     }
-
-    return pageNumbers;
+    
+    return pages;
   };
 
   return (
-    <div className="flex justify-center mt-8 space-x-2">
-      {getPageNumbers().map((page, index) => (
-        <button
-          key={index}
-          onClick={() => page !== '...' && onPageChange(page)}
-          className={`px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200
-            ${page === '...' 
-              ? "cursor-default"
-              : currentPage === page
-                ? "bg-red-600 text-white"
-                : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-300"
-            }
-            sm:px-4 sm:py-2
-            md:px-5 md:py-2.5
-            lg:px-6 lg:py-3
-            text-base md:text-lg`}
-          disabled={page === '...'}
-        >
-          {page}
-        </button>
+    <div className="flex justify-center items-center space-x-2 mt-8">
+      {/* Botón Anterior */}
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={!hasPrevPage}
+        className={`px-3 py-2 rounded-md text-sm font-medium ${
+          hasPrevPage
+            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
+      >
+        Anterior
+      </button>
+
+      {/* Números de página */}
+      {generatePageNumbers().map((page, index) => (
+        <React.Fragment key={index}>
+          {page === '...' ? (
+            <span className="px-3 py-2 text-gray-500">...</span>
+          ) : (
+            <button
+              onClick={() => onPageChange(page)}
+              className={`px-3 py-2 rounded-md text-sm font-medium ${
+                page === currentPage
+                  ? 'bg-red-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {page}
+            </button>
+          )}
+        </React.Fragment>
       ))}
+
+      {/* Botón Siguiente */}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={!hasNextPage}
+        className={`px-3 py-2 rounded-md text-sm font-medium ${
+          hasNextPage
+            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
+      >
+        Siguiente
+      </button>
     </div>
   );
-}
+};
+
+export default Pagination;
