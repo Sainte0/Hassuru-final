@@ -70,7 +70,7 @@ export default function Navbar() {
   }, []);
 
   const handleMarcaClick = (categoria, marca) => {
-    router.push(`/categoria/${categoria}?marca=${marca}`);
+    router.push(`/productos/categoria/${categoria}?marca=${marca}`);
   };
 
   return (
