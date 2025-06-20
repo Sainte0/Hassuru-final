@@ -2,6 +2,7 @@ const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
+const { sendOrderReceiptEmail, sendNewOrderNotification } = require('../utils/email');
 const router = express.Router();
 
 // Ultra simple: guardar pedido tal cual llega
@@ -18,6 +19,21 @@ router.post('/', async (req, res) => {
     console.log('BODY RECIBIDO EN BACKEND:', req.body);
     const order = new Order(req.body);
     await order.save();
+    
+    // Enviar email de comprobante al cliente
+    try {
+      await sendOrderReceiptEmail({ to: order.datosPersonales.email, order });
+    } catch (err) {
+      console.error('Error enviando email de comprobante:', err);
+    }
+    
+    // Enviar notificación a Hassuru
+    try {
+      await sendNewOrderNotification({ order });
+    } catch (err) {
+      console.error('Error enviando notificación a Hassuru:', err);
+    }
+    
     res.status(201).json(order);
   } catch (error) {
     res.status(400).json({ error: error.message, stack: error.stack });
