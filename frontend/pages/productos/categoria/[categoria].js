@@ -83,6 +83,7 @@ export default function Categoria() {
   const handlePageChange = (pageNumber) => {
     // Actualizar el estado local primero
     setCurrentPage(pageNumber);
+    currentPageRef.current = pageNumber; // Actualizar el ref inmediatamente
     
     // Guardar la página en sessionStorage solo si no es la primera página
     if (pageNumber > 1) {
@@ -206,13 +207,36 @@ export default function Categoria() {
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
     console.log('🔄 Cambiando filtros:', filters);
+    console.log('📄 Página actual antes del cambio:', currentPageRef.current);
     setCurrentFilters(filters);
-    setCurrentPage(1); // Resetear a la primera página cuando cambian los filtros
-    // Llamar fetchProductsByCategory directamente para evitar dependencias circulares
+    
+    // Resetear a la primera página cuando cambian los filtros
+    setCurrentPage(1);
+    currentPageRef.current = 1; // Actualizar el ref inmediatamente
+    console.log('📄 Página reseteada a:', currentPageRef.current);
+    
+    // Limpiar la página guardada en sessionStorage
+    sessionStorage.removeItem(`lastPage_${categoria}`);
+    
+    // Actualizar la URL para remover el parámetro de página
+    const newQuery = { ...router.query, ...filters };
+    delete newQuery.page; // Remover página de la URL
+    
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+    
+    // Llamar fetchProductsByCategory después de actualizar la URL
     setTimeout(() => {
+      console.log('📄 Llamando fetchProductsByCategory con página:', currentPageRef.current);
       fetchProductsByCategory(filters);
-    }, 0);
-  }, [categoria]);
+    }, 100); // Pequeño delay para asegurar que la URL se actualice
+  }, [categoria, router]);
 
   // Cargar productos cuando cambia la categoría
   useEffect(() => {
