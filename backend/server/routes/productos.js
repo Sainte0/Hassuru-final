@@ -50,19 +50,88 @@ router.get('/buscar/:termino', async (req, res) => {
 router.get('/categoria/:categoria', async (req, res) => {
   try {
     const { categoria } = req.params;
+    const { page = 1, limit = 20, marca, talla, disponibilidad, precioMin, precioMax, q } = req.query;
+    
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
     const categoriaLower = categoria ? categoria.toLowerCase() : null;
     
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
-      const productosFiltrados = await Producto.find({
+      // Construir filtros
+      let filterQuery = {
         categoria: { $regex: new RegExp(categoria, 'i') }
-      })
-      .select('-image.data')
-      .lean();
+      };
+
+      // Filtro por marca
+      if (marca) {
+        filterQuery.marca = { $in: [marca] };
+      }
+
+      // Filtro por talla
+      if (talla) {
+        filterQuery['tallas.talla'] = talla;
+      }
+
+      // Filtro por disponibilidad
+      if (disponibilidad) {
+        switch (disponibilidad) {
+          case 'inmediata':
+            filterQuery.encargo = false;
+            filterQuery.tallas = { $exists: true, $ne: [] };
+            break;
+          case '3dias':
+            filterQuery.encargo = true;
+            filterQuery.tallas = { $exists: true, $ne: [] };
+            break;
+          case '20dias':
+            filterQuery.tallas = { $exists: false };
+            break;
+        }
+      }
+
+      // Filtro por precio
+      if (precioMin || precioMax) {
+        filterQuery.precio = {};
+        if (precioMin) filterQuery.precio.$gte = parseFloat(precioMin);
+        if (precioMax) filterQuery.precio.$lte = parseFloat(precioMax);
+      }
+
+      // Filtro por búsqueda
+      if (q) {
+        filterQuery.$or = [
+          { nombre: { $regex: new RegExp(q, 'i') } },
+          { descripcion: { $regex: new RegExp(q, 'i') } }
+        ];
+      }
+
+      // Calcular skip para paginación
+      const skip = (parseInt(page) - 1) * parseInt(limit);
+
+      // Ejecutar consulta con paginación
+      const [productos, total] = await Promise.all([
+        Producto.find(filterQuery)
+          .select('-image.data')
+          .sort({ createdAt: -1 })
+          .skip(skip)
+          .limit(parseInt(limit))
+          .lean(),
+        Producto.countDocuments(filterQuery)
+      ]);
+
+      const totalPages = Math.ceil(total / parseInt(limit));
       
-      return res.status(200).json(productosFiltrados);
+      res.status(200).json({
+        productos,
+        pagination: {
+          currentPage: parseInt(page),
+          totalPages,
+          totalProducts: total,
+          productsPerPage: parseInt(limit),
+          hasNextPage: parseInt(page) < totalPages,
+          hasPrevPage: parseInt(page) > 1
+        }
+      });
     } else {
-      return res.status(400).json({ error: 'Categoría no válida.Las categorías permitidas son: zapatillas, ropa, accesorios. ' });
+      return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
   } catch (error) {
     console.error('Error en la ruta /categoria:', error);
