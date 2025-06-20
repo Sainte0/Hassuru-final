@@ -1,138 +1,109 @@
-import React, { useEffect } from "react";
-import Carousell from "../../frontend/components/Carousell";
+import React from "react";
 import Image from "next/image";
-import Link from "next/link";
-import Newsletter from "../../frontend/components/Newsletter";
-import useStore from "../store/store";
-import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
-  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
-
-  useEffect(() => {
-    console.log('Estado inicial de Home:', {
-      loading,
-      error,
-      homeProducts,
-      dolarBlue,
-      tiktokLinksCount: tiktokLinks?.length
-    });
-
-    // Función para inicializar los datos
-    const initializeData = async () => {
-      console.log('Iniciando carga de datos en Home...');
-      try {
-        // Obtener productos de la home
-        console.log('Iniciando fetchHomeProducts...');
-        await fetchHomeProducts();
-        console.log('Productos cargados en Home:', {
-          ultimosRopa: homeProducts.ultimosRopa?.length,
-          ultimosZapatillas: homeProducts.ultimosZapatillas?.length
-        });
-        
-        // Obtener valor del dólar blue
-        const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
-        const now = Date.now();
-        console.log('Estado del dólar blue:', {
-          ultimaActualizacion: lastUpdate,
-          tiempoTranscurrido: now - parseInt(lastUpdate || 0),
-          necesitaActualizacion: !lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000
-        });
-
-        if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
-          console.log('Actualizando dólar blue...');
-          await fetchDolarBlue();
-          console.log('Dólar Blue actualizado:', dolarBlue);
-        }
-        
-        // Obtener enlaces de TikTok
-        console.log('Estado de TikTok links:', {
-          hayLinks: tiktokLinks?.length > 0,
-          cantidadLinks: tiktokLinks?.length
-        });
-
-        if (!tiktokLinks.length) {
-          console.log('Cargando links de TikTok...');
-          await fetchTikTokLinks();
-          console.log('Links de TikTok cargados:', tiktokLinks);
-        }
-      } catch (error) {
-        console.error("Error detallado al inicializar datos:", {
-          mensaje: error.message,
-          stack: error.stack,
-          tipo: error.name
-        });
-      }
-    };
-    
-    initializeData();
-  }, []);
-
-  if (loading) {
-    console.log('Home en estado de carga...');
-    return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;
-  }
-  
-  if (error) {
-    console.error('Error en Home:', error);
-    return <div>Error: {error}</div>;
-  }
-
   return (
-    <main>
-      <div className="container p-4 mx-auto">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
-            <img
-              src="https://i.ibb.co/8D7xdF7G/Sneackers.png"
-              alt="Catalogo"
-              width={600}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
-            />
-          </Link>
-          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
-            <img
-              src="https://i.ibb.co/hk3ppsH/Ropa.png"
-              alt="Encargo"
-              width={620}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
-            />
-          </Link>
+    <main className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+      <div className="container mx-auto px-4 text-center">
+        {/* Logo */}
+        <div className="mb-8">
+          <Image
+            src="/logo.png"
+            alt="Hassuru Logo"
+            width={200}
+            height={80}
+            className="mx-auto"
+          />
         </div>
-      </div>
 
-      {/* Últimos productos por categoría */}
-      <div className="mt-8">
-        <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Últimos en Ropa"} />
-        </Link>
-      </div>
-      <div className="mt-2">
-        <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Últimos en Zapatillas"} />
-        </Link>
-      </div>
+        {/* Mensaje principal */}
+        <div className="max-w-2xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border border-red-200">
+            {/* Icono de mantenimiento */}
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                <svg 
+                  className="w-10 h-10 text-red-600" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" 
+                  />
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" 
+                  />
+                </svg>
+              </div>
+            </div>
 
-      {/* TikToks en horizontal */}
-      <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3">
-        {tiktokLinks.slice(0, 3).map((linkObj, index) => (
-          <div key={index} className="w-full aspect-[9/16]">
-            <iframe
-              src={linkObj.link}
-              width="100%"
-              height="100%"
-              style={{ border: "none" }}
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; accelerometer; gyroscope;"
-              allowFullScreen
-            ></iframe>
+            {/* Título */}
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+              🔧 Sitio en Mantenimiento
+            </h1>
+
+            {/* Subtítulo */}
+            <h2 className="text-xl md:text-2xl font-semibold text-red-600 mb-6">
+              Estamos renovando nuestro stock
+            </h2>
+
+            {/* Descripción */}
+            <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+              Estamos trabajando para traerte los mejores productos con el mejor stock. 
+              <br />
+              <span className="font-medium text-gray-700">
+                ¡Volveremos muy pronto con novedades increíbles!
+              </span>
+            </p>
+
+            {/* Información adicional */}
+            <div className="bg-red-50 rounded-lg p-6 mb-8">
+              <div className="flex items-center justify-center mb-3">
+                <svg className="w-5 h-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium text-red-800">Información importante</span>
+              </div>
+              <p className="text-red-700 text-sm">
+                Durante este período, no podrás realizar compras ni acceder al catálogo. 
+                Te recomendamos seguirnos en nuestras redes sociales para estar al tanto de las novedades.
+              </p>
+            </div>
+
+            {/* Redes sociales */}
+            <div className="flex justify-center space-x-4">
+              <a 
+                href="https://www.instagram.com/hassuru" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105"
+              >
+                📱 Instagram
+              </a>
+              <a 
+                href="https://wa.me/5491112345678" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-green-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-600 transition-all duration-300 transform hover:scale-105"
+              >
+                💬 WhatsApp
+              </a>
+            </div>
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="mb-4">
-        <Newsletter />
+        {/* Footer */}
+        <div className="mt-12 text-gray-500 text-sm">
+          <p>© 2024 Hassuru. Todos los derechos reservados.</p>
+          <p className="mt-1">Gracias por tu paciencia 🙏</p>
+        </div>
       </div>
     </main>
   );
