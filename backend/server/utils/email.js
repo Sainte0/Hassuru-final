@@ -56,13 +56,13 @@ async function sendOrderReceiptEmail({ to, order }) {
 
   try {
     console.log('📧 Enviando email de comprobante con datos:', {
-      from: 'Hassuru <onboarding@resend.dev>',
+      from: 'Hassuru <no-reply@hassuru.ar>',
       to,
       subject: 'Comprobante de tu pedido en Hassuru'
     });
     
     const result = await resend.emails.send({
-      from: 'Hassuru <onboarding@resend.dev>',
+      from: 'Hassuru <no-reply@hassuru.ar>',
       to,
       subject: 'Comprobante de tu pedido en Hassuru',
       html
@@ -140,7 +140,7 @@ async function sendNewOrderNotification({ order }) {
   `;
 
   return resend.emails.send({
-    from: 'Hassuru <onboarding@resend.dev>',
+    from: 'Hassuru <no-reply@hassuru.ar>',
     to: hassuruEmail,
     subject: `🛒 Nuevo Pedido - ${order.datosPersonales.nombre} - $${total.toFixed(2)} USD`,
     html
@@ -187,7 +187,7 @@ async function testClientEmail(email) {
 
   try {
     const testResult = await resend.emails.send({
-      from: 'Hassuru <delivered@resend.dev>',
+      from: 'Hassuru <no-reply@hassuru.ar>',
       to: email,
       subject: 'Test de email al cliente - Hassuru',
       html: `
