@@ -48,7 +48,7 @@ async function sendOrderReceiptEmail({ to, order }) {
   `;
 
   return resend.emails.send({
-    from: 'Hassuru <no-reply@hassuru.com>',
+    from: 'Hassuru <onboarding@resend.dev>',
     to,
     subject: 'Comprobante de tu pedido en Hassuru',
     html
@@ -113,7 +113,7 @@ async function sendNewOrderNotification({ order }) {
   `;
 
   return resend.emails.send({
-    from: 'Hassuru <no-reply@hassuru.com>',
+    from: 'Hassuru <onboarding@resend.dev>',
     to: hassuruEmail,
     subject: `🛒 Nuevo Pedido - ${order.datosPersonales.nombre} - $${total.toFixed(2)} USD`,
     html
