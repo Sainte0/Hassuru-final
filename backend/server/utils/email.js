@@ -198,7 +198,15 @@ async function testClientEmail(email) {
         <p>Si recibes este email, significa que la configuración está funcionando correctamente.</p>
       `
     });
+    
     console.log('✅ Test de email al cliente exitoso:', testResult);
+    
+    // Verificar si hay error en la respuesta
+    if (testResult.error) {
+      console.error('❌ Error en respuesta de Resend:', testResult.error);
+      return false;
+    }
+    
     return true;
   } catch (error) {
     console.error('❌ Test de email al cliente falló:', error);

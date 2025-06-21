@@ -47,6 +47,28 @@ export default function TestEmail() {
     }
   };
 
+  const testWithHassuruEmail = async () => {
+    setLoading(true);
+    setResult(null);
+    
+    try {
+      const response = await fetch('https://web-production-ffe2.up.railway.app/api/orders/test-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: 'hassuru.ar@gmail.com' })
+      });
+      
+      const data = await response.json();
+      setResult(data);
+    } catch (error) {
+      setResult({ success: false, error: error.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
@@ -69,11 +91,26 @@ export default function TestEmail() {
             </div>
           )}
         </div>
+
+        {/* Test con email verificado */}
+        <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
+          <h2 className="text-lg font-semibold mb-2">Test con Email Verificado</h2>
+          <p className="text-sm text-gray-600 mb-3">
+            Resend solo permite enviar emails de prueba a tu email verificado (hassuru.ar@gmail.com)
+          </p>
+          <button
+            onClick={testWithHassuruEmail}
+            disabled={loading}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded transition-colors"
+          >
+            {loading ? 'Enviando...' : 'Probar con hassuru.ar@gmail.com'}
+          </button>
+        </div>
         
         <form onSubmit={testEmail} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email para probar:
+              Email para probar (solo funcionará con dominio verificado):
             </label>
             <input
               type="email"
@@ -105,13 +142,15 @@ export default function TestEmail() {
         )}
         
         <div className="mt-6 text-sm text-gray-600">
-          <p><strong>Instrucciones:</strong></p>
+          <p><strong>Problema identificado:</strong></p>
+          <p className="text-red-600 font-semibold">
+            Resend solo permite enviar emails de prueba a tu email verificado (hassuru.ar@gmail.com)
+          </p>
+          <p><strong>Solución:</strong></p>
           <ul className="list-disc list-inside mt-2 space-y-1">
-            <li>Primero verifica el estado de Resend</li>
-            <li>Ingresa tu email real</li>
-            <li>Haz clic en "Enviar Email de Prueba"</li>
-            <li>Revisa tu bandeja de entrada</li>
-            <li>Si no llega, revisa la carpeta de spam</li>
+            <li>Verifica un dominio en <a href="https://resend.com/domains" target="_blank" className="text-blue-600 underline">resend.com/domains</a></li>
+            <li>O usa tu email verificado para pruebas</li>
+            <li>Una vez verificado el dominio, podrás enviar a cualquier email</li>
           </ul>
         </div>
       </div>
