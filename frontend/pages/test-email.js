@@ -4,6 +4,23 @@ export default function TestEmail() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [resendStatus, setResendStatus] = useState(null);
+  const [statusLoading, setStatusLoading] = useState(false);
+
+  const checkResendStatus = async () => {
+    setStatusLoading(true);
+    setResendStatus(null);
+    
+    try {
+      const response = await fetch('https://web-production-ffe2.up.railway.app/api/orders/resend-status');
+      const data = await response.json();
+      setResendStatus(data);
+    } catch (error) {
+      setResendStatus({ error: error.message });
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
   const testEmail = async (e) => {
     e.preventDefault();
@@ -35,6 +52,24 @@ export default function TestEmail() {
       <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Test de Email</h1>
         
+        {/* Verificar estado de Resend */}
+        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+          <h2 className="text-lg font-semibold mb-2">Estado de Resend</h2>
+          <button
+            onClick={checkResendStatus}
+            disabled={statusLoading}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded transition-colors mb-2"
+          >
+            {statusLoading ? 'Verificando...' : 'Verificar Estado de Resend'}
+          </button>
+          
+          {resendStatus && (
+            <div className={`p-3 rounded text-sm ${resendStatus.error ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+              <pre className="whitespace-pre-wrap">{JSON.stringify(resendStatus, null, 2)}</pre>
+            </div>
+          )}
+        </div>
+        
         <form onSubmit={testEmail} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
@@ -54,7 +89,7 @@ export default function TestEmail() {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded transition-colors"
+            className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded transition-colors"
           >
             {loading ? 'Enviando...' : 'Enviar Email de Prueba'}
           </button>
@@ -72,6 +107,7 @@ export default function TestEmail() {
         <div className="mt-6 text-sm text-gray-600">
           <p><strong>Instrucciones:</strong></p>
           <ul className="list-disc list-inside mt-2 space-y-1">
+            <li>Primero verifica el estado de Resend</li>
             <li>Ingresa tu email real</li>
             <li>Haz clic en "Enviar Email de Prueba"</li>
             <li>Revisa tu bandeja de entrada</li>

@@ -147,6 +147,35 @@ async function sendNewOrderNotification({ order }) {
   });
 }
 
+// Función para verificar el estado de la cuenta de Resend
+async function checkResendStatus() {
+  console.log('🔍 Verificando estado de Resend...');
+  
+  if (!resend) {
+    console.log('❌ Resend no está configurado');
+    return { configured: false };
+  }
+
+  try {
+    // Intentar obtener información de la cuenta
+    const domains = await resend.domains.list();
+    console.log('✅ Dominios configurados en Resend:', domains);
+    
+    return {
+      configured: true,
+      domains: domains,
+      apiKeyPresent: !!process.env.RESEND_API_KEY
+    };
+  } catch (error) {
+    console.error('❌ Error verificando estado de Resend:', error);
+    return {
+      configured: true,
+      error: error.message,
+      apiKeyPresent: !!process.env.RESEND_API_KEY
+    };
+  }
+}
+
 // Función de prueba específica para email del cliente
 async function testClientEmail(email) {
   console.log('🧪 Probando envío de email al cliente:', email);
@@ -158,7 +187,7 @@ async function testClientEmail(email) {
 
   try {
     const testResult = await resend.emails.send({
-      from: 'Hassuru <onboarding@resend.dev>',
+      from: 'Hassuru <delivered@resend.dev>',
       to: email,
       subject: 'Test de email al cliente - Hassuru',
       html: `
@@ -173,8 +202,14 @@ async function testClientEmail(email) {
     return true;
   } catch (error) {
     console.error('❌ Test de email al cliente falló:', error);
+    console.error('❌ Detalles del error:', {
+      message: error.message,
+      status: error.status,
+      code: error.code,
+      stack: error.stack
+    });
     return false;
   }
 }
 
-module.exports = { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail }; 
+module.exports = { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail, checkResendStatus }; 

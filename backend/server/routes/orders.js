@@ -2,8 +2,20 @@ const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
-const { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail } = require('../utils/email');
+const { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail, checkResendStatus } = require('../utils/email');
 const router = express.Router();
+
+// Ruta para verificar estado de Resend
+router.get('/resend-status', async (req, res) => {
+  try {
+    console.log('🔍 Verificando estado de Resend...');
+    const status = await checkResendStatus();
+    res.json(status);
+  } catch (error) {
+    console.error('❌ Error verificando estado de Resend:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Ruta simple para probar email al cliente
 router.post('/test-email', async (req, res) => {
@@ -15,7 +27,11 @@ router.post('/test-email', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Email requerido' });
     }
     
+    console.log('🧪 Verificando configuración de Resend...');
+    console.log('🧪 RESEND_API_KEY configurada:', !!process.env.RESEND_API_KEY);
+    
     const result = await testClientEmail(email);
+    console.log('🧪 Resultado del test:', result);
     
     if (result) {
       res.json({ success: true, message: `Email de prueba enviado a ${email}` });
@@ -24,6 +40,7 @@ router.post('/test-email', async (req, res) => {
     }
   } catch (error) {
     console.error('❌ Error en test de email:', error);
+    console.error('❌ Stack trace:', error.stack);
     res.status(500).json({ success: false, error: error.message });
   }
 });
