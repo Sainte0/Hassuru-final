@@ -5,25 +5,25 @@ const mongoose = require('mongoose');
 const { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail } = require('../utils/email');
 const router = express.Router();
 
-// Ruta para probar email del cliente
-router.post('/test-client-email', async (req, res) => {
+// Ruta simple para probar email al cliente
+router.post('/test-email', async (req, res) => {
   try {
     const { email } = req.body;
+    console.log('🧪 Test de email solicitado para:', email);
     
     if (!email) {
       return res.status(400).json({ success: false, error: 'Email requerido' });
     }
     
-    console.log('🧪 Iniciando test de email al cliente:', email);
-    const testResult = await testClientEmail(email);
+    const result = await testClientEmail(email);
     
-    if (testResult) {
+    if (result) {
       res.json({ success: true, message: `Email de prueba enviado a ${email}` });
     } else {
       res.status(500).json({ success: false, message: 'Error enviando email de prueba' });
     }
   } catch (error) {
-    console.error('❌ Error en test de email al cliente:', error);
+    console.error('❌ Error en test de email:', error);
     res.status(500).json({ success: false, error: error.message });
   }
 });
@@ -44,22 +44,35 @@ router.post('/', async (req, res) => {
     await order.save();
     console.log('✅ Pedido guardado en base de datos:', order._id);
     
+    // Verificar datos del cliente antes de enviar email
+    console.log('🔍 Verificando datos del cliente:');
+    console.log('  - Email:', order.datosPersonales.email);
+    console.log('  - Nombre:', order.datosPersonales.nombre);
+    console.log('  - Datos completos:', order.datosPersonales);
+    
     // Enviar email de comprobante al cliente
     try {
       console.log('📧 Iniciando envío de email de comprobante...');
       console.log('📧 Email del cliente:', order.datosPersonales.email);
-      await sendOrderReceiptEmail({ to: order.datosPersonales.email, order });
-      console.log('✅ Email de comprobante enviado correctamente');
+      
+      if (!order.datosPersonales.email) {
+        console.log('❌ ERROR: No hay email del cliente');
+        throw new Error('Email del cliente no encontrado');
+      }
+      
+      const emailResult = await sendOrderReceiptEmail({ to: order.datosPersonales.email, order });
+      console.log('✅ Email de comprobante enviado correctamente:', emailResult);
     } catch (err) {
       console.error('❌ Error enviando email de comprobante:', err);
       console.error('❌ Stack trace:', err.stack);
+      console.error('❌ Error completo:', JSON.stringify(err, null, 2));
     }
     
     // Enviar notificación a Hassuru
     try {
       console.log('📧 Iniciando envío de notificación a Hassuru...');
-      await sendNewOrderNotification({ order });
-      console.log('✅ Notificación a Hassuru enviada correctamente');
+      const hassuruResult = await sendNewOrderNotification({ order });
+      console.log('✅ Notificación a Hassuru enviada correctamente:', hassuruResult);
     } catch (err) {
       console.error('❌ Error enviando notificación a Hassuru:', err);
     }
