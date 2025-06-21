@@ -11,6 +11,7 @@ const tiktokRoutes = require('./routes/tiktoks');
 const suscriptoresRoutes = require('./routes/suscriptores');
 const imagesRoutes = require('./routes/images');
 const ordersRoutes = require('./routes/orders');
+const bannersRoutes = require('./routes/banners');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -23,7 +24,6 @@ console.log('MONGODB_URI disponible:', !!process.env.MONGODB_URI);
 console.log('SUPABASE_URL disponible:', !!process.env.SUPABASE_URL);
 console.log('SUPABASE_SERVICE_ROLE_KEY disponible:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-// No es necesario verificar IMGBB_API_KEY ya que ahora usamos una hardcodeada como respaldo
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -42,6 +42,7 @@ app.use('/api/tiktoks', tiktokRoutes);
 app.use('/api/suscriptores', suscriptoresRoutes);
 app.use('/api/images', imagesRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/banners', bannersRoutes);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {

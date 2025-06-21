@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import Carousell from "../../frontend/components/Carousell";
+import BannerCarousel from "../../frontend/components/BannerCarousel";
 import Image from "next/image";
 import Link from "next/link";
 import Newsletter from "../../frontend/components/Newsletter";
@@ -7,7 +8,7 @@ import useStore from "../store/store";
 import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
-  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks } = useStore();
+  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks, banners, fetchBanners } = useStore();
 
   useEffect(() => {
     console.log('Estado inicial de Home:', {
@@ -15,7 +16,8 @@ export default function Home() {
       error,
       homeProducts,
       dolarBlue,
-      tiktokLinksCount: tiktokLinks?.length
+      tiktokLinksCount: tiktokLinks?.length,
+      bannersCount: banners?.length
     });
 
     // Función para inicializar los datos
@@ -56,6 +58,18 @@ export default function Home() {
           await fetchTikTokLinks();
           console.log('Links de TikTok cargados:', tiktokLinks);
         }
+
+        // Obtener banners
+        console.log('Estado de banners:', {
+          hayBanners: banners?.length > 0,
+          cantidadBanners: banners?.length
+        });
+
+        if (!banners.length) {
+          console.log('Cargando banners...');
+          await fetchBanners();
+          console.log('Banners cargados:', banners);
+        }
       } catch (error) {
         console.error("Error detallado al inicializar datos:", {
           mensaje: error.message,
@@ -80,6 +94,11 @@ export default function Home() {
 
   return (
     <main>
+      {/* Banner Carousel */}
+      <div className="container px-4 mx-auto mt-4">
+        <BannerCarousel banners={banners} />
+      </div>
+
       <div className="container p-4 mx-auto">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">

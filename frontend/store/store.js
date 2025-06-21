@@ -13,6 +13,7 @@ const useStore = create((set) => ({
   error: null,
   filteredProducts: [],
   tiktokLinks: [],
+  banners: [],
   homeProducts: {
     ultimosRopa: [],
     ultimosZapatillas: []
@@ -263,6 +264,201 @@ const useStore = create((set) => ({
     } catch (error) {
       set({ error: error.message });
       console.error('Error al cargar productos de la home:', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchBanners: async () => {
+    set({ loading: true });
+    try {
+      const response = await fetch(`${URL}/api/banners`, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error('Error al cargar los banners');
+      }
+      const data = await response.json();
+      set({ banners: data });
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al cargar los banners:', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  fetchBannersAdmin: async () => {
+    set({ loading: true });
+    try {
+      const response = await fetch(`${URL}/api/banners/admin`, {
+        method: 'GET',
+        headers: {
+          'Authorization': getToken(),
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Error al cargar los banners');
+      }
+      const data = await response.json();
+      set({ banners: data });
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al cargar los banners:', error);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  addBanner: async (bannerData, imageFile) => {
+    set({ loading: true });
+    try {
+      const formData = new FormData();
+      
+      // Agregar datos del banner
+      Object.keys(bannerData).forEach(key => {
+        formData.append(key, bannerData[key]);
+      });
+      
+      // Agregar imagen
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+      
+      const response = await fetch(`${URL}/api/banners`, {
+        method: 'POST',
+        headers: {
+          'Authorization': getToken(),
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al agregar el banner');
+      }
+      
+      const nuevoBanner = await response.json();
+      
+      set((state) => ({
+        banners: [...state.banners, nuevoBanner],
+      }));
+      
+      toast.success('Banner agregado con éxito');
+      
+      return nuevoBanner;
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al agregar el banner:', error);
+      toast.error(error.message || 'Error al agregar el banner');
+      throw error;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  updateBanner: async (id, bannerData, imageFile) => {
+    set({ loading: true });
+    try {
+      const formData = new FormData();
+      
+      // Agregar datos del banner
+      Object.keys(bannerData).forEach(key => {
+        formData.append(key, bannerData[key]);
+      });
+      
+      // Agregar imagen si se proporciona
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
+      
+      const response = await fetch(`${URL}/api/banners/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': getToken(),
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al actualizar el banner');
+      }
+      
+      const bannerActualizado = await response.json();
+      
+      set((state) => ({
+        banners: state.banners.map(banner => 
+          banner._id === id ? bannerActualizado : banner
+        ),
+      }));
+      
+      toast.success('Banner actualizado con éxito');
+      
+      return bannerActualizado;
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al actualizar el banner:', error);
+      toast.error(error.message || 'Error al actualizar el banner');
+      throw error;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  deleteBanner: async (id) => {
+    set({ loading: true });
+    try {
+      const response = await fetch(`${URL}/api/banners/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': getToken(),
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al eliminar el banner');
+      }
+      
+      set((state) => ({
+        banners: state.banners.filter(banner => banner._id !== id),
+      }));
+      
+      toast.success('Banner eliminado con éxito');
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al eliminar el banner:', error);
+      toast.error(error.message || 'Error al eliminar el banner');
+      throw error;
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  reorderBanners: async (banners) => {
+    set({ loading: true });
+    try {
+      const response = await fetch(`${URL}/api/banners/reorder`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': getToken(),
+        },
+        body: JSON.stringify({ banners }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Error al reordenar los banners');
+      }
+      
+      toast.success('Orden de banners actualizado');
+    } catch (error) {
+      set({ error: error.message });
+      console.error('Error al reordenar banners:', error);
+      toast.error(error.message || 'Error al reordenar los banners');
+      throw error;
     } finally {
       set({ loading: false });
     }

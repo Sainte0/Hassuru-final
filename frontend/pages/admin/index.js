@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
+import BannersAdmin from "../../components/BannersAdmin";
 import Sidebar from "../../components/Sidebar";
 import { BounceLoader } from 'react-spinners';
 import useStore from "../../store/store";
@@ -149,6 +150,7 @@ export default function AdminDashboard() {
           </button>
         </div>
         <TiktokLinksAdmin />
+        <BannersAdmin />
         {loading ? (
           <div className="flex justify-center mt-[10%]">
             <BounceLoader color="#BE1A1D" />
