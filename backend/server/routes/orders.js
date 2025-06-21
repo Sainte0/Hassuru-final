@@ -2,48 +2,8 @@ const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
-const { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail, checkResendStatus } = require('../utils/email');
+const { sendOrderReceiptEmail, sendNewOrderNotification } = require('../utils/email');
 const router = express.Router();
-
-// Ruta para verificar estado de Resend
-router.get('/resend-status', async (req, res) => {
-  try {
-    console.log('🔍 Verificando estado de Resend...');
-    const status = await checkResendStatus();
-    res.json(status);
-  } catch (error) {
-    console.error('❌ Error verificando estado de Resend:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Ruta simple para probar email al cliente
-router.post('/test-email', async (req, res) => {
-  try {
-    const { email } = req.body;
-    console.log('🧪 Test de email solicitado para:', email);
-    
-    if (!email) {
-      return res.status(400).json({ success: false, error: 'Email requerido' });
-    }
-    
-    console.log('🧪 Verificando configuración de Resend...');
-    console.log('🧪 RESEND_API_KEY configurada:', !!process.env.RESEND_API_KEY);
-    
-    const result = await testClientEmail(email);
-    console.log('🧪 Resultado del test:', result);
-    
-    if (result) {
-      res.json({ success: true, message: `Email de prueba enviado a ${email}` });
-    } else {
-      res.status(500).json({ success: false, message: 'Error enviando email de prueba' });
-    }
-  } catch (error) {
-    console.error('❌ Error en test de email:', error);
-    console.error('❌ Stack trace:', error.stack);
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 // Ultra simple: guardar pedido tal cual llega
 router.post('/', async (req, res) => {
@@ -56,47 +16,26 @@ router.post('/', async (req, res) => {
         return res.status(400).json({ error: 'Body malformado' });
       }
     }
-    console.log('📦 BODY RECIBIDO EN BACKEND:', req.body);
+    
     const order = new Order(req.body);
     await order.save();
-    console.log('✅ Pedido guardado en base de datos:', order._id);
-    
-    // Verificar datos del cliente antes de enviar email
-    console.log('🔍 Verificando datos del cliente:');
-    console.log('  - Email:', order.datosPersonales.email);
-    console.log('  - Nombre:', order.datosPersonales.nombre);
-    console.log('  - Datos completos:', order.datosPersonales);
     
     // Enviar email de comprobante al cliente
     try {
-      console.log('📧 Iniciando envío de email de comprobante...');
-      console.log('📧 Email del cliente:', order.datosPersonales.email);
-      
-      if (!order.datosPersonales.email) {
-        console.log('❌ ERROR: No hay email del cliente');
-        throw new Error('Email del cliente no encontrado');
-      }
-      
-      const emailResult = await sendOrderReceiptEmail({ to: order.datosPersonales.email, order });
-      console.log('✅ Email de comprobante enviado correctamente:', emailResult);
+      await sendOrderReceiptEmail({ to: order.datosPersonales.email, order });
     } catch (err) {
-      console.error('❌ Error enviando email de comprobante:', err);
-      console.error('❌ Stack trace:', err.stack);
-      console.error('❌ Error completo:', JSON.stringify(err, null, 2));
+      console.error('Error enviando email de comprobante:', err);
     }
     
     // Enviar notificación a Hassuru
     try {
-      console.log('📧 Iniciando envío de notificación a Hassuru...');
-      const hassuruResult = await sendNewOrderNotification({ order });
-      console.log('✅ Notificación a Hassuru enviada correctamente:', hassuruResult);
+      await sendNewOrderNotification({ order });
     } catch (err) {
-      console.error('❌ Error enviando notificación a Hassuru:', err);
+      console.error('Error enviando notificación a Hassuru:', err);
     }
     
     res.status(201).json(order);
   } catch (error) {
-    console.error('❌ Error general en creación de pedido:', error);
     res.status(400).json({ error: error.message, stack: error.stack });
   }
 });

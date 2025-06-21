@@ -4,20 +4,14 @@ const { Resend } = require('resend');
 let resend = null;
 if (process.env.RESEND_API_KEY) {
   resend = new Resend(process.env.RESEND_API_KEY);
-} else {
-  console.log('RESEND_API_KEY no configurada, emails deshabilitados');
 }
 
 async function sendOrderReceiptEmail({ to, order }) {
-  console.log('📧 Intentando enviar email de comprobante a:', to);
-  
   if (!resend) {
-    console.log('❌ Resend no configurado, saltando envío de email al cliente');
     return;
   }
 
   if (!to || !order) {
-    console.log('❌ Datos faltantes para enviar email:', { to, order: !!order });
     return;
   }
 
@@ -43,6 +37,8 @@ async function sendOrderReceiptEmail({ to, order }) {
       </tbody>
     </table>
     <p><strong>Total:</strong> $${order.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0)} USD</p>
+    <h4>Método de Pago</h4>
+    <p><strong>Forma de pago:</strong> ${order.pago.toUpperCase()}</p>
     <h4>Datos de envío</h4>
     <p>Tipo: ${order.envio.tipo === 'envio' ? 'Envío a domicilio' : 'Retiro en persona'}</p>
     ${order.envio.direccion ? `<p>Dirección: ${order.envio.direccion}</p>` : ''}
@@ -54,37 +50,16 @@ async function sendOrderReceiptEmail({ to, order }) {
     <p>Gracias por confiar en Hassuru. Te contactaremos pronto para coordinar el pago y la entrega.</p>
   `;
 
-  try {
-    console.log('📧 Enviando email de comprobante con datos:', {
-      from: 'Hassuru <no-reply@hassuru.ar>',
-      to,
-      subject: 'Comprobante de tu pedido en Hassuru'
-    });
-    
-    const result = await resend.emails.send({
-      from: 'Hassuru <no-reply@hassuru.ar>',
-      to,
-      subject: 'Comprobante de tu pedido en Hassuru',
-      html
-    });
-    
-    console.log('✅ Email de comprobante enviado exitosamente:', result);
-    return result;
-  } catch (error) {
-    console.error('❌ Error enviando email de comprobante:', error);
-    console.error('Detalles del error:', {
-      message: error.message,
-      status: error.status,
-      code: error.code,
-      stack: error.stack
-    });
-    throw error;
-  }
+  return resend.emails.send({
+    from: 'Hassuru <no-reply@hassuru.ar>',
+    to,
+    subject: 'Comprobante de tu pedido en Hassuru',
+    html
+  });
 }
 
 async function sendNewOrderNotification({ order }) {
   if (!resend) {
-    console.log('Resend no configurado, saltando envío de notificación a Hassuru');
     return;
   }
 
