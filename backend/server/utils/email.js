@@ -9,8 +9,15 @@ if (process.env.RESEND_API_KEY) {
 }
 
 async function sendOrderReceiptEmail({ to, order }) {
+  console.log('📧 Intentando enviar email de comprobante a:', to);
+  
   if (!resend) {
-    console.log('Resend no configurado, saltando envío de email al cliente');
+    console.log('❌ Resend no configurado, saltando envío de email al cliente');
+    return;
+  }
+
+  if (!to || !order) {
+    console.log('❌ Datos faltantes para enviar email:', { to, order: !!order });
     return;
   }
 
@@ -47,12 +54,32 @@ async function sendOrderReceiptEmail({ to, order }) {
     <p>Gracias por confiar en Hassuru. Te contactaremos pronto para coordinar el pago y la entrega.</p>
   `;
 
-  return resend.emails.send({
-    from: 'Hassuru <onboarding@resend.dev>',
-    to,
-    subject: 'Comprobante de tu pedido en Hassuru',
-    html
-  });
+  try {
+    console.log('📧 Enviando email de comprobante con datos:', {
+      from: 'Hassuru <onboarding@resend.dev>',
+      to,
+      subject: 'Comprobante de tu pedido en Hassuru'
+    });
+    
+    const result = await resend.emails.send({
+      from: 'Hassuru <onboarding@resend.dev>',
+      to,
+      subject: 'Comprobante de tu pedido en Hassuru',
+      html
+    });
+    
+    console.log('✅ Email de comprobante enviado exitosamente:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Error enviando email de comprobante:', error);
+    console.error('Detalles del error:', {
+      message: error.message,
+      status: error.status,
+      code: error.code,
+      stack: error.stack
+    });
+    throw error;
+  }
 }
 
 async function sendNewOrderNotification({ order }) {
@@ -75,10 +102,10 @@ async function sendNewOrderNotification({ order }) {
   const total = order.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
 
   const html = `
-    <h2>🛒 ¡Nuevo Pedido Recibido!</h2>
-    <p>Se ha recibido un nuevo pedido en Hassuru.</p>
+    <h2>🛒 ¡HOY SE COME PAPAAAA!</h2>
+    <p>Prepara el pedido culeaaaa.</p>
     
-    <h3>📋 Detalles del Cliente</h3>
+    <h3>📋 Detalles del naziii</h3>
     <p><strong>Nombre:</strong> ${order.datosPersonales.nombre}</p>
     <p><strong>Email:</strong> ${order.datosPersonales.email}</p>
     <p><strong>Teléfono:</strong> ${order.datosPersonales.telefono}</p>
@@ -120,4 +147,34 @@ async function sendNewOrderNotification({ order }) {
   });
 }
 
-module.exports = { sendOrderReceiptEmail, sendNewOrderNotification }; 
+// Función de prueba específica para email del cliente
+async function testClientEmail(email) {
+  console.log('🧪 Probando envío de email al cliente:', email);
+  
+  if (!resend) {
+    console.log('❌ Resend no está configurado');
+    return false;
+  }
+
+  try {
+    const testResult = await resend.emails.send({
+      from: 'Hassuru <onboarding@resend.dev>',
+      to: email,
+      subject: 'Test de email al cliente - Hassuru',
+      html: `
+        <h2>🧪 Test de Email</h2>
+        <p>Este es un email de prueba para verificar que la configuración funciona correctamente.</p>
+        <p><strong>Email de destino:</strong> ${email}</p>
+        <p><strong>Fecha:</strong> ${new Date().toLocaleString('es-AR')}</p>
+        <p>Si recibes este email, significa que la configuración está funcionando correctamente.</p>
+      `
+    });
+    console.log('✅ Test de email al cliente exitoso:', testResult);
+    return true;
+  } catch (error) {
+    console.error('❌ Test de email al cliente falló:', error);
+    return false;
+  }
+}
+
+module.exports = { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail }; 
