@@ -63,22 +63,6 @@ const BannerCarousel = ({ banners }) => {
                 className="w-full h-full object-cover"
               />
             )}
-            
-            {/* Banner Info Overlay */}
-            {(banner.title || banner.description) && (
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                {banner.title && (
-                  <h3 className="text-white text-lg font-semibold mb-1">
-                    {banner.title}
-                  </h3>
-                )}
-                {banner.description && (
-                  <p className="text-white/90 text-sm">
-                    {banner.description}
-                  </p>
-                )}
-              </div>
-            )}
           </div>
         ))}
       </div>

@@ -103,7 +103,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
             <img
-              src="https://i.ibb.co/8D7xdF7G/Sneackers.png"
+              src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images/static-1750482098933-Sneackers.png"
               alt="Catalogo"
               width={600}
               height={500}
@@ -112,7 +112,7 @@ export default function Home() {
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
             <img
-              src="https://i.ibb.co/hk3ppsH/Ropa.png"
+              src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images/static-1750482100110-Ropa.png"
               alt="Encargo"
               width={620}
               height={500}

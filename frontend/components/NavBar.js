@@ -98,7 +98,7 @@ export default function Navbar() {
         <div className="absolute inset-0 w-full h-full">
           <Link href="/">
             <img
-              src="https://i.ibb.co/1WvGB4R/banner-3.png"
+              src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images/static-1750482097221-banner-3.png"
               alt="Background"
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               width={1200}
