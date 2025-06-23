@@ -22,7 +22,7 @@ export default function Home() {
 
     // Función para inicializar los datos
     const initializeData = async () => {
-      console.log('Iniciando carga de datos en Home...');
+      console.log('Iniciando carga de datos en Home..');
       try {
         // Obtener productos de la home
         console.log('Iniciando fetchHomeProducts...');
