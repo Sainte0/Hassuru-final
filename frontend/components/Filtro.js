@@ -215,7 +215,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       console.log('🔍 URL actual antes del cambio:', router.asPath);
 
       // Update URL - solo incluir parámetros con valores
-      router.push(
+      router.replace(
         {
           pathname: router.pathname,
           query: queryParams,
@@ -223,6 +223,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         undefined,
         { shallow: true }
       );
+
+      // Verificar que la URL se actualizó correctamente
+      setTimeout(() => {
+        console.log('🔍 URL después del cambio (verificación):', router.asPath);
+        console.log('🔍 QueryParams esperados:', queryParams);
+        console.log('🔍 QueryParams actuales:', router.query);
+      }, 100);
 
       console.log('🔍 URL después del cambio:', router.asPath);
 
@@ -254,6 +261,50 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     query,
     router.isReady
   ]);
+
+  // Efecto adicional para verificar que la URL se actualice correctamente
+  useEffect(() => {
+    if (router.isReady) {
+      console.log('🔍 Verificando sincronización de URL:', {
+        asPath: router.asPath,
+        query: router.query,
+        selectedTallaRopa,
+        selectedTallaZapatilla,
+        selectedMarca
+      });
+      
+      // Verificar si hay inconsistencias entre el estado local y la URL
+      const urlHasTallaRopa = router.query.tallaRopa && router.query.tallaRopa !== '';
+      const urlHasTallaZapatilla = router.query.tallaZapatilla && router.query.tallaZapatilla !== '';
+      const urlHasMarca = router.query.marca && router.query.marca !== '';
+      
+      const stateHasTallaRopa = selectedTallaRopa && selectedTallaRopa !== '';
+      const stateHasTallaZapatilla = selectedTallaZapatilla && selectedTallaZapatilla !== '';
+      const stateHasMarca = selectedMarca && selectedMarca !== '';
+      
+      if ((urlHasTallaRopa && !stateHasTallaRopa) || 
+          (urlHasTallaZapatilla && !stateHasTallaZapatilla) || 
+          (urlHasMarca && !stateHasMarca)) {
+        console.log('⚠️ Inconsistencia detectada entre URL y estado local');
+        console.log('🔄 Forzando actualización de URL...');
+        
+        const queryParams = {};
+        if (stateHasTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
+        if (stateHasTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
+        if (stateHasMarca) queryParams.marca = selectedMarca;
+        if (router.query.categoria) queryParams.categoria = router.query.categoria;
+        
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: queryParams,
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    }
+  }, [router.asPath, router.query, selectedTallaRopa, selectedTallaZapatilla, selectedMarca, router.isReady]);
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
