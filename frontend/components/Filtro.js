@@ -195,7 +195,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       
       const queryParams = {};
       
-      // Solo agregar filtros que tengan valor
+      // Solo agregar filtros que tengan valor (no vacíos)
       if (selectedTallaRopa && selectedTallaRopa.trim() !== '') queryParams.tallaRopa = selectedTallaRopa;
       if (selectedTallaZapatilla && selectedTallaZapatilla.trim() !== '') queryParams.tallaZapatilla = selectedTallaZapatilla;
       if (selectedAccesorio && selectedAccesorio.trim() !== '') queryParams.accesorio = selectedAccesorio;
@@ -212,8 +212,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
 
       console.log('📋 QueryParams construidos:', queryParams);
       console.log('🔍 QueryParams tiene valores?', Object.keys(queryParams).length > 0);
+      console.log('🔍 URL actual antes del cambio:', router.asPath);
 
-      // Update URL
+      // Update URL - solo incluir parámetros con valores
       router.push(
         {
           pathname: router.pathname,
@@ -222,6 +223,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         undefined,
         { shallow: true }
       );
+
+      console.log('🔍 URL después del cambio:', router.asPath);
 
       // Pass filters to parent component via onFiltersChange
       if (onFiltersChange) {
