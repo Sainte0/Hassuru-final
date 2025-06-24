@@ -189,6 +189,10 @@ export default function Categoria() {
       }
 
       console.log('📋 QueryParams finales:', Object.fromEntries(queryParams.entries()));
+      console.log('🔍 QueryParams incluye tallaRopa?', queryParams.has('tallaRopa'));
+      console.log('🔍 QueryParams incluye tallaZapatilla?', queryParams.has('tallaZapatilla'));
+      console.log('🔍 Valor de tallaRopa en QueryParams:', queryParams.get('tallaRopa'));
+      console.log('🔍 Valor de tallaZapatilla en QueryParams:', queryParams.get('tallaZapatilla'));
 
       const url = `${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}?${queryParams}`;
       console.log('🌐 URL de la petición:', url);
@@ -249,7 +253,29 @@ export default function Categoria() {
   const handleFiltersChange = useCallback((filters) => {
     console.log('🔄 Cambiando filtros:', filters);
     console.log('📄 Página actual antes del cambio:', currentPageRef.current);
-    setCurrentFilters(filters);
+    
+    // Verificar que los filtros no estén vacíos
+    const hasValidFilters = filters && typeof filters === 'object' && Object.values(filters).some(value => value !== '');
+    
+    if (!hasValidFilters) {
+      console.log('⚠️ Filtros vacíos recibidos, extrayendo de URL');
+      // Si los filtros están vacíos, extraerlos de la URL
+      const urlFilters = {
+        marca: router.query.marca || '',
+        tallaRopa: router.query.tallaRopa || '',
+        tallaZapatilla: router.query.tallaZapatilla || '',
+        accesorio: router.query.accesorio || '',
+        disponibilidad: router.query.disponibilidad || '',
+        precioMin: router.query.precioMin || router.query.min || '',
+        precioMax: router.query.precioMax || router.query.max || '',
+        q: router.query.q || ''
+      };
+      console.log('📋 Filtros extraídos de URL:', urlFilters);
+      setCurrentFilters(urlFilters);
+      filters = urlFilters; // Usar los filtros de la URL
+    } else {
+      setCurrentFilters(filters);
+    }
     
     // Resetear a la primera página cuando cambian los filtros
     setCurrentPage(1);
@@ -275,6 +301,7 @@ export default function Categoria() {
     // Llamar fetchProductsByCategory después de actualizar la URL
     setTimeout(() => {
       console.log('📄 Llamando fetchProductsByCategory con página:', currentPageRef.current);
+      console.log('📄 Filtros que se van a enviar:', filters);
       fetchProductsByCategory(filters);
     }, 100); // Pequeño delay para asegurar que la URL se actualice
   }, [categoria, router]);
