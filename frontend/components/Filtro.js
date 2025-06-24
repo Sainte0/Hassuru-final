@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { sortProductsByAvailability } from '../utils/sortProducts';
 
@@ -25,10 +25,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   const [precioMax, setPrecioMax] = useState("");
   const [filterOptions, setFilterOptions] = useState(null);
   const [loadingFilters, setLoadingFilters] = useState(false);
+  
+  // Ref para controlar si se debe ignorar la inicialización desde la URL
+  const ignoreUrlInitRef = useRef(false);
 
   // Initialize filters from URL parameters
   useEffect(() => {
-    if (router.isReady) {
+    if (router.isReady && !ignoreUrlInitRef.current) {
       console.log('🔍 Inicializando filtros desde URL:', router.query);
       const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max } = router.query;
       
@@ -81,6 +84,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       } else {
         console.log('ℹ️ No hay filtros en la URL o ya están establecidos localmente');
       }
+    } else if (ignoreUrlInitRef.current) {
+      console.log('🚫 Ignorando inicialización desde URL (limpiando filtro)');
+      ignoreUrlInitRef.current = false; // Resetear el flag
     }
   }, [router.isReady, router.query]);
 
@@ -258,6 +264,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     console.log('🔍 selectedMarca actual:', selectedMarca);
     if (selectedMarca === marca) {
       console.log('✅ Limpiando filtro marca');
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedMarca("");
     } else {
       console.log('✅ Estableciendo filtro marca:', marca);
@@ -270,6 +277,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     console.log('🔍 selectedTallaRopa actual:', selectedTallaRopa);
     if (selectedTallaRopa === talla) {
       console.log('✅ Limpiando filtro tallaRopa');
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedTallaRopa("");
     } else {
       console.log('✅ Estableciendo filtro tallaRopa:', talla);
@@ -284,6 +292,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     console.log('🔍 selectedTallaZapatilla actual:', selectedTallaZapatilla);
     if (selectedTallaZapatilla === talla) {
       console.log('✅ Limpiando filtro tallaZapatilla');
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedTallaZapatilla("");
     } else {
       console.log('✅ Estableciendo filtro tallaZapatilla:', talla);
@@ -298,6 +307,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     console.log('🔍 selectedAccesorio actual:', selectedAccesorio);
     if (selectedAccesorio === accesorio) {
       console.log('✅ Limpiando filtro accesorio');
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedAccesorio("");
     } else {
       console.log('✅ Estableciendo filtro accesorio:', accesorio);
@@ -312,6 +322,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     console.log('🔍 selectedDisponibilidad actual:', selectedDisponibilidad);
     if (selectedDisponibilidad === opcion) {
       console.log('✅ Limpiando filtro disponibilidad');
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedDisponibilidad("");
     } else {
       console.log('✅ Estableciendo filtro disponibilidad:', opcion);
@@ -410,7 +421,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
             {query && (
               <div className="flex items-center mb-2">
                 <span className="mr-2 text-gray-600">Búsqueda: {query}</span>
-                <button type="button" onClick={() => setQuery("")} className="text-red-500">X</button>
+                <button type="button" onClick={() => { 
+                  ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
+                  setQuery(""); 
+                }} className="text-red-500">X</button>
               </div>
             )}
             {(precioMin || precioMax) && (
@@ -418,7 +432,11 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                 <span className="mr-2 text-gray-600">
                   Precio: {precioMin ? `$${precioMin}` : '$0'} - {precioMax ? `$${precioMax}` : 'Max'}
                 </span>
-                <button type="button" onClick={() => { setPrecioMin(""); setPrecioMax(""); }} className="text-red-500">X</button>
+                <button type="button" onClick={() => { 
+                  ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
+                  setPrecioMin(""); 
+                  setPrecioMax(""); 
+                }} className="text-red-500">X</button>
               </div>
             )}
           </div>
