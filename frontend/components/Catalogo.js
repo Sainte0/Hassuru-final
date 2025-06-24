@@ -22,8 +22,56 @@ export default function Catalogo() {
   
   // Flag para evitar múltiples llamadas simultáneas
   const isLoadingRef = useRef(false);
+  
+  // Ref para fetchCatalogoProducts para usarlo en el event listener
+  const fetchCatalogoProductsRef = useRef();
 
-  // Efecto para manejar la navegación inicial
+  // Función para restaurar el estado de la página desde la URL
+  const restorePageFromURL = useCallback(() => {
+    if (!router.isReady) return;
+
+    const urlPage = parseInt(router.query.page) || 1;
+    const savedPage = sessionStorage.getItem('lastPage_catalogo');
+    
+    console.log('🔄 Restaurando página desde URL:', {
+      urlPage,
+      savedPage,
+      currentPage: currentPageRef.current
+    });
+
+    // Si hay una página en la URL, usarla
+    if (router.query.page) {
+      setCurrentPage(urlPage);
+      currentPageRef.current = urlPage;
+      if (urlPage > 1) {
+        sessionStorage.setItem('lastPage_catalogo', urlPage.toString());
+      }
+    } else if (savedPage) {
+      // Si no hay página en la URL pero hay una guardada, restaurarla
+      const page = parseInt(savedPage);
+      if (page > 1) {
+        console.log('📄 Restaurando página guardada:', page);
+        setCurrentPage(page);
+        currentPageRef.current = page;
+        // Actualizar la URL para mantener consistencia
+        router.push(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, page: page.toString() },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    } else {
+      // Si no hay nada, ir a la página 1
+      setCurrentPage(1);
+      currentPageRef.current = 1;
+      sessionStorage.removeItem('lastPage_catalogo');
+    }
+  }, [router.isReady, router.query.page, router.pathname, router.query]);
+
+  // Efecto para manejar la navegación inicial y cambios en la URL
   useEffect(() => {
     if (!router.isReady) {
       console.log('Router no está listo aún');
@@ -35,75 +83,29 @@ export default function Catalogo() {
       currentPage
     });
 
-    // Recuperar la página guardada al cargar la página
-    const savedPage = sessionStorage.getItem('lastPage_catalogo');
-    const urlPage = parseInt(router.query.page) || 1;
+    restorePageFromURL();
+  }, [router.isReady, router.query.page, restorePageFromURL]);
+
+  // Event listener para detectar navegación hacia atrás/adelante
+  useEffect(() => {
+    const handlePopState = () => {
+      console.log('🔄 Evento popstate detectado - navegación hacia atrás/adelante');
+      // Pequeño delay para asegurar que la URL se actualice
+      setTimeout(() => {
+        restorePageFromURL();
+        // Recargar productos con la página restaurada
+        if (fetchCatalogoProductsRef.current) {
+          fetchCatalogoProductsRef.current(currentFilters);
+        }
+      }, 100);
+    };
+
+    window.addEventListener('popstate', handlePopState);
     
-    console.log('Información de paginación del catálogo:', {
-      paginaGuardada: savedPage,
-      paginaURL: urlPage,
-      paginaActual: currentPage
-    });
-
-    // Si hay una página guardada y no hay página en la URL, actualizar la URL
-    if (savedPage && !router.query.page) {
-      const page = parseInt(savedPage);
-      if (page > 1) {
-        console.log('Actualizando URL con página guardada del catálogo:', page);
-        router.push(
-          {
-            pathname: router.pathname,
-            query: { ...router.query, page: page.toString() },
-          },
-          undefined,
-          { shallow: true }
-        );
-      }
-    }
-    
-    // Establecer la página actual
-    setCurrentPage(urlPage > 1 ? urlPage : (savedPage ? parseInt(savedPage) : 1));
-  }, [router.isReady, router.query.page]);
-
-  // Función para manejar el cambio de página
-  const handlePageChange = (pageNumber) => {
-    // Actualizar el estado local primero
-    setCurrentPage(pageNumber);
-    currentPageRef.current = pageNumber; // Actualizar el ref inmediatamente
-    
-    // Guardar la página en sessionStorage solo si no es la primera página
-    if (pageNumber > 1) {
-      sessionStorage.setItem('lastPage_catalogo', pageNumber.toString());
-    } else {
-      sessionStorage.removeItem('lastPage_catalogo');
-    }
-    
-    // Actualizar la URL
-    const newQuery = { ...router.query };
-    if (pageNumber === 1) {
-      delete newQuery.page;
-    } else {
-      newQuery.page = pageNumber.toString();
-    }
-
-    // Usar push para mantener el historial de navegación
-    router.push(
-      {
-        pathname: router.pathname,
-        query: newQuery,
-      },
-      undefined,
-      { shallow: true }
-    );
-
-    // Cargar productos para la nueva página
-    setTimeout(() => {
-      fetchCatalogoProducts(currentFilters);
-    }, 0);
-
-    // Scroll al inicio de la página
-    window.scrollTo(0, 0);
-  };
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [restorePageFromURL, currentFilters]);
 
   const fetchCatalogoProducts = useCallback(async (filters = {}) => {
     // Evitar múltiples llamadas simultáneas
@@ -183,6 +185,51 @@ export default function Catalogo() {
       isLoadingRef.current = false;
     }
   }, [productsPerPage]);
+
+  // Asignar la función al ref para que esté disponible en el event listener
+  useEffect(() => {
+    fetchCatalogoProductsRef.current = fetchCatalogoProducts;
+  }, [fetchCatalogoProducts]);
+
+  // Función para manejar el cambio de página
+  const handlePageChange = (pageNumber) => {
+    // Actualizar el estado local primero
+    setCurrentPage(pageNumber);
+    currentPageRef.current = pageNumber; // Actualizar el ref inmediatamente
+    
+    // Guardar la página en sessionStorage solo si no es la primera página
+    if (pageNumber > 1) {
+      sessionStorage.setItem('lastPage_catalogo', pageNumber.toString());
+    } else {
+      sessionStorage.removeItem('lastPage_catalogo');
+    }
+    
+    // Actualizar la URL
+    const newQuery = { ...router.query };
+    if (pageNumber === 1) {
+      delete newQuery.page;
+    } else {
+      newQuery.page = pageNumber.toString();
+    }
+
+    // Usar push para mantener el historial de navegación
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+
+    // Cargar productos para la nueva página
+    setTimeout(() => {
+      fetchCatalogoProducts(currentFilters);
+    }, 0);
+
+    // Scroll al inicio de la página
+    window.scrollTo(0, 0);
+  };
 
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {

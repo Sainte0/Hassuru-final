@@ -516,21 +516,21 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   {Array.from(new Set([...marcas.zapatillas, ...marcas.ropa, ...marcas.accesorios]))
                     .sort()
                     .map((marca, index) => (
-                      <div key={index} className="flex items-center mb-2">
-                        <input
-                          type="radio"
-                          id={`marca-${marca}`}
-                          name="marca"
-                          value={marca}
-                          checked={selectedMarca === marca}
-                          onChange={() => handleSelectMarca(marca)}
-                          className="mr-2"
-                        />
-                        <label htmlFor={`marca-${marca}`} className="text-gray-600 cursor-pointer">
-                          {marca}
-                        </label>
-                      </div>
-                    ))}
+                    <div key={index} className="flex items-center mb-2">
+                      <input
+                        type="radio"
+                        id={`marca-${marca}`}
+                        name="marca"
+                        value={marca}
+                        checked={selectedMarca === marca}
+                        onChange={() => handleSelectMarca(marca)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`marca-${marca}`} className="text-gray-600 cursor-pointer">
+                        {marca}
+                      </label>
+                    </div>
+                  ))}
                 </div>
               </div>
 

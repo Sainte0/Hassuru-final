@@ -35,8 +35,57 @@ export default function Categoria() {
   
   // Flag para evitar múltiples llamadas simultáneas
   const isLoadingRef = useRef(false);
+  
+  // Ref para fetchProductsByCategory para usarlo en el event listener
+  const fetchProductsByCategoryRef = useRef();
 
-  // Efecto para manejar la navegación inicial
+  // Función para restaurar el estado de la página desde la URL
+  const restorePageFromURL = useCallback(() => {
+    if (!router.isReady) return;
+
+    const urlPage = parseInt(router.query.page) || 1;
+    const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
+    
+    console.log('🔄 Restaurando página desde URL:', {
+      urlPage,
+      savedPage,
+      currentPage: currentPageRef.current,
+      categoria
+    });
+
+    // Si hay una página en la URL, usarla
+    if (router.query.page) {
+      setCurrentPage(urlPage);
+      currentPageRef.current = urlPage;
+      if (urlPage > 1) {
+        sessionStorage.setItem(`lastPage_${categoria}`, urlPage.toString());
+      }
+    } else if (savedPage) {
+      // Si no hay página en la URL pero hay una guardada, restaurarla
+      const page = parseInt(savedPage);
+      if (page > 1) {
+        console.log('📄 Restaurando página guardada:', page);
+        setCurrentPage(page);
+        currentPageRef.current = page;
+        // Actualizar la URL para mantener consistencia
+        router.push(
+          {
+            pathname: router.pathname,
+            query: { ...router.query, page: page.toString() },
+          },
+          undefined,
+          { shallow: true }
+        );
+      }
+    } else {
+      // Si no hay nada, ir a la página 1
+      setCurrentPage(1);
+      currentPageRef.current = 1;
+      sessionStorage.removeItem(`lastPage_${categoria}`);
+    }
+  }, [router.isReady, router.query.page, router.pathname, router.query, categoria]);
+
+  // Efecto para manejar la navegación inicial y cambios en la URL
   useEffect(() => {
     if (!router.isReady) {
       console.log('Router no está listo aún');
@@ -49,35 +98,29 @@ export default function Categoria() {
       currentPage
     });
 
-    // Recuperar la página guardada al cargar la página
-    const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
-    const urlPage = parseInt(router.query.page) || 1;
-    
-    console.log('Información de paginación:', {
-      paginaGuardada: savedPage,
-      paginaURL: urlPage,
-      paginaActual: currentPage
-    });
+    restorePageFromURL();
+  }, [router.isReady, categoria, router.query.page, restorePageFromURL]);
 
-    // Si hay una página guardada y no hay página en la URL, actualizar la URL
-    if (savedPage && !router.query.page) {
-      const page = parseInt(savedPage);
-      if (page > 1) {
-        console.log('Actualizando URL con página guardada:', page);
-        router.push(
-          {
-            pathname: router.pathname,
-            query: { ...router.query, page: page.toString() },
-          },
-          undefined,
-          { shallow: true }
-        );
-      }
-    }
+  // Event listener para detectar navegación hacia atrás/adelante
+  useEffect(() => {
+    const handlePopState = () => {
+      console.log('🔄 Evento popstate detectado - navegación hacia atrás/adelante');
+      // Pequeño delay para asegurar que la URL se actualice
+      setTimeout(() => {
+        restorePageFromURL();
+        // Recargar productos con la página restaurada
+        if (fetchProductsByCategoryRef.current) {
+          fetchProductsByCategoryRef.current(currentFilters);
+        }
+      }, 100);
+    };
+
+    window.addEventListener('popstate', handlePopState);
     
-    // Establecer la página actual
-    setCurrentPage(urlPage > 1 ? urlPage : (savedPage ? parseInt(savedPage) : 1));
-  }, [router.isReady, categoria, router.query.page]);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [restorePageFromURL, currentFilters]);
 
   // Función para manejar el cambio de página
   const handlePageChange = (pageNumber) => {
@@ -249,6 +292,11 @@ export default function Categoria() {
     }
   }, [categoria, productsPerPage]);
 
+  // Asignar la función al ref para que esté disponible en el event listener
+  useEffect(() => {
+    fetchProductsByCategoryRef.current = fetchProductsByCategory;
+  }, [fetchProductsByCategory]);
+
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
     console.log('🔄 Cambiando filtros:', filters);
@@ -303,7 +351,7 @@ export default function Categoria() {
       console.log('📄 Llamando fetchProductsByCategory con página:', currentPageRef.current);
       console.log('📄 Filtros que se van a enviar:', filters);
       fetchProductsByCategory(filters);
-    }, 100); // Pequeño delay para asegurar que la URL se actualice
+    }, 100);
   }, [categoria, router]);
 
   // Efecto consolidado para manejar filtros y carga inicial de productos
@@ -404,10 +452,10 @@ export default function Categoria() {
         ) : (
           <>
             <Card currentProducts={safeFilteredProducts} />
-            <Pagination
+              <Pagination
               pagination={pagination}
-              onPageChange={handlePageChange}
-            />
+                onPageChange={handlePageChange}
+              />
           </>
         )}
       </section>
