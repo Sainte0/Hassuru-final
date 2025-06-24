@@ -132,6 +132,12 @@ export default function Categoria() {
     }
     
     console.log('Iniciando carga de productos para categoría:', categoria, 'con filtros:', filters);
+    console.log('🔍 Tipo de filters:', typeof filters);
+    console.log('🔍 Filters es objeto?', filters && typeof filters === 'object');
+    console.log('🔍 Filters.tallaZapatilla:', filters.tallaZapatilla);
+    console.log('🔍 Filters.tallaZapatilla es string?', typeof filters.tallaZapatilla === 'string');
+    console.log('🔍 Filters.tallaZapatilla tiene valor?', filters.tallaZapatilla && filters.tallaZapatilla.length > 0);
+    
     isLoadingRef.current = true;
     setLoading(true);
     setError(null);
@@ -143,15 +149,43 @@ export default function Categoria() {
         limit: productsPerPage.toString()
       });
 
+      console.log('📋 QueryParams iniciales:', Object.fromEntries(queryParams.entries()));
+
       // Agregar todos los filtros al servidor
-      if (filters.marca) queryParams.append('marca', filters.marca);
-      if (filters.tallaRopa) queryParams.append('tallaRopa', filters.tallaRopa);
-      if (filters.tallaZapatilla) queryParams.append('tallaZapatilla', filters.tallaZapatilla);
-      if (filters.accesorio) queryParams.append('accesorio', filters.accesorio);
-      if (filters.disponibilidad) queryParams.append('disponibilidad', filters.disponibilidad);
-      if (filters.precioMin) queryParams.append('precioMin', filters.precioMin);
-      if (filters.precioMax) queryParams.append('precioMax', filters.precioMax);
-      if (filters.q) queryParams.append('q', filters.q);
+      if (filters.marca) {
+        queryParams.append('marca', filters.marca);
+        console.log('✅ Agregado filtro marca:', filters.marca);
+      }
+      if (filters.tallaRopa) {
+        queryParams.append('tallaRopa', filters.tallaRopa);
+        console.log('✅ Agregado filtro tallaRopa:', filters.tallaRopa);
+      }
+      if (filters.tallaZapatilla) {
+        queryParams.append('tallaZapatilla', filters.tallaZapatilla);
+        console.log('✅ Agregado filtro tallaZapatilla:', filters.tallaZapatilla);
+      }
+      if (filters.accesorio) {
+        queryParams.append('accesorio', filters.accesorio);
+        console.log('✅ Agregado filtro accesorio:', filters.accesorio);
+      }
+      if (filters.disponibilidad) {
+        queryParams.append('disponibilidad', filters.disponibilidad);
+        console.log('✅ Agregado filtro disponibilidad:', filters.disponibilidad);
+      }
+      if (filters.precioMin) {
+        queryParams.append('precioMin', filters.precioMin);
+        console.log('✅ Agregado filtro precioMin:', filters.precioMin);
+      }
+      if (filters.precioMax) {
+        queryParams.append('precioMax', filters.precioMax);
+        console.log('✅ Agregado filtro precioMax:', filters.precioMax);
+      }
+      if (filters.q) {
+        queryParams.append('q', filters.q);
+        console.log('✅ Agregado filtro q:', filters.q);
+      }
+
+      console.log('📋 QueryParams finales:', Object.fromEntries(queryParams.entries()));
 
       const url = `${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}?${queryParams}`;
       console.log('🌐 URL de la petición:', url);
@@ -297,41 +331,6 @@ export default function Categoria() {
     router.query.max, 
     router.query.q
   ]);
-
-  // Efecto para sincronizar filtros cuando cambien desde el componente Filtro
-  useEffect(() => {
-    if (router.isReady && categoria) {
-      // Verificar si los filtros actuales coinciden con los de la URL
-      const urlFilters = {
-        marca: router.query.marca || '',
-        tallaRopa: router.query.tallaRopa || '',
-        tallaZapatilla: router.query.tallaZapatilla || '',
-        accesorio: router.query.accesorio || '',
-        disponibilidad: router.query.disponibilidad || '',
-        precioMin: router.query.precioMin || router.query.min || '',
-        precioMax: router.query.precioMax || router.query.max || '',
-        q: router.query.q || ''
-      };
-
-      // Comparar con los filtros actuales
-      const currentFiltersString = JSON.stringify(currentFilters);
-      const urlFiltersString = JSON.stringify(urlFilters);
-      
-      if (currentFiltersString !== urlFiltersString) {
-        console.log('🔄 Sincronizando filtros - URL diferente a estado actual');
-        console.log('📋 Filtros actuales:', currentFilters);
-        console.log('📋 Filtros de URL:', urlFilters);
-        
-        setCurrentFilters(urlFilters);
-        
-        // Recargar productos con los nuevos filtros
-        setTimeout(() => {
-          console.log('📞 Recargando productos con filtros sincronizados:', urlFilters);
-          fetchProductsByCategory(urlFilters);
-        }, 100);
-      }
-    }
-  }, [router.query, router.isReady, categoria]);
 
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
