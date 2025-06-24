@@ -175,6 +175,17 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Update URL and apply filters when any filter changes
   useEffect(() => {
     if (router.isReady) {
+      console.log('🔄 Filtro.js - useEffect ejecutándose con filtros:', {
+        selectedTallaRopa,
+        selectedTallaZapatilla,
+        selectedAccesorio,
+        precioMin,
+        precioMax,
+        selectedDisponibilidad,
+        selectedMarca,
+        query
+      });
+      
       const queryParams = {};
       
       if (selectedTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
@@ -191,6 +202,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         queryParams.categoria = router.query.categoria;
       }
 
+      console.log('📋 QueryParams construidos:', queryParams);
+
       // Update URL
       router.push(
         {
@@ -203,7 +216,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
 
       // Pass filters to parent component via onFiltersChange
       if (onFiltersChange) {
-        onFiltersChange({
+        const filtersToPass = {
           tallaRopa: selectedTallaRopa,
           tallaZapatilla: selectedTallaZapatilla,
           accesorio: selectedAccesorio,
@@ -212,7 +225,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           disponibilidad: selectedDisponibilidad,
           marca: selectedMarca,
           q: query
-        });
+        };
+        
+        console.log('📤 Pasando filtros al componente padre:', filtersToPass);
+        onFiltersChange(filtersToPass);
       }
     }
   }, [

@@ -271,6 +271,7 @@ router.get('/categoria/:categoria', async (req, res) => {
     console.log('🔍 Ruta /categoria/:categoria llamada');
     console.log('📋 Parámetros:', req.params);
     console.log('🔍 Query:', req.query);
+    console.log('🎯 Filtro tallaZapatilla recibido:', req.query.tallaZapatilla);
     
     const { categoria } = req.params;
     const { 
@@ -292,6 +293,7 @@ router.get('/categoria/:categoria', async (req, res) => {
     
     console.log('🏷️ Categoría recibida:', categoria);
     console.log('✅ Categoría válida:', categoriasValidas.includes(categoriaLower));
+    console.log('🎯 tallaZapatilla extraída:', tallaZapatilla);
     
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       // Construir filtros
@@ -309,6 +311,7 @@ router.get('/categoria/:categoria', async (req, res) => {
       // Filtro por talla (compatibilidad con diferentes tipos)
       if (talla || tallaRopa || tallaZapatilla || accesorio) {
         const tallaToUse = talla || tallaRopa || tallaZapatilla || accesorio;
+        console.log('🎯 Aplicando filtro de talla:', tallaToUse);
         filterQuery['tallas.talla'] = tallaToUse;
       }
 
