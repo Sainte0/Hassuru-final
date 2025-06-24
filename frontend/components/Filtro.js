@@ -171,14 +171,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     });
   };
 
-  // Efecto para aplicar filtros cuando cambian los valores
-  // useEffect(() => {
-  //   if (products.length > 0) {
-  //     const filteredProducts = applyFilters(products);
-  //     setFilteredProducts(filteredProducts);
-  //   }
-  // }, [selectedMarca, selectedTallaRopa, selectedTallaZapatilla, selectedAccesorio, selectedDisponibilidad, query, precioMin, precioMax, products]);
-
   // Update URL and apply filters when any filter changes
   useEffect(() => {
     if (router.isReady) {
@@ -247,7 +239,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         };
         
         console.log('📤 Pasando filtros al componente padre:', filtersToPass);
-        onFiltersChange(filtersToPass);
+        
+        // Solo pasar filtros si no estamos en proceso de limpiar
+        if (!ignoreUrlInitRef.current) {
+          onFiltersChange(filtersToPass);
+        } else {
+          console.log('🚫 No pasando filtros al componente padre (limpiando filtro)');
+        }
       }
     }
   }, [
@@ -273,35 +271,40 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         selectedMarca
       });
       
-      // Verificar si hay inconsistencias entre el estado local y la URL
-      const urlHasTallaRopa = router.query.tallaRopa && router.query.tallaRopa !== '';
-      const urlHasTallaZapatilla = router.query.tallaZapatilla && router.query.tallaZapatilla !== '';
-      const urlHasMarca = router.query.marca && router.query.marca !== '';
-      
-      const stateHasTallaRopa = selectedTallaRopa && selectedTallaRopa !== '';
-      const stateHasTallaZapatilla = selectedTallaZapatilla && selectedTallaZapatilla !== '';
-      const stateHasMarca = selectedMarca && selectedMarca !== '';
-      
-      if ((urlHasTallaRopa && !stateHasTallaRopa) || 
-          (urlHasTallaZapatilla && !stateHasTallaZapatilla) || 
-          (urlHasMarca && !stateHasMarca)) {
-        console.log('⚠️ Inconsistencia detectada entre URL y estado local');
-        console.log('🔄 Forzando actualización de URL...');
+      // Solo verificar inconsistencias si no estamos en proceso de limpiar filtros
+      if (!ignoreUrlInitRef.current) {
+        // Verificar si hay inconsistencias entre el estado local y la URL
+        const urlHasTallaRopa = router.query.tallaRopa && router.query.tallaRopa !== '';
+        const urlHasTallaZapatilla = router.query.tallaZapatilla && router.query.tallaZapatilla !== '';
+        const urlHasMarca = router.query.marca && router.query.marca !== '';
         
-        const queryParams = {};
-        if (stateHasTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
-        if (stateHasTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
-        if (stateHasMarca) queryParams.marca = selectedMarca;
-        if (router.query.categoria) queryParams.categoria = router.query.categoria;
+        const stateHasTallaRopa = selectedTallaRopa && selectedTallaRopa !== '';
+        const stateHasTallaZapatilla = selectedTallaZapatilla && selectedTallaZapatilla !== '';
+        const stateHasMarca = selectedMarca && selectedMarca !== '';
         
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: queryParams,
-          },
-          undefined,
-          { shallow: true }
-        );
+        if ((urlHasTallaRopa && !stateHasTallaRopa) || 
+            (urlHasTallaZapatilla && !stateHasTallaZapatilla) || 
+            (urlHasMarca && !stateHasMarca)) {
+          console.log('⚠️ Inconsistencia detectada entre URL y estado local');
+          console.log('🔄 Forzando actualización de URL...');
+          
+          const queryParams = {};
+          if (stateHasTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
+          if (stateHasTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
+          if (stateHasMarca) queryParams.marca = selectedMarca;
+          if (router.query.categoria) queryParams.categoria = router.query.categoria;
+          
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: queryParams,
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
+      } else {
+        console.log('🚫 Ignorando verificación de sincronización (limpiando filtro)');
       }
     }
   }, [router.asPath, router.query, selectedTallaRopa, selectedTallaZapatilla, selectedMarca, router.isReady]);
