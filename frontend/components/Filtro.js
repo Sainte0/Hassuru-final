@@ -34,42 +34,43 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       
       let filtersApplied = false;
       
-      if (marca) {
+      // Solo aplicar filtros si no están ya establecidos localmente
+      if (marca && !selectedMarca) {
         console.log('✅ Aplicando filtro de marca:', marca);
         setSelectedMarca(marca);
         filtersApplied = true;
       }
-      if (tallaRopa) {
+      if (tallaRopa && !selectedTallaRopa) {
         console.log('✅ Aplicando filtro de talla ropa:', tallaRopa);
         setSelectedTallaRopa(tallaRopa);
         filtersApplied = true;
       }
-      if (tallaZapatilla) {
+      if (tallaZapatilla && !selectedTallaZapatilla) {
         console.log('✅ Aplicando filtro de talla zapatilla:', tallaZapatilla);
         setSelectedTallaZapatilla(tallaZapatilla);
         filtersApplied = true;
       }
-      if (accesorio) {
+      if (accesorio && !selectedAccesorio) {
         console.log('✅ Aplicando filtro de accesorio:', accesorio);
         setSelectedAccesorio(accesorio);
         filtersApplied = true;
       }
-      if (disponibilidad) {
+      if (disponibilidad && !selectedDisponibilidad) {
         console.log('✅ Aplicando filtro de disponibilidad:', disponibilidad);
         setSelectedDisponibilidad(disponibilidad);
         filtersApplied = true;
       }
-      if (q) {
+      if (q && !query) {
         console.log('✅ Aplicando filtro de búsqueda:', q);
         setQuery(q);
         filtersApplied = true;
       }
-      if (min) {
+      if (min && !precioMin) {
         console.log('✅ Aplicando filtro de precio mínimo:', min);
         setPrecioMin(min);
         filtersApplied = true;
       }
-      if (max) {
+      if (max && !precioMax) {
         console.log('✅ Aplicando filtro de precio máximo:', max);
         setPrecioMax(max);
         filtersApplied = true;
@@ -78,7 +79,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (filtersApplied) {
         console.log('🎯 Filtros aplicados desde URL correctamente');
       } else {
-        console.log('ℹ️ No hay filtros en la URL');
+        console.log('ℹ️ No hay filtros en la URL o ya están establecidos localmente');
       }
     }
   }, [router.isReady, router.query]);
@@ -188,14 +189,15 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       
       const queryParams = {};
       
-      if (selectedTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
-      if (selectedTallaZapatilla) queryParams.tallaZapatilla = selectedTallaZapatilla;
-      if (selectedAccesorio) queryParams.accesorio = selectedAccesorio;
-      if (precioMin) queryParams.min = precioMin;
-      if (precioMax) queryParams.max = precioMax;
-      if (selectedDisponibilidad) queryParams.disponibilidad = selectedDisponibilidad;
-      if (selectedMarca) queryParams.marca = selectedMarca;
-      if (query) queryParams.q = query;
+      // Solo agregar filtros que tengan valor
+      if (selectedTallaRopa && selectedTallaRopa.trim() !== '') queryParams.tallaRopa = selectedTallaRopa;
+      if (selectedTallaZapatilla && selectedTallaZapatilla.trim() !== '') queryParams.tallaZapatilla = selectedTallaZapatilla;
+      if (selectedAccesorio && selectedAccesorio.trim() !== '') queryParams.accesorio = selectedAccesorio;
+      if (precioMin && precioMin.trim() !== '') queryParams.min = precioMin;
+      if (precioMax && precioMax.trim() !== '') queryParams.max = precioMax;
+      if (selectedDisponibilidad && selectedDisponibilidad.trim() !== '') queryParams.disponibilidad = selectedDisponibilidad;
+      if (selectedMarca && selectedMarca.trim() !== '') queryParams.marca = selectedMarca;
+      if (query && query.trim() !== '') queryParams.q = query;
       
       // Preserve the category parameter if it exists
       if (router.query.categoria) {
@@ -218,14 +220,14 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       // Pass filters to parent component via onFiltersChange
       if (onFiltersChange) {
         const filtersToPass = {
-          tallaRopa: selectedTallaRopa,
-          tallaZapatilla: selectedTallaZapatilla,
-          accesorio: selectedAccesorio,
-          precioMin,
-          precioMax,
-          disponibilidad: selectedDisponibilidad,
-          marca: selectedMarca,
-          q: query
+          tallaRopa: selectedTallaRopa || '',
+          tallaZapatilla: selectedTallaZapatilla || '',
+          accesorio: selectedAccesorio || '',
+          precioMin: precioMin || '',
+          precioMax: precioMax || '',
+          disponibilidad: selectedDisponibilidad || '',
+          marca: selectedMarca || '',
+          q: query || ''
         };
         
         console.log('📤 Pasando filtros al componente padre:', filtersToPass);
