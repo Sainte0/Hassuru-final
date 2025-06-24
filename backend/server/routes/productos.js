@@ -24,9 +24,6 @@ const upload = multer({ storage: storage });
 // Ruta para el catálogo con filtros y paginación (DEBE IR PRIMERO)
 router.get('/catalogo', async (req, res) => {
   try {
-    console.log('🔍 Ruta /catalogo llamada');
-    console.log('📋 Query:', req.query);
-    
     const { 
       page = 1, 
       limit = 20, 
@@ -44,8 +41,6 @@ router.get('/catalogo', async (req, res) => {
     
     // Construir filtros
     let filterQuery = {};
-
-    console.log('🔍 Query de filtro inicial:', JSON.stringify(filterQuery, null, 2));
 
     // Filtro por categoría
     if (categoria) {
@@ -95,14 +90,10 @@ router.get('/catalogo', async (req, res) => {
       ];
     }
 
-    console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
-
     // Obtener TODOS los productos que coincidan con los filtros
     const todosLosProductos = await Producto.find(filterQuery)
       .select('-image.data')
       .lean();
-
-    console.log('📦 Todos los productos encontrados:', todosLosProductos.length);
 
     // Ordenar TODOS los productos por disponibilidad y precio
     const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
@@ -131,28 +122,9 @@ router.get('/catalogo', async (req, res) => {
       return aPrice - bPrice; // Ordenar de menor a mayor precio
     });
 
-    console.log('📊 Todos los productos ordenados por disponibilidad y precio:', {
-      total: todosLosProductosOrdenados.length,
-      muestra: todosLosProductosOrdenados.slice(0, 10).map(p => ({
-        nombre: p.nombre,
-        precio: p.precio,
-        encargo: p.encargo,
-        tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0,
-        grupo: (() => {
-          const hasTallas = Array.isArray(p.tallas) && p.tallas.length > 0;
-          if (hasTallas && !p.encargo) return 'Entrega inmediata';
-          if (hasTallas && p.encargo) return 'Disponible en 3 días';
-          if (!hasTallas) return 'Disponible en 20 días';
-          return 'Otros';
-        })()
-      }))
-    });
-
     // Calcular skip para paginación
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const productosDeLaPagina = todosLosProductosOrdenados.slice(skip, skip + parseInt(limit));
-
-    console.log('📊 Paginación - Skip:', skip, 'Limit:', limit, 'Productos en página:', productosDeLaPagina.length);
 
     const total = todosLosProductosOrdenados.length;
     const totalPages = Math.ceil(total / parseInt(limit));
@@ -168,15 +140,10 @@ router.get('/catalogo', async (req, res) => {
         hasPrevPage: parseInt(page) > 1
       }
     };
-
-    console.log('📤 Enviando respuesta del catálogo:', {
-      productosCount: response.productos.length,
-      pagination: response.pagination
-    });
     
     res.status(200).json(response);
   } catch (error) {
-    console.error('💥 Error en la ruta /catalogo:', error);
+    console.error('Error en la ruta /catalogo:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -184,8 +151,6 @@ router.get('/catalogo', async (req, res) => {
 // Ruta para obtener opciones de filtro del catálogo (DEBE IR DESPUÉS DE /catalogo)
 router.get('/catalogo/filtros', async (req, res) => {
   try {
-    console.log('🔍 Ruta /catalogo/filtros llamada');
-    
     // Obtener todos los productos para extraer opciones de filtro
     const productos = await Producto.find({})
       .select('marca categoria tallas precio encargo')
@@ -251,13 +216,6 @@ router.get('/catalogo/filtros', async (req, res) => {
       }
     };
 
-    console.log('📊 Opciones de filtro extraídas:', {
-      totalMarcas: response.marcas.length,
-      totalTallasZapatillas: response.tallas.zapatillas.length,
-      totalTallasRopa: response.tallas.ropa.length,
-      totalTallasAccesorios: response.tallas.accesorios.length
-    });
-
     res.status(200).json(response);
   } catch (error) {
     console.error('💥 Error en la ruta /catalogo/filtros:', error);
@@ -268,11 +226,6 @@ router.get('/catalogo/filtros', async (req, res) => {
 // Ruta de categoría PRIMERO (antes de buscar)
 router.get('/categoria/:categoria', async (req, res) => {
   try {
-    console.log('🔍 Ruta /categoria/:categoria llamada');
-    console.log('📋 Parámetros:', req.params);
-    console.log('🔍 Query:', req.query);
-    console.log('🎯 Filtro tallaZapatilla recibido:', req.query.tallaZapatilla);
-    
     const { categoria } = req.params;
     const { 
       page = 1, 
@@ -291,17 +244,11 @@ router.get('/categoria/:categoria', async (req, res) => {
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
     const categoriaLower = categoria ? categoria.toLowerCase() : null;
     
-    console.log('🏷️ Categoría recibida:', categoria);
-    console.log('✅ Categoría válida:', categoriasValidas.includes(categoriaLower));
-    console.log('🎯 tallaZapatilla extraída:', tallaZapatilla);
-    
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       // Construir filtros
       let filterQuery = {
         categoria: { $regex: new RegExp(categoria, 'i') }
       };
-
-      console.log('🔍 Query de filtro inicial:', JSON.stringify(filterQuery, null, 2));
 
       // Filtro por marca
       if (marca) {
@@ -311,7 +258,6 @@ router.get('/categoria/:categoria', async (req, res) => {
       // Filtro por talla (compatibilidad con diferentes tipos)
       if (talla || tallaRopa || tallaZapatilla || accesorio) {
         const tallaToUse = talla || tallaRopa || tallaZapatilla || accesorio;
-        console.log('🎯 Aplicando filtro de talla:', tallaToUse);
         filterQuery['tallas.talla'] = tallaToUse;
       }
 
@@ -347,14 +293,10 @@ router.get('/categoria/:categoria', async (req, res) => {
         ];
       }
 
-      console.log('🔍 Query de filtro final:', JSON.stringify(filterQuery, null, 2));
-
       // Obtener TODOS los productos de la categoría para ordenamiento correcto
       const todosLosProductos = await Producto.find(filterQuery)
         .select('-image.data')
         .lean();
-
-      console.log('📦 Todos los productos encontrados:', todosLosProductos.length);
 
       // Ordenar TODOS los productos por disponibilidad y precio
       const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
@@ -383,28 +325,9 @@ router.get('/categoria/:categoria', async (req, res) => {
         return aPrice - bPrice; // Ordenar de menor a mayor precio
       });
 
-      console.log('📊 Todos los productos ordenados por disponibilidad y precio:', {
-        total: todosLosProductosOrdenados.length,
-        muestra: todosLosProductosOrdenados.slice(0, 10).map(p => ({
-          nombre: p.nombre,
-          precio: p.precio,
-          encargo: p.encargo,
-          tieneTallas: Array.isArray(p.tallas) && p.tallas.length > 0,
-          grupo: (() => {
-            const hasTallas = Array.isArray(p.tallas) && p.tallas.length > 0;
-            if (hasTallas && !p.encargo) return 'Entrega inmediata';
-            if (hasTallas && p.encargo) return 'Disponible en 3 días';
-            if (!hasTallas) return 'Disponible en 20 días';
-            return 'Otros';
-          })()
-        }))
-      });
-
       // Calcular skip para paginación
       const skip = (parseInt(page) - 1) * parseInt(limit);
       const productosDeLaPagina = todosLosProductosOrdenados.slice(skip, skip + parseInt(limit));
-
-      console.log('📊 Paginación - Skip:', skip, 'Limit:', limit, 'Productos en página:', productosDeLaPagina.length);
 
       const total = todosLosProductosOrdenados.length;
       const totalPages = Math.ceil(total / parseInt(limit));
@@ -420,19 +343,13 @@ router.get('/categoria/:categoria', async (req, res) => {
           hasPrevPage: parseInt(page) > 1
         }
       };
-
-      console.log('📤 Enviando respuesta:', {
-        productosCount: response.productos.length,
-        pagination: response.pagination
-      });
       
       res.status(200).json(response);
     } else {
-      console.log('❌ Categoría no válida:', categoria);
       return res.status(400).json({ error: 'Categoría no válida. Las categorías permitidas son: zapatillas, ropa, accesorios.' });
     }
   } catch (error) {
-    console.error('💥 Error en la ruta /categoria:', error);
+    console.error('Error en la ruta /categoria:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -440,9 +357,6 @@ router.get('/categoria/:categoria', async (req, res) => {
 // Ruta para obtener todas las tallas de una categoría (sin paginación)
 router.get('/categoria/:categoria/tallas', async (req, res) => {
   try {
-    console.log('🔍 Ruta /categoria/:categoria/tallas llamada');
-    console.log('📋 Parámetros:', req.params);
-    
     const { categoria } = req.params;
     
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
@@ -493,12 +407,6 @@ router.get('/categoria/:categoria/tallas', async (req, res) => {
       return a.localeCompare(b);
     });
 
-    console.log('📏 Tallas encontradas para categoría:', {
-      categoria,
-      totalTallas: tallasArray.length,
-      tallas: tallasArray
-    });
-
     res.status(200).json(tallasArray);
   } catch (error) {
     console.error('💥 Error en la ruta /categoria/:categoria/tallas:', error);
@@ -509,9 +417,6 @@ router.get('/categoria/:categoria/tallas', async (req, res) => {
 // Ruta para obtener opciones de filtro de una categoría específica
 router.get('/categoria/:categoria/filtros', async (req, res) => {
   try {
-    console.log('🔍 Ruta /categoria/:categoria/filtros llamada');
-    console.log('📋 Parámetros:', req.params);
-    
     const { categoria } = req.params;
     
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
@@ -573,12 +478,6 @@ router.get('/categoria/:categoria/filtros', async (req, res) => {
       marcas: Array.from(marcasSet).sort(),
       tallas: tallasArray
     };
-
-    console.log('📊 Opciones de filtro extraídas para categoría:', {
-      categoria,
-      totalMarcas: response.marcas.length,
-      totalTallas: response.tallas.length
-    });
 
     res.status(200).json(response);
   } catch (error) {
@@ -709,14 +608,10 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
   try {
-    console.log('Iniciando creación de producto...');
-    console.log('Datos recibidos:', JSON.stringify(req.body));
-    
     const { nombre, descripcion, precio, marca, categoria, tallas, colores, encargo, destacado, destacado_zapatillas } = req.body;
     
     // Validar campos requeridos
     if (!nombre || !precio || !marca || !categoria) {
-      console.error('Faltan campos requeridos');
       return res.status(400).json({ error: 'Faltan campos requeridos: nombre, precio, marca, categoria' });
     }
 
@@ -743,7 +638,6 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         marcasArray = [marcasProcesadas.toString().trim()];
       }
     } catch (e) {
-      console.error('Error al procesar marcas:', e);
       // Si falla el parseo, tratar marca como un string simple y dividirlo
       marcasArray = marca
         .toString()
@@ -753,22 +647,16 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
         .filter((m, index, self) => self.indexOf(m) === index); // Eliminar duplicados
     }
 
-    console.log('Marcas procesadas:', marcasArray);
-    
     let imageData = null;
     
     if (req.file) {
-      console.log('Archivo recibido:', req.file.originalname, 'Tipo:', req.file.mimetype);
       try {
         // Leer el archivo como Buffer
         const imageBuffer = fs.readFileSync(req.file.path);
-        console.log('Archivo leído correctamente, tamaño:', imageBuffer.length, 'bytes');
         
         // Subir la imagen a Supabase con optimización automática
         try {
-          console.log('Intentando subir imagen a Supabase...');
           const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
-          console.log('Imagen subida exitosamente a Supabase:', imageUrl);
           
           // Obtener metadata de la imagen optimizada
           const sharp = require('sharp');
@@ -786,21 +674,18 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
           };
           
         } catch (error) {
-          console.error('Error al subir la imagen a Supabase:', error);
           return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
         } finally {
           // Eliminar el archivo temporal
           if (req.file && req.file.path) {
             try {
               fs.unlinkSync(req.file.path);
-              console.log('Archivo temporal eliminado');
             } catch (error) {
               console.error('Error al eliminar archivo temporal:', error);
             }
           }
         }
       } catch (error) {
-        console.error('Error al procesar la imagen:', error);
         return res.status(500).json({ error: 'Error al procesar la imagen: ' + error.message });
       }
     } else {
@@ -813,23 +698,18 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
     
     try {
       parsedTallas = tallas ? JSON.parse(tallas) : [];
-      console.log('Tallas parseadas:', parsedTallas);
     } catch (e) {
-      console.error('Error al parsear tallas:', e);
       return res.status(400).json({ error: 'Formato de tallas inválido' });
     }
     
     try {
       parsedColores = colores ? JSON.parse(colores) : [];
-      console.log('Colores parseados:', parsedColores);
     } catch (e) {
-      console.error('Error al parsear colores:', e);
       return res.status(400).json({ error: 'Formato de colores inválido' });
     }
 
     // Generar un slug único para el producto
     const slug = generateUniqueSlug(nombre);
-    console.log('Slug generado:', slug);
 
     const nuevoProducto = new Producto({
       nombre,
@@ -846,19 +726,14 @@ router.post('/', authMiddleware, upload.single('image'), async (req, res) => {
       image: imageData
     });
 
-    console.log('Guardando producto en la base de datos...');
     const productoGuardado = await nuevoProducto.save();
-    console.log('Producto guardado exitosamente con ID:', productoGuardado._id);
     
     res.status(201).json(productoGuardado);
   } catch (error) {
-    console.error('Error al crear el producto:', error);
-    
     // Asegurarse de eliminar el archivo temporal si existe
     if (req.file && req.file.path) {
       try {
         fs.unlinkSync(req.file.path);
-        console.log('Archivo temporal eliminado después de error');
       } catch (unlinkError) {
         console.error('Error al eliminar archivo temporal:', unlinkError);
       }
@@ -882,9 +757,7 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     let imageData = null;
     
     try {
-      console.log('Intentando subir imagen a Supabase...');
       const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
-      console.log('Imagen subida exitosamente a Supabase:', imageUrl);
       
       // Obtener metadata de la imagen optimizada
       const sharp = require('sharp');
@@ -901,7 +774,6 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
       };
       
     } catch (error) {
-      console.error('Error al subir la imagen a Supabase:', error);
       return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
     } finally {
       // Eliminar el archivo temporal
@@ -926,8 +798,6 @@ router.post('/:id/imagen', authMiddleware, upload.single('image'), async (req, r
     }
     res.status(200).json(productoActualizado);
   } catch (error) {
-    console.error('Error al subir la imagen:', error);
-    
     // Asegurarse de eliminar el archivo temporal si existe
     if (req.file && req.file.path) {
       try {
@@ -998,9 +868,7 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Subir la imagen a Supabase
     let imageData = null;
     try {
-      console.log('Intentando subir imagen a Supabase...');
       const imageUrl = await uploadToSupabase(imageBuffer, req.file.originalname);
-      console.log('Imagen subida exitosamente a Supabase:', imageUrl);
       
       // Obtener metadata de la imagen optimizada
       const sharp = require('sharp');
@@ -1017,7 +885,6 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
       };
       
     } catch (error) {
-      console.error('Error al subir la imagen a Supabase:', error);
       return res.status(500).json({ error: 'Error al subir la imagen a Supabase: ' + error.message });
     } finally {
       // Eliminar el archivo temporal
@@ -1040,8 +907,6 @@ router.put('/:id/image', authMiddleware, upload.single('image'), async (req, res
     // Devolver el producto actualizado
     res.status(200).json(productoActualizado);
   } catch (error) {
-    console.error('Error al actualizar la imagen del producto:', error);
-    
     // Asegurarse de eliminar el archivo temporal si existe
     if (req.file && req.file.path) {
       try {
@@ -1087,7 +952,6 @@ router.get('/:id/image', async (req, res) => {
       return res.status(404).json({ error: 'Imagen no encontrada' });
     }
   } catch (error) {
-    console.error('Error al obtener la imagen:', error);
     res.status(500).json({ error: error.message });
   }
 });

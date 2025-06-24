@@ -10,12 +10,10 @@ export default function Categoria() {
   const router = useRouter();
   
   if (router.isFallback) {
-    console.log('Página en estado de fallback');
     return <div>Cargando...</div>;
   }
 
   if (!router.query.categoria) {
-    console.log('No se encontró la categoría en la URL');
     return <div>No se encontró la categoría </div>;
   }
 
@@ -45,13 +43,6 @@ export default function Categoria() {
 
     const urlPage = parseInt(router.query.page) || 1;
     const savedPage = sessionStorage.getItem(`lastPage_${categoria}`);
-    
-    console.log('🔄 Restaurando página desde URL:', {
-      urlPage,
-      savedPage,
-      currentPage: currentPageRef.current,
-      categoria
-    });
 
     // Si hay una página en la URL, usarla
     if (router.query.page) {
@@ -64,7 +55,6 @@ export default function Categoria() {
       // Si no hay página en la URL pero hay una guardada, restaurarla
       const page = parseInt(savedPage);
       if (page > 1) {
-        console.log('📄 Restaurando página guardada:', page);
         setCurrentPage(page);
         currentPageRef.current = page;
         // Actualizar la URL para mantener consistencia
@@ -88,15 +78,8 @@ export default function Categoria() {
   // Efecto para manejar la navegación inicial y cambios en la URL
   useEffect(() => {
     if (!router.isReady) {
-      console.log('Router no está listo aún');
       return;
     }
-
-    console.log('Estado inicial de navegación:', {
-      categoria,
-      queryParams: router.query,
-      currentPage
-    });
 
     restorePageFromURL();
   }, [router.isReady, categoria, router.query.page, restorePageFromURL]);
@@ -104,7 +87,6 @@ export default function Categoria() {
   // Event listener para detectar navegación hacia atrás/adelante
   useEffect(() => {
     const handlePopState = () => {
-      console.log('🔄 Evento popstate detectado - navegación hacia atrás/adelante');
       // Pequeño delay para asegurar que la URL se actualice
       setTimeout(() => {
         restorePageFromURL();
@@ -164,25 +146,13 @@ export default function Categoria() {
 
   const fetchProductsByCategory = useCallback(async (filters = {}) => {
     if (!categoria) {
-      console.log('No hay categoría para cargar productos');
       return;
     }
     
     // Evitar múltiples llamadas simultáneas
     if (isLoadingRef.current) {
-      console.log('Ya hay una carga en progreso, saltando...');
       return;
     }
-    
-    console.log('Iniciando carga de productos para categoría:', categoria, 'con filtros:', filters);
-    console.log('🔍 Tipo de filters:', typeof filters);
-    console.log('🔍 Filters es objeto?', filters && typeof filters === 'object');
-    console.log('🔍 Filters.tallaRopa:', filters.tallaRopa);
-    console.log('🔍 Filters.tallaRopa es string?', typeof filters.tallaRopa === 'string');
-    console.log('🔍 Filters.tallaRopa tiene valor?', filters.tallaRopa && filters.tallaRopa.length > 0);
-    console.log('🔍 Filters.tallaZapatilla:', filters.tallaZapatilla);
-    console.log('🔍 Filters.tallaZapatilla es string?', typeof filters.tallaZapatilla === 'string');
-    console.log('🔍 Filters.tallaZapatilla tiene valor?', filters.tallaZapatilla && filters.tallaZapatilla.length > 0);
     
     isLoadingRef.current = true;
     setLoading(true);
@@ -195,80 +165,43 @@ export default function Categoria() {
         limit: productsPerPage.toString()
       });
 
-      console.log('📋 QueryParams iniciales:', Object.fromEntries(queryParams.entries()));
-
       // Agregar todos los filtros al servidor
       if (filters.marca) {
         queryParams.append('marca', filters.marca);
-        console.log('✅ Agregado filtro marca:', filters.marca);
       }
       if (filters.tallaRopa) {
         queryParams.append('tallaRopa', filters.tallaRopa);
-        console.log('✅ Agregado filtro tallaRopa:', filters.tallaRopa);
       }
       if (filters.tallaZapatilla) {
         queryParams.append('tallaZapatilla', filters.tallaZapatilla);
-        console.log('✅ Agregado filtro tallaZapatilla:', filters.tallaZapatilla);
       }
       if (filters.accesorio) {
         queryParams.append('accesorio', filters.accesorio);
-        console.log('✅ Agregado filtro accesorio:', filters.accesorio);
       }
       if (filters.disponibilidad) {
         queryParams.append('disponibilidad', filters.disponibilidad);
-        console.log('✅ Agregado filtro disponibilidad:', filters.disponibilidad);
       }
       if (filters.precioMin) {
         queryParams.append('precioMin', filters.precioMin);
-        console.log('✅ Agregado filtro precioMin:', filters.precioMin);
       }
       if (filters.precioMax) {
         queryParams.append('precioMax', filters.precioMax);
-        console.log('✅ Agregado filtro precioMax:', filters.precioMax);
       }
       if (filters.q) {
         queryParams.append('q', filters.q);
-        console.log('✅ Agregado filtro q:', filters.q);
       }
 
-      console.log('📋 QueryParams finales:', Object.fromEntries(queryParams.entries()));
-      console.log('🔍 QueryParams incluye tallaRopa?', queryParams.has('tallaRopa'));
-      console.log('🔍 QueryParams incluye tallaZapatilla?', queryParams.has('tallaZapatilla'));
-      console.log('🔍 Valor de tallaRopa en QueryParams:', queryParams.get('tallaRopa'));
-      console.log('🔍 Valor de tallaZapatilla en QueryParams:', queryParams.get('tallaZapatilla'));
-
       const url = `${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}?${queryParams}`;
-      console.log('🌐 URL de la petición:', url);
-      console.log('📤 Filtros enviados al servidor:', Object.fromEntries(queryParams.entries()));
 
       const response = await fetch(url);
       if (!response.ok) throw new Error("Error al cargar los productos");
       
       const data = await response.json();
-      console.log('📥 Datos recibidos del servidor:', data);
-      console.log('📊 Tipo de data:', typeof data);
-      console.log('📦 Tipo de data.productos:', typeof data.productos);
-      console.log('🔍 Es array data.productos?', Array.isArray(data.productos));
       
       // Verificar que data tenga la estructura esperada
       if (!data || !data.productos || !Array.isArray(data.productos)) {
-        console.error('❌ Estructura de datos inesperada:', data);
         throw new Error('Formato de respuesta inválido del servidor');
       }
-      
-      console.log('Productos cargados por categoría:', {
-        categoria,
-        totalProductos: data.pagination?.totalProducts || 0,
-        productosEnPagina: data.productos.length,
-        paginaActual: data.pagination?.currentPage || 1,
-        totalPaginas: data.pagination?.totalPages || 0
-      });
-      
-      // Los productos ya vienen ordenados del servidor, no necesitamos ordenarlos aquí
-      console.log('Productos recibidos del servidor (ya ordenados):', {
-        total: data.productos.length,
-        orden: data.productos.map(p => p.nombre)
-      });
       
       setProducts(data.productos);
       setFilteredProducts(data.productos);
@@ -280,11 +213,6 @@ export default function Categoria() {
       }
       
     } catch (error) {
-      console.error('Error al cargar productos:', {
-        mensaje: error.message,
-        stack: error.stack,
-        categoria
-      });
       setError(error.message);
     } finally {
       setLoading(false);
@@ -299,14 +227,10 @@ export default function Categoria() {
 
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
-    console.log('🔄 Cambiando filtros:', filters);
-    console.log('📄 Página actual antes del cambio:', currentPageRef.current);
-    
     // Verificar que los filtros no estén vacíos
     const hasValidFilters = filters && typeof filters === 'object' && Object.values(filters).some(value => value !== '');
     
     if (!hasValidFilters) {
-      console.log('⚠️ Filtros vacíos recibidos, extrayendo de URL');
       // Si los filtros están vacíos, extraerlos de la URL
       const urlFilters = {
         marca: router.query.marca || '',
@@ -318,7 +242,6 @@ export default function Categoria() {
         precioMax: router.query.precioMax || router.query.max || '',
         q: router.query.q || ''
       };
-      console.log('📋 Filtros extraídos de URL:', urlFilters);
       setCurrentFilters(urlFilters);
       filters = urlFilters; // Usar los filtros de la URL
     } else {
@@ -328,7 +251,6 @@ export default function Categoria() {
     // Resetear a la primera página cuando cambian los filtros
     setCurrentPage(1);
     currentPageRef.current = 1; // Actualizar el ref inmediatamente
-    console.log('📄 Página reseteada a:', currentPageRef.current);
     
     // Limpiar la página guardada en sessionStorage
     sessionStorage.removeItem(`lastPage_${categoria}`);
@@ -348,8 +270,6 @@ export default function Categoria() {
     
     // Llamar fetchProductsByCategory después de actualizar la URL
     setTimeout(() => {
-      console.log('📄 Llamando fetchProductsByCategory con página:', currentPageRef.current);
-      console.log('📄 Filtros que se van a enviar:', filters);
       fetchProductsByCategory(filters);
     }, 100);
   }, [categoria, router]);
@@ -359,11 +279,6 @@ export default function Categoria() {
     if (!router.isReady || !categoria) {
       return;
     }
-
-    console.log('🔄 Efecto consolidado - Router listo y categoría disponible');
-    console.log('📋 Query actual:', router.query);
-    console.log('🔍 router.query.tallaRopa:', router.query.tallaRopa);
-    console.log('🔍 router.query.tallaZapatilla:', router.query.tallaZapatilla);
     
     // Extraer filtros de la URL
     const urlFilters = {
@@ -376,27 +291,18 @@ export default function Categoria() {
       precioMax: router.query.precioMax || router.query.max || '',
       q: router.query.q || ''
     };
-
-    console.log('📋 Filtros extraídos de la URL:', urlFilters);
-    console.log('🔍 urlFilters.tallaRopa:', urlFilters.tallaRopa);
-    console.log('🔍 urlFilters.tallaRopa tiene valor?', urlFilters.tallaRopa && urlFilters.tallaRopa.length > 0);
     
     // Verificar si hay filtros activos
     const hasUrlFilters = Object.values(urlFilters).some(value => value !== '');
     
     if (hasUrlFilters) {
-      console.log('🎯 Aplicando filtros de la URL');
-      console.log('🎯 Filtro tallaRopa específico:', urlFilters.tallaRopa);
-      console.log('🎯 Filtro tallaZapatilla específico:', urlFilters.tallaZapatilla);
       setCurrentFilters(urlFilters);
     } else {
-      console.log('ℹ️ No hay filtros en la URL');
       setCurrentFilters({});
     }
     
     // Cargar productos con los filtros extraídos
     setTimeout(() => {
-      console.log('📞 Llamando fetchProductsByCategory con filtros:', urlFilters);
       fetchProductsByCategory(urlFilters);
     }, 100);
     
@@ -418,16 +324,7 @@ export default function Categoria() {
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
 
-  console.log('Estado de paginación:', {
-    paginaActual: currentPage,
-    totalPaginas: pagination?.totalPages || 0,
-    productosPorPagina: productsPerPage,
-    productosEnPaginaActual: safeFilteredProducts.length,
-    totalProductos: pagination?.totalProducts || 0
-  });
-
   if (!router.isReady) {
-    console.log('Router no está listo, esperando...');
     return null;
   }
 

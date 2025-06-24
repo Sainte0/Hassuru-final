@@ -32,60 +32,44 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Initialize filters from URL parameters
   useEffect(() => {
     if (router.isReady && !ignoreUrlInitRef.current) {
-      console.log('🔍 Inicializando filtros desde URL:', router.query);
       const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max } = router.query;
       
       let filtersApplied = false;
       
       // Solo aplicar filtros si no están ya establecidos localmente
       if (marca && !selectedMarca) {
-        console.log('✅ Aplicando filtro de marca:', marca);
         setSelectedMarca(marca);
         filtersApplied = true;
       }
       if (tallaRopa && !selectedTallaRopa) {
-        console.log('✅ Aplicando filtro de talla ropa:', tallaRopa);
         setSelectedTallaRopa(tallaRopa);
         filtersApplied = true;
       }
       if (tallaZapatilla && !selectedTallaZapatilla) {
-        console.log('✅ Aplicando filtro de talla zapatilla:', tallaZapatilla);
         setSelectedTallaZapatilla(tallaZapatilla);
         filtersApplied = true;
       }
       if (accesorio && !selectedAccesorio) {
-        console.log('✅ Aplicando filtro de accesorio:', accesorio);
         setSelectedAccesorio(accesorio);
         filtersApplied = true;
       }
       if (disponibilidad && !selectedDisponibilidad) {
-        console.log('✅ Aplicando filtro de disponibilidad:', disponibilidad);
         setSelectedDisponibilidad(disponibilidad);
         filtersApplied = true;
       }
       if (q && !query) {
-        console.log('✅ Aplicando filtro de búsqueda:', q);
         setQuery(q);
         filtersApplied = true;
       }
       if (min && !precioMin) {
-        console.log('✅ Aplicando filtro de precio mínimo:', min);
         setPrecioMin(min);
         filtersApplied = true;
       }
       if (max && !precioMax) {
-        console.log('✅ Aplicando filtro de precio máximo:', max);
         setPrecioMax(max);
         filtersApplied = true;
       }
-      
-      if (filtersApplied) {
-        console.log('🎯 Filtros aplicados desde URL correctamente');
-      } else {
-        console.log('ℹ️ No hay filtros en la URL o ya están establecidos localmente');
-      }
     } else if (ignoreUrlInitRef.current) {
-      console.log('🚫 Ignorando inicialización desde URL (limpiando filtro)');
       ignoreUrlInitRef.current = false; // Resetear el flag
     }
   }, [router.isReady, router.query]);
@@ -106,7 +90,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         // Cargar opciones de filtro para una categoría específica
         response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}/filtros`);
       } else {
-        console.log('No se pudo determinar la ruta para cargar filtros');
         return;
       }
       
@@ -174,17 +157,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Update URL and apply filters when any filter changes
   useEffect(() => {
     if (router.isReady) {
-      console.log('🔄 Filtro.js - useEffect ejecutándose con filtros:', {
-        selectedTallaRopa,
-        selectedTallaZapatilla,
-        selectedAccesorio,
-        precioMin,
-        precioMax,
-        selectedDisponibilidad,
-        selectedMarca,
-        query
-      });
-      
       const queryParams = {};
       
       // Solo agregar filtros que tengan valor (no vacíos)
@@ -202,10 +174,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         queryParams.categoria = router.query.categoria;
       }
 
-      console.log('📋 QueryParams construidos:', queryParams);
-      console.log('🔍 QueryParams tiene valores?', Object.keys(queryParams).length > 0);
-      console.log('🔍 URL actual antes del cambio:', router.asPath);
-
       // Update URL - solo incluir parámetros con valores
       router.replace(
         {
@@ -215,15 +183,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         undefined,
         { shallow: true }
       );
-
-      // Verificar que la URL se actualizó correctamente
-      setTimeout(() => {
-        console.log('🔍 URL después del cambio (verificación):', router.asPath);
-        console.log('🔍 QueryParams esperados:', queryParams);
-        console.log('🔍 QueryParams actuales:', router.query);
-      }, 100);
-
-      console.log('🔍 URL después del cambio:', router.asPath);
 
       // Pass filters to parent component via onFiltersChange
       if (onFiltersChange) {
@@ -238,13 +197,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           q: query || ''
         };
         
-        console.log('📤 Pasando filtros al componente padre:', filtersToPass);
-        
         // Solo pasar filtros si no estamos en proceso de limpiar
         if (!ignoreUrlInitRef.current) {
           onFiltersChange(filtersToPass);
-        } else {
-          console.log('🚫 No pasando filtros al componente padre (limpiando filtro)');
         }
       }
     }
@@ -263,14 +218,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Efecto adicional para verificar que la URL se actualice correctamente
   useEffect(() => {
     if (router.isReady) {
-      console.log('🔍 Verificando sincronización de URL:', {
-        asPath: router.asPath,
-        query: router.query,
-        selectedTallaRopa,
-        selectedTallaZapatilla,
-        selectedMarca
-      });
-      
       // Solo verificar inconsistencias si no estamos en proceso de limpiar filtros
       if (!ignoreUrlInitRef.current) {
         // Verificar si hay inconsistencias entre el estado local y la URL
@@ -285,8 +232,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         if ((urlHasTallaRopa && !stateHasTallaRopa) || 
             (urlHasTallaZapatilla && !stateHasTallaZapatilla) || 
             (urlHasMarca && !stateHasMarca)) {
-          console.log('⚠️ Inconsistencia detectada entre URL y estado local');
-          console.log('🔄 Forzando actualización de URL...');
           
           const queryParams = {};
           if (stateHasTallaRopa) queryParams.tallaRopa = selectedTallaRopa;
@@ -303,8 +248,6 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
             { shallow: true }
           );
         }
-      } else {
-        console.log('🚫 Ignorando verificación de sincronización (limpiando filtro)');
       }
     }
   }, [router.asPath, router.query, selectedTallaRopa, selectedTallaZapatilla, selectedMarca, router.isReady]);
@@ -317,27 +260,19 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   }, []);
 
   const handleSelectMarca = (marca) => {
-    console.log('🔄 handleSelectMarca llamado con:', marca);
-    console.log('🔍 selectedMarca actual:', selectedMarca);
     if (selectedMarca === marca) {
-      console.log('✅ Limpiando filtro marca');
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedMarca("");
     } else {
-      console.log('✅ Estableciendo filtro marca:', marca);
       setSelectedMarca(marca);
     }
   };
 
   const handleSelectTallaRopa = (talla) => {
-    console.log('🔄 handleSelectTallaRopa llamado con:', talla);
-    console.log('🔍 selectedTallaRopa actual:', selectedTallaRopa);
     if (selectedTallaRopa === talla) {
-      console.log('✅ Limpiando filtro tallaRopa');
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedTallaRopa("");
     } else {
-      console.log('✅ Estableciendo filtro tallaRopa:', talla);
       setSelectedTallaRopa(talla);
       setSelectedTallaZapatilla("");
       setSelectedAccesorio("");
@@ -345,14 +280,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectTallaZapatilla = (talla) => {
-    console.log('🔄 handleSelectTallaZapatilla llamado con:', talla);
-    console.log('🔍 selectedTallaZapatilla actual:', selectedTallaZapatilla);
     if (selectedTallaZapatilla === talla) {
-      console.log('✅ Limpiando filtro tallaZapatilla');
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedTallaZapatilla("");
     } else {
-      console.log('✅ Estableciendo filtro tallaZapatilla:', talla);
       setSelectedTallaZapatilla(talla);
       setSelectedTallaRopa("");
       setSelectedAccesorio("");
@@ -360,14 +291,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectAccesorio = (accesorio) => {
-    console.log('🔄 handleSelectAccesorio llamado con:', accesorio);
-    console.log('🔍 selectedAccesorio actual:', selectedAccesorio);
     if (selectedAccesorio === accesorio) {
-      console.log('✅ Limpiando filtro accesorio');
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedAccesorio("");
     } else {
-      console.log('✅ Estableciendo filtro accesorio:', accesorio);
       setSelectedAccesorio(accesorio);
       setSelectedTallaRopa("");
       setSelectedTallaZapatilla("");
@@ -375,14 +302,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectDisponibilidad = (opcion) => {
-    console.log('🔄 handleSelectDisponibilidad llamado con:', opcion);
-    console.log('🔍 selectedDisponibilidad actual:', selectedDisponibilidad);
     if (selectedDisponibilidad === opcion) {
-      console.log('✅ Limpiando filtro disponibilidad');
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedDisponibilidad("");
     } else {
-      console.log('✅ Estableciendo filtro disponibilidad:', opcion);
       setSelectedDisponibilidad(opcion);
     }
   };

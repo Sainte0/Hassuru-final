@@ -32,12 +32,6 @@ export default function Catalogo() {
 
     const urlPage = parseInt(router.query.page) || 1;
     const savedPage = sessionStorage.getItem('lastPage_catalogo');
-    
-    console.log('🔄 Restaurando página desde URL:', {
-      urlPage,
-      savedPage,
-      currentPage: currentPageRef.current
-    });
 
     // Si hay una página en la URL, usarla
     if (router.query.page) {
@@ -50,7 +44,6 @@ export default function Catalogo() {
       // Si no hay página en la URL pero hay una guardada, restaurarla
       const page = parseInt(savedPage);
       if (page > 1) {
-        console.log('📄 Restaurando página guardada:', page);
         setCurrentPage(page);
         currentPageRef.current = page;
         // Actualizar la URL para mantener consistencia
@@ -74,14 +67,8 @@ export default function Catalogo() {
   // Efecto para manejar la navegación inicial y cambios en la URL
   useEffect(() => {
     if (!router.isReady) {
-      console.log('Router no está listo aún');
       return;
     }
-
-    console.log('Estado inicial de navegación del catálogo:', {
-      queryParams: router.query,
-      currentPage
-    });
 
     restorePageFromURL();
   }, [router.isReady, router.query.page, restorePageFromURL]);
@@ -89,7 +76,6 @@ export default function Catalogo() {
   // Event listener para detectar navegación hacia atrás/adelante
   useEffect(() => {
     const handlePopState = () => {
-      console.log('🔄 Evento popstate detectado - navegación hacia atrás/adelante');
       // Pequeño delay para asegurar que la URL se actualice
       setTimeout(() => {
         restorePageFromURL();
@@ -110,11 +96,9 @@ export default function Catalogo() {
   const fetchCatalogoProducts = useCallback(async (filters = {}) => {
     // Evitar múltiples llamadas simultáneas
     if (isLoadingRef.current) {
-      console.log('Ya hay una carga en progreso del catálogo, saltando...');
       return;
     }
     
-    console.log('Iniciando carga de productos del catálogo con filtros:', filters);
     isLoadingRef.current = true;
     setLoading(true);
     setError(null);
@@ -141,29 +125,11 @@ export default function Catalogo() {
       if (!response.ok) throw new Error("Error al cargar los productos del catálogo");
       
       const data = await response.json();
-      console.log('📥 Datos recibidos del catálogo:', data);
-      console.log('📊 Tipo de data:', typeof data);
-      console.log('📦 Tipo de data.productos:', typeof data.productos);
-      console.log('🔍 Es array data.productos?', Array.isArray(data.productos));
       
       // Verificar que data tenga la estructura esperada
       if (!data || !data.productos || !Array.isArray(data.productos)) {
-        console.error('❌ Estructura de datos inesperada del catálogo:', data);
         throw new Error('Formato de respuesta inválido del servidor');
       }
-      
-      console.log('Productos cargados del catálogo:', {
-        totalProductos: data.pagination?.totalProducts || 0,
-        productosEnPagina: data.productos.length,
-        paginaActual: data.pagination?.currentPage || 1,
-        totalPaginas: data.pagination?.totalPages || 0
-      });
-      
-      // Los productos ya vienen ordenados del servidor, no necesitamos ordenarlos aquí
-      console.log('Productos recibidos del catálogo (ya ordenados):', {
-        total: data.productos.length,
-        orden: data.productos.map(p => p.nombre)
-      });
       
       setProducts(data.productos);
       setFilteredProducts(data.productos);
@@ -175,10 +141,6 @@ export default function Catalogo() {
       }
       
     } catch (error) {
-      console.error('Error al cargar productos del catálogo:', {
-        mensaje: error.message,
-        stack: error.stack
-      });
       setError(error.message);
     } finally {
       setLoading(false);
@@ -233,14 +195,11 @@ export default function Catalogo() {
 
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
-    console.log('🔄 Cambiando filtros del catálogo:', filters);
-    console.log('📄 Página actual antes del cambio:', currentPageRef.current);
     setCurrentFilters(filters);
     
     // Resetear a la primera página cuando cambian los filtros
     setCurrentPage(1);
     currentPageRef.current = 1; // Actualizar el ref inmediatamente
-    console.log('📄 Página reseteada a:', currentPageRef.current);
     
     // Limpiar la página guardada en sessionStorage
     sessionStorage.removeItem('lastPage_catalogo');
@@ -260,7 +219,6 @@ export default function Catalogo() {
     
     // Llamar fetchCatalogoProducts después de actualizar la URL
     setTimeout(() => {
-      console.log('📄 Llamando fetchCatalogoProducts con página:', currentPageRef.current);
       fetchCatalogoProducts(filters);
     }, 100); // Pequeño delay para asegurar que la URL se actualice
   }, [router]);
@@ -278,16 +236,7 @@ export default function Catalogo() {
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
 
-  console.log('Estado de paginación del catálogo:', {
-    paginaActual: currentPage,
-    totalPaginas: pagination?.totalPages || 0,
-    productosPorPagina: productsPerPage,
-    productosEnPaginaActual: safeFilteredProducts.length,
-    totalProductos: pagination?.totalProducts || 0
-  });
-
   if (!router.isReady) {
-    console.log('Router no está listo, esperando...');
     return null;
   }
 

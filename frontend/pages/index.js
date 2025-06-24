@@ -11,64 +11,28 @@ export default function Home() {
   const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks, banners, fetchBanners } = useStore();
 
   useEffect(() => {
-    console.log('Estado inicial de Home:', {
-      loading,
-      error,
-      homeProducts,
-      dolarBlue,
-      tiktokLinksCount: tiktokLinks?.length,
-      bannersCount: banners?.length
-    });
-
     // Función para inicializar los datos
     const initializeData = async () => {
-      console.log('Iniciando carga de datos en Home..');
       try {
         // Obtener productos de la home
-        console.log('Iniciando fetchHomeProducts...');
         await fetchHomeProducts();
-        console.log('Productos cargados en Home:', {
-          ultimosRopa: homeProducts.ultimosRopa?.length,
-          ultimosZapatillas: homeProducts.ultimosZapatillas?.length
-        });
         
         // Obtener valor del dólar blue
         const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
         const now = Date.now();
-        console.log('Estado del dólar blue:', {
-          ultimaActualizacion: lastUpdate,
-          tiempoTranscurrido: now - parseInt(lastUpdate || 0),
-          necesitaActualizacion: !lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000
-        });
 
         if (!lastUpdate || now - parseInt(lastUpdate) > 5 * 60 * 1000) {
-          console.log('Actualizando dólar blue...');
           await fetchDolarBlue();
-          console.log('Dólar Blue actualizado:', dolarBlue);
         }
         
         // Obtener enlaces de TikTok
-        console.log('Estado de TikTok links:', {
-          hayLinks: tiktokLinks?.length > 0,
-          cantidadLinks: tiktokLinks?.length
-        });
-
         if (!tiktokLinks.length) {
-          console.log('Cargando links de TikTok...');
           await fetchTikTokLinks();
-          console.log('Links de TikTok cargados:', tiktokLinks);
         }
 
         // Obtener banners
-        console.log('Estado de banners:', {
-          hayBanners: banners?.length > 0,
-          cantidadBanners: banners?.length
-        });
-
         if (!banners.length) {
-          console.log('Cargando banners...');
           await fetchBanners();
-          console.log('Banners cargados:', banners);
         }
       } catch (error) {
         console.error("Error detallado al inicializar datos:", {
@@ -83,12 +47,10 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    console.log('Home en estado de carga...');
     return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;
   }
   
   if (error) {
-    console.error('Error en Home:', error);
     return <div>Error: {error}</div>;
   }
 
