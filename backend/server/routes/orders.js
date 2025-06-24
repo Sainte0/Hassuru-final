@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     try {
       await sendNewOrderNotification({ order });
     } catch (err) {
-      console.error('Error enviando notificación a Hassuru:', err);
+      console.error('Error enviando notificación a Hassuru: ', err);
     }
     
     res.status(201).json(order);
