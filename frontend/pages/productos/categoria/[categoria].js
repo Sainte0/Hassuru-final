@@ -134,6 +134,9 @@ export default function Categoria() {
     console.log('Iniciando carga de productos para categoría:', categoria, 'con filtros:', filters);
     console.log('🔍 Tipo de filters:', typeof filters);
     console.log('🔍 Filters es objeto?', filters && typeof filters === 'object');
+    console.log('🔍 Filters.tallaRopa:', filters.tallaRopa);
+    console.log('🔍 Filters.tallaRopa es string?', typeof filters.tallaRopa === 'string');
+    console.log('🔍 Filters.tallaRopa tiene valor?', filters.tallaRopa && filters.tallaRopa.length > 0);
     console.log('🔍 Filters.tallaZapatilla:', filters.tallaZapatilla);
     console.log('🔍 Filters.tallaZapatilla es string?', typeof filters.tallaZapatilla === 'string');
     console.log('🔍 Filters.tallaZapatilla tiene valor?', filters.tallaZapatilla && filters.tallaZapatilla.length > 0);
@@ -284,6 +287,8 @@ export default function Categoria() {
 
     console.log('🔄 Efecto consolidado - Router listo y categoría disponible');
     console.log('📋 Query actual:', router.query);
+    console.log('🔍 router.query.tallaRopa:', router.query.tallaRopa);
+    console.log('🔍 router.query.tallaZapatilla:', router.query.tallaZapatilla);
     
     // Extraer filtros de la URL
     const urlFilters = {
@@ -298,12 +303,15 @@ export default function Categoria() {
     };
 
     console.log('📋 Filtros extraídos de la URL:', urlFilters);
+    console.log('🔍 urlFilters.tallaRopa:', urlFilters.tallaRopa);
+    console.log('🔍 urlFilters.tallaRopa tiene valor?', urlFilters.tallaRopa && urlFilters.tallaRopa.length > 0);
     
     // Verificar si hay filtros activos
     const hasUrlFilters = Object.values(urlFilters).some(value => value !== '');
     
     if (hasUrlFilters) {
       console.log('🎯 Aplicando filtros de la URL');
+      console.log('🎯 Filtro tallaRopa específico:', urlFilters.tallaRopa);
       console.log('🎯 Filtro tallaZapatilla específico:', urlFilters.tallaZapatilla);
       setCurrentFilters(urlFilters);
     } else {
