@@ -203,6 +203,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       }
 
       console.log('📋 QueryParams construidos:', queryParams);
+      console.log('🔍 QueryParams tiene valores?', Object.keys(queryParams).length > 0);
 
       // Update URL
       router.push(
@@ -251,17 +252,25 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   }, []);
 
   const handleSelectMarca = (marca) => {
+    console.log('🔄 handleSelectMarca llamado con:', marca);
+    console.log('🔍 selectedMarca actual:', selectedMarca);
     if (selectedMarca === marca) {
+      console.log('✅ Limpiando filtro marca');
       setSelectedMarca("");
     } else {
+      console.log('✅ Estableciendo filtro marca:', marca);
       setSelectedMarca(marca);
     }
   };
 
   const handleSelectTallaRopa = (talla) => {
+    console.log('🔄 handleSelectTallaRopa llamado con:', talla);
+    console.log('🔍 selectedTallaRopa actual:', selectedTallaRopa);
     if (selectedTallaRopa === talla) {
+      console.log('✅ Limpiando filtro tallaRopa');
       setSelectedTallaRopa("");
     } else {
+      console.log('✅ Estableciendo filtro tallaRopa:', talla);
       setSelectedTallaRopa(talla);
       setSelectedTallaZapatilla("");
       setSelectedAccesorio("");
@@ -269,9 +278,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectTallaZapatilla = (talla) => {
+    console.log('🔄 handleSelectTallaZapatilla llamado con:', talla);
+    console.log('🔍 selectedTallaZapatilla actual:', selectedTallaZapatilla);
     if (selectedTallaZapatilla === talla) {
+      console.log('✅ Limpiando filtro tallaZapatilla');
       setSelectedTallaZapatilla("");
     } else {
+      console.log('✅ Estableciendo filtro tallaZapatilla:', talla);
       setSelectedTallaZapatilla(talla);
       setSelectedTallaRopa("");
       setSelectedAccesorio("");
@@ -279,9 +292,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectAccesorio = (accesorio) => {
+    console.log('🔄 handleSelectAccesorio llamado con:', accesorio);
+    console.log('🔍 selectedAccesorio actual:', selectedAccesorio);
     if (selectedAccesorio === accesorio) {
+      console.log('✅ Limpiando filtro accesorio');
       setSelectedAccesorio("");
     } else {
+      console.log('✅ Estableciendo filtro accesorio:', accesorio);
       setSelectedAccesorio(accesorio);
       setSelectedTallaRopa("");
       setSelectedTallaZapatilla("");
@@ -289,9 +306,13 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   const handleSelectDisponibilidad = (opcion) => {
+    console.log('🔄 handleSelectDisponibilidad llamado con:', opcion);
+    console.log('🔍 selectedDisponibilidad actual:', selectedDisponibilidad);
     if (selectedDisponibilidad === opcion) {
+      console.log('✅ Limpiando filtro disponibilidad');
       setSelectedDisponibilidad("");
     } else {
+      console.log('✅ Estableciendo filtro disponibilidad:', opcion);
       setSelectedDisponibilidad(opcion);
     }
   };
