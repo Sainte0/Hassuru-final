@@ -65,7 +65,7 @@ router.get('/catalogo', async (req, res) => {
           filterQuery.encargo = false;
           filterQuery.tallas = { $exists: true, $ne: [] };
           break;
-        case 'Disponible en 3 días':
+        case 'Disponible en 5 días':
           filterQuery.encargo = true;
           filterQuery.tallas = { $exists: true, $ne: [] };
           break;
