@@ -86,7 +86,8 @@ router.get('/catalogo', async (req, res) => {
     if (q) {
       filterQuery.$or = [
         { nombre: { $regex: new RegExp(q, 'i') } },
-        { descripcion: { $regex: new RegExp(q, 'i') } }
+        { descripcion: { $regex: new RegExp(q, 'i') } },
+        { marca: { $regex: new RegExp(q, 'i') } }
       ];
     }
 
@@ -289,7 +290,8 @@ router.get('/categoria/:categoria', async (req, res) => {
       if (q) {
         filterQuery.$or = [
           { nombre: { $regex: new RegExp(q, 'i') } },
-          { descripcion: { $regex: new RegExp(q, 'i') } }
+          { descripcion: { $regex: new RegExp(q, 'i') } },
+          { marca: { $regex: new RegExp(q, 'i') } }
         ];
       }
 

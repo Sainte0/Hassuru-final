@@ -226,12 +226,36 @@ export default function Catalogo() {
   // Cargar productos cuando se carga la página
   useEffect(() => {
     if (router.isReady) {
-      // Llamar fetchCatalogoProducts directamente para evitar dependencias circulares
-      setTimeout(() => {
-        fetchCatalogoProducts();
-      }, 0);
+      // Extraer filtros de la URL
+      const urlFilters = {
+        marca: router.query.marca || '',
+        tallaRopa: router.query.tallaRopa || '',
+        tallaZapatilla: router.query.tallaZapatilla || '',
+        accesorio: router.query.accesorio || '',
+        disponibilidad: router.query.disponibilidad || '',
+        precioMin: router.query.precioMin || router.query.min || '',
+        precioMax: router.query.precioMax || router.query.max || '',
+        q: router.query.q || '',
+        categoria: router.query.categoria || ''
+      };
+      
+      // Verificar si hay filtros activos en la URL
+      const hasUrlFilters = Object.values(urlFilters).some(value => value !== '');
+      
+      if (hasUrlFilters) {
+        setCurrentFilters(urlFilters);
+        // Llamar fetchCatalogoProducts con los filtros extraídos de la URL
+        setTimeout(() => {
+          fetchCatalogoProducts(urlFilters);
+        }, 0);
+      } else {
+        // Llamar fetchCatalogoProducts directamente para evitar dependencias circulares
+        setTimeout(() => {
+          fetchCatalogoProducts();
+        }, 0);
+      }
     }
-  }, [router.isReady]);
+  }, [router.isReady, router.query.marca, router.query.tallaRopa, router.query.tallaZapatilla, router.query.accesorio, router.query.disponibilidad, router.query.precioMin, router.query.precioMax, router.query.min, router.query.max, router.query.q, router.query.categoria]);
 
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
