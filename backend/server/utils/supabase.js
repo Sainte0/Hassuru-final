@@ -90,7 +90,7 @@ const uploadToSupabase = async (imageBuffer, fileName, bucketName = 'product-ima
       .from(bucketName)
       .upload(uniqueFileName, optimizedBuffer, {
         contentType: contentType,
-        cacheControl: '3600',
+        cacheControl: '31536000', // 1 año de caché
         upsert: false
       });
 

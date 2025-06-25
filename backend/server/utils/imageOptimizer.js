@@ -9,9 +9,9 @@ const sharp = require('sharp');
 const optimizeImage = async (imageBuffer, options = {}) => {
   try {
     const {
-      maxWidth = 1200,
-      maxHeight = 1200,
-      quality = 80
+      maxWidth = 800,
+      maxHeight = 800,
+      quality = 50  // Reducir calidad de 80 a 50 para menor egress
     } = options;
 
     console.log('Optimizando imagen...');
