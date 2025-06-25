@@ -103,7 +103,7 @@ router.get('/catalogo', async (req, res) => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
         
         if (hasTallas && !product.encargo) return 1; // Entrega inmediata
-        if (hasTallas && product.encargo) return 2; // Disponible en 3 días
+        if (hasTallas && product.encargo) return 2; // Disponible en 5 días
         if (!hasTallas) return 3; // Disponible en 20 días
         return 4; // Otros casos
       };
@@ -269,7 +269,7 @@ router.get('/categoria/:categoria', async (req, res) => {
             filterQuery.encargo = false;
             filterQuery.tallas = { $exists: true, $ne: [] };
             break;
-          case 'Disponible en 3 días':
+          case 'Disponible en 5 días':
             filterQuery.encargo = true;
             filterQuery.tallas = { $exists: true, $ne: [] };
             break;
@@ -307,7 +307,7 @@ router.get('/categoria/:categoria', async (req, res) => {
           const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
           
           if (hasTallas && !product.encargo) return 1; // Entrega inmediata
-          if (hasTallas && product.encargo) return 2; // Disponible en 3 días
+          if (hasTallas && product.encargo) return 2; // Disponible en 5 días
           if (!hasTallas) return 3; // Disponible en 20 días
           return 4; // Otros casos
         };
