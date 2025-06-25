@@ -253,7 +253,7 @@ export default function Catalogo() {
     }, 100); // Pequeño delay para asegurar que la URL se actualice
   }, [router]);
 
-is  // Cargar productos cuando se carga la página
+// Cargar productos cuando se carga la página
   useEffect(() => {
     if (router.isReady) {
       // Extraer filtros de la URL
