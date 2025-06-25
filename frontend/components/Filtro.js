@@ -35,44 +35,60 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max } = router.query;
       
       let filtersApplied = false;
+      const filtersToApply = {};
       
       // Solo aplicar filtros si no están ya establecidos localmente
       if (marca && !selectedMarca) {
         setSelectedMarca(marca);
+        filtersToApply.marca = marca;
         filtersApplied = true;
       }
       if (tallaRopa && !selectedTallaRopa) {
         setSelectedTallaRopa(tallaRopa);
+        filtersToApply.tallaRopa = tallaRopa;
         filtersApplied = true;
       }
       if (tallaZapatilla && !selectedTallaZapatilla) {
         setSelectedTallaZapatilla(tallaZapatilla);
+        filtersToApply.tallaZapatilla = tallaZapatilla;
         filtersApplied = true;
       }
       if (accesorio && !selectedAccesorio) {
         setSelectedAccesorio(accesorio);
+        filtersToApply.accesorio = accesorio;
         filtersApplied = true;
       }
       if (disponibilidad && !selectedDisponibilidad) {
         setSelectedDisponibilidad(disponibilidad);
+        filtersToApply.disponibilidad = disponibilidad;
         filtersApplied = true;
       }
       if (q && !query) {
         setQuery(q);
+        filtersToApply.q = q;
         filtersApplied = true;
       }
       if (min && !precioMin) {
         setPrecioMin(min);
+        filtersToApply.precioMin = min;
         filtersApplied = true;
       }
       if (max && !precioMax) {
         setPrecioMax(max);
+        filtersToApply.precioMax = max;
         filtersApplied = true;
+      }
+      
+      // Si se aplicaron filtros desde la URL, notificar al componente padre
+      if (filtersApplied && onFiltersChange) {
+        setTimeout(() => {
+          onFiltersChange(filtersToApply);
+        }, 100);
       }
     } else if (ignoreUrlInitRef.current) {
       ignoreUrlInitRef.current = false; // Resetear el flag
     }
-  }, [router.isReady, router.query]);
+  }, [router.isReady, router.query, onFiltersChange]);
 
   // Función para cargar opciones de filtro desde el servidor
   const loadFilterOptions = async (categoria) => {
