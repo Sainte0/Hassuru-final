@@ -288,10 +288,10 @@ export default function Detail({ product }) {
                     disponibilidadLabel = "Entrega inmediata";
                     disponibilidadClass = "bg-green-500 text-white";
                   } else if (
-                    disponibilidad === "Disponible en 3 días" ||
+                    disponibilidad === "Disponible en 5 días" ||
                     (relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
                   ) {
-                    disponibilidadLabel = "Disponible en 3 días";
+                    disponibilidadLabel = "Disponible en 5 días";
                     disponibilidadClass = "bg-yellow-400 text-gray-900";
                   } else if (
                     disponibilidad === "Disponible en 20 días" ||

@@ -37,10 +37,6 @@ const nextConfig = {
     unoptimized: true,
     minimumCacheTTL: 31536000, // 1 año
   },
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ['react-icons'],
-  },
 };
 
 export default nextConfig;

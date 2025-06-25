@@ -673,9 +673,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleSelectDisponibilidad("Disponible en 3 días")}
+                    onClick={() => handleSelectDisponibilidad("Disponible en 5 días")}
                     className={`p-2 rounded w-full ${
-                      selectedDisponibilidad === "Disponible en 3 días"
+                      selectedDisponibilidad === "Disponible en 5 días"
                         ? "bg-gray-600 text-white"
                         : "bg-gray-300 text-black"
                     } hover:bg-yellow-500 mb-1`}
