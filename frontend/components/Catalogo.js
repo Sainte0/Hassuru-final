@@ -16,6 +16,10 @@ export default function Catalogo() {
   const [currentFilters, setCurrentFilters] = useState({});
   const [pagination, setPagination] = useState(null);
   
+  // Cache para evitar llamadas repetitivas
+  const cacheRef = useRef(new Map());
+  const cacheTimeout = 5 * 60 * 1000; // 5 minutos
+  
   // Usar ref para evitar dependencias circulares
   const currentPageRef = useRef(currentPage);
   currentPageRef.current = currentPage;
@@ -99,6 +103,23 @@ export default function Catalogo() {
       return;
     }
     
+    // Crear clave de caché
+    const cacheKey = JSON.stringify({
+      page: currentPageRef.current,
+      filters: filters
+    });
+    
+    // Verificar caché
+    const cached = cacheRef.current.get(cacheKey);
+    if (cached && (Date.now() - cached.timestamp) < cacheTimeout) {
+      console.log('📦 Usando datos en caché');
+      setProducts(cached.data.productos);
+      setFilteredProducts(cached.data.productos);
+      setPagination(cached.data.pagination);
+      setLoading(false);
+      return;
+    }
+    
     isLoadingRef.current = true;
     setLoading(true);
     setError(null);
@@ -130,6 +151,12 @@ export default function Catalogo() {
       if (!data || !data.productos || !Array.isArray(data.productos)) {
         throw new Error('Formato de respuesta inválido del servidor');
       }
+      
+      // Guardar en caché
+      cacheRef.current.set(cacheKey, {
+        data: data,
+        timestamp: Date.now()
+      });
       
       setProducts(data.productos);
       setFilteredProducts(data.productos);
@@ -196,6 +223,9 @@ export default function Catalogo() {
   // Función para manejar cambios de filtros
   const handleFiltersChange = useCallback((filters) => {
     setCurrentFilters(filters);
+    
+    // Limpiar caché cuando cambian los filtros
+    cacheRef.current.clear();
     
     // Resetear a la primera página cuando cambian los filtros
     setCurrentPage(1);

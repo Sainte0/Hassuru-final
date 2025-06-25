@@ -192,7 +192,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         >
           <option value="">Disponibilidad</option>
           <option value="inmediata">Entrega inmediata</option>
-          <option value="3dias">Disponible en 3 días</option>
+          <option value="3dias">Disponible en 5 días</option>
           <option value="20dias">Disponible en 20 días</option>
         </select>
         <select

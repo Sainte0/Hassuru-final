@@ -12,6 +12,15 @@ const nextConfig = {
           { key: "Access-Control-Allow-Headers", value: "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" },
         ],
       },
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
     ];
   },
   images: {
@@ -26,6 +35,11 @@ const nextConfig = {
       },
     ],
     unoptimized: true,
+    minimumCacheTTL: 31536000, // 1 año
+  },
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['react-icons'],
   },
 };
 

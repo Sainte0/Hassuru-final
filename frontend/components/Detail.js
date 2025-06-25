@@ -179,7 +179,7 @@ export default function Detail({ product }) {
               {product.tallas && product.tallas.length > 0 ? (
                 product.tallas.some((tallaObj) => tallaObj.precioTalla > 0) ? (
                   product.encargo ? (
-                    <span className="text-yellow-500">Disponible en 3 días</span>
+                    <span className="text-yellow-500">Disponible en 5 días</span>
                   ) : (
                     <span className="text-green-500">Entrega inmediata</span>
                   )
