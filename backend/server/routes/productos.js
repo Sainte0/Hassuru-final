@@ -144,7 +144,7 @@ router.get('/catalogo', async (req, res) => {
     
     res.status(200).json(response);
   } catch (error) {
-    console.error('Error en la ruta /catalogo:', error);
+    console.error('Error en la ruta /catalogo: ', error);
     res.status(500).json({ error: error.message });
   }
 });
