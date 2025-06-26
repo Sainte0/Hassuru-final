@@ -90,5 +90,13 @@ export const useAuth = () => {
     return () => clearInterval(interval);
   }, []);
 
-  return { isAuthenticated, checkAuth, token };
+  // Función de logout
+  const logout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setToken(null);
+    router.push("/login");
+  };
+
+  return { isAuthenticated, checkAuth, token, logout };
 };
