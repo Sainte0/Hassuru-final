@@ -70,18 +70,18 @@ export default function Carousell({ title, products, dolarBlue }) {
     <div className="relative w-full">
       <div className="container p-4 mx-auto">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-2xl font-bold sm:text-4xl">{title}</h1>
+          <h1 className="text-2xl font-bold sm:text-4xl text-gray-900 dark:text-white">{title}</h1>
           {/* Solo mostrar controles en móvil */}
           <div className="flex gap-2 md:hidden">
             <button
-              className="p-2 text-black transform hover:scale-105"
+              className="p-2 text-black dark:text-white transform hover:scale-105"
               onClick={() => handleScroll('left')}
               type="button"
             >
               <FaChevronLeft />
             </button>
             <button
-              className="p-2 text-black transform hover:scale-105"
+              className="p-2 text-black dark:text-white transform hover:scale-105"
               onClick={() => handleScroll('right')}
               type="button"
             >
@@ -120,10 +120,10 @@ export default function Carousell({ title, products, dolarBlue }) {
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
                 </div>
-                <h3 className="text-sm font-semibold line-clamp-2">{product.nombre}</h3>
+                <h3 className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</h3>
                 <div className="flex flex-col mt-2">
-                  <p className="text-sm font-bold text-gray-800">${product.precio} USD</p>
-                  <p className="text-sm font-bold text-gray-800">
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
                     {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
                   </p>
                 </div>
@@ -165,10 +165,10 @@ export default function Carousell({ title, products, dolarBlue }) {
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
                 </div>
-                <h3 className="text-sm font-semibold line-clamp-2">{product.nombre}</h3>
+                <h3 className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</h3>
                 <div className="flex flex-col mt-2">
-                  <p className="text-sm font-bold text-gray-800">${product.precio} USD</p>
-                  <p className="text-sm font-bold text-gray-800">
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
+                  <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
                     {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
                   </p>
                 </div>

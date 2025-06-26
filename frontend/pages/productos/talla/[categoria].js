@@ -169,7 +169,7 @@ export default function TallaSelector() {
   return (
     <div className="container py-10 mx-auto">
       <div className="max-w-2xl mx-auto text-center">
-        <h1 className="mb-8 text-3xl font-bold text-gray-800">{getTitle()}</h1>
+        <h1 className="mb-8 text-3xl font-bold text-gray-800 dark:text-white">{getTitle()}</h1>
         
         {error && <p className="mb-4 text-red-500">{error}</p>}
         
@@ -204,7 +204,7 @@ export default function TallaSelector() {
                 className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[80px] flex items-center justify-center transition-all duration-200 hover:bg-red-500 hover:text-white hover:border-red-600 ${
                   selectedTalla === talla
                     ? "bg-red-500 text-white border-red-600 shadow-md"
-                    : "bg-white text-gray-800 border-gray-300"
+                    : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
                 }`}
               >
                 {formattedTalla}

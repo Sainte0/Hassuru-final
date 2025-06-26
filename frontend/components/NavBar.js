@@ -205,6 +205,11 @@ export default function Navbar() {
 
             {/* Mobile Navigation */}
             <div className="md:hidden flex items-center justify-between w-full relative">
+              {/* Theme Toggle para móvil */}
+              <div className="flex items-center">
+                <ThemeToggle />
+              </div>
+              
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-md hover:bg-gray-700 focus:outline-none z-50"

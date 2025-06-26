@@ -48,7 +48,7 @@ export default function Contact() {
         window.open(whatsappUrl, "_blank");
     };
 
-    const inputStyle = "p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9F1E40]";
+    const inputStyle = "p-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-[#9F1E40] bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors";
 
     const nextStep = () => {
         setCurrentStep((prevStep) => (prevStep + 1) % steps.length);
@@ -59,9 +59,9 @@ export default function Contact() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center px-4 py-12 bg-gray-50">
-            <h1 className="mb-8 text-3xl font-bold text-center text-gray-800">Servicio de Encargos</h1>
-            <p className="mb-8 text-center text-gray-600 max-w-2xl">
+        <div className="flex flex-col items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+            <h1 className="mb-8 text-3xl font-bold text-center text-gray-800 dark:text-white">Servicio de Encargos</h1>
+            <p className="mb-8 text-center text-gray-600 dark:text-gray-300 max-w-2xl">
                 Traemos productos originales desde EEUU y Europa. Solo productos originales, garantizados.
             </p>
             
@@ -115,9 +115,9 @@ export default function Contact() {
             </div>
             
             {/* Formulario de contacto */}
-            <div className="w-full max-w-2xl p-8 rounded-lg shadow-xl bg-white">
-                <h2 className="mb-6 text-2xl font-bold text-center text-gray-800">Solicita tu Encargo</h2>
-                <p className="mb-6 text-center text-gray-600">
+            <div className="w-full max-w-2xl p-8 rounded-lg shadow-xl bg-white dark:bg-gray-800 transition-colors duration-300">
+                <h2 className="mb-6 text-2xl font-bold text-center text-gray-800 dark:text-white">Solicita tu Encargo</h2>
+                <p className="mb-6 text-center text-gray-600 dark:text-gray-300">
                     Completa el formulario y nos pondremos en contacto contigo para coordinar tu pedido.
                 </p>
                 <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
@@ -186,8 +186,8 @@ export default function Contact() {
             </div>
             
             {/* Información adicional */}
-            <div className="w-full max-w-4xl mt-12 p-6 bg-white rounded-lg shadow-md">
-                <h3 className="mb-4 text-xl font-semibold text-center text-gray-800">Beneficios de Nuestro Servicio</h3>
+            <div className="w-full max-w-4xl mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors duration-300">
+                <h3 className="mb-4 text-xl font-semibold text-center text-gray-800 dark:text-white">Beneficios de Nuestro Servicio</h3>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <div className="p-4 text-center">
                         <div className="flex justify-center mb-2">
@@ -195,8 +195,8 @@ export default function Contact() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h4 className="mb-2 font-medium">Productos Originales</h4>
-                        <p className="text-sm text-gray-600">Garantizamos la autenticidad de todos los productos</p>
+                        <h4 className="mb-2 font-medium text-gray-900 dark:text-white">Productos Originales</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Garantizamos la autenticidad de todos los productos</p>
                     </div>
                     <div className="p-4 text-center">
                         <div className="flex justify-center mb-2">
@@ -204,8 +204,8 @@ export default function Contact() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h4 className="mb-2 font-medium">Envíos Gratis</h4>
-                        <p className="text-sm text-gray-600">Envíos sin costo a Argentina o recogida en showroom</p>
+                        <h4 className="mb-2 font-medium text-gray-900 dark:text-white">Envíos Gratis</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Envíos sin costo a Argentina o recogida en showroom</p>
                     </div>
                     <div className="p-4 text-center">
                         <div className="flex justify-center mb-2">
@@ -213,8 +213,8 @@ export default function Contact() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <h4 className="mb-2 font-medium">Servicio Completo</h4>
-                        <p className="text-sm text-gray-600">Nos encargamos de todo el proceso por ti</p>
+                        <h4 className="mb-2 font-medium text-gray-900 dark:text-white">Servicio Completo</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Nos encargamos de todo el proceso por ti</p>
                     </div>
                 </div>
             </div>
