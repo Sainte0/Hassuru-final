@@ -240,12 +240,12 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
 
       {/* Table Section */}
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
+        <div className="w-full">
           <div className="min-w-full">
             <table className="w-full text-left">
               <thead>
                 <tr className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700">
-                  <th className="px-3 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <th className="px-2 py-3 border-b border-gray-200 dark:border-gray-700 w-8">
                     <input
                       type="checkbox"
                       checked={selectedProducts.length === currentProducts.length}
@@ -253,19 +253,19 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                     />
                   </th>
-                  <th className="px-3 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700">#</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[140px]">Nombre</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[160px]">Descripción</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Marca</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Categoría</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[130px]">Precios (USD/AR)</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Tallas</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Colores</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Imagen</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Destacado</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Destacado Z</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Encargo</th>
-                  <th className="px-4 py-4 text-sm font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 min-w-[120px]">Acciones</th>
+                  <th className="px-1 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-8">#</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-1/6">Nombre</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-1/6">Descripción</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-16">Marca</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-20">Cat.</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-24">Precios</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-16">Tallas</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-16">Colores</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-12">Img</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-12">Dest.</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-12">DestZ</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-12">Enc.</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-20">Acciones</th>
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-900">
