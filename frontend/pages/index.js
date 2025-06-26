@@ -47,15 +47,15 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center mt-[15%]"><BounceLoader color="#BE1A1D" /></div>;
+    return <div className="flex items-center justify-center mt-[15%] bg-white dark:bg-gray-900"><BounceLoader color="#BE1A1D" /></div>;
   }
   
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">Error: {error}</div>;
   }
 
   return (
-    <main>
+    <main className="bg-white dark:bg-gray-900 transition-colors duration-300">
       {/* Banner Carousel */}
       <div className="container px-4 mx-auto mt-4">
         <BannerCarousel banners={banners} />
@@ -70,6 +70,7 @@ export default function Home() {
               width={600}
               height={500}
               style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+              className="dark:bg-gray-800"
             />
           </Link>
           <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
@@ -79,6 +80,7 @@ export default function Home() {
               width={620}
               height={500}
               style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+              className="dark:bg-gray-800"
             />
           </Link>
         </div>

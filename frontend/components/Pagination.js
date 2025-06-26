@@ -48,10 +48,10 @@ const Pagination = ({ pagination, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={!hasPrevPage}
-        className={`px-3 py-2 rounded-md text-sm font-medium ${
+        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
           hasPrevPage
-            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+            ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
         }`}
       >
         Anterior
@@ -61,14 +61,14 @@ const Pagination = ({ pagination, onPageChange }) => {
       {generatePageNumbers().map((page, index) => (
         <React.Fragment key={index}>
           {page === '...' ? (
-            <span className="px-3 py-2 text-gray-500">...</span>
+            <span className="px-3 py-2 text-gray-500 dark:text-gray-400">...</span>
           ) : (
             <button
               onClick={() => onPageChange(page)}
-              className={`px-3 py-2 rounded-md text-sm font-medium ${
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 page === currentPage
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  ? 'bg-red-600 dark:bg-red-500 text-white'
+                  : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
               }`}
             >
               {page}
@@ -81,10 +81,10 @@ const Pagination = ({ pagination, onPageChange }) => {
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={!hasNextPage}
-        className={`px-3 py-2 rounded-md text-sm font-medium ${
+        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
           hasNextPage
-            ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+            ? 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
         }`}
       >
         Siguiente

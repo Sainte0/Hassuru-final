@@ -115,7 +115,7 @@ export default function Detail({ product }) {
 
   return (
     <>
-      <div className="container py-10 mx-auto">
+      <div className="container py-10 mx-auto bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
@@ -126,76 +126,76 @@ export default function Detail({ product }) {
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full rounded-xl bg-white "
+                className="object-contain w-full h-full rounded-xl bg-white dark:bg-gray-800"
               />
             </div>
           </div>
           {/* Info a la derecha */}
           <div className="flex flex-col w-full lg:w-1/2 p-2 space-y-4 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-800 lg:text-4xl mb-2">{product.nombre}</h2>
-            <div className="space-y-2 text-gray-800">
-              <p className="text-sm text-gray-500 mb-2">{product.descripcion}</p>
+            <h2 className="text-3xl font-bold text-gray-800 dark:text-white lg:text-4xl mb-2">{product.nombre}</h2>
+            <div className="space-y-2 text-gray-800 dark:text-white">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{product.descripcion}</p>
               <p className="text-4xl font-bold">${product.precio} USD</p>
-              <p className="text-lg text-gray-400">${(product.precio * dolarBlue).toFixed(2)} ARS</p>
+              <p className="text-lg text-gray-400 dark:text-gray-500">${(product.precio * dolarBlue).toFixed(2)} ARS</p>
             </div>
             <div className="mt-4">
-              <h3 className="mb-2 text-lg font-semibold text-gray-800">Tallas disponibles:</h3>
+              <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white">Tallas disponibles:</h3>
               {product.tallas && product.tallas.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {product.tallas.map((talla) => (
                     <button
                       key={talla._id}
                       onClick={() => handleTallaSelect(talla)}
-                      className={`px-4 py-2 border rounded-md ${
+                      className={`px-4 py-2 border rounded-md transition-colors ${
                         selectedTalla?._id === talla._id
                           ? "bg-red-600 text-white border-red-600"
-                          : "border-gray-300 hover:border-red-600"
+                          : "border-gray-300 dark:border-gray-600 hover:border-red-600 dark:hover:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       }`}
                     >
                       <div className="flex flex-col items-center">
                         <span className="font-medium">{talla.talla}</span>
                         <span className="text-sm">${talla.precioTalla} USD</span>
-                        <span className="text-xs text-gray-500">${(talla.precioTalla * dolarBlue).toFixed(2)} ARS</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">${(talla.precioTalla * dolarBlue).toFixed(2)} ARS</span>
                       </div>
                     </button>
                   ))}
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <p className="text-yellow-600 font-medium">Te traemos el par desde Estados Unidos con demora de 20/30 días</p>
+                  <p className="text-yellow-600 dark:text-yellow-400 font-medium">Te traemos el par desde Estados Unidos con demora de 20/30 días</p>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={customTalla}
                       onChange={(e) => setCustomTalla(e.target.value)}
                       placeholder="Ingresa tu talle"
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-red-500"
+                      className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
                     />
                   </div>
                 </div>
               )}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-600 dark:text-gray-400">
               {product.tallas && product.tallas.length > 0 ? (
                 product.tallas.some((tallaObj) => tallaObj.precioTalla > 0) ? (
                   product.encargo ? (
-                    <span className="text-yellow-500">Disponible en 5 días</span>
+                    <span className="text-yellow-500 dark:text-yellow-400">Disponible en 5 días</span>
                   ) : (
-                    <span className="text-green-500">Entrega inmediata</span>
+                    <span className="text-green-500 dark:text-green-400">Entrega inmediata</span>
                   )
                 ) : (
-                  <span className="text-red-500">Disponible en 20 días</span>
+                  <span className="text-red-500 dark:text-red-400">Disponible en 20 días</span>
                 )
               ) : (
-                <span className="text-yellow-500">Encargo desde Estados Unidos (20-30 días)</span>
+                <span className="text-yellow-500 dark:text-yellow-400">Encargo desde Estados Unidos (20-30 días)</span>
               )}
             </div>
 
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span>✓</span>
               <p>Artículo verificado, 100% original.</p>
             </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span>📦</span>
               {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
                 <p>Quedan {Object.values(product.tallas).reduce((acc, stock) => acc + stock, 0)} en stock. Ordena pronto.</p>
@@ -204,27 +204,27 @@ export default function Detail({ product }) {
               )}
             </div>
             {selectedTalla && (
-              <div className="mt-2 text-sm text-gray-600">
+              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                 Has seleccionado la talla: <span className="font-bold">{selectedTalla.talla}</span>
                 <button
                   onClick={() => setSelectedTalla(null)}
-                  className="ml-2 text-sm text-red-500 hover:underline"
+                  className="ml-2 text-sm text-red-500 hover:underline dark:hover:text-red-400 transition-colors"
                 >
                   Deseleccionar
                 </button>
               </div>
             )}
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              <div className="p-4 text-sm text-center text-gray-600 border rounded-md">
+              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 transition-colors">
                 Envíos gratis a todo el país.
               </div>
-              <div className="p-4 text-sm text-center text-gray-600 border rounded-md">
+              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 transition-colors">
                 Entrega en Córdoba Capital
               </div>
             </div>
             <div className="mt-4">
               <button
-                className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 border border-gray-400 rounded-md hover:bg-green-600`}
+                className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 dark:bg-green-600 border border-gray-400 dark:border-gray-600 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition-colors`}
                 onClick={handleCompraClick}
               >
                 {product.tallas && product.tallas.length > 0 ? (
@@ -235,9 +235,9 @@ export default function Detail({ product }) {
               </button>
             </div>
             {/* Medios de pago */}
-            <div className="p-4 mt-6 bg-white border border-gray-300 rounded-md shadow-md">
-              <h3 className="text-lg font-semibold text-gray-800">Medios de pago disponibles:</h3>
-              <ul className="mt-2 space-y-2 text-gray-700">
+            <div className="p-4 mt-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-md transition-colors">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Medios de pago disponibles:</h3>
+              <ul className="mt-2 space-y-2 text-gray-700 dark:text-gray-300">
                 <li className="flex items-center">
                   <span className="text-green-500">✔️</span>
                   <span className="ml-2">Zelle, Cashapp, USDT/CRYPTO</span>
@@ -261,17 +261,17 @@ export default function Detail({ product }) {
       </div>
       {/* Sección de productos relacionados más cerca del detalle */}
       {(loadingRelated || relatedProducts.length > 0) && (
-        <div className="container mt-8 mx-auto">
-          <h2 className="mb-6 text-2xl font-bold text-gray-800">Productos relacionados</h2>
+        <div className="container mt-8 mx-auto bg-white dark:bg-gray-900 transition-colors duration-300">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Productos relacionados</h2>
           <div className="flex gap-6 overflow-x-auto pb-2">
             {loadingRelated
               ? Array.from({ length: 4 }).map((_, idx) => (
-                  <div key={idx} className="min-w-[240px] max-w-[240px] p-4 border rounded-lg flex-shrink-0 bg-gray-200 animate-pulse">
-                    <div className="w-full h-64 mb-4 bg-gray-300 rounded-lg" />
-                    <div className="h-5 w-3/4 mb-2 bg-gray-300 rounded" />
-                    <div className="h-4 w-1/2 mb-1 bg-gray-300 rounded" />
-                    <div className="h-4 w-2/3 mb-2 bg-gray-300 rounded" />
-                    <div className="h-8 w-full bg-gray-300 rounded" />
+                  <div key={idx} className="min-w-[240px] max-w-[240px] p-4 border border-gray-300 dark:border-gray-600 rounded-lg flex-shrink-0 bg-gray-200 dark:bg-gray-700 animate-pulse">
+                    <div className="w-full h-64 mb-4 bg-gray-300 dark:bg-gray-600 rounded-lg" />
+                    <div className="h-5 w-3/4 mb-2 bg-gray-300 dark:bg-gray-600 rounded" />
+                    <div className="h-4 w-1/2 mb-1 bg-gray-300 dark:bg-gray-600 rounded" />
+                    <div className="h-4 w-2/3 mb-2 bg-gray-300 dark:bg-gray-600 rounded" />
+                    <div className="h-8 w-full bg-gray-300 dark:bg-gray-600 rounded" />
                   </div>
                 ))
               : relatedProducts.slice(0, 6).map((relatedProduct) => {
@@ -280,7 +280,7 @@ export default function Detail({ product }) {
                   // Determinar disponibilidad y estilos
                   let disponibilidad = relatedProduct.disponibilidad || "Sin info";
                   let disponibilidadLabel = disponibilidad;
-                  let disponibilidadClass = "bg-gray-300 text-black";
+                  let disponibilidadClass = "bg-gray-300 dark:bg-gray-600 text-black dark:text-white";
                   if (
                     disponibilidad === "Entrega inmediata" ||
                     (!relatedProduct.encargo && Array.isArray(relatedProduct.tallas) && relatedProduct.tallas.length > 0)
@@ -303,7 +303,7 @@ export default function Detail({ product }) {
                   return (
                     <div
                       key={relatedProduct._id}
-                      className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border rounded-lg hover:shadow-lg flex-shrink-0 bg-white cursor-pointer"
+                      className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-lg flex-shrink-0 bg-white dark:bg-gray-800 cursor-pointer"
                       onClick={() => router.push(`/producto/${relatedProduct._id}`)}
                       tabIndex={0}
                       role="button"
@@ -318,10 +318,10 @@ export default function Detail({ product }) {
                           className="rounded-lg"
                         />
                       </div>
-                      <h3 className="mb-2 text-lg font-semibold text-gray-800 truncate">{relatedProduct.nombre}</h3>
-                      <p className="mb-1 text-gray-600">USD ${relatedProduct.precio}</p>
+                      <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white truncate">{relatedProduct.nombre}</h3>
+                      <p className="mb-1 text-gray-600 dark:text-gray-400">USD ${relatedProduct.precio}</p>
                       {precioPesos && (
-                        <p className="mb-2 text-gray-600">${precioPesos.toLocaleString("es-AR")} ARS</p>
+                        <p className="mb-2 text-gray-600 dark:text-gray-400">${precioPesos.toLocaleString("es-AR")} ARS</p>
                       )}
                       <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
                     </div>

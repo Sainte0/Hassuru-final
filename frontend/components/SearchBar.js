@@ -86,7 +86,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="w-full bg-white" ref={searchRef}>
+    <div className="w-full bg-white dark:bg-gray-800 transition-colors duration-300" ref={searchRef}>
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="relative">
           <div className="flex items-center">
@@ -97,11 +97,11 @@ export default function SearchBar() {
               onFocus={() => setIsFocused(true)}
               onKeyPress={handleKeyPress}
               placeholder="Buscar productos, marcas, etc."
-              className="w-full py-4 pl-4 pr-12 text-gray-900 placeholder-gray-500 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              className="w-full py-4 pl-4 pr-12 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-blue-500 focus:border-transparent transition-colors duration-300"
             />
             <button
               onClick={handleSearch}
-              className="absolute right-3 p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+              className="absolute right-3 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition-colors"
             >
               <FaSearch className="w-5 h-5" />
             </button>
@@ -109,13 +109,13 @@ export default function SearchBar() {
 
           {/* Resultados de búsqueda */}
           {showResults && filteredProducts.length > 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg transition-colors duration-300">
               <div className="py-2">
                 {filteredProducts.map((product) => (
                   <div
                     key={product._id}
                     onClick={() => handleProductClick(product._id)}
-                    className="flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200"
                   >
                     <div className="flex-shrink-0 w-12 h-12 relative">
                       <img
@@ -125,8 +125,8 @@ export default function SearchBar() {
                       />
                     </div>
                     <div className="ml-4 flex-1">
-                      <p className="text-sm font-medium text-gray-900">{product.nombre}</p>
-                      <p className="text-sm text-gray-500">${product.precio} USD</p>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">{product.nombre}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">${product.precio} USD</p>
                     </div>
                   </div>
                 ))}

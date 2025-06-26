@@ -98,13 +98,13 @@ export default function Card({ currentProducts }) {
           return (
             <Link href={getProductUrl(product)} key={product._id}>
               <div 
-                className="flex flex-col h-[500px] transition-transform transform hover:scale-105 product-container"
+                className="flex flex-col h-[500px] transition-transform transform hover:scale-105 product-container bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 p-4 transition-all duration-300"
                 data-product-id={product._id}
               >
                 <div className="relative w-full h-[300px]">
                   {!loadedImages[product._id] && (
                     <div className="absolute inset-0 animate-pulse">
-                      <div className="w-full h-full bg-gray-200 rounded-lg"></div>
+                      <div className="w-full h-full bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
                     </div>
                   )}
                   {isVisible && (
@@ -127,13 +127,13 @@ export default function Card({ currentProducts }) {
                   )}
                 </div>
                 
-                <h3 className="text-lg font-semibold">{product.nombre}</h3>
-                <h5 className="text-sm leading-relaxed text-gray-500">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{product.nombre}</h3>
+                <h5 className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                   {product.description}
                 </h5>
                 <div className="flex flex-col">
-                  <p className="text-lg font-bold text-gray-800">${product.precio} USD</p>
-                  <p className="text-lg font-bold text-gray-800">
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">${product.precio} USD</p>
+                  <p className="text-lg font-bold text-gray-800 dark:text-white">
                     ${(product.precio * dolarBlue).toFixed(2)} ARS
                   </p>
                   <span className={disponibilidad.color}>{disponibilidad.message}</span>

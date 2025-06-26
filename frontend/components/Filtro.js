@@ -379,60 +379,60 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   return (
-    <main className="px-4 font-semibold md:px-12">
+    <main className="px-4 font-semibold md:px-12 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
       <form onSubmit={handleFormSubmit}>
         <div className="mb-4">
-          <h3 className="mb-3 text-xl font-semibold text-gray-800">Filtros</h3>
+          <h3 className="mb-3 text-xl font-semibold text-gray-800 dark:text-white">Filtros</h3>
           <div className="flex flex-wrap gap-2 mb-4">
             {selectedTallaRopa && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Talla de Ropa: {selectedTallaRopa}</span>
-                <button type="button" onClick={() => handleSelectTallaRopa(selectedTallaRopa)} className="text-red-500">X</button>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Talla de Ropa: {selectedTallaRopa}</span>
+                <button type="button" onClick={() => handleSelectTallaRopa(selectedTallaRopa)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {selectedTallaZapatilla && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Talla de Zapatillas: {selectedTallaZapatilla}</span>
-                <button type="button" onClick={() => handleSelectTallaZapatilla(selectedTallaZapatilla)} className="text-red-500">X</button>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Talla de Zapatillas: {selectedTallaZapatilla}</span>
+                <button type="button" onClick={() => handleSelectTallaZapatilla(selectedTallaZapatilla)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {selectedAccesorio && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Tecnología: {selectedAccesorio}</span>
-                <button type="button" onClick={() => handleSelectAccesorio(selectedAccesorio)} className="text-red-500">X</button>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Tecnología: {selectedAccesorio}</span>
+                <button type="button" onClick={() => handleSelectAccesorio(selectedAccesorio)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {selectedDisponibilidad && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Disponibilidad: {selectedDisponibilidad}</span>
-                <button type="button" onClick={() => handleSelectDisponibilidad(selectedDisponibilidad)} className="text-red-500">X</button>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Disponibilidad: {selectedDisponibilidad}</span>
+                <button type="button" onClick={() => handleSelectDisponibilidad(selectedDisponibilidad)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {selectedMarca && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Marca: {selectedMarca}</span>
-                <button type="button" onClick={() => handleSelectMarca(selectedMarca)} className="text-red-500">X</button>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Marca: {selectedMarca}</span>
+                <button type="button" onClick={() => handleSelectMarca(selectedMarca)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {query && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">Búsqueda: {query}</span>
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Búsqueda: {query}</span>
                 <button type="button" onClick={() => { 
                   ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
                   setQuery(""); 
-                }} className="text-red-500">X</button>
+                }} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {(precioMin || precioMax) && (
-              <div className="flex items-center mb-2">
-                <span className="mr-2 text-gray-600">
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">
                   Precio: {precioMin ? `$${precioMin}` : '$0'} - {precioMax ? `$${precioMax}` : 'Max'}
                 </span>
                 <button type="button" onClick={() => { 
                   ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
                   setPrecioMin(""); 
                   setPrecioMax(""); 
-                }} className="text-red-500">X</button>
+                }} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
           </div>
@@ -442,7 +442,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
-            className={`mb-4 px-4 py-2 text-white md:hidden bg-red-500 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:bg-red-600 hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-300`}
+            className={`mb-4 px-4 py-2 text-white md:hidden bg-red-500 dark:bg-red-600 rounded-md shadow-md transition-all duration-300 ease-in-out transform hover:bg-red-600 dark:hover:bg-red-700 hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-red-300 dark:focus:ring-red-600`}
           >
             {showFilters ? "Ocultar Filtros" : "Mostrar Filtros"}
           </button>
@@ -450,7 +450,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
             <>
               {/* Filtro de Marca */}
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Marca</label>
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Marca</label>
                 <div className="overflow-auto max-h-32">
                   {Array.from(new Set([...marcas.zapatillas, ...marcas.ropa, ...marcas.accesorios]))
                     .sort()
@@ -463,9 +463,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                         value={marca}
                         checked={selectedMarca === marca}
                         onChange={() => handleSelectMarca(marca)}
-                        className="mr-2"
+                        className="mr-2 text-blue-600 focus:ring-blue-500"
                       />
-                      <label htmlFor={`marca-${marca}`} className="text-gray-600 cursor-pointer">
+                      <label htmlFor={`marca-${marca}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                         {marca}
                       </label>
                     </div>
@@ -479,7 +479,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   {/* Filtro de Tallas de Ropa */}
                   {tallasRopa.length > 0 && (
                     <div className="mb-4">
-                      <label className="block mb-1 font-medium text-gray-700">Tallas de Ropa</label>
+                      <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tallas de Ropa</label>
                       <div className="overflow-auto max-h-32">
                         {Array.from(new Set(tallasRopa))
                           .sort((a, b) => {
@@ -495,9 +495,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                                 value={talla}
                                 checked={selectedTallaRopa === talla}
                                 onChange={() => handleSelectTallaRopa(talla)}
-                                className="mr-2"
+                                className="mr-2 text-blue-600 focus:ring-blue-500"
                               />
-                              <label htmlFor={`talla-ropa-${talla}`} className="text-gray-600 cursor-pointer">
+                              <label htmlFor={`talla-ropa-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                                 {talla}
                               </label>
                             </div>
@@ -509,7 +509,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   {/* Filtro de Tallas de Zapatillas */}
                   {tallasZapatilla.length > 0 && (
                     <div className="mb-4">
-                      <label className="block mb-1 font-medium text-gray-700">Tallas de Zapatillas</label>
+                      <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tallas de Zapatillas</label>
                       <div className="overflow-auto max-h-32">
                         {Array.from(new Set(tallasZapatilla))
                           .sort((a, b) => {
@@ -529,9 +529,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                                 value={talla}
                                 checked={selectedTallaZapatilla === talla}
                                 onChange={() => handleSelectTallaZapatilla(talla)}
-                                className="mr-2"
+                                className="mr-2 text-blue-600 focus:ring-blue-500"
                               />
-                              <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 cursor-pointer">
+                              <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                                 {talla}
                               </label>
                             </div>
@@ -543,7 +543,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   {/* Filtro de Tecnología (Accesorios) */}
                   {accesorios.length > 0 && (
                     <div className="mb-4">
-                      <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
+                      <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tecnología</label>
                       <div className="overflow-auto max-h-32">
                         {accesorios.map((accesorio, index) => (
                           <div key={index} className="flex items-center mb-2">
@@ -554,9 +554,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                               value={accesorio}
                               checked={selectedAccesorio === accesorio}
                               onChange={() => handleSelectAccesorio(accesorio)}
-                              className="mr-2"
+                              className="mr-2 text-blue-600 focus:ring-blue-500"
                             />
-                            <label htmlFor={`accesorio-${accesorio}`} className="text-gray-600 cursor-pointer">
+                            <label htmlFor={`accesorio-${accesorio}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                               {accesorio}
                             </label>
                           </div>
@@ -570,7 +570,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
               {/* Filtro de Tallas de Ropa */}
               {categoria === 'ropa' && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Tallas de Ropa</label>
+                  <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tallas de Ropa</label>
                   <div className="overflow-auto max-h-32">
                     {Array.from(new Set(tallasRopa))
                       .sort((a, b) => {
@@ -586,9 +586,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                             value={talla}
                             checked={selectedTallaRopa === talla}
                             onChange={() => handleSelectTallaRopa(talla)}
-                            className="mr-2"
+                            className="mr-2 text-blue-600 focus:ring-blue-500"
                           />
-                          <label htmlFor={`talla-ropa-${talla}`} className="text-gray-600 cursor-pointer">
+                          <label htmlFor={`talla-ropa-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
                           </label>
                         </div>
@@ -600,7 +600,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
               {/* Filtro de Tallas de Zapatillas */}
               {categoria === 'zapatillas' && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Tallas de Zapatillas</label>
+                  <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tallas de Zapatillas</label>
                   <div className="overflow-auto max-h-32">
                     {Array.from(new Set(tallasZapatilla))
                       .sort((a, b) => {
@@ -620,9 +620,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                             value={talla}
                             checked={selectedTallaZapatilla === talla}
                             onChange={() => handleSelectTallaZapatilla(talla)}
-                            className="mr-2"
+                            className="mr-2 text-blue-600 focus:ring-blue-500"
                           />
-                          <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 cursor-pointer">
+                          <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
                           </label>
                         </div>
@@ -634,7 +634,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
               {/* Filtro de Tecnología (Accesorios) */}
               {categoria === 'accesorios' && (
                 <div className="mb-4">
-                  <label className="block mb-1 font-medium text-gray-700">Tecnología</label>
+                  <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tecnología</label>
                   <div className="overflow-auto max-h-32">
                     {accesorios.map((accesorio, index) => (
                       <div key={index} className="flex items-center mb-2">
@@ -645,9 +645,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           value={accesorio}
                           checked={selectedAccesorio === accesorio}
                           onChange={() => handleSelectAccesorio(accesorio)}
-                          className="mr-2"
+                          className="mr-2 text-blue-600 focus:ring-blue-500"
                         />
-                        <label htmlFor={`accesorio-${accesorio}`} className="text-gray-600 cursor-pointer">
+                        <label htmlFor={`accesorio-${accesorio}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                           {accesorio}
                         </label>
                       </div>
@@ -658,38 +658,38 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
 
               {/* Filtro de Disponibilidad */}
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Disponibilidad</label>
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Disponibilidad</label>
                 <div className="flex flex-col">
                   <button
                     type="button"
                     onClick={() => handleSelectDisponibilidad("Entrega inmediata")}
-                    className={`p-2 rounded w-full ${
+                    className={`p-2 rounded w-full transition-colors ${
                       selectedDisponibilidad === "Entrega inmediata"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-300 text-black"
-                    } hover:bg-green-500 mb-1`}
+                        ? "bg-gray-600 dark:bg-gray-500 text-white"
+                        : "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+                    } hover:bg-green-500 dark:hover:bg-green-600 mb-1`}
                   >
                     Entrega inmediata
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSelectDisponibilidad("Disponible en 5 días")}
-                    className={`p-2 rounded w-full ${
+                    className={`p-2 rounded w-full transition-colors ${
                       selectedDisponibilidad === "Disponible en 5 días"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-300 text-black"
-                    } hover:bg-yellow-500 mb-1`}
+                        ? "bg-gray-600 dark:bg-gray-500 text-white"
+                        : "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+                    } hover:bg-yellow-500 dark:hover:bg-yellow-600 mb-1`}
                   >
                     Disponible en 5 días
                   </button>
                   <button
                     type="button"
                     onClick={() => handleSelectDisponibilidad("Disponible en 20 días")}
-                    className={`p-2 rounded w-full ${
+                    className={`p-2 rounded w-full transition-colors ${
                       selectedDisponibilidad === "Disponible en 20 días"
-                        ? "bg-gray-600 text-white"
-                        : "bg-gray-300 text-black"
-                    } hover:bg-red-500`}
+                        ? "bg-gray-600 dark:bg-gray-500 text-white"
+                        : "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
+                    } hover:bg-red-500 dark:hover:bg-red-600`}
                   >
                     Disponible en 20 días
                   </button>
@@ -698,7 +698,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
 
               {/* Filtro de Precios */}
               <div className="mb-4">
-                <label className="block mb-1 font-medium text-gray-700">Precio</label>
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Precio</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -712,7 +712,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                       }, undefined, { shallow: true });
                     }}
                     placeholder="Min"
-                    className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
+                    className="w-full p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   />
                   <input
                     type="number"
@@ -726,7 +726,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                       }, undefined, { shallow: true });
                     }}
                     placeholder="Max"
-                    className="w-full p-2 bg-gray-100 border border-gray-300 rounded"
+                    className="w-full p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   />
                 </div>
               </div>
@@ -734,14 +734,14 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
               <div className="mt-4">
                 <button
                   type="submit"
-                  className="w-full p-2 mb-2 text-white bg-red-500 rounded hover:bg-red-700"
+                  className="w-full p-2 mb-2 text-white bg-red-500 dark:bg-red-600 rounded hover:bg-red-700 dark:hover:bg-red-700 transition-colors"
                 >
                   Buscar
                 </button>
                 <button
                   type="reset"
                   onClick={resetFilters}
-                  className="w-full p-2 text-white bg-red-500 rounded hover:bg-red-700"
+                  className="w-full p-2 text-white bg-red-500 dark:bg-red-600 rounded hover:bg-red-700 dark:hover:bg-red-700 transition-colors"
                 >
                   Reiniciar Filtros
                 </button>

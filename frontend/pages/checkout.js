@@ -126,46 +126,46 @@ export default function Checkout() {
   const totalARS = dolarBlue ? (totalUSD * dolarBlue) : null;
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-8">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100">
-        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 tracking-tight">Finalizar pedido</h1>
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
+      <div className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100 dark:border-gray-700">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 dark:text-white tracking-tight">Finalizar pedido</h1>
         <div className="mb-6 sm:mb-8 flex space-x-2">
           {pasos.map((p, i) => (
-            <div key={i} className={`flex-1 text-center py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-base transition-all duration-200 ${i === step ? 'bg-black text-white shadow' : 'bg-gray-200 text-gray-600'}`}>{p}</div>
+            <div key={i} className={`flex-1 text-center py-2 sm:py-3 rounded-lg font-semibold text-xs sm:text-base transition-all duration-200 ${i === step ? 'bg-black dark:bg-blue-600 text-white shadow' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'}`}>{p}</div>
           ))}
         </div>
-        <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-4 mb-6">
+        <div className="mt-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4 mb-6">
           <div className="flex items-center">
             <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
-            <p className="ml-2 text-sm text-green-700 font-medium">¡Envío gratis a todo Argentina!</p>
+            <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">¡Envío gratis a todo Argentina!</p>
           </div>
         </div>
         <div className="mb-6 sm:mb-8">
-          <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-gray-800">Resumen del carrito</h2>
+          <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-gray-800 dark:text-white">Resumen del carrito</h2>
           {cart.length === 0 ? (
-            <p className="text-gray-500">El carrito está vacío.</p>
+            <p className="text-gray-500 dark:text-gray-400">El carrito está vacío.</p>
           ) : (
             <div className="space-y-3 sm:space-y-4 overflow-x-auto">
               {cart.map(item => (
-                <div key={item.productoId + '-' + item.talle} className="flex items-center border rounded-lg p-2 sm:p-3 bg-gray-50 shadow-sm min-w-[260px] sm:min-w-0">
-                  <img src={item.imagen} alt={item.nombre} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg mr-2 sm:mr-3 border" />
+                <div key={item.productoId + '-' + item.talle} className="flex items-center border border-gray-200 dark:border-gray-600 rounded-lg p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 shadow-sm min-w-[260px] sm:min-w-0">
+                  <img src={item.imagen} alt={item.nombre} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg mr-2 sm:mr-3 border border-gray-200 dark:border-gray-600" />
                   <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-gray-900 break-words text-xs sm:text-base">{item.nombre}</div>
-                    <div className="text-xs sm:text-sm text-gray-500 break-words">Talle: {item.talle}</div>
+                    <div className="font-semibold text-gray-900 dark:text-white break-words text-xs sm:text-base">{item.nombre}</div>
+                    <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 break-words">Talle: {item.talle}</div>
                     <div className="flex items-center gap-1 sm:gap-2 mt-1">
                       <button 
-                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" 
+                        className="px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition text-xs sm:text-base text-gray-700 dark:text-gray-300" 
                         onClick={() => {
                           if (item.cantidad > 1) {
                             addToCart({ ...item, cantidad: -1 });
                           }
                         }}
                       >-</button>
-                      <span className="px-2 font-medium text-xs sm:text-base">{item.cantidad}</span>
+                      <span className="px-2 font-medium text-xs sm:text-base text-gray-900 dark:text-white">{item.cantidad}</span>
                       <button 
-                        className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300 transition text-xs sm:text-base" 
+                        className="px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition text-xs sm:text-base text-gray-700 dark:text-gray-300" 
                         onClick={() => addToCart({ ...item, cantidad: 1 })}
                       >+</button>
                       <button 
@@ -175,19 +175,19 @@ export default function Checkout() {
                     </div>
                   </div>
                   <div className="text-right min-w-[70px] sm:min-w-[90px]">
-                    <div className="font-bold text-gray-900 text-xs sm:text-base">${item.precio} USD</div>
+                    <div className="font-bold text-gray-900 dark:text-white text-xs sm:text-base">${item.precio} USD</div>
                     {dolarBlue && (
-                      <div className="text-[10px] sm:text-xs text-gray-500 mt-1">
+                      <div className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-1">
                         ${(item.precio * dolarBlue).toFixed(2)} ARS
                       </div>
                     )}
                   </div>
                 </div>
               ))}
-              <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t pt-3 sm:pt-4">
-                <div>Total: <span className="text-black">${totalUSD.toFixed(2)} USD</span></div>
+              <div className="text-right font-bold mt-3 sm:mt-4 text-base sm:text-lg border-t border-gray-200 dark:border-gray-600 pt-3 sm:pt-4">
+                <div className="text-gray-900 dark:text-white">Total: <span className="text-black dark:text-white">${totalUSD.toFixed(2)} USD</span></div>
                 {dolarBlue && (
-                  <div className="text-gray-500 mt-1">${totalARS.toFixed(2)} ARS</div>
+                  <div className="text-gray-500 dark:text-gray-400 mt-1">${totalARS.toFixed(2)} ARS</div>
                 )}
               </div>
             </div>
@@ -196,59 +196,119 @@ export default function Checkout() {
        
         {step === 0 && (
           <div className="space-y-2">
-            <input className="w-full border p-2" placeholder="Nombre" value={datos.nombre} onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} />
-            <input className="w-full border p-2" placeholder="Email" value={datos.email} onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} />
-            <input className="w-full border p-2" placeholder="DNI" value={datos.dni} onChange={e => setDatos(d => ({ ...d, dni: e.target.value }))} />
+            <input 
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+              placeholder="Nombre" 
+              value={datos.nombre} 
+              onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} 
+            />
+            <input 
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+              placeholder="Email" 
+              value={datos.email} 
+              onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} 
+            />
+            <input 
+              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+              placeholder="DNI" 
+              value={datos.dni} 
+              onChange={e => setDatos(d => ({ ...d, dni: e.target.value }))} 
+            />
             <div className="flex">
-              <select className="border p-2" value={telefono.prefijo} onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}>
+              <select 
+                className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
+                value={telefono.prefijo} 
+                onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}
+              >
                 {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
               </select>
-              <input className="flex-1 border p-2" placeholder="Teléfono" value={telefono.numero} onChange={e => setTelefono(t => ({ ...t, numero: e.target.value }))} required />
+              <input 
+                className="flex-1 border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                placeholder="Teléfono" 
+                value={telefono.numero} 
+                onChange={e => setTelefono(t => ({ ...t, numero: e.target.value }))} 
+                required 
+              />
             </div>
           </div>
         )}
         {step === 1 && (
           <div className="space-y-2">
-            <div>
-              <label>
-                <input type="radio" checked={envio.tipo === 'envio'} onChange={() => setEnvio({ ...envio, tipo: 'envio' })} /> Envío
+            <div className="text-gray-900 dark:text-white">
+              <label className="flex items-center">
+                <input type="radio" checked={envio.tipo === 'envio'} onChange={() => setEnvio({ ...envio, tipo: 'envio' })} className="mr-2" /> Envío
               </label>
-              <label className="ml-4">
-                <input type="radio" checked={envio.tipo === 'retiro'} onChange={() => setEnvio({ ...envio, tipo: 'retiro' })} /> Retiro en persona
+              <label className="flex items-center ml-4">
+                <input type="radio" checked={envio.tipo === 'retiro'} onChange={() => setEnvio({ ...envio, tipo: 'retiro' })} className="mr-2" /> Retiro en persona
               </label>
             </div>
             {envio.tipo === 'envio' && (
               <div className="space-y-2">
-                <input className="w-full border p-2" placeholder="Calle" value={envio.calle} onChange={e => setEnvio({ ...envio, calle: e.target.value })} />
-                <input className="w-full border p-2" placeholder="Número" value={envio.numero} onChange={e => setEnvio({ ...envio, numero: e.target.value })} />
-                <input className="w-full border p-2" placeholder="Piso/Depto (opcional)" value={envio.piso} onChange={e => setEnvio({ ...envio, piso: e.target.value })} />
-                <input className="w-full border p-2" placeholder="Ciudad" value={envio.ciudad} onChange={e => setEnvio({ ...envio, ciudad: e.target.value })} />
-                <input className="w-full border p-2" placeholder="Provincia/Estado" value={envio.provincia} onChange={e => setEnvio({ ...envio, provincia: e.target.value })} />
-                <input className="w-full border p-2" placeholder="Código Postal" value={envio.codigoPostal} onChange={e => setEnvio({ ...envio, codigoPostal: e.target.value })} />
-                <input className="w-full border p-2" placeholder="País" value={envio.pais} onChange={e => setEnvio({ ...envio, pais: e.target.value })} />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Calle" 
+                  value={envio.calle} 
+                  onChange={e => setEnvio({ ...envio, calle: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Número" 
+                  value={envio.numero} 
+                  onChange={e => setEnvio({ ...envio, numero: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Piso/Depto (opcional)" 
+                  value={envio.piso} 
+                  onChange={e => setEnvio({ ...envio, piso: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Ciudad" 
+                  value={envio.ciudad} 
+                  onChange={e => setEnvio({ ...envio, ciudad: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Provincia/Estado" 
+                  value={envio.provincia} 
+                  onChange={e => setEnvio({ ...envio, provincia: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="Código Postal" 
+                  value={envio.codigoPostal} 
+                  onChange={e => setEnvio({ ...envio, codigoPostal: e.target.value })} 
+                />
+                <input 
+                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
+                  placeholder="País" 
+                  value={envio.pais} 
+                  onChange={e => setEnvio({ ...envio, pais: e.target.value })} 
+                />
               </div>
             )}
           </div>
         )}
         {step === 2 && (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Método de pago</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Método de pago</h3>
             <div className="grid grid-cols-1 gap-4">
-              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'usdt' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('usdt')}>
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'usdt' ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}`} onClick={() => setPago('usdt')}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
                       <span className="text-xl">₮</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">USDT / Crypto</h4>
-                      <p className="text-sm text-gray-600">Pago en criptomonedas</p>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">USDT / Crypto</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Pago en criptomonedas</p>
                     </div>
                   </div>
                   <input type="radio" checked={pago === 'usdt'} onChange={() => setPago('usdt')} className="w-5 h-5 text-green-500" />
                 </div>
                 {pago === 'usdt' && (
-                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                  <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                     <p>• Aceptamos USDT en las redes TRC20 y BEP20</p>
                     <p>• También aceptamos otras criptomonedas principales</p>
                     <p>• El precio se fija al momento del pago</p>
@@ -256,21 +316,21 @@ export default function Checkout() {
                 )}
               </div>
 
-              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'transferencia' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('transferencia')}>
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'transferencia' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}`} onClick={() => setPago('transferencia')}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
                       <span className="text-xl">💸</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Transferencia Bancaria</h4>
-                      <p className="text-sm text-gray-600">Pago en USD o ARS</p>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Transferencia Bancaria</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Pago en USD o ARS</p>
                     </div>
                   </div>
                   <input type="radio" checked={pago === 'transferencia'} onChange={() => setPago('transferencia')} className="w-5 h-5 text-blue-500" />
                 </div>
                 {pago === 'transferencia' && (
-                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                  <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                     <p>• Transferencia en USD desde cuentas internacionales</p>
                     <p>• Transferencia en pesos argentinos</p>
                     <p>• Zelle y Cashapp disponibles</p>
@@ -278,21 +338,21 @@ export default function Checkout() {
                 )}
               </div>
 
-              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'efectivo' ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPago('efectivo')}>
+              <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'efectivo' ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}`} onClick={() => setPago('efectivo')}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
                       <span className="text-xl">💵</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-gray-900">Efectivo</h4>
-                      <p className="text-sm text-gray-600">Pago en persona</p>
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Efectivo</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Pago en persona</p>
                     </div>
                   </div>
                   <input type="radio" checked={pago === 'efectivo'} onChange={() => setPago('efectivo')} className="w-5 h-5 text-purple-500" />
                 </div>
                 {pago === 'efectivo' && (
-                  <div className="mt-3 text-sm text-gray-600 bg-white p-3 rounded-md border border-gray-200">
+                  <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600">
                     <p>• Disponible en Córdoba Capital</p>
                     <p>• Disponible en Buenos Aires</p>
                     <p>• Coordinamos punto de encuentro seguro</p>
@@ -301,9 +361,9 @@ export default function Checkout() {
               </div>
             </div>
 
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <h4 className="font-semibold text-gray-900 mb-2">Información importante</h4>
-              <ul className="text-sm text-gray-600 space-y-2">
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Información importante</h4>
+              <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
                   <span>Los precios están en USD y se convierten a ARS al momento del pago</span>
@@ -320,13 +380,13 @@ export default function Checkout() {
             </div>
           </div>
         )}
-        {error && <div className="text-red-500 mt-2">{error}</div>}
+        {error && <div className="text-red-500 dark:text-red-400 mt-2">{error}</div>}
         <div className="flex justify-between mt-6">
-          {step > 0 && <button className="px-4 py-2 bg-gray-200 rounded" onClick={handleBack}>Atrás</button>}
-          {step < 2 && <button className="px-4 py-2 bg-black text-white rounded" onClick={handleNext}>Siguiente</button>}
+          {step > 0 && <button className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" onClick={handleBack}>Atrás</button>}
+          {step < 2 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
           {step === 2 && pago && (
             <button 
-              className="px-4 py-2 bg-green-600 text-white rounded" 
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors" 
               onClick={handleSubmit} 
               disabled={loading}
             >

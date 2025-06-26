@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import CartDrawer from './CartDrawer';
 import { useCartStore } from '../store/cartStore';
 import WhatsButton from './Whatsbutton';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const router = useRouter();
@@ -108,9 +109,14 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
-      <nav className="relative bg-gray-800 text-white">
+      <nav className="relative bg-gray-800 dark:bg-gray-900 text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
+            {/* Theme Toggle - Left side */}
+            <div className="flex items-center">
+              <ThemeToggle className="mr-4" />
+            </div>
+
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8 w-full justify-center">
               <Link href="/" className="py-2 hover:text-gray-300">
@@ -130,7 +136,7 @@ export default function Navbar() {
                 <button className="py-2 hover:text-gray-300">
                   Stock
                 </button>
-                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-gray-800 bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-gray-800 dark:bg-gray-900 bg-opacity-90 dark:bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                   <div className="py-6 px-8 grid grid-cols-3 gap-8">
                     {/* Zapatillas Column */}
                     <div>
@@ -211,7 +217,7 @@ export default function Navbar() {
             {/* Carrito desktop */}
             {!isMobile && (
               <button
-                className="ml-4 bg-black text-white rounded-full w-10 h-10 flex items-center justify-center relative"
+                className="ml-4 bg-black dark:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center relative"
                 onClick={() => setOpen(true)}
               >
                 🛒

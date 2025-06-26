@@ -34,11 +34,11 @@ export default function DetailPage() {
     }
   }, [id, fetchProductById, fetchDolarBlue]);
 
-  if (loading) return <div className="flex items-center justify-center mt-[5%]"><BounceLoader color="#BE1A1D" /></div>;
+  if (loading) return <div className="flex items-center justify-center mt-[5%] bg-white dark:bg-gray-900"><BounceLoader color="#BE1A1D" /></div>;
 
   return (
-    <div>
-      {product ? <Detail product={product} /> : <div>No se encontró el producto.</div>}
+    <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
+      {product ? <Detail product={product} /> : <div className="text-gray-900 dark:text-white">No se encontró el producto.</div>}
     </div>
   );
 }
