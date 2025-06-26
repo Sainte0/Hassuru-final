@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import BannersAdmin from "../../components/BannersAdmin";
-import Sidebar from "../../components/Sidebar";
+import AdminLayout from "../../components/AdminLayout";
 import { BounceLoader } from 'react-spinners';
 import useStore from "../../store/store";
 
@@ -131,43 +131,42 @@ export default function AdminDashboard() {
     initializeData();
   }, [fetchDolarBlue]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    router.push("/login");
-  };
-
   return (
-    <div className="flex w-full min-h-screen bg-gray-100">
-      <Sidebar fetchProducts={fetchProducts} />
-      <div className="flex-1 w-full p-4 md:p-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-black">Bienvenido al Dashboard </h2>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 text-sm font-medium text-white transition duration-300 bg-red-500 rounded hover:bg-red-600 md:text-base"
-          >
-            Logout
-          </button>
+    <AdminLayout title="Dashboard">
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-6">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-dark-text mb-4">
+            Bienvenido al Dashboard
+          </h2>
+          <p className="text-gray-600 dark:text-dark-text-secondary">
+            Gestiona tus productos, pedidos y configuraciones desde aquí.
+          </p>
         </div>
+
         <TiktokLinksAdmin />
         <BannersAdmin />
+        
         {loading ? (
-          <div className="flex justify-center mt-[10%]">
+          <div className="flex justify-center py-12">
             <BounceLoader color="#BE1A1D" />
           </div>
         ) : error ? (
-          <p className="text-red-500">{error}</p>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <p className="text-red-600 dark:text-red-400">{error}</p>
+          </div>
         ) : (
-          <ProductList
-            editableProducts={editableProducts}
-            setEditableProducts={setEditableProducts}
-            selectedProduct={selectedProduct}
-            setSelectedProduct={setSelectedProduct}
-            fetchProducts={fetchProducts}
-            fetchProductsFiltered={fetchProductsFiltered}
-          />
+          <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border">
+            <ProductList
+              editableProducts={editableProducts}
+              setEditableProducts={setEditableProducts}
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+              fetchProducts={fetchProducts}
+              fetchProductsFiltered={fetchProductsFiltered}
+            />
+          </div>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

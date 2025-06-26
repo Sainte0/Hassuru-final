@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
+import AdminLayout from '../../components/AdminLayout';
 
 const estados = ['pendiente', 'pagado', 'enviado', 'recibido', 'cancelado'];
 
@@ -48,72 +49,99 @@ export default function PedidosAdmin() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">Cargando...</div>;
-  if (error) return <div className="p-8 text-center text-red-500">{error}</div>;
+  if (loading) return (
+    <AdminLayout title="Pedidos">
+      <div className="flex justify-center py-12">
+        <div className="text-gray-600 dark:text-dark-text-secondary">Cargando...</div>
+      </div>
+    </AdminLayout>
+  );
+
+  if (error) return (
+    <AdminLayout title="Pedidos">
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+        <p className="text-red-600 dark:text-red-400">{error}</p>
+      </div>
+    </AdminLayout>
+  );
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Pedidos</h1>
-      {orders.length === 0 ? <div>No hay pedidos.</div> : (
-        <div className="overflow-x-auto">
-          <table className="w-full border text-sm bg-white shadow rounded">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-2">Cliente</th>
-                <th className="p-2">Productos</th>
-                <th className="p-2">Pago</th>
-                <th className="p-2">Envío</th>
-                <th className="p-2">Estado</th>
-                <th className="p-2">Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map(order => (
-                <tr key={order._id} className="border-t hover:bg-gray-50">
-                  <td className="p-2 align-top min-w-[140px]">
-                    <div className="font-semibold">{order.datosPersonales?.nombre}</div>
-                    <div className="text-xs text-gray-500">{order.datosPersonales?.email}</div>
-                    <div className="text-xs text-gray-500">{order.datosPersonales?.telefono}</div>
-                    <div className="text-xs text-gray-500">DNI: {order.datosPersonales?.dni}</div>
-                  </td>
-                  <td className="p-2 align-top min-w-[220px]">
-                    {order.productos.map(p => (
-                      <div key={p.productoId + (p.talle || '')} className="flex items-center mb-1 gap-2">
-                        <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
-                        <div>
-                          <div className="font-medium">{p.nombre}</div>
-                          {p.talle && <div className="text-xs">Talle: <span className="font-semibold">{p.talle}</span></div>}
-                          <div className="text-xs">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
-                          <div className="text-xs text-gray-500">${p.precio} USD</div>
-                        </div>
-                      </div>
-                    ))}
-                  </td>
-                  <td className="p-2 align-top min-w-[80px]">{order.pago}</td>
-                  <td className="p-2 align-top min-w-[120px]">
-                    <div className="capitalize font-medium">{order.envio?.tipo}</div>
-                    {order.envio?.direccion && <div className="text-xs text-gray-500 break-words">{order.envio.direccion}</div>}
-                  </td>
-                  <td className="p-2 align-top min-w-[100px]">
-                    <span className={`px-2 py-1 rounded text-xs font-semibold ${order.estado === 'pendiente' ? 'bg-yellow-200 text-yellow-800' : order.estado === 'pagado' ? 'bg-green-200 text-green-800' : order.estado === 'enviado' ? 'bg-blue-200 text-blue-800' : order.estado === 'recibido' ? 'bg-gray-200 text-gray-800' : 'bg-red-200 text-red-800'}`}>{order.estado}</span>
-                  </td>
-                  <td className="p-2 align-top min-w-[120px]">
-                    <select
-                      value={order.estado}
-                      onChange={e => cambiarEstado(order._id, e.target.value)}
-                      className="border rounded px-2 py-1"
-                      disabled={changing === order._id}
-                    >
-                      {estados.map(e => <option key={e} value={e}>{e}</option>)}
-                    </select>
-                    {changing === order._id && <div className="text-xs text-blue-500 mt-1">Actualizando...</div>}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <AdminLayout title="Pedidos">
+      <div className="space-y-6">
+        <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-6">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text mb-4">Gestión de Pedidos</h1>
+          {orders.length === 0 ? (
+            <div className="text-gray-600 dark:text-dark-text-secondary">No hay pedidos.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full border border-gray-200 dark:border-dark-border text-sm bg-white dark:bg-dark-card shadow rounded">
+                <thead className="bg-gray-50 dark:bg-dark-bg">
+                  <tr>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Cliente</th>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Productos</th>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Pago</th>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Envío</th>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Estado</th>
+                    <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr key={order._id} className="border-t border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg">
+                      <td className="p-3 align-top min-w-[140px]">
+                        <div className="font-semibold text-gray-900 dark:text-dark-text">{order.datosPersonales?.nombre}</div>
+                        <div className="text-xs text-gray-500 dark:text-dark-text-secondary">{order.datosPersonales?.email}</div>
+                        <div className="text-xs text-gray-500 dark:text-dark-text-secondary">{order.datosPersonales?.telefono}</div>
+                        <div className="text-xs text-gray-500 dark:text-dark-text-secondary">DNI: {order.datosPersonales?.dni}</div>
+                      </td>
+                      <td className="p-3 align-top min-w-[220px]">
+                        {order.productos.map(p => (
+                          <div key={p.productoId + (p.talle || '')} className="flex items-center mb-1 gap-2">
+                            <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
+                            <div>
+                              <div className="font-medium text-gray-900 dark:text-dark-text">{p.nombre}</div>
+                              {p.talle && <div className="text-xs">Talle: <span className="font-semibold">{p.talle}</span></div>}
+                              <div className="text-xs">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
+                              <div className="text-xs text-gray-500 dark:text-dark-text-secondary">${p.precio} USD</div>
+                            </div>
+                          </div>
+                        ))}
+                      </td>
+                      <td className="p-3 align-top min-w-[80px] text-gray-900 dark:text-dark-text">{order.pago}</td>
+                      <td className="p-3 align-top min-w-[120px]">
+                        <div className="capitalize font-medium text-gray-900 dark:text-dark-text">{order.envio?.tipo}</div>
+                        {order.envio?.direccion && <div className="text-xs text-gray-500 dark:text-dark-text-secondary break-words">{order.envio.direccion}</div>}
+                      </td>
+                      <td className="p-3 align-top min-w-[100px]">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                          order.estado === 'pendiente' ? 'bg-yellow-200 text-yellow-800' : 
+                          order.estado === 'pagado' ? 'bg-green-200 text-green-800' : 
+                          order.estado === 'enviado' ? 'bg-blue-200 text-blue-800' : 
+                          order.estado === 'recibido' ? 'bg-gray-200 text-gray-800' : 
+                          'bg-red-200 text-red-800'
+                        }`}>
+                          {order.estado}
+                        </span>
+                      </td>
+                      <td className="p-3 align-top min-w-[120px]">
+                        <select
+                          value={order.estado}
+                          onChange={e => cambiarEstado(order._id, e.target.value)}
+                          className="border border-gray-300 dark:border-dark-border rounded px-2 py-1 bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text"
+                          disabled={changing === order._id}
+                        >
+                          {estados.map(e => <option key={e} value={e}>{e}</option>)}
+                        </select>
+                        {changing === order._id && <div className="text-xs text-blue-500 mt-1">Actualizando...</div>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 } 
