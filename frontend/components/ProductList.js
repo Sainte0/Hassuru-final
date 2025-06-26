@@ -147,8 +147,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
   }, [categoriaFilter, nameFilter, encargoFilter, priceSort, availabilityFilter, duplicateFilter]);
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="mb-6 text-xl font-semibold text-black">Lista de Productos</h2>
+    <div className="p-6 bg-white dark:bg-dark-card rounded-lg shadow-md">
+      <h2 className="mb-6 text-xl font-semibold text-black dark:text-dark-text">Lista de Productos</h2>
       <button
         onClick={() => setModalOpen(true)}
         className="flex items-center p-3 mb-4 text-white transition duration-200 bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 lg:hidden"
@@ -164,12 +164,12 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           placeholder="Buscar por nombre..."
           value={nameFilter}
           onChange={(e) => setNameFilter(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
+          className="w-full p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:w-auto"
         />
         <select
           value={categoriaFilter}
           onChange={(e) => setCategoriaFilter(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
+          className="w-full p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:w-auto"
         >
           <option value="">Seleccione una categoría</option>
           <option value="zapatillas">Zapatillas</option>
@@ -179,7 +179,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         <select
           value={priceSort}
           onChange={(e) => setPriceSort(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
+          className="w-full p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:w-auto"
         >
           <option value="">Ordenar por precio</option>
           <option value="asc">Menor a mayor</option>
@@ -188,7 +188,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         <select
           value={availabilityFilter}
           onChange={(e) => setAvailabilityFilter(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
+          className="w-full p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:w-auto"
         >
           <option value="">Disponibilidad</option>
           <option value="inmediata">Entrega inmediata</option>
@@ -198,7 +198,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         <select
           value={duplicateFilter}
           onChange={(e) => setDuplicateFilter(e.target.value)}
-          className="w-full p-2 border rounded sm:w-auto"
+          className="w-full p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:w-auto"
         >
           <option value="">Filtrar duplicados</option>
           <option value="nombre">Por nombre</option>
@@ -216,7 +216,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       {/* Acciones en lote */}
       {selectedProducts.length > 0 && (
         <div className="flex items-center gap-4 mb-4">
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-gray-600 dark:text-gray-400">
             {selectedProducts.length} productos seleccionados
           </span>
           <button
@@ -228,50 +228,54 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left table-auto">
-          <thead className="text-base">
-            <tr className="text-gray-700 bg-gray-100">
-              <th className="px-2 py-2">
-                <input
-                  type="checkbox"
-                  checked={selectedProducts.length === currentProducts.length}
-                  onChange={handleSelectAll}
+      {/* Tabla responsive */}
+      <div className="w-full overflow-x-auto">
+        <div className="min-w-full">
+          <table className="w-full text-left table-auto">
+            <thead className="text-base">
+              <tr className="text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800">
+                <th className="px-2 py-2 border-b border-gray-200 dark:border-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={selectedProducts.length === currentProducts.length}
+                    onChange={handleSelectAll}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                  />
+                </th>
+                <th className="px-2 py-2 border-b border-gray-200 dark:border-gray-700">#</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[120px]">Nombre</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[150px]">Descripción</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Marca</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Categoría</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[120px]">Precios (USD/AR)</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Tallas</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[100px]">Colores</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Imagen</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Destacado</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Destacado Z</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[80px]">Encargo</th>
+                <th className="px-4 py-2 border-b border-gray-200 dark:border-gray-700 min-w-[120px]">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-dark-card">
+              {currentProducts.map((producto, index) => (
+                <ProductRow
+                  key={producto._id}
+                  producto={producto}
+                  index={indexOfFirstProduct + index + 1}
+                  selectedProduct={selectedProduct}
+                  handleProductSelect={handleProductSelect}
+                  setEditableProducts={setEditableProducts}
+                  fetchProducts={fetchProducts}
+                  editableProducts={editableProducts}
+                  setSelectedProduct={setSelectedProduct}
+                  isSelected={selectedProducts.includes(producto._id)}
+                  onSelect={() => handleMultipleSelect(producto._id)}
                 />
-              </th>
-              <th className="px-2 py-2">#</th>
-              <th className="px-4 py-2">Nombre</th>
-              <th className="px-4 py-2">Descripción</th>
-              <th className="px-4 py-2">Marca</th>
-              <th className="px-4 py-2">Categoría</th>
-              <th className="px-4 py-2">Precios (USD/AR)</th>
-              <th className="px-4 py-2">Tallas</th>
-              <th className="px-4 py-2">Colores</th>
-              <th className="px-4 py-2">Imagen</th>
-              <th className="px-4 py-2">Destacado</th>
-              <th className="px-4 py-2">Destacado Z</th>
-              <th className="px-4 py-2">Encargo</th>
-              <th className="px-4 py-2">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentProducts.map((producto, index) => (
-              <ProductRow
-                key={producto._id}
-                producto={producto}
-                index={indexOfFirstProduct + index + 1}
-                selectedProduct={selectedProduct}
-                handleProductSelect={handleProductSelect}
-                setEditableProducts={setEditableProducts}
-                fetchProducts={fetchProducts}
-                editableProducts={editableProducts}
-                setSelectedProduct={setSelectedProduct}
-                isSelected={selectedProducts.includes(producto._id)}
-                onSelect={() => handleMultipleSelect(producto._id)}
-              />
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination Controls */}
@@ -280,7 +284,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-600 dark:text-gray-400 transition-colors duration-200 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdChevronLeft size={24} />
           </button>
@@ -288,18 +292,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           {currentPage > 2 && (
             <button
               onClick={() => handlePageChange(1)}
-              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               1
             </button>
           )}
 
-          {currentPage > 3 && <span>...</span>}
+          {currentPage > 3 && <span className="text-gray-500 dark:text-gray-400">...</span>}
 
           {currentPage > 1 && (
             <button
               onClick={() => handlePageChange(currentPage - 1)}
-              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               {currentPage - 1}
             </button>
@@ -314,18 +318,18 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           {currentPage < totalPages && (
             <button
               onClick={() => handlePageChange(currentPage + 1)}
-              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               {currentPage + 1}
             </button>
           )}
 
-          {currentPage < totalPages - 2 && <span>...</span>}
+          {currentPage < totalPages - 2 && <span className="text-gray-500 dark:text-gray-400">...</span>}
 
           {currentPage < totalPages - 1 && (
             <button
               onClick={() => handlePageChange(totalPages)}
-              className="px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className="px-3 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               {totalPages}
             </button>
@@ -334,14 +338,14 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 text-gray-600 transition-colors duration-200 rounded hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2 text-gray-600 dark:text-gray-400 transition-colors duration-200 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <MdChevronRight size={24} />
           </button>
         </div>
 
         {/* Page info */}
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600 dark:text-gray-400">
           Mostrando {indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, filteredProducts.length)} de {filteredProducts.length} productos
         </div>
       </div>

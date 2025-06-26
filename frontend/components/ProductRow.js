@@ -395,42 +395,43 @@ const ProductRow = ({
   };
 
   return (
-    <tr className="overflow-x-auto text-gray-600">
-      <td className="px-4 py-2 border">
+    <tr className={`border-b border-gray-200 dark:border-gray-700 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : 'hover:bg-gray-50 dark:hover:bg-gray-800'}`}>
+      <td className="px-2 py-2 border">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={onSelect}
+          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
         />
       </td>
-      <td className="px-4 py-2 border">
+      <td className="px-4 py-2 border border-gray-200 dark:border-gray-700">
         {index}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <input
             type="text"
             value={producto.nombre}
             onChange={(e) => handleProductChange(e, "nombre", producto)}
-            className="w-full p-1 border"
+            className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
         ) : (
-          producto.nombre
+          <span className="text-gray-900 dark:text-gray-100">{producto.nombre}</span>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <input
             type="text"
             value={producto.descripcion}
             onChange={(e) => handleProductChange(e, "descripcion", producto)}
-            className="w-full p-1 border"
+            className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
         ) : (
-          producto.descripcion
+          <span className="text-gray-900 dark:text-gray-100">{producto.descripcion}</span>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <div>
             <div className="flex gap-2 mb-2">
@@ -445,24 +446,24 @@ const ProductRow = ({
                   }
                 }}
                 placeholder="Agregar marca"
-                className="flex-1 p-1 border"
+                className="flex-1 p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <button
                 type="button"
                 onClick={() => handleAddMarca(producto)}
-                className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+                className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
               >
                 Agregar
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
               {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
-                <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded">
-                  <span>{marca}</span>
+                <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                  <span className="text-gray-900 dark:text-gray-100">{marca}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveMarca(producto, marca)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                   >
                     ×
                   </button>
@@ -473,52 +474,52 @@ const ProductRow = ({
         ) : (
           <div className="flex flex-wrap gap-2">
             {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
-              <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded">
-                <span>{marca}</span>
+              <div key={index} className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded">
+                <span className="text-gray-900 dark:text-gray-100">{marca}</span>
               </div>
             ))}
           </div>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <select
             value={producto.categoria}
             onChange={(e) => handleProductChange(e, "categoria", producto)}
-            className="w-full p-1 border"
+            className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           >
             <option value="zapatillas">Zapatillas</option>
             <option value="ropa">Ropa</option>
             <option value="accesorios">Accesorios</option>
           </select>
         ) : (
-          producto.categoria
+          <span className="text-gray-900 dark:text-gray-100">{producto.categoria}</span>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <input
             type="number"
             value={producto.precio}
             onChange={(e) => handleProductChange(e, "precio", producto)}
-            className="w-full p-1 border"
+            className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
           />
         ) : (
-          <div>
+          <div className="text-gray-900 dark:text-gray-100">
             <p>${producto.precio} USD</p>
-            <p>${(producto.precio * dolarBlue).toFixed(2)} ARS</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">${(producto.precio * dolarBlue).toFixed(2)} ARS</p>
           </div>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col gap-1">
           {producto.tallas.map((talla, index) => (
             <div key={index} className="flex items-center gap-2">
-              <span>{talla.talla}</span>
+              <span className="text-gray-900 dark:text-gray-100">{talla.talla}</span>
               {selectedProduct === producto._id && (
                 <button
                   onClick={() => handleDeleteTalla(index)}
-                  className="p-1 text-white bg-red-500 rounded"
+                  className="p-1 text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
                 >
                   <RiDeleteBin5Line />
                 </button>
@@ -533,18 +534,18 @@ const ProductRow = ({
                   value={newTalla}
                   onChange={(e) => setNewTalla(e.target.value)}
                   placeholder="Nueva talla"
-                  className="w-20 p-1 border"
+                  className="w-20 p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
                 <input
                   type="number"
                   value={newStock}
                   onChange={(e) => setNewStock(e.target.value)}
                   placeholder="Precio"
-                  className="w-20 p-1 border"
+                  className="w-20 p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
                 <button
                   onClick={handleAddTalla}
-                  className="p-1 text-white bg-blue-500 rounded"
+                  className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
                 >
                   <IoAddCircleOutline />
                 </button>
@@ -552,7 +553,7 @@ const ProductRow = ({
               <button
                 type="button"
                 onClick={handleOpenSizeModal}
-                className="px-2 py-1 mb-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                className="px-2 py-1 mb-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
               >
                 Seleccionar tallas
               </button>
@@ -568,7 +569,7 @@ const ProductRow = ({
                 <button
                   type="button"
                   onClick={handleUpdateSizes}
-                  className="px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700"
+                  className="px-2 py-1 text-white bg-green-600 rounded hover:bg-green-700 transition-colors"
                 >
                   Guardar tallas seleccionadas
                 </button>
@@ -577,15 +578,15 @@ const ProductRow = ({
           )}
         </div>
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         <div className="flex flex-col gap-1">
           {producto.colores.map((color, index) => (
             <div key={index} className="flex items-center gap-2">
-              <span>{color.color}</span>
+              <span className="text-gray-900 dark:text-gray-100">{color.color}</span>
               {selectedProduct === producto._id && (
                 <button
                   onClick={() => handleDeleteColor(index)}
-                  className="p-1 text-white bg-red-500 rounded"
+                  className="p-1 text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
                 >
                   <RiDeleteBin5Line />
                 </button>
@@ -599,11 +600,11 @@ const ProductRow = ({
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
                 placeholder="Nuevo color"
-                className="w-full p-1 border"
+                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <button
                 onClick={handleAddColor}
-                className="p-1 text-white bg-blue-500 rounded"
+                className="p-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
               >
                 <IoAddCircleOutline />
               </button>
@@ -611,18 +612,18 @@ const ProductRow = ({
           )}
         </div>
       </td>
-      <td className="px-4 py-2 border">
+      <td className="px-4 py-2 border border-gray-200 dark:border-gray-700">
         <div className="relative w-16 h-16">
           <Image
             src={newImage || getImageUrl(producto)}
             alt={producto.nombre}
             width={64}
             height={64}
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full rounded border border-gray-300 dark:border-gray-600"
             unoptimized={true}
           />
           {selectedProduct === producto._id && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity rounded">
               <label className="cursor-pointer">
                 <input
                   type="file"
@@ -636,69 +637,81 @@ const ProductRow = ({
           )}
         </div>
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={producto.destacado}
               onChange={handleDestacadoChange}
-              className="mr-2"
+              className="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
             />
-            Destacado
+            <span className="text-gray-900 dark:text-gray-100">Destacado</span>
           </label>
-        ) : producto.destacado ? (
-          "Sí"
         ) : (
-          "No"
+          <span className={`inline-block px-2 py-1 text-xs rounded ${
+            producto.destacado 
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+          }`}>
+            {producto.destacado ? 'Sí' : 'No'}
+          </span>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={producto.destacado_zapatillas}
               onChange={handleDestacadoZapatillasChange}
-              className="mr-2"
+              className="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
             />
-            Destacado Z
+            <span className="text-gray-900 dark:text-gray-100">Destacado Z</span>
           </label>
-        ) : producto.destacado_zapatillas ? (
-          "Sí"
         ) : (
-          "No"
+          <span className={`inline-block px-2 py-1 text-xs rounded ${
+            producto.destacado_zapatillas 
+              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+          }`}>
+            {producto.destacado_zapatillas ? 'Sí' : 'No'}
+          </span>
         )}
       </td>
-      <td className="px-2 py-2 border">
+      <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={producto.encargo}
               onChange={handleEncargoChange}
-              className="mr-2"
+              className="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
             />
-            Encargo
+            <span className="text-gray-900 dark:text-gray-100">Encargo</span>
           </label>
-        ) : producto.encargo ? (
-          "Sí"
         ) : (
-          "No"
+          <span className={`inline-block px-2 py-1 text-xs rounded ${
+            producto.encargo 
+              ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' 
+              : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+          }`}>
+            {producto.encargo ? 'Sí' : 'No'}
+          </span>
         )}
       </td>
-      <td className="px-2 py-2 text-center border">
+      <td className="px-2 py-2 text-center border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
-          <div>
+          <div className="space-y-1">
             <button
               onClick={() => handleProductUpdate(producto)}
-              className="px-2 py-1 text-white bg-blue-500 rounded"
+              className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
             >
               Guardar
             </button>
             <button
               onClick={() => setSelectedProduct(null)}
-              className="px-[6px] py-1 text-white bg-red-500 rounded my-1"
+              className="px-[6px] py-1 text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
             >
               Cancelar
             </button>
@@ -706,14 +719,14 @@ const ProductRow = ({
         ) : (
           <button
             onClick={() => handleProductSelect(producto._id)}
-            className="px-2 py-1 text-white bg-blue-500 rounded"
+            className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
           >
             Editar
           </button>
         )}
         <button
           onClick={handleProductDelete}
-          className="px-2 py-1 text-white bg-red-500 rounded"
+          className="px-2 py-1 text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
         >
           Eliminar
         </button>
