@@ -126,9 +126,9 @@ const BannersAdmin = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-white dark:bg-dark-card rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-dark-border">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-gray-800">Banners Promocionales</h3>
+        <h3 className="text-xl font-semibold text-gray-800 dark:text-dark-text">Banners Promocionales</h3>
         <button
           onClick={() => {
             resetForm();
@@ -146,7 +146,7 @@ const BannersAdmin = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : banners.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           No hay banners configurados. Crea el primero haciendo clic en "Agregar Banner".
         </div>
       ) : (
@@ -158,19 +158,19 @@ const BannersAdmin = () => {
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
-              className={`flex items-center p-4 border rounded-lg cursor-move hover:bg-gray-50 transition-colors ${
+              className={`flex items-center p-4 border border-gray-200 dark:border-gray-700 rounded-lg cursor-move hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
                 !banner.active ? 'opacity-60' : ''
               }`}
             >
               {/* Drag Handle */}
-              <div className="mr-4 text-gray-400">
+              <div className="mr-4 text-gray-400 dark:text-gray-500">
                 <div className="w-6 h-6 flex items-center justify-center">
                   ⋮⋮
                 </div>
               </div>
 
               {/* Banner Image */}
-              <div className="w-20 h-16 mr-4 rounded overflow-hidden flex-shrink-0">
+              <div className="w-20 h-16 mr-4 rounded overflow-hidden flex-shrink-0 border border-gray-200 dark:border-gray-600">
                 <img
                   src={banner.imageUrl}
                   alt={banner.title}
@@ -181,29 +181,29 @@ const BannersAdmin = () => {
               {/* Banner Info */}
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="font-medium text-gray-900">{banner.title}</h4>
-                  <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+                  <h4 className="font-medium text-gray-900 dark:text-gray-100">{banner.title}</h4>
+                  <span className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
                     Orden: {banner.order}
                   </span>
                   {banner.active ? (
-                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-600">
+                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-200">
                       Activo
                     </span>
                   ) : (
-                    <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-600">
+                    <span className="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-200">
                       Inactivo
                     </span>
                   )}
                 </div>
                 {banner.description && (
-                  <p className="text-sm text-gray-600 mb-1">{banner.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{banner.description}</p>
                 )}
                 {banner.link && (
                   <a
                     href={banner.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:underline"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     {banner.link}
                   </a>
@@ -214,7 +214,7 @@ const BannersAdmin = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleToggleActive(banner)}
-                  className="p-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                   title={banner.active ? 'Desactivar' : 'Activar'}
                 >
                   {banner.active ? (
@@ -225,14 +225,14 @@ const BannersAdmin = () => {
                 </button>
                 <button
                   onClick={() => handleEdit(banner)}
-                  className="p-2 text-blue-600 hover:text-blue-800 transition-colors"
+                  className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                   title="Editar"
                 >
                   <PencilIcon className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => handleDelete(banner._id)}
-                  className="p-2 text-red-600 hover:text-red-800 transition-colors"
+                  className="p-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
                   title="Eliminar"
                 >
                   <TrashIcon className="w-5 h-5" />
@@ -246,73 +246,84 @@ const BannersAdmin = () => {
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-dark-card rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto border border-gray-200 dark:border-dark-border">
             <div className="p-6">
-              <h3 className="text-lg font-semibold mb-4">
-                {editingBanner ? 'Editar Banner' : 'Nuevo Banner'}
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-dark-text">
+                  {editingBanner ? 'Editar Banner' : 'Nuevo Banner'}
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    resetForm();
+                  }}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  ✕
+                </button>
+              </div>
               
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Título *
                   </label>
                   <input
                     type="text"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Descripción
                   </label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     rows="3"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Enlace (opcional)
                   </label>
                   <input
                     type="url"
                     value={formData.link}
                     onChange={(e) => setFormData({ ...formData, link: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     placeholder="https://ejemplo.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Orden
                   </label>
                   <input
                     type="number"
                     value={formData.order}
                     onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     Imagen {!editingBanner && '*'}
                   </label>
                   <input
                     type="file"
                     onChange={handleImageChange}
                     accept="image/*"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                     required={!editingBanner}
                   />
                   {imagePreview && (
@@ -320,7 +331,7 @@ const BannersAdmin = () => {
                       <img
                         src={imagePreview}
                         alt="Preview"
-                        className="w-full h-32 object-cover rounded-md"
+                        className="w-full h-32 object-cover rounded-md border border-gray-200 dark:border-gray-600"
                       />
                     </div>
                   )}
@@ -332,9 +343,9 @@ const BannersAdmin = () => {
                     id="active"
                     checked={formData.active}
                     onChange={(e) => setFormData({ ...formData, active: e.target.checked })}
-                    className="mr-2"
+                    className="mr-2 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                   />
-                  <label htmlFor="active" className="text-sm text-gray-700">
+                  <label htmlFor="active" className="text-sm text-gray-700 dark:text-gray-300">
                     Banner activo
                   </label>
                 </div>
@@ -353,7 +364,7 @@ const BannersAdmin = () => {
                       setShowModal(false);
                       resetForm();
                     }}
-                    className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
+                    className="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
                   >
                     Cancelar
                   </button>

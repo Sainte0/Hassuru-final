@@ -39,35 +39,58 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, 
 
     return (
         isOpen ? (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-                    <h2 className="mb-4 text-xl">Selecciona las Tallas y Precios</h2>
-                    <div className="max-h-60 overflow-y-auto">
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                <div className="w-full max-w-md p-6 bg-white dark:bg-dark-card rounded-lg shadow-lg border border-gray-200 dark:border-dark-border">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-dark-text">Selecciona las Tallas y Precios</h2>
+                        <button
+                            onClick={onClose}
+                            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    <div className="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800">
                         {availableSizes.map((size, index) => (
-                            <div key={index} className="flex items-center mb-2">
+                            <div key={index} className="flex items-center mb-3 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <input
                                     type="checkbox"
                                     id={`size-${size}`}
                                     checked={selectedSizes.includes(size)}
                                     onChange={() => handleCheckboxChange(size)}
-                                    className="mr-2"
+                                    className="mr-3 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
                                 />
-                                <label htmlFor={`size-${size}`} className="cursor-pointer">{size}</label>
+                                <label 
+                                    htmlFor={`size-${size}`} 
+                                    className="cursor-pointer flex-1 text-gray-900 dark:text-gray-100 font-medium"
+                                >
+                                    {size}
+                                </label>
                                 {selectedSizes.includes(size) && (
                                     <input
                                         type="number"
                                         placeholder="Precio"
                                         value={sizePrices[size] || ''}
                                         onChange={(e) => handlePriceChange(size, e.target.value)}
-                                        className="ml-2 border rounded p-1 w-20"
+                                        className="ml-2 border border-gray-300 dark:border-gray-600 rounded p-2 w-24 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
                                     />
                                 )}
                             </div>
                         ))}
                     </div>
-                    <div className="flex justify-end mt-4">
-                        <button onClick={handleConfirm} className="px-4 py-2 text-white bg-blue-500 rounded">Confirmar</button>
-                        <button onClick={onClose} className="px-4 py-2 ml-2 text-white bg-red-500 rounded">Cancelar</button>
+                    <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <button 
+                            onClick={onClose} 
+                            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200"
+                        >
+                            Cancelar
+                        </button>
+                        <button 
+                            onClick={handleConfirm} 
+                            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200"
+                        >
+                            Confirmar
+                        </button>
                     </div>
                 </div>
             </div>

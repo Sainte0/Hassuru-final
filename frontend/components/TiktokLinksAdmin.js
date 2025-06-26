@@ -66,42 +66,42 @@ const TiktokLinksAdmin = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
-      <h2 className="mb-6 text-xl font-semibold text-black">Enlaces de TikTok</h2>
+    <div className="p-6 bg-white dark:bg-dark-card rounded-lg shadow-md border border-gray-200 dark:border-dark-border">
+      <h2 className="mb-6 text-xl font-semibold text-black dark:text-dark-text">Enlaces de TikTok</h2>
       {loading ? (
-        <p>Cargando enlaces...</p>
+        <p className="text-gray-600 dark:text-gray-400">Cargando enlaces...</p>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 dark:text-red-400">{error}</p>
       ) : (
         <ul className="space-y-4">
           {tiktoks.map((tiktok, index) => (
-            <li key={tiktok._id} className="flex flex-col items-center justify-between sm:flex-row">
+            <li key={tiktok._id} className="flex flex-col items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors sm:flex-row">
               {editIndex === index ? (
                 <input
                   type="url"
                   value={newLink}
                   onChange={(e) => setNewLink(e.target.value)}
-                  className="w-full p-1 ml-2 border rounded sm:w-60"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 sm:w-60"
                   placeholder="Nuevo enlace"
                 />
               ) : (
-                <span className="w-full max-w-xs truncate sm:w-auto" title={tiktok.link}>
+                <span className="w-full max-w-xs truncate text-gray-900 dark:text-gray-100 sm:w-auto" title={tiktok.link}>
                   {tiktok.link}
                 </span>
               )}
-              <div className="flex items-center mt-2 sm:mt-0">
+              <div className="flex items-center gap-2 mt-2 sm:mt-0">
                 {editIndex === index ? (
                   <>
                     <button
                       onClick={() => handleUpdate(tiktok._id)}
-                      className="px-2 py-1 ml-2 text-white bg-green-500 rounded hover:bg-green-600"
+                      className="px-3 py-1 text-white bg-green-500 rounded hover:bg-green-600 transition-colors"
                       aria-label="Guardar enlace de TikTok"
                     >
                       Guardar
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="px-2 py-1 ml-2 text-white bg-red-500 rounded hover:bg-red-600"
+                      className="px-3 py-1 text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
                       aria-label="Cancelar edición de enlace"
                     >
                       Cancelar
@@ -110,7 +110,7 @@ const TiktokLinksAdmin = () => {
                 ) : (
                   <button
                     onClick={() => handleEdit(index)}
-                    className="px-2 py-1 text-white bg-blue-500 rounded hover:bg-blue-600"
+                    className="px-3 py-1 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
                     aria-label="Editar enlace de TikTok"
                   >
                     Editar
