@@ -112,8 +112,8 @@ export default function Navbar() {
       <nav className="relative bg-gray-800 dark:bg-gray-900 text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            {/* Theme Toggle - Left side */}
-            <div className="flex items-center">
+            {/* Theme Toggle - Left side (solo desktop) */}
+            <div className="hidden md:flex items-center">
               <ThemeToggle className="mr-4" />
             </div>
 

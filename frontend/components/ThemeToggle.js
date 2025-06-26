@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { FaSun, FaMoon, FaDesktop } from 'react-icons/fa';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
 const ThemeToggle = ({ className = '' }) => {
-  const { isDarkMode, isSystemMode, toggleTheme, setSystemMode } = useTheme();
+  const { isDarkMode, isSystemMode, toggleTheme } = useTheme();
   const [showTooltip, setShowTooltip] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -20,80 +20,50 @@ const ThemeToggle = ({ className = '' }) => {
   }, []);
 
   const handleToggle = () => {
-    if (isSystemMode) {
-      // Si está en modo sistema, cambiar a modo manual
-      toggleTheme();
-    } else {
-      // Si está en modo manual, cambiar al modo opuesto
-      toggleTheme();
-    }
-  };
-
-  const handleSystemMode = () => {
-    setSystemMode();
+    toggleTheme();
   };
 
   // Versión móvil más compacta
   if (isMobile) {
     return (
-      <div className="flex items-center space-x-1">
-        {/* Botón principal compacto */}
-        <button
-          onClick={handleToggle}
+      <button
+        onClick={handleToggle}
+        className={`
+          relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none
+          ${isDarkMode 
+            ? 'bg-blue-600' 
+            : 'bg-gray-200'
+          }
+          ${isSystemMode ? 'ring-1 ring-green-400' : ''}
+          ${className}
+        `}
+        aria-label={`Cambiar a modo ${isDarkMode ? 'claro' : 'oscuro'}`}
+      >
+        <span
           className={`
-            relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none
-            ${isDarkMode 
-              ? 'bg-blue-600' 
-              : 'bg-gray-200'
-            }
-            ${isSystemMode ? 'ring-1 ring-green-400' : ''}
-            ${className}
+            inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300
+            ${isDarkMode ? 'translate-x-7' : 'translate-x-1'}
           `}
-          aria-label={`Cambiar a modo ${isDarkMode ? 'claro' : 'oscuro'}`}
-        >
-          <span
-            className={`
-              inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-300
-              ${isDarkMode ? 'translate-x-7' : 'translate-x-1'}
-            `}
+        />
+        <div className="absolute inset-0 flex items-center justify-between px-1">
+          <FaSun 
+            className={`h-3 w-3 transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-yellow-500'
+            }`} 
           />
-          <div className="absolute inset-0 flex items-center justify-between px-1">
-            <FaSun 
-              className={`h-3 w-3 transition-colors duration-300 ${
-                isDarkMode ? 'text-gray-400' : 'text-yellow-500'
-              }`} 
-            />
-            <FaMoon 
-              className={`h-3 w-3 transition-colors duration-300 ${
-                isDarkMode ? 'text-white' : 'text-gray-400'
-              }`} 
-            />
-          </div>
-        </button>
-
-        {/* Botón de modo sistema compacto */}
-        <button
-          onClick={handleSystemMode}
-          className={`
-            p-1 rounded-full transition-colors duration-300 focus:outline-none
-            ${isSystemMode 
-              ? 'bg-green-500 text-white' 
-              : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
-            }
-          `}
-          aria-label="Usar modo del sistema"
-          title={isSystemMode ? "Automático" : "Manual"}
-        >
-          <FaDesktop className="h-3 w-3" />
-        </button>
-      </div>
+          <FaMoon 
+            className={`h-3 w-3 transition-colors duration-300 ${
+              isDarkMode ? 'text-white' : 'text-gray-400'
+            }`} 
+          />
+        </div>
+      </button>
     );
   }
 
-  // Versión desktop completa
+  // Versión desktop
   return (
-    <div className="relative flex items-center space-x-2">
-      {/* Botón principal */}
+    <div className="relative">
       <button
         onClick={handleToggle}
         className={`
@@ -127,22 +97,6 @@ const ThemeToggle = ({ className = '' }) => {
             }`} 
           />
         </div>
-      </button>
-
-      {/* Botón de modo sistema */}
-      <button
-        onClick={handleSystemMode}
-        className={`
-          p-1.5 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500
-          ${isSystemMode 
-            ? 'bg-green-500 text-white' 
-            : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-500'
-          }
-        `}
-        aria-label="Usar modo del sistema"
-        title={isSystemMode ? "Modo automático activado" : "Activar modo automático"}
-      >
-        <FaDesktop className="h-4 w-4" />
       </button>
 
       {/* Tooltip */}
