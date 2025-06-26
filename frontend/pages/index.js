@@ -101,14 +101,18 @@ export default function Home() {
       {/* TikToks en horizontal */}
       <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (
-          <div key={index} className="w-full aspect-[9/16]">
+          <div key={index} className="w-full aspect-[9/16] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
             <iframe
               src={linkObj.link}
               width="100%"
               height="100%"
-              style={{ border: "none" }}
+              style={{ 
+                border: "none",
+                backgroundColor: "transparent"
+              }}
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; accelerometer; gyroscope;"
               allowFullScreen
+              className="bg-transparent"
             ></iframe>
           </div>
         ))}
