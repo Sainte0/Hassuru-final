@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useRouter } from 'next/router';
 import ThemeToggle from './ThemeToggle';
-import { FaSignOutAlt, FaHome, FaBoxes, FaUsers, FaEnvelope, FaChartBar } from 'react-icons/fa';
+import AddProductModal from './AddProductModal';
+import { FaSignOutAlt, FaHome, FaBoxes, FaUsers, FaChartBar } from 'react-icons/fa';
 
 const AdminLayout = ({ children, title = 'Admin Panel' }) => {
   const { logout } = useAuth();
   const router = useRouter();
+  const [isModalOpen, setModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -15,10 +17,8 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: FaHome },
-    { name: 'Productos', href: '/admin/productos', icon: FaBoxes },
     { name: 'Pedidos', href: '/admin/pedidos', icon: FaChartBar },
     { name: 'Suscriptores', href: '/admin/suscriptores', icon: FaUsers },
-    { name: 'Banners', href: '/admin/banners', icon: FaEnvelope },
   ];
 
   return (
@@ -71,6 +71,15 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
                   </a>
                 );
               })}
+              
+              {/* Botón de Agregar Producto */}
+              <button
+                onClick={() => setModalOpen(true)}
+                className="flex items-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200"
+              >
+                <FaBoxes className="mr-3 h-5 w-5" />
+                Agregar Producto
+              </button>
             </div>
           </nav>
         </aside>
@@ -82,6 +91,16 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
           </div>
         </main>
       </div>
+
+      {/* Modal de Agregar Producto */}
+      <AddProductModal
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        fetchProducts={() => {
+          // Recargar la página para actualizar los productos
+          window.location.reload();
+        }}
+      />
     </div>
   );
 };

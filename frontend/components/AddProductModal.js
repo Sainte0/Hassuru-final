@@ -224,9 +224,17 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-full max-h-screen p-6 overflow-y-auto text-black bg-white rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3">
-        <h2 className="mb-4 text-xl">Agregar Producto</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="w-full max-h-screen p-6 overflow-y-auto text-black dark:text-dark-text bg-white dark:bg-dark-card rounded-lg shadow-lg sm:w-3/4 md:w-1/2 lg:w-1/3 border border-gray-200 dark:border-dark-border">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Agregar Producto</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            ✕
+          </button>
+        </div>
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -235,7 +243,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             value={product.nombre}
             onChange={handleInputChange}
             required
-            className="w-full p-2 mb-4 border"
+            className="w-full p-2 mb-4 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
           />
           <input
             type="text"
@@ -243,7 +251,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             placeholder="Descripción"
             value={product.descripcion}
             onChange={handleInputChange}
-            className="w-full p-2 mb-4 border"
+            className="w-full p-2 mb-4 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
           />
           <div className="mb-4">
             <div className="flex gap-2 mb-2">
@@ -252,12 +260,12 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
                 value={marcaInput}
                 onChange={(e) => setMarcaInput(e.target.value)}
                 placeholder="Agregar marca"
-                className="flex-1 p-2 border"
+                className="flex-1 p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
               />
               <button
                 type="button"
                 onClick={handleAddMarca}
-                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200"
               >
                 Agregar
               </button>
@@ -266,13 +274,13 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               {product.marca.map((marca, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 rounded"
+                  className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded"
                 >
                   <span>{marca}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveMarca(marca)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                   >
                     ×
                   </button>
@@ -285,7 +293,7 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             value={product.categoria}
             onChange={handleInputChange}
             required
-            className="w-full p-2 mb-4 border"
+            className="w-full p-2 mb-4 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
           >
             <option value="">Seleccione una categoría</option>
             {categoriasDisponibles.map((categoria, index) => (
@@ -301,20 +309,20 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
             value={product.precio}
             onChange={handleInputChange}
             required
-            className="w-full p-2 mb-4 border"
+            className="w-full p-2 mb-4 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
           />
           <input
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            className="w-full p-2 mb-4 border"
+            className="w-full p-2 mb-4 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
           />
           {imagePreview && (
             <div className="mb-4">
               <img
                 src={imagePreview}
                 alt="Previsualización"
-                className="object-contain w-full h-40 mb-2 border"
+                className="object-contain w-full h-40 mb-2 border border-gray-300 dark:border-dark-border rounded"
               />
             </div>
           )}
@@ -324,31 +332,31 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               value={tallaInput}
               onChange={(e) => setTallaInput(e.target.value)}
               placeholder="Talla"
-              className="w-1/2 p-2 border"
+              className="w-1/2 p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
             />
             <input
               type="number"
               value={precioTalla}
               onChange={(e) => setPrecioTalla(e.target.value)}
               placeholder="Precio Talla"
-              className="w-1/2 p-2 border"
+              className="w-1/2 p-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text"
             />
             <button
               type="button"
               onClick={handleAddTalla}
-              className="px-4 py-2 text-white bg-blue-500 rounded"
+              className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200"
             >
               Agregar Talla
             </button>
           </div>
           <ul className="mb-4">
             {Array.isArray(product.tallas) && product.tallas.map((talla, index) => (
-              <li key={index} className="flex items-center justify-between">
-                Talla {talla.talla}: ${talla.precioTalla}
+              <li key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded mb-2">
+                <span>Talla {talla.talla}: ${talla.precioTalla}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveTalla(index)}
-                  className="px-4 py-2 text-white bg-red-500 rounded"
+                  className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200"
                 >
                   Eliminar
                 </button>
@@ -361,80 +369,83 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
               value={colorInput}
               onChange={(e) => setColorInput(e.target.value)}
               placeholder="Agregar Color"
-              className="w-full p-2 mb-2 border sm:mb-0 sm:w-1/4"
+              className="w-full p-2 mb-2 border border-gray-300 dark:border-dark-border rounded bg-white dark:bg-dark-bg text-gray-900 dark:text-dark-text sm:mb-0 sm:w-1/4"
             />
-            <button type="button" onClick={handleAddColor} className="px-4 py-2 mt-2 text-white bg-blue-500 rounded sm:mt-0">Agregar Color</button>
+            <button type="button" onClick={handleAddColor} className="px-4 py-2 mt-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200 sm:mt-0">Agregar Color</button>
           </div>
           <div className="mb-4">
-            <h3>Colores:</h3>
+            <h3 className="mb-2 font-medium">Colores:</h3>
             {product.colores.map((color, index) => (
-              <div key={index} className="flex items-center justify-between">
-                {color.color}
+              <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded mb-2">
+                <span>{color.color}</span>
                 <button
                   type="button"
                   onClick={() => setProduct((prev) => ({
                     ...prev,
                     colores: prev.colores.filter((_, i) => i !== index)
                   }))}
-                  className="px-4 py-2 text-white bg-red-500 rounded">
+                  className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200">
                   Eliminar
                 </button>
               </div>
             ))}
           </div>
-          <div className="mb-4">
-            <div className="flex items-center mb-4">
+          <div className="mb-4 space-y-4">
+            <div className="flex items-center">
               <input
                 type="checkbox"
                 name="encargo"
                 checked={product.encargo}
                 onChange={handleInputChange}
-                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
               />
               <label
                 htmlFor="encargo"
-                className="ml-2 text-sm font-medium text-gray-900"
+                className="ml-2 text-sm font-medium text-gray-900 dark:text-dark-text"
               >
                 Encargo
               </label>
             </div>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center">
               <input
                 type="checkbox"
                 name="destacado"
                 checked={product.destacado}
                 onChange={handleInputChange}
-                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
               />
               <label
                 htmlFor="destacado"
-                className="ml-2 text-sm font-medium text-gray-900"
+                className="ml-2 text-sm font-medium text-gray-900 dark:text-dark-text"
               >
                 Destacado
               </label>
             </div>
-            <div className="flex items-center mb-4">
+            <div className="flex items-center">
               <input
                 type="checkbox"
                 name="destacado_zapatillas"
                 checked={product.destacado_zapatillas}
                 onChange={handleInputChange}
-                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-6 h-6 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
               />
               <label
                 htmlFor="destacado_zapatillas"
-                className="ml-2 text-sm font-medium text-gray-900"
+                className="ml-2 text-sm font-medium text-gray-900 dark:text-dark-text"
               >
                 Destacado Zapatillas
               </label>
             </div>
           </div>
-          <div className="flex justify-end">
-            <button type="button" onClick={onClose} className="px-4 py-2 mr-2 text-white bg-red-500 rounded">Cancelar</button>
-            <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">Agregar Producto</button>
+          <div className="flex justify-end space-x-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200">Cancelar</button>
+            <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200">Agregar Producto</button>
           </div>
         </form>
-        <button onClick={handleOpenSizeModal} className="px-4 py-2 text-white bg-blue-500 rounded">Seleccionar Tallas</button>
+        <div className="mt-4 space-y-2">
+          <button onClick={handleOpenSizeModal} className="w-full px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200">Seleccionar Tallas</button>
+          <button onClick={handleAddSizes} className="w-full px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600 transition-colors duration-200">Agregar Tallas Seleccionadas</button>
+        </div>
         <SizeSelectionModal
           isOpen={isSizeModalOpen}
           onClose={() => setIsSizeModalOpen(false)}
@@ -443,7 +454,6 @@ const AddProductModal = ({ isOpen, onClose, fetchProducts }) => {
           sizePrices={sizePrices}
           setSizePrices={setSizePrices}
         />
-        <button onClick={handleAddSizes} className="px-4 py-2 text-white bg-green-500 rounded">Agregar Tallas Seleccionadas</button>
       </div>
     </div>
   );
