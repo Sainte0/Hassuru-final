@@ -434,7 +434,7 @@ const ProductRow = ({
       <td className="px-2 py-2 border border-gray-200 dark:border-gray-700">
         {selectedProduct === producto._id ? (
           <div>
-            <div className="flex gap-1 mb-1">
+            <div className="grid grid-cols-3 gap-1 mb-1">
               <input
                 type="text"
                 value={newMarca}
@@ -446,7 +446,7 @@ const ProductRow = ({
                   }
                 }}
                 placeholder="Marca"
-                className="flex-1 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="col-span-2 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <button
                 type="button"
@@ -456,14 +456,14 @@ const ProductRow = ({
                 +
               </button>
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
               {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
                 <div key={index} className="flex items-center gap-1 px-1 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 rounded">
-                  <span className="text-gray-900 dark:text-gray-100">{marca}</span>
+                  <span className="text-gray-900 dark:text-gray-100 truncate max-w-16">{marca}</span>
                   <button
                     type="button"
                     onClick={() => handleRemoveMarca(producto, marca)}
-                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs"
+                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 text-xs flex-shrink-0"
                   >
                     ×
                   </button>
@@ -472,10 +472,10 @@ const ProductRow = ({
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1 max-h-16 overflow-y-auto">
             {Array.isArray(producto.marca) && producto.marca.map((marca, index) => (
               <div key={index} className="px-1 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 rounded">
-                <span className="text-gray-900 dark:text-gray-100">{marca}</span>
+                <span className="text-gray-900 dark:text-gray-100 truncate max-w-16">{marca}</span>
               </div>
             ))}
           </div>
@@ -531,20 +531,20 @@ const ProductRow = ({
           )}
           {selectedProduct === producto._id && (
             <>
-              <div className="flex gap-1 mb-1">
+              <div className="grid grid-cols-3 gap-1 mb-1">
                 <input
                   type="text"
                   value={newTalla}
                   onChange={(e) => setNewTalla(e.target.value)}
                   placeholder="Talla"
-                  className="w-12 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
                 <input
                   type="number"
                   value={newStock}
                   onChange={(e) => setNewStock(e.target.value)}
                   placeholder="Precio"
-                  className="w-12 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  className="w-full p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 />
                 <button
                   onClick={handleAddTalla}
@@ -553,22 +553,14 @@ const ProductRow = ({
                   <IoAddCircleOutline size={12} />
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={handleOpenSizeModal}
-                className="px-1 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-              >
-                Seleccionar
-              </button>
-              <SizeSelectionModal
-                isOpen={isSizeModalOpen}
-                onClose={() => setIsSizeModalOpen(false)}
-                selectedSizes={selectedSizes}
-                setSelectedSizes={setSelectedSizes}
-                sizePrices={sizePrices}
-                setSizePrices={setSizePrices}
-              />
-              <div className="flex justify-end mt-1">
+              <div className="flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={handleOpenSizeModal}
+                  className="px-1 py-1 text-xs text-white bg-blue-600 rounded hover:bg-blue-700 transition-colors"
+                >
+                  Seleccionar
+                </button>
                 <button
                   type="button"
                   onClick={handleUpdateSizes}
@@ -577,6 +569,14 @@ const ProductRow = ({
                   Guardar
                 </button>
               </div>
+              <SizeSelectionModal
+                isOpen={isSizeModalOpen}
+                onClose={() => setIsSizeModalOpen(false)}
+                selectedSizes={selectedSizes}
+                setSelectedSizes={setSelectedSizes}
+                sizePrices={sizePrices}
+                setSizePrices={setSizePrices}
+              />
             </>
           )}
         </div>
@@ -600,13 +600,13 @@ const ProductRow = ({
             <span className="text-xs text-gray-500">+{producto.colores.length - 3} más</span>
           )}
           {selectedProduct === producto._id && (
-            <div className="flex gap-1">
+            <div className="grid grid-cols-3 gap-1">
               <input
                 type="text"
                 value={newColor}
                 onChange={(e) => setNewColor(e.target.value)}
                 placeholder="Color"
-                className="flex-1 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                className="col-span-2 p-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               />
               <button
                 onClick={handleAddColor}
