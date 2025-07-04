@@ -108,35 +108,35 @@ export default function PedidosAdmin() {
   const renderFiltros = () => (
     <div className="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 dark:bg-dark-bg p-4 rounded-lg border border-gray-200 dark:border-dark-border">
       <div>
-        <label className="block text-xs font-semibold mb-1">Estado</label>
-        <select className="border rounded p-1" value={filtros.estado} onChange={e => setFiltros(f => ({ ...f, estado: e.target.value }))}>
+        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Estado</label>
+        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.estado} onChange={e => setFiltros(f => ({ ...f, estado: e.target.value }))}>
           <option value="">Todos</option>
           {estados.map(e => <option key={e} value={e}>{e}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1">Nombre/Email</label>
-        <input className="border rounded p-1" value={filtros.search} onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} placeholder="Buscar..." />
+        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Nombre/Email</label>
+        <input className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.search} onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} placeholder="Buscar..." />
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1">Pago</label>
-        <select className="border rounded p-1" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}>
+        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Pago</label>
+        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}>
           <option value="">Todos</option>
           {pagos.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1">Envío</label>
-        <select className="border rounded p-1" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))}>
+        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Envío</label>
+        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))}>
           <option value="">Todos</option>
           {tiposEnvio.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1">DNI</label>
-        <input className="border rounded p-1" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value.replace(/\D/g, '').slice(0, 12) }))} placeholder="DNI..." />
+        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">DNI</label>
+        <input className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value.replace(/\D/g, '').slice(0, 12) }))} placeholder="DNI..." />
       </div>
-      <button className="ml-auto px-3 py-1 bg-gray-200 dark:bg-dark-card rounded hover:bg-gray-300 dark:hover:bg-dark-border" onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}>Limpiar</button>
+      <button className="ml-auto px-3 py-1 bg-gray-200 dark:bg-dark-card rounded hover:bg-gray-300 dark:hover:bg-dark-border text-gray-900 dark:text-white" onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}>Limpiar</button>
     </div>
   );
 
@@ -187,20 +187,20 @@ export default function PedidosAdmin() {
                     {currentOrders.map(order => (
                       <tr key={order._id} className="border-t border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg">
                         <td className="p-3 align-top min-w-[140px]">
-                          <div className="font-semibold text-gray-900 dark:text-dark-text">{order.datosPersonales?.nombre}</div>
-                          <div className="text-xs text-gray-500 dark:text-dark-text-secondary">{order.datosPersonales?.email}</div>
-                          <div className="text-xs text-gray-500 dark:text-dark-text-secondary">{order.datosPersonales?.telefono}</div>
-                          <div className="text-xs text-gray-500 dark:text-dark-text-secondary">DNI: {order.datosPersonales?.dni}</div>
+                          <div className="font-semibold text-gray-900 dark:text-white">{order.datosPersonales?.nombre}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-300">{order.datosPersonales?.email}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-300">{order.datosPersonales?.telefono}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-300">DNI: {order.datosPersonales?.dni}</div>
                         </td>
                         <td className="p-3 align-top min-w-[220px]">
                           {order.productos.map(p => (
                             <div key={p.productoId + (p.talle || '')} className="flex items-center mb-1 gap-2">
                               <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
                               <div>
-                                <div className="font-medium text-gray-900 dark:text-dark-text">{p.nombre}</div>
-                                {p.talle && <div className="text-xs">Talle: <span className="font-semibold">{p.talle}</span></div>}
-                                <div className="text-xs">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
-                                <div className="text-xs text-gray-500 dark:text-dark-text-secondary">${p.precio} USD</div>
+                                <div className="font-medium text-gray-900 dark:text-white">{p.nombre}</div>
+                                {p.talle && <div className="text-xs text-gray-500 dark:text-gray-300">Talle: <span className="font-semibold">{p.talle}</span></div>}
+                                <div className="text-xs text-gray-700 dark:text-gray-200">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
+                                <div className="text-xs text-gray-500 dark:text-gray-300">${p.precio} USD</div>
                               </div>
                             </div>
                           ))}
