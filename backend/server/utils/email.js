@@ -17,16 +17,14 @@ async function sendOrderReceiptEmail({ to, order }) {
 
   // Construir el HTML del comprobante
   const productosHtml = order.productos.map(p => {
-    // Determinar disponibilidad
+    // Lógica unificada con filtro de productos.js
     let entrega = '20 días';
     if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === false) {
       entrega = 'Inmediata';
     } else if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === true) {
       entrega = '5 días';
-    } else if (p.encargo === false) {
-      entrega = 'Inmediata';
-    } else if (p.encargo === true) {
-      entrega = '5 días';
+    } else if (!Array.isArray(p.tallas) || p.tallas.length === 0) {
+      entrega = '20 días';
     }
     return `
       <tr>
