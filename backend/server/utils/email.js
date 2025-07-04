@@ -16,13 +16,46 @@ async function sendOrderReceiptEmail({ to, order }) {
   }
 
   // Construir el HTML del comprobante
-  const productosHtml = order.productos.map(p => `
-    <tr>
-      <td>${p.nombre}${p.talle ? ' (Talle: ' + p.talle + ')' : ''}</td>
-      <td>${p.cantidad}</td>
-      <td>$${p.precio} USD</td>
-    </tr>
-  `).join('');
+  const productosHtml = order.productos.map(p => {
+    // Determinar disponibilidad
+    let entrega = '20 días';
+    if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === false) {
+      entrega = 'Inmediata';
+    } else if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === true) {
+      entrega = '5 días';
+    } else if (p.encargo === false) {
+      entrega = 'Inmediata';
+    } else if (p.encargo === true) {
+      entrega = '5 días';
+    }
+    return `
+      <tr>
+        <td>${p.nombre}${p.talle ? ' (Talle: ' + p.talle + ')' : ''}</td>
+        <td>${p.cantidad}</td>
+        <td>$${p.precio} USD</td>
+        <td>${entrega}</td>
+      </tr>
+    `;
+  }).join('');
+
+  // Determinar si hay productos con entrega 5 días o 20 días
+  const tieneEntregaLenta = order.productos.some(p => {
+    let entrega = '20 días';
+    if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === false) {
+      entrega = 'Inmediata';
+    } else if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === true) {
+      entrega = '5 días';
+    } else if (p.encargo === false) {
+      entrega = 'Inmediata';
+    } else if (p.encargo === true) {
+      entrega = '5 días';
+    }
+    return entrega === '5 días' || entrega === '20 días';
+  });
+
+  const mensajeEnvio = tieneEntregaLenta
+    ? '<p style="color:#b91c1c;"><strong>Recibirás un email de notificación cuando tu pedido haya sido enviado.</strong></p>'
+    : '';
 
   const html = `
     <h2>¡Gracias por tu pedido, ${order.datosPersonales.nombre}!</h2>
@@ -30,12 +63,13 @@ async function sendOrderReceiptEmail({ to, order }) {
     <h3>Resumen del pedido</h3>
     <table border="1" cellpadding="6" style="border-collapse:collapse;">
       <thead>
-        <tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>
+        <tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Entrega</th></tr>
       </thead>
       <tbody>
         ${productosHtml}
       </tbody>
     </table>
+    ${mensajeEnvio}
     <p><strong>Total:</strong> $${order.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0)} USD</p>
     <h4>Método de Pago</h4>
     <p><strong>Forma de pago:</strong> ${order.pago.toUpperCase()}</p>
