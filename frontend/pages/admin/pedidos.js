@@ -119,14 +119,6 @@ export default function PedidosAdmin() {
         <input className="border rounded p-1" value={filtros.search} onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} placeholder="Buscar..." />
       </div>
       <div>
-        <label className="block text-xs font-semibold mb-1">Desde</label>
-        <input type="date" className="border rounded p-1" value={filtros.fechaDesde} onChange={e => setFiltros(f => ({ ...f, fechaDesde: e.target.value }))} />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold mb-1">Hasta</label>
-        <input type="date" className="border rounded p-1" value={filtros.fechaHasta} onChange={e => setFiltros(f => ({ ...f, fechaHasta: e.target.value }))} />
-      </div>
-      <div>
         <label className="block text-xs font-semibold mb-1">Pago</label>
         <select className="border rounded p-1" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}>
           <option value="">Todos</option>
