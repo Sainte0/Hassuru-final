@@ -13,6 +13,17 @@ export default function PedidosAdmin() {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
+  // Filtros
+  const [filtros, setFiltros] = useState({
+    estado: '',
+    search: '',
+    fechaDesde: '',
+    fechaHasta: '',
+    pago: '',
+    envio: '',
+    dni: ''
+  });
+
   useEffect(() => {
     if (!token) return;
     fetch('https://web-production-ffe2.up.railway.app/api/orders', {
@@ -51,23 +62,83 @@ export default function PedidosAdmin() {
     }
   };
 
-  // Pagination logic
+  // Filtrado frontend
+  const filteredOrders = orders
+    .filter(order => {
+      if (filtros.estado && order.estado !== filtros.estado) return false;
+      if (filtros.search) {
+        const search = filtros.search.toLowerCase();
+        const nombre = order.datosPersonales?.nombre?.toLowerCase() || '';
+        const email = order.datosPersonales?.email?.toLowerCase() || '';
+        if (!nombre.includes(search) && !email.includes(search)) return false;
+      }
+      if (filtros.fechaDesde) {
+        const fecha = new Date(order.createdAt);
+        if (fecha < new Date(filtros.fechaDesde)) return false;
+      }
+      if (filtros.fechaHasta) {
+        const fecha = new Date(order.createdAt);
+        if (fecha > new Date(filtros.fechaHasta + 'T23:59:59')) return false;
+      }
+      if (filtros.pago && order.pago !== filtros.pago) return false;
+      if (filtros.envio && order.envio?.tipo !== filtros.envio) return false;
+      if (filtros.dni && order.datosPersonales?.dni !== filtros.dni) return false;
+      return true;
+    })
+    // Cancelados siempre al final
+    .sort((a, b) => {
+      if (a.estado === 'cancelado' && b.estado !== 'cancelado') return 1;
+      if (a.estado !== 'cancelado' && b.estado === 'cancelado') return -1;
+      return 0;
+    });
+
+  // Paginación
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
-  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
 
-  const goToPage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const goToPreviousPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const goToNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
 
-  const goToPreviousPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
-  };
-
-  const goToNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
-  };
+  // Panel de filtros
+  const renderFiltros = () => (
+    <div className="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 dark:bg-dark-bg p-4 rounded-lg border border-gray-200 dark:border-dark-border">
+      <div>
+        <label className="block text-xs font-semibold mb-1">Estado</label>
+        <select className="border rounded p-1" value={filtros.estado} onChange={e => setFiltros(f => ({ ...f, estado: e.target.value }))}>
+          <option value="">Todos</option>
+          {estados.map(e => <option key={e} value={e}>{e}</option>)}
+        </select>
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">Nombre/Email</label>
+        <input className="border rounded p-1" value={filtros.search} onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} placeholder="Buscar..." />
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">Desde</label>
+        <input type="date" className="border rounded p-1" value={filtros.fechaDesde} onChange={e => setFiltros(f => ({ ...f, fechaDesde: e.target.value }))} />
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">Hasta</label>
+        <input type="date" className="border rounded p-1" value={filtros.fechaHasta} onChange={e => setFiltros(f => ({ ...f, fechaHasta: e.target.value }))} />
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">Pago</label>
+        <input className="border rounded p-1" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))} placeholder="Método..." />
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">Envío</label>
+        <input className="border rounded p-1" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))} placeholder="Tipo..." />
+      </div>
+      <div>
+        <label className="block text-xs font-semibold mb-1">DNI</label>
+        <input className="border rounded p-1" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value }))} placeholder="DNI..." />
+      </div>
+      <button className="ml-auto px-3 py-1 bg-gray-200 dark:bg-dark-card rounded hover:bg-gray-300 dark:hover:bg-dark-border" onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}>Limpiar</button>
+    </div>
+  );
 
   if (loading) return (
     <AdminLayout title="Pedidos">
@@ -88,15 +159,15 @@ export default function PedidosAdmin() {
   return (
     <AdminLayout title="Pedidos">
       <div className="space-y-6">
+        {renderFiltros()}
         <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-6">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text">Gestión de Pedidos</h1>
             <div className="text-sm text-gray-600 dark:text-dark-text-secondary">
-              Mostrando {indexOfFirstOrder + 1}-{Math.min(indexOfLastOrder, orders.length)} de {orders.length} pedidos
+              Mostrando {indexOfFirstOrder + 1}-{Math.min(indexOfLastOrder, filteredOrders.length)} de {filteredOrders.length} pedidos
             </div>
           </div>
-          
-          {orders.length === 0 ? (
+          {filteredOrders.length === 0 ? (
             <div className="text-gray-600 dark:text-dark-text-secondary">No hay pedidos.</div>
           ) : (
             <>
