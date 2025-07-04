@@ -16,6 +16,60 @@ export default function TallaSelector() {
   const [loading, setLoading] = useState(true);
   const [availableTallas, setAvailableTallas] = useState([]);
 
+  // Función para ordenar tallas según el orden especificado
+  const sortTallas = (tallas) => {
+    if (categoria === "ropa") {
+      // Orden específico para ropa: "XS", "S", "M", "L", "XL", "XXL"
+      const ropaOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+      return tallas.sort((a, b) => {
+        const aIndex = ropaOrder.indexOf(a);
+        const bIndex = ropaOrder.indexOf(b);
+        
+        // Si ambos están en el orden definido, ordenar por índice
+        if (aIndex !== -1 && bIndex !== -1) {
+          return aIndex - bIndex;
+        }
+        
+        // Si solo uno está en el orden definido, ponerlo primero
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        
+        // Si ninguno está en el orden definido, ordenar alfabéticamente
+        return a.localeCompare(b);
+      });
+    } else if (categoria === "zapatillas") {
+      // Ordenar zapatillas por número
+      return tallas.sort((a, b) => {
+        const parseTalla = (talla) => {
+          const parts = talla.split("|");
+          const usPart = parts[0]?.trim().split(" ")[0];
+          const numericPart = parseFloat(usPart?.replace(",", ".")) || 0;
+          return numericPart;
+        };
+        
+        const aNum = parseTalla(a);
+        const bNum = parseTalla(b);
+        
+        if (aNum !== bNum) {
+          return aNum - bNum;
+        }
+        
+        // Si los números son iguales, ordenar alfabéticamente
+        return a.localeCompare(b);
+      });
+    } else if (categoria === "accesorios") {
+      // Para accesorios, ordenar alfabéticamente pero con "Accesorios" al final
+      return tallas.sort((a, b) => {
+        if (a === "Accesorios") return 1;
+        if (b === "Accesorios") return -1;
+        return a.localeCompare(b);
+      });
+    }
+    
+    // Orden por defecto alfabético
+    return tallas.sort((a, b) => a.localeCompare(b));
+  };
+
   useEffect(() => {
     console.log('Estado inicial de selección de talla:', {
       categoria,
@@ -46,13 +100,16 @@ export default function TallaSelector() {
           throw new Error("Formato de tallas inválido");
         }
         
-        console.log('Tallas cargadas:', {
+        // Ordenar las tallas según la categoría
+        const tallasOrdenadas = sortTallas(tallasArray);
+        
+        console.log('Tallas cargadas y ordenadas:', {
           categoria,
-          totalTallas: tallasArray.length,
-          tallas: tallasArray
+          totalTallas: tallasOrdenadas.length,
+          tallas: tallasOrdenadas
         });
         
-        setAvailableTallas(tallasArray);
+        setAvailableTallas(tallasOrdenadas);
       } catch (error) {
         console.error('Error al cargar tallas:', {
           mensaje: error.message,
