@@ -36,7 +36,8 @@ router.get('/catalogo', async (req, res) => {
       tallaRopa,
       tallaZapatilla,
       accesorio,
-      categoria
+      categoria,
+      sort
     } = req.query;
     
     // Construir filtros
@@ -98,6 +99,19 @@ router.get('/catalogo', async (req, res) => {
 
     // Ordenar TODOS los productos por disponibilidad y precio
     const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
+      // Si hay un parámetro de ordenamiento específico, usarlo
+      if (sort === 'asc' || sort === 'desc') {
+        const aPrice = parseFloat(a.precio) || 0;
+        const bPrice = parseFloat(b.precio) || 0;
+        
+        if (sort === 'asc') {
+          return aPrice - bPrice; // Menor a mayor
+        } else {
+          return bPrice - aPrice; // Mayor a menor
+        }
+      }
+
+      // Ordenamiento por defecto: primero por disponibilidad, luego por precio
       // Función para determinar el grupo de disponibilidad
       const getAvailabilityGroup = (product) => {
         const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;
@@ -239,7 +253,8 @@ router.get('/categoria/:categoria', async (req, res) => {
       q,
       tallaRopa,
       tallaZapatilla,
-      accesorio
+      accesorio,
+      sort
     } = req.query;
     
     const categoriasValidas = ['zapatillas', 'ropa', 'accesorios'];
@@ -302,6 +317,19 @@ router.get('/categoria/:categoria', async (req, res) => {
 
       // Ordenar TODOS los productos por disponibilidad y precio
       const todosLosProductosOrdenados = todosLosProductos.sort((a, b) => {
+        // Si hay un parámetro de ordenamiento específico, usarlo
+        if (sort === 'asc' || sort === 'desc') {
+          const aPrice = parseFloat(a.precio) || 0;
+          const bPrice = parseFloat(b.precio) || 0;
+          
+          if (sort === 'asc') {
+            return aPrice - bPrice; // Menor a mayor
+          } else {
+            return bPrice - aPrice; // Mayor a menor
+          }
+        }
+
+        // Ordenamiento por defecto: primero por disponibilidad, luego por precio
         // Función para determinar el grupo de disponibilidad
         const getAvailabilityGroup = (product) => {
           const hasTallas = Array.isArray(product.tallas) && product.tallas.length > 0;

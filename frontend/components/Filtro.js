@@ -25,6 +25,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   const [precioMax, setPrecioMax] = useState("");
   const [filterOptions, setFilterOptions] = useState(null);
   const [loadingFilters, setLoadingFilters] = useState(false);
+  const [sortOrder, setSortOrder] = useState("");
   
   // Ref para controlar si se debe ignorar la inicialización desde la URL
   const ignoreUrlInitRef = useRef(false);
@@ -32,7 +33,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   // Initialize filters from URL parameters
   useEffect(() => {
     if (router.isReady && !ignoreUrlInitRef.current) {
-      const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max } = router.query;
+      const { marca, tallaRopa, tallaZapatilla, accesorio, disponibilidad, stock, q, min, max, sort } = router.query;
       
       let filtersApplied = false;
       const filtersToApply = {};
@@ -76,6 +77,11 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (max && !precioMax) {
         setPrecioMax(max);
         filtersToApply.precioMax = max;
+        filtersApplied = true;
+      }
+      if (sort && !sortOrder) {
+        setSortOrder(sort);
+        filtersToApply.sort = sort;
         filtersApplied = true;
       }
       
@@ -210,7 +216,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           precioMax: precioMax || '',
           disponibilidad: selectedDisponibilidad || '',
           marca: selectedMarca || '',
-          q: query || ''
+          q: query || '',
+          sort: sortOrder || ''
         };
         
         // Solo pasar filtros si no estamos en proceso de limpiar
@@ -228,6 +235,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     selectedDisponibilidad,
     selectedMarca,
     query,
+    sortOrder,
     router.isReady
   ]);
 
@@ -341,6 +349,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     setQuery("");
     setPrecioMin("");
     setPrecioMax("");
+    setSortOrder("");
     router.push({
       pathname: router.pathname,
       query: {},
@@ -363,6 +372,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     if (query) queryParams.q = query;
     if (precioMin) queryParams.min = precioMin;
     if (precioMax) queryParams.max = precioMax;
+    if (sortOrder) queryParams.sort = sortOrder;
 
     router.push({
       pathname: router.pathname,
@@ -432,6 +442,17 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
                   setPrecioMin(""); 
                   setPrecioMax(""); 
+                }} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
+              </div>
+            )}
+            {sortOrder && (
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">
+                  Ordenar: {sortOrder === 'asc' ? 'Menor a Mayor' : 'Mayor a Menor'}
+                </span>
+                <button type="button" onClick={() => { 
+                  ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
+                  setSortOrder(""); 
                 }} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
@@ -729,6 +750,30 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                     className="w-full p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   />
                 </div>
+              </div>
+
+              {/* Filtro de Ordenamiento por Precio */}
+              <div className="mb-4">
+                <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Ordenar por Precio</label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => {
+                    setSortOrder(e.target.value);
+                    const queryParams = { ...router.query, sort: e.target.value };
+                    if (!e.target.value) {
+                      delete queryParams.sort;
+                    }
+                    router.push({
+                      pathname: router.pathname,
+                      query: queryParams,
+                    }, undefined, { shallow: true });
+                  }}
+                  className="w-full p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                >
+                  <option value="">Sin ordenar</option>
+                  <option value="asc">Menor a Mayor</option>
+                  <option value="desc">Mayor a Menor</option>
+                </select>
               </div>
 
               <div className="mt-4">

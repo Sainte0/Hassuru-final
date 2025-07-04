@@ -190,6 +190,9 @@ export default function Categoria() {
       if (filters.q) {
         queryParams.append('q', filters.q);
       }
+      if (filters.sort) {
+        queryParams.append('sort', filters.sort);
+      }
 
       const url = `${process.env.NEXT_PUBLIC_URL}/api/productos/categoria/${categoria}?${queryParams}`;
 
@@ -289,7 +292,8 @@ export default function Categoria() {
       disponibilidad: router.query.disponibilidad || '',
       precioMin: router.query.precioMin || router.query.min || '',
       precioMax: router.query.precioMax || router.query.max || '',
-      q: router.query.q || ''
+      q: router.query.q || '',
+      sort: router.query.sort || ''
     };
     
     // Verificar si hay filtros activos
@@ -318,7 +322,8 @@ export default function Categoria() {
     router.query.precioMax, 
     router.query.min, 
     router.query.max, 
-    router.query.q
+    router.query.q,
+    router.query.sort
   ]);
 
   // Asegurar que filteredProducts sea siempre un array

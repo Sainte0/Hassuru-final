@@ -141,6 +141,7 @@ export default function Catalogo() {
       if (filters.precioMax) queryParams.append('precioMax', filters.precioMax);
       if (filters.q) queryParams.append('q', filters.q);
       if (filters.categoria) queryParams.append('categoria', filters.categoria);
+      if (filters.sort) queryParams.append('sort', filters.sort);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos/catalogo?${queryParams}`);
       if (!response.ok) throw new Error("Error al cargar los productos del catálogo");
@@ -266,7 +267,8 @@ export default function Catalogo() {
         precioMin: router.query.precioMin || router.query.min || '',
         precioMax: router.query.precioMax || router.query.max || '',
         q: router.query.q || '',
-        categoria: router.query.categoria || ''
+        categoria: router.query.categoria || '',
+        sort: router.query.sort || ''
       };
       
       // Verificar si hay filtros activos en la URL
@@ -285,7 +287,7 @@ export default function Catalogo() {
         }, 0);
       }
     }
-  }, [router.isReady, router.query.marca, router.query.tallaRopa, router.query.tallaZapatilla, router.query.accesorio, router.query.disponibilidad, router.query.precioMin, router.query.precioMax, router.query.min, router.query.max, router.query.q, router.query.categoria]);
+  }, [router.isReady, router.query.marca, router.query.tallaRopa, router.query.tallaZapatilla, router.query.accesorio, router.query.disponibilidad, router.query.precioMin, router.query.precioMax, router.query.min, router.query.max, router.query.q, router.query.categoria, router.query.sort]);
 
   // Asegurar que filteredProducts sea siempre un array
   const safeFilteredProducts = Array.isArray(filteredProducts) ? filteredProducts : [];
