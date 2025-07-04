@@ -32,7 +32,12 @@ const LATAM_PREFIXES = [
 export default function Checkout() {
   const { cart, clearCart, addToCart, removeFromCart } = useCartStore();
   const [step, setStep] = useState(0);
-  const [datos, setDatos] = useState({ nombre: '', email: '', telefono: '', dni: '' });
+  const [datos, setDatos] = useState({ 
+    nombre: '', 
+    apellido: '', 
+    email: '', 
+    dni: '' 
+  });
   const [envio, setEnvio] = useState({ tipo: 'envio', direccion: '', calle: '', numero: '', piso: '', ciudad: '', provincia: '', codigoPostal: '', pais: '' });
   const [pago, setPago] = useState('usdt');
   const [loading, setLoading] = useState(false);
@@ -40,6 +45,10 @@ export default function Checkout() {
   const router = useRouter();
   const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
   const { dolarBlue, fetchDolarBlue } = useStore();
+  
+  // Estados para validaciones
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   useEffect(() => {
     fetchDolarBlue();
@@ -52,17 +61,131 @@ export default function Checkout() {
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
 
-  const handleNext = () => setStep(s => s + 1);
+  // Función de validación
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'nombre':
+        if (!value.trim()) return 'El nombre es obligatorio';
+        if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) return 'El nombre solo puede contener letras';
+        return '';
+      
+      case 'apellido':
+        if (!value.trim()) return 'El apellido es obligatorio';
+        if (value.trim().length < 2) return 'El apellido debe tener al menos 2 caracteres';
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) return 'El apellido solo puede contener letras';
+        return '';
+      
+      case 'email':
+        if (!value.trim()) return 'El email es obligatorio';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Ingresa un email válido';
+        return '';
+      
+      case 'dni':
+        if (!value.trim()) return 'El DNI es obligatorio';
+        if (!/^\d{8}$/.test(value.replace(/\D/g, ''))) return 'El DNI debe tener exactamente 8 números';
+        return '';
+      
+      case 'telefono':
+        if (!value.trim()) return 'El teléfono es obligatorio';
+        const cleanPhone = value.replace(/\D/g, '');
+        if (cleanPhone.length < 8) return 'El teléfono debe tener al menos 8 dígitos';
+        if (cleanPhone.length > 15) return 'El teléfono no puede tener más de 15 dígitos';
+        return '';
+      
+      default:
+        return '';
+    }
+  };
+
+  // Función para manejar cambios en los campos
+  const handleFieldChange = (name, value) => {
+    let processedValue = value;
+    
+    // Procesamiento específico por campo
+    switch (name) {
+      case 'dni':
+        // Solo permitir números y limitar a 8 dígitos
+        processedValue = value.replace(/\D/g, '').slice(0, 8);
+        break;
+      
+      case 'telefono':
+        // Limpiar formato y solo permitir números
+        processedValue = value.replace(/\D/g, '');
+        break;
+      
+      case 'nombre':
+      case 'apellido':
+        // Capitalizar primera letra
+        processedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        break;
+    }
+
+    // Actualizar el estado
+    if (name === 'telefono') {
+      setTelefono(prev => ({ ...prev, numero: processedValue }));
+    } else {
+      setDatos(prev => ({ ...prev, [name]: processedValue }));
+    }
+
+    // Validar el campo
+    const fieldError = validateField(name, processedValue);
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
+  };
+
+  // Función para manejar el blur (cuando el usuario sale del campo)
+  const handleFieldBlur = (name) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+  };
+
+  // Función para validar todo el formulario
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validar todos los campos
+    newErrors.nombre = validateField('nombre', datos.nombre);
+    newErrors.apellido = validateField('apellido', datos.apellido);
+    newErrors.email = validateField('email', datos.email);
+    newErrors.dni = validateField('dni', datos.dni);
+    newErrors.telefono = validateField('telefono', telefono.numero);
+    
+    setErrors(newErrors);
+    
+    // Verificar si hay errores
+    return !Object.values(newErrors).some(error => error !== '');
+  };
+
+  const handleNext = () => {
+    if (step === 0) {
+      // Validar formulario antes de continuar
+      if (!validateForm()) {
+        // Marcar todos los campos como tocados para mostrar errores
+        setTouched({
+          nombre: true,
+          apellido: true,
+          email: true,
+          dni: true,
+          telefono: true
+        });
+        return;
+      }
+    }
+    setStep(s => s + 1);
+  };
+
   const handleBack = () => setStep(s => s - 1);
 
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
-    if (!telefono.numero || telefono.numero.trim().length < 6) {
-      setError('Por favor, ingresa un teléfono válido.');
+    
+    // Validar formulario antes de enviar
+    if (!validateForm()) {
+      setError('Por favor, corrige los errores en el formulario.');
       setLoading(false);
       return;
     }
+
     try {
       let envioData;
       if (envio.tipo === 'envio') {
@@ -90,7 +213,7 @@ export default function Checkout() {
       console.log('Checkout - envioData:', envioData);
       const telefonoCompleto = telefono.prefijo + telefono.numero;
       console.log('Enviando datosPersonales:', {
-        nombre: datos.nombre,
+        nombre: `${datos.nombre} ${datos.apellido}`,
         email: datos.email,
         telefono: telefonoCompleto,
         dni: datos.dni
@@ -101,7 +224,7 @@ export default function Checkout() {
         body: JSON.stringify({
           productos: productosToSend,
           datosPersonales: {
-            nombre: datos.nombre,
+            nombre: `${datos.nombre} ${datos.apellido}`,
             email: datos.email,
             telefono: telefonoCompleto,
             dni: datos.dni
@@ -124,6 +247,34 @@ export default function Checkout() {
   // Calcular totales
   const totalUSD = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
   const totalARS = dolarBlue ? (totalUSD * dolarBlue) : null;
+
+  // Función para renderizar campo con validación
+  const renderField = (name, placeholder, type = 'text') => {
+    const value = name === 'telefono' ? telefono.numero : datos[name];
+    const error = errors[name];
+    const isTouched = touched[name];
+    const showError = isTouched && error;
+
+    return (
+      <div className="space-y-1">
+        <input 
+          type={type}
+          className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${
+            showError 
+              ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+              : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+          }`}
+          placeholder={placeholder} 
+          value={value} 
+          onChange={e => handleFieldChange(name, e.target.value)}
+          onBlur={() => handleFieldBlur(name)}
+        />
+        {showError && (
+          <p className="text-red-500 text-sm">{error}</p>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
@@ -195,40 +346,40 @@ export default function Checkout() {
         </div>
        
         {step === 0 && (
-          <div className="space-y-2">
-            <input 
-              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-              placeholder="Nombre" 
-              value={datos.nombre} 
-              onChange={e => setDatos(d => ({ ...d, nombre: e.target.value }))} 
-            />
-            <input 
-              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-              placeholder="Email" 
-              value={datos.email} 
-              onChange={e => setDatos(d => ({ ...d, email: e.target.value }))} 
-            />
-            <input 
-              className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-              placeholder="DNI" 
-              value={datos.dni} 
-              onChange={e => setDatos(d => ({ ...d, dni: e.target.value }))} 
-            />
-            <div className="flex">
-              <select 
-                className="border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white" 
-                value={telefono.prefijo} 
-                onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}
-              >
-                {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
-              </select>
-              <input 
-                className="flex-1 border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                placeholder="Teléfono" 
-                value={telefono.numero} 
-                onChange={e => setTelefono(t => ({ ...t, numero: e.target.value }))} 
-                required 
-              />
+          <div className="space-y-4">
+            {renderField('nombre', 'Nombre')}
+            {renderField('apellido', 'Apellido')}
+            {renderField('email', 'Email', 'email')}
+            {renderField('dni', 'DNI (8 números)')}
+            <div className="space-y-1">
+              <div className="flex">
+                <select 
+                  className={`border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white transition-colors ${
+                    errors.telefono && touched.telefono
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
+                  value={telefono.prefijo} 
+                  onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}
+                >
+                  {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
+                </select>
+                <input 
+                  type="tel"
+                  className={`flex-1 border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${
+                    errors.telefono && touched.telefono
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
+                  placeholder="Teléfono (ej: 3513341366)" 
+                  value={telefono.numero} 
+                  onChange={e => handleFieldChange('telefono', e.target.value)}
+                  onBlur={() => handleFieldBlur('telefono')}
+                />
+              </div>
+              {errors.telefono && touched.telefono && (
+                <p className="text-red-500 text-sm">{errors.telefono}</p>
+              )}
             </div>
           </div>
         )}
