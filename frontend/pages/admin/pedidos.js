@@ -3,6 +3,8 @@ import { useAuth } from '../../hooks/useAuth';
 import AdminLayout from '../../components/AdminLayout';
 
 const estados = ['pendiente', 'pagado', 'enviado', 'recibido', 'cancelado'];
+const pagos = ['usdt', 'transferencia', 'efectivo'];
+const tiposEnvio = ['envio', 'retiro'];
 
 export default function PedidosAdmin() {
   const { token } = useAuth();
@@ -126,15 +128,21 @@ export default function PedidosAdmin() {
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1">Pago</label>
-        <input className="border rounded p-1" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))} placeholder="Método..." />
+        <select className="border rounded p-1" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}>
+          <option value="">Todos</option>
+          {pagos.map(p => <option key={p} value={p}>{p}</option>)}
+        </select>
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1">Envío</label>
-        <input className="border rounded p-1" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))} placeholder="Tipo..." />
+        <select className="border rounded p-1" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))}>
+          <option value="">Todos</option>
+          {tiposEnvio.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1">DNI</label>
-        <input className="border rounded p-1" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value }))} placeholder="DNI..." />
+        <input className="border rounded p-1" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value.replace(/\D/g, '').slice(0, 12) }))} placeholder="DNI..." />
       </div>
       <button className="ml-auto px-3 py-1 bg-gray-200 dark:bg-dark-card rounded hover:bg-gray-300 dark:hover:bg-dark-border" onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}>Limpiar</button>
     </div>

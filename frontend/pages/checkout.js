@@ -62,7 +62,7 @@ export default function Checkout() {
   }, [fetchDolarBlue]);
 
   // Función de validación
-  const validateField = (name, value) => {
+  const validateField = (name, value, envioTipo, envioObj) => {
     switch (name) {
       case 'nombre':
         if (!value.trim()) return 'El nombre es obligatorio';
@@ -91,6 +91,25 @@ export default function Checkout() {
         const cleanPhone = value.replace(/\D/g, '');
         if (cleanPhone.length < 8) return 'El teléfono debe tener al menos 8 dígitos';
         if (cleanPhone.length > 15) return 'El teléfono no puede tener más de 15 dígitos';
+        return '';
+      
+      case 'calle':
+        if (envioTipo === 'envio' && !value.trim()) return 'La calle es obligatoria';
+        return '';
+      case 'numero':
+        if (envioTipo === 'envio' && !value.trim()) return 'El número es obligatorio';
+        return '';
+      case 'ciudad':
+        if (envioTipo === 'envio' && !value.trim()) return 'La ciudad es obligatoria';
+        return '';
+      case 'provincia':
+        if (envioTipo === 'envio' && !value.trim()) return 'La provincia es obligatoria';
+        return '';
+      case 'codigoPostal':
+        if (envioTipo === 'envio' && !value.trim()) return 'El código postal es obligatorio';
+        return '';
+      case 'pais':
+        if (envioTipo === 'envio' && !value.trim()) return 'El país es obligatorio';
         return '';
       
       default:
@@ -129,7 +148,7 @@ export default function Checkout() {
     }
 
     // Validar el campo
-    const fieldError = validateField(name, processedValue);
+    const fieldError = validateField(name, processedValue, envio.tipo, envio);
     setErrors(prev => ({ ...prev, [name]: fieldError }));
   };
 
@@ -143,11 +162,11 @@ export default function Checkout() {
     const newErrors = {};
     
     // Validar todos los campos
-    newErrors.nombre = validateField('nombre', datos.nombre);
-    newErrors.apellido = validateField('apellido', datos.apellido);
-    newErrors.email = validateField('email', datos.email);
-    newErrors.dni = validateField('dni', datos.dni);
-    newErrors.telefono = validateField('telefono', telefono.numero);
+    newErrors.nombre = validateField('nombre', datos.nombre, envio.tipo, envio);
+    newErrors.apellido = validateField('apellido', datos.apellido, envio.tipo, envio);
+    newErrors.email = validateField('email', datos.email, envio.tipo, envio);
+    newErrors.dni = validateField('dni', datos.dni, envio.tipo, envio);
+    newErrors.telefono = validateField('telefono', telefono.numero, envio.tipo, envio);
     
     setErrors(newErrors);
     
@@ -155,11 +174,37 @@ export default function Checkout() {
     return !Object.values(newErrors).some(error => error !== '');
   };
 
+  // Modificar handleFieldChange para campos de envío
+  const handleEnvioFieldChange = (name, value) => {
+    setEnvio(prev => ({ ...prev, [name]: value }));
+    const fieldError = validateField(name, value, envio.tipo, { ...envio, [name]: value });
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
+  };
+
+  // Modificar handleFieldBlur para campos de envío
+  const handleEnvioFieldBlur = (name) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+  };
+
+  // Validar todos los campos de envío si es tipo 'envio'
+  const validateEnvioFields = () => {
+    if (envio.tipo !== 'envio') return true;
+    const requiredFields = ['calle', 'numero', 'ciudad', 'provincia', 'codigoPostal', 'pais'];
+    let valid = true;
+    const newErrors = {};
+    requiredFields.forEach(field => {
+      const error = validateField(field, envio[field], envio.tipo, envio);
+      newErrors[field] = error;
+      if (error) valid = false;
+    });
+    setErrors(prev => ({ ...prev, ...newErrors }));
+    return valid;
+  };
+
+  // Modificar handleNext y handleSubmit para validar envío
   const handleNext = () => {
     if (step === 0) {
-      // Validar formulario antes de continuar
       if (!validateForm()) {
-        // Marcar todos los campos como tocados para mostrar errores
         setTouched({
           nombre: true,
           apellido: true,
@@ -167,6 +212,12 @@ export default function Checkout() {
           dni: true,
           telefono: true
         });
+        return;
+      }
+    }
+    if (step === 1 && envio.tipo === 'envio') {
+      if (!validateEnvioFields()) {
+        setTouched(prev => ({ ...prev, calle: true, numero: true, ciudad: true, provincia: true, codigoPostal: true, pais: true }));
         return;
       }
     }
@@ -178,14 +229,17 @@ export default function Checkout() {
   const handleSubmit = async () => {
     setLoading(true);
     setError('');
-    
-    // Validar formulario antes de enviar
     if (!validateForm()) {
       setError('Por favor, corrige los errores en el formulario.');
       setLoading(false);
       return;
     }
-
+    if (envio.tipo === 'envio' && !validateEnvioFields()) {
+      setError('Por favor, completa todos los campos de envío.');
+      setLoading(false);
+      return;
+    }
+    
     try {
       let envioData;
       if (envio.tipo === 'envio') {
@@ -395,48 +449,74 @@ export default function Checkout() {
             </div>
             {envio.tipo === 'envio' && (
               <div className="space-y-2">
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Calle" 
-                  value={envio.calle} 
-                  onChange={e => setEnvio({ ...envio, calle: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Número" 
-                  value={envio.numero} 
-                  onChange={e => setEnvio({ ...envio, numero: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Piso/Depto (opcional)" 
-                  value={envio.piso} 
-                  onChange={e => setEnvio({ ...envio, piso: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Ciudad" 
-                  value={envio.ciudad} 
-                  onChange={e => setEnvio({ ...envio, ciudad: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Provincia/Estado" 
-                  value={envio.provincia} 
-                  onChange={e => setEnvio({ ...envio, provincia: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="Código Postal" 
-                  value={envio.codigoPostal} 
-                  onChange={e => setEnvio({ ...envio, codigoPostal: e.target.value })} 
-                />
-                <input 
-                  className="w-full border border-gray-300 dark:border-gray-600 p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" 
-                  placeholder="País" 
-                  value={envio.pais} 
-                  onChange={e => setEnvio({ ...envio, pais: e.target.value })} 
-                />
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.calle && touched.calle ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="Calle"
+                    value={envio.calle}
+                    onChange={e => handleEnvioFieldChange('calle', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('calle')}
+                  />
+                  {errors.calle && touched.calle && <p className="text-red-500 text-sm">{errors.calle}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.numero && touched.numero ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="Número"
+                    value={envio.numero}
+                    onChange={e => handleEnvioFieldChange('numero', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('numero')}
+                  />
+                  {errors.numero && touched.numero && <p className="text-red-500 text-sm">{errors.numero}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.ciudad && touched.ciudad ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="Ciudad"
+                    value={envio.ciudad}
+                    onChange={e => handleEnvioFieldChange('ciudad', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('ciudad')}
+                  />
+                  {errors.ciudad && touched.ciudad && <p className="text-red-500 text-sm">{errors.ciudad}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.provincia && touched.provincia ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="Provincia/Estado"
+                    value={envio.provincia}
+                    onChange={e => handleEnvioFieldChange('provincia', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('provincia')}
+                  />
+                  {errors.provincia && touched.provincia && <p className="text-red-500 text-sm">{errors.provincia}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.codigoPostal && touched.codigoPostal ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="Código Postal"
+                    value={envio.codigoPostal}
+                    onChange={e => handleEnvioFieldChange('codigoPostal', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('codigoPostal')}
+                  />
+                  {errors.codigoPostal && touched.codigoPostal && <p className="text-red-500 text-sm">{errors.codigoPostal}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.pais && touched.pais ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
+                    placeholder="País"
+                    value={envio.pais}
+                    onChange={e => handleEnvioFieldChange('pais', e.target.value)}
+                    onBlur={() => handleEnvioFieldBlur('pais')}
+                  />
+                  {errors.pais && touched.pais && <p className="text-red-500 text-sm">{errors.pais}</p>}
+                </div>
+                <div className="space-y-1">
+                  <input 
+                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors`}
+                    placeholder="Piso/Depto (opcional)"
+                    value={envio.piso}
+                    onChange={e => handleEnvioFieldChange('piso', e.target.value)}
+                  />
+                </div>
               </div>
             )}
           </div>
