@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
           </div>
         </div>
       )}
-      <main className='flex-grow'>{children}</main>
+      <main className='flex-1'>{children}</main>
       {showLayout && <Footer />}
     </div>
   );
