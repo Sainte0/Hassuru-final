@@ -5,7 +5,15 @@
 /* Estilos personalizados para modo oscuro */
 @layer base {
   body {
-    @apply transition-colors duration-300;
+    @apply transition-colors duration-300 m-0 p-0;
+  }
+  
+  html {
+    @apply h-full;
+  }
+  
+  #__next {
+    @apply min-h-full;
   }
   
   /* Scrollbar personalizada para modo oscuro */
