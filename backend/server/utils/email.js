@@ -43,10 +43,8 @@ async function sendOrderReceiptEmail({ to, order }) {
       entrega = 'Inmediata';
     } else if (Array.isArray(p.tallas) && p.tallas.length > 0 && p.encargo === true) {
       entrega = '5 días';
-    } else if (p.encargo === false) {
-      entrega = 'Inmediata';
-    } else if (p.encargo === true) {
-      entrega = '5 días';
+    } else if (!Array.isArray(p.tallas) || p.tallas.length === 0) {
+      entrega = '20 días';
     }
     return entrega === '5 días' || entrega === '20 días';
   });
