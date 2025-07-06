@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AdminLayout from '../../components/AdminLayout';
+import { FaRegCopy } from 'react-icons/fa';
 
 const estados = ['pendiente', 'pagado', 'enviado', 'recibido', 'cancelado'];
 const pagos = ['usdt', 'transferencia', 'efectivo'];
@@ -218,17 +219,30 @@ export default function PedidosAdmin() {
                     {currentOrders.map(order => (
                       <tr key={order._id} className="border-t border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg">
                         <td className="p-3 align-top min-w-[140px]">
-                          <pre className="text-xs text-gray-900 dark:text-white whitespace-pre-wrap break-words bg-gray-50 dark:bg-gray-800 rounded p-2 select-all cursor-pointer" style={{fontFamily:'inherit'}}>
-                            - Nombre y apellido: {order.datosPersonales?.nombre || ''}
-                            - Domicilio (calle y número): {order.envio?.direccion?.split(',')[0] || ''}
-                            - Casa o Departamento: {order.envio?.direccion?.split(',')[1]?.trim() || ''}
-                            - Localidad: {order.envio?.direccion?.split(',')[2]?.trim() || ''}
-                            - Código postal: {order.envio?.direccion?.split(',')[3]?.trim() || ''}
-                            - Provincia: {order.envio?.direccion?.split(',')[4]?.trim() || ''}
-                            - Teléfono: {order.datosPersonales?.telefono || ''}
-                            - DNI: {order.datosPersonales?.dni || ''}
-                            - Mail: {order.datosPersonales?.email || ''}
-                          </pre>
+                          <div className="relative group">
+                            <button
+                              className="absolute right-0 top-0 text-xs p-1 text-gray-500 hover:text-blue-600 focus:outline-none"
+                              title="Copiar info"
+                              onClick={() => {
+                                const info = `Nombre y apellido: ${order.datosPersonales?.nombre || ''}\nDomicilio (calle y número): ${order.envio?.direccion?.split(',')[0] || ''}\nCasa o Departamento: ${order.envio?.direccion?.split(',')[1]?.trim() || ''}\nLocalidad: ${order.envio?.direccion?.split(',')[2]?.trim() || ''}\nCódigo postal: ${order.envio?.direccion?.split(',')[3]?.trim() || ''}\nProvincia: ${order.envio?.direccion?.split(',')[4]?.trim() || ''}\nTeléfono: ${order.datosPersonales?.telefono || ''}\nDNI: ${order.datosPersonales?.dni || ''}\nMail: ${order.datosPersonales?.email || ''}`;
+                                navigator.clipboard.writeText(info);
+                              }}
+                              tabIndex={-1}
+                            >
+                              <FaRegCopy size={14} />
+                            </button>
+                            <div className="space-y-0.5 pr-5">
+                              <div><span className="font-semibold">Nombre y apellido:</span> {order.datosPersonales?.nombre || ''}</div>
+                              <div><span className="font-semibold">Domicilio (calle y número):</span> {order.envio?.direccion?.split(',')[0] || ''}</div>
+                              <div><span className="font-semibold">Casa o Departamento:</span> {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
+                              <div><span className="font-semibold">Localidad:</span> {order.envio?.direccion?.split(',')[2]?.trim() || ''}</div>
+                              <div><span className="font-semibold">Código postal:</span> {order.envio?.direccion?.split(',')[3]?.trim() || ''}</div>
+                              <div><span className="font-semibold">Provincia:</span> {order.envio?.direccion?.split(',')[4]?.trim() || ''}</div>
+                              <div><span className="font-semibold">Teléfono:</span> {order.datosPersonales?.telefono || ''}</div>
+                              <div><span className="font-semibold">DNI:</span> {order.datosPersonales?.dni || ''}</div>
+                              <div><span className="font-semibold">Mail:</span> {order.datosPersonales?.email || ''}</div>
+                            </div>
+                          </div>
                         </td>
                         <td className="p-3 align-top min-w-[220px]">
                           {order.productos.map(p => (
