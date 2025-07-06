@@ -183,28 +183,28 @@ export default function Encargos() {
             <img 
               src={images[currentImage]} 
               alt={`Encargo ${currentImage + 1}`} 
-              className="w-full h-64 object-contain transition-transform duration-500"
+              className="w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] object-contain transition-transform duration-500"
             />
           </div>
           <button 
             onClick={prevImage}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
           >
             ‹
           </button>
           <button 
             onClick={nextImage}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all"
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
           >
             ›
           </button>
-          <div className="flex justify-center mt-4 space-x-2">
+          <div className="flex justify-center mt-6 space-x-3">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImage(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentImage ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+                className={`w-4 h-4 rounded-full transition-all ${
+                  index === currentImage ? 'bg-blue-600 scale-110' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                 }`}
               />
             ))}
