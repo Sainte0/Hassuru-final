@@ -362,6 +362,13 @@ export default function Checkout() {
                       <span className="inline-block mb-1 px-2 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
                     )}
                     <div className="font-semibold text-gray-900 dark:text-white break-words text-xs sm:text-base">{item.nombre}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      {item.encargo
+                        ? 'Entrega estimada: 20 días'
+                        : (item.entrega === '5 días' || item.tiempoEntrega === '5 días')
+                          ? 'Entrega estimada: 5 días'
+                          : 'Entrega inmediata'}
+                    </div>
                     <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 break-words">Talle: {item.talle}</div>
                     <div className="flex items-center gap-1 sm:gap-2 mt-1">
                       <button 
