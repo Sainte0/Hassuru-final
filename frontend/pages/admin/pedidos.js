@@ -211,6 +211,7 @@ export default function PedidosAdmin() {
                       <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Productos</th>
                       <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Pago</th>
                       <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Envío</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Fecha</th>
                       <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Estado</th>
                       <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Acción</th>
                     </tr>
@@ -266,6 +267,21 @@ export default function PedidosAdmin() {
                         <td className="p-3 align-top min-w-[120px]">
                           <div className="capitalize font-medium text-gray-900 dark:text-dark-text">{order.envio?.tipo}</div>
                           {order.envio?.direccion && <div className="text-xs text-gray-500 dark:text-dark-text-secondary break-words">{order.envio.direccion}</div>}
+                        </td>
+                        <td className="p-3 align-top min-w-[100px] text-gray-900 dark:text-white">
+                          {(() => {
+                            const fecha = new Date(order.createdAt);
+                            const ahora = new Date();
+                            const diffMs = ahora - fecha;
+                            const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                            const fechaStr = fecha.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                            return (
+                              <div>
+                                <div>{fechaStr}</div>
+                                <div className="text-xs text-gray-500 dark:text-gray-300">Hace {diffDias} día{diffDias !== 1 ? 's' : ''}</div>
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="p-3 align-top min-w-[100px]">
                           <span className={`px-2 py-1 rounded text-xs font-semibold ${
