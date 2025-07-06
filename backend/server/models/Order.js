@@ -23,6 +23,7 @@ const OrderSchema = new mongoose.Schema({
   },
   pago: { type: String, enum: ['usdt', 'transferencia', 'efectivo'], required: true },
   estado: { type: String, enum: ['pendiente', 'pagado', 'enviado', 'recibido', 'cancelado'], default: 'pendiente' },
+  tracking: { type: String },
   fechaCreacion: { type: Date, default: Date.now }
 });
 

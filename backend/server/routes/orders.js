@@ -2,7 +2,7 @@ const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
-const { sendOrderReceiptEmail, sendNewOrderNotification } = require('../utils/email');
+const { sendOrderReceiptEmail, sendNewOrderNotification, sendOrderShippedEmail } = require('../utils/email');
 const router = express.Router();
 
 // Ultra simple: guardar pedido tal cual llega
@@ -89,6 +89,32 @@ router.put('/:id/estado', authMiddleware, async (req, res) => {
       { new: true }
     );
     if (!order) return res.status(404).json({ error: 'Pedido no encontrado' });
+    res.json(order);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Actualizar tracking
+router.put('/:id/tracking', authMiddleware, async (req, res) => {
+  try {
+    const { tracking } = req.body;
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { tracking },
+      { new: true }
+    );
+    if (!order) return res.status(404).json({ error: 'Pedido no encontrado' });
+
+    // Si el estado es 'enviado', enviar email de notificación
+    if (order.estado === 'enviado') {
+      try {
+        await sendOrderShippedEmail({ to: order.datosPersonales.email, order });
+      } catch (err) {
+        console.error('Error enviando email de envío:', err);
+      }
+    }
+
     res.json(order);
   } catch (error) {
     res.status(400).json({ error: error.message });

@@ -152,6 +152,63 @@ async function sendNewOrderNotification({ order }) {
   });
 }
 
+async function sendOrderShippedEmail({ to, order }) {
+  if (!resend) {
+    return;
+  }
+  if (!to || !order) {
+    return;
+  }
+  const trackingInfo = order.tracking
+    ? `<p><strong>Tu link o número de seguimiento:</strong> <a href="${order.tracking}" target="_blank">${order.tracking}</a></p>`
+    : '<p><strong>El vendedor te contactará con el seguimiento.</strong></p>';
+
+  // Productos enviados
+  const productosHtml = order.productos.map(p => `
+    <tr>
+      <td>${p.nombre}${p.talle ? ' (Talle: ' + p.talle + ')' : ''}</td>
+      <td>${p.cantidad}</td>
+      <td>$${p.precio} USD</td>
+    </tr>
+  `).join('');
+  const total = order.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+
+  const html = `
+    <h2>¡Tu pedido ha sido enviado!</h2>
+    <p>Hola ${order.datosPersonales.nombre},</p>
+    <p>Te informamos que tu pedido en Hassuru ha sido enviado.</p>
+    ${trackingInfo}
+    <h3>Resumen del pedido enviado</h3>
+    <table border="1" cellpadding="6" style="border-collapse:collapse;">
+      <thead>
+        <tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>
+      </thead>
+      <tbody>
+        ${productosHtml}
+      </tbody>
+    </table>
+    <p><strong>Total:</strong> $${total} USD</p>
+    <h4>Datos de envío</h4>
+    <p>Tipo: ${order.envio.tipo === 'envio' ? 'Envío a domicilio' : 'Retiro en persona'}</p>
+    ${order.envio.direccion ? `<p>Dirección: ${order.envio.direccion}</p>` : ''}
+    <h4>Datos personales</h4>
+    <p>Nombre: ${order.datosPersonales.nombre}</p>
+    <p>Email: ${order.datosPersonales.email}</p>
+    <p>Teléfono: ${order.datosPersonales.telefono}</p>
+    <p>DNI: ${order.datosPersonales.dni}</p>
+    <p>Si tienes dudas, responde a este email o contáctanos.</p>
+    <hr />
+    <p>Gracias por confiar en Hassuru.</p>
+  `;
+
+  return resend.emails.send({
+    from: 'Hassuru <no-reply@hassuru.ar>',
+    to,
+    subject: '¡Tu pedido ha sido enviado! - Hassuru',
+    html
+  });
+}
+
 // Función para verificar el estado de la cuenta de Resend
 async function checkResendStatus() {
   console.log('🔍 Verificando estado de Resend...');
@@ -225,4 +282,10 @@ async function testClientEmail(email) {
   }
 }
 
-module.exports = { sendOrderReceiptEmail, sendNewOrderNotification, testClientEmail, checkResendStatus }; 
+module.exports = {
+  sendOrderReceiptEmail,
+  sendNewOrderNotification,
+  checkResendStatus,
+  testClientEmail,
+  sendOrderShippedEmail
+}; 

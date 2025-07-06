@@ -26,6 +26,9 @@ export default function PedidosAdmin() {
     dni: ''
   });
 
+  const [trackingInputs, setTrackingInputs] = useState({});
+  const [savingTracking, setSavingTracking] = useState(null);
+
   useEffect(() => {
     if (!token) return;
     fetch('https://web-production-ffe2.up.railway.app/api/orders', {
@@ -57,10 +60,38 @@ export default function PedidosAdmin() {
         body: JSON.stringify({ estado })
       });
       setOrders(orders => orders.map(o => o._id === id ? { ...o, estado } : o));
+      // Si el nuevo estado es 'enviado', mostrar input de tracking
+      if (estado === 'enviado') {
+        setTrackingInputs(inputs => ({ ...inputs, [id]: '' }));
+      }
     } catch {
       alert('Error al cambiar estado');
     } finally {
       setChanging(null);
+    }
+  };
+
+  const guardarTracking = async (id) => {
+    setSavingTracking(id);
+    try {
+      const tracking = trackingInputs[id] || '';
+      const res = await fetch(`https://web-production-ffe2.up.railway.app/api/orders/${id}/tracking`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ tracking })
+      });
+      if (!res.ok) throw new Error('Error al guardar tracking');
+      const updated = await res.json();
+      setOrders(orders => orders.map(o => o._id === id ? { ...o, tracking: updated.tracking } : o));
+      setTrackingInputs(inputs => ({ ...inputs, [id]: updated.tracking }));
+      alert('Tracking guardado y email enviado');
+    } catch {
+      alert('Error al guardar tracking');
+    } finally {
+      setSavingTracking(null);
     }
   };
 
@@ -231,6 +262,26 @@ export default function PedidosAdmin() {
                             {estados.map(e => <option key={e} value={e}>{e}</option>)}
                           </select>
                           {changing === order._id && <div className="text-xs text-blue-500 mt-1">Actualizando...</div>}
+                          {/* Tracking input si estado es enviado */}
+                          {order.estado === 'enviado' && (
+                            <div className="mt-2">
+                              <input
+                                type="text"
+                                className="border rounded px-2 py-1 w-full text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                placeholder="Pega aquí el link o número de trackeo"
+                                value={trackingInputs[order._id] !== undefined ? trackingInputs[order._id] : (order.tracking || '')}
+                                onChange={e => setTrackingInputs(inputs => ({ ...inputs, [order._id]: e.target.value }))}
+                                disabled={savingTracking === order._id}
+                              />
+                              <button
+                                className="mt-1 px-2 py-1 bg-blue-600 text-white rounded text-xs disabled:opacity-50"
+                                onClick={() => guardarTracking(order._id)}
+                                disabled={savingTracking === order._id || !trackingInputs[order._id]}
+                              >
+                                {savingTracking === order._id ? 'Guardando...' : 'Guardar tracking y enviar email'}
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
