@@ -348,6 +348,11 @@ export default function Checkout() {
             <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">¡Envío gratis a todo Argentina!</p>
           </div>
         </div>
+        {cart.some(item => item.encargo) && (
+          <div className="mb-4 text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900 rounded p-2 text-sm text-center font-semibold">
+            ¡Recuerda! Los productos de encargo se piden especialmente para vos y tardan 20 días.
+          </div>
+        )}
         <div className="mb-6 sm:mb-8">
           <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4 text-gray-800 dark:text-white">Resumen del carrito</h2>
           {cart.length === 0 ? (

@@ -145,6 +145,11 @@ export default function Detail({ product }) {
           {/* Info a la derecha */}
           <div className="flex flex-col w-full lg:w-1/2 p-2 space-y-4 max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-800 dark:text-white lg:text-4xl mb-2">{product.nombre}</h2>
+            {isEncargo && (
+              <div className="mb-2 p-3 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-sm font-semibold text-center">
+                Ingresá tu talle y agregá la prenda al carrito como encargo.<br/>¡Ahora podés pedir prendas de encargo directamente desde la web!
+              </div>
+            )}
             <div className="space-y-2 text-gray-800 dark:text-white">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{product.descripcion}</p>
               <p className="text-4xl font-bold">${product.precio} USD</p>

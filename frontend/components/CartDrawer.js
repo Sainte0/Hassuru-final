@@ -1,6 +1,7 @@
 import React from 'react';
 import { useCartStore } from '../store/cartStore';
 import useStore from '../store/store';
+import Link from 'next/link';
 
 export default function CartDrawer({ open, onClose, cart, onProceed }) {
   const { removeFromCart, addToCart } = useCartStore();
@@ -142,6 +143,16 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                 </p>
               </div>
             </div>
+
+            {cart.length === 0 && (
+              <div className="flex justify-center mt-6">
+                <Link href="/encargos">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow transition-all text-lg">
+                    ¿No encontrás lo que buscás? Hacé tu encargo personalizado aquí
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
