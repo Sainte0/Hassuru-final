@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
           </div>
         </div>
       )}
-      <main className='flex-1'>{children}</main>
+      <main className='flex-1 flex flex-col justify-between'>{children}</main>
       {showLayout && <Footer />}
     </div>
   );
