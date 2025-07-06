@@ -209,6 +209,68 @@ async function sendOrderShippedEmail({ to, order }) {
   });
 }
 
+async function sendOrderCancelledEmail({ to, order }) {
+  if (!resend) {
+    return;
+  }
+  if (!to || !order) {
+    return;
+  }
+
+  // Productos cancelados
+  const productosHtml = order.productos.map(p => `
+    <tr>
+      <td>${p.nombre}${p.talle ? ' (Talle: ' + p.talle + ')' : ''}</td>
+      <td>${p.cantidad}</td>
+      <td>$${p.precio} USD</td>
+    </tr>
+  `).join('');
+  const total = order.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+
+  const html = `
+    <h2>Tu pedido ha sido cancelado</h2>
+    <p>Hola ${order.datosPersonales.nombre},</p>
+    <p>Te informamos que tu pedido en Hassuru ha sido cancelado.</p>
+    
+    <h3>Resumen del pedido cancelado</h3>
+    <table border="1" cellpadding="6" style="border-collapse:collapse;">
+      <thead>
+        <tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>
+      </thead>
+      <tbody>
+        ${productosHtml}
+      </tbody>
+    </table>
+    <p><strong>Total:</strong> $${total} USD</p>
+    
+    <h4>Datos de envío</h4>
+    <p>Tipo: ${order.envio.tipo === 'envio' ? 'Envío a domicilio' : 'Retiro en persona'}</p>
+    ${order.envio.direccion ? `<p>Dirección: ${order.envio.direccion}</p>` : ''}
+    
+    <h4>Datos personales</h4>
+    <p>Nombre: ${order.datosPersonales.nombre}</p>
+    <p>Email: ${order.datosPersonales.email}</p>
+    <p>Teléfono: ${order.datosPersonales.telefono}</p>
+    <p>DNI: ${order.datosPersonales.dni}</p>
+    
+    <h4>Información del pedido</h4>
+    <p>ID del pedido: ${order._id}</p>
+    <p>Fecha de creación: ${new Date(order.fechaCreacion).toLocaleString('es-AR')}</p>
+    <p>Método de pago: ${order.pago.toUpperCase()}</p>
+    
+    <p>Si tienes dudas sobre la cancelación, responde a este email o contáctanos.</p>
+    <hr />
+    <p>Gracias por tu interés en Hassuru.</p>
+  `;
+
+  return resend.emails.send({
+    from: 'Hassuru <no-reply@hassuru.ar>',
+    to,
+    subject: 'Tu pedido ha sido cancelado - Hassuru',
+    html
+  });
+}
+
 // Función para verificar el estado de la cuenta de Resend
 async function checkResendStatus() {
   console.log('🔍 Verificando estado de Resend...');
@@ -287,5 +349,6 @@ module.exports = {
   sendNewOrderNotification,
   checkResendStatus,
   testClientEmail,
-  sendOrderShippedEmail
+  sendOrderShippedEmail,
+  sendOrderCancelledEmail
 }; 

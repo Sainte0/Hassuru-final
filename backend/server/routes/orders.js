@@ -2,7 +2,7 @@ const express = require('express');
 const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
-const { sendOrderReceiptEmail, sendNewOrderNotification, sendOrderShippedEmail } = require('../utils/email');
+const { sendOrderReceiptEmail, sendNewOrderNotification, sendOrderShippedEmail, sendOrderCancelledEmail } = require('../utils/email');
 const router = express.Router();
 
 // Ultra simple: guardar pedido tal cual llega
@@ -89,6 +89,16 @@ router.put('/:id/estado', authMiddleware, async (req, res) => {
       { new: true }
     );
     if (!order) return res.status(404).json({ error: 'Pedido no encontrado' });
+    
+    // Si el estado cambió a 'cancelado', enviar email de cancelación
+    if (estado === 'cancelado') {
+      try {
+        await sendOrderCancelledEmail({ to: order.datosPersonales.email, order });
+      } catch (err) {
+        console.error('Error enviando email de cancelación:', err);
+      }
+    }
+    
     res.json(order);
   } catch (error) {
     res.status(400).json({ error: error.message });
