@@ -247,9 +247,15 @@ export default function PedidosAdmin() {
                         </td>
                         <td className="p-3 align-top min-w-[220px]">
                           {order.productos.map(p => (
-                            <div key={p.productoId + (p.talle || '')} className="flex items-center mb-1 gap-2">
-                              <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
-                              <div>
+                            <div key={p.productoId + (p.talle || '')} className="flex items-start mb-2 gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-b-0">
+                              {p.imagen ? (
+                                <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
+                              ) : (
+                                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">📦</span>
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
                                 <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
                                   {p.nombre}
                                   {p.encargo && (
@@ -257,6 +263,16 @@ export default function PedidosAdmin() {
                                   )}
                                 </div>
                                 {p.talle && <div className="text-xs text-gray-500 dark:text-gray-300">Talle: <span className="font-semibold">{p.talle}</span></div>}
+                                {p.color && <div className="text-xs text-gray-500 dark:text-gray-300">Color: <span className="font-semibold">{p.color}</span></div>}
+                                {p.tipoProducto && <div className="text-xs text-gray-500 dark:text-gray-300">Tipo: <span className="font-semibold capitalize">{p.tipoProducto}</span></div>}
+                                {p.detalles && <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 italic">"{p.detalles}"</div>}
+                                {p.link && (
+                                  <div className="text-xs mt-1">
+                                    <a href={p.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline break-all">
+                                      🔗 Ver referencia
+                                    </a>
+                                  </div>
+                                )}
                                 <div className="text-xs text-gray-700 dark:text-gray-200">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
                                 <div className="text-xs text-gray-500 dark:text-gray-300">${p.precio} USD</div>
                               </div>

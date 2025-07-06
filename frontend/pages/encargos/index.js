@@ -132,23 +132,28 @@ export default function Encargos() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          productos: productos.map(p => ({ ...p, encargo: true })),
+          productos: productos.map(p => ({ 
+            productoId: `encargo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            nombre: p.nombre,
+            cantidad: 1,
+            precio: 0,
+            imagen: '',
+            talle: p.talle,
+            encargo: true,
+            detalles: p.detalles,
+            link: p.link,
+            color: p.color,
+            tipoProducto: p.tipoProducto
+          })),
           datosPersonales: {
-            nombre: datos.nombre,
-            apellido: datos.apellido,
+            nombre: `${datos.nombre} ${datos.apellido}`,
             email: datos.email,
             telefono: datos.telefono,
             dni: datos.dni
           },
           envio: { 
             tipo: envio.tipo, 
-            direccion: envio.tipo === 'envio' ? {
-              domicilio: envio.domicilio,
-              casaDepto: envio.casaDepto,
-              localidad: envio.localidad,
-              codigoPostal: envio.codigoPostal,
-              provincia: envio.provincia
-            } : null
+            direccion: envio.tipo === 'envio' ? `${envio.domicilio}${envio.casaDepto ? ', ' + envio.casaDepto : ''}, ${envio.localidad}, ${envio.provincia}, ${envio.codigoPostal}` : ''
           },
           pago: pago,
         })

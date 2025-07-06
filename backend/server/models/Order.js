@@ -7,7 +7,11 @@ const ProductoPedidoSchema = new mongoose.Schema({
   precio: Number,
   imagen: String,
   talle: String,
-  encargo: { type: Boolean, default: false }
+  encargo: { type: Boolean, default: false },
+  detalles: String,
+  link: String,
+  color: String,
+  tipoProducto: String
 });
 
 const OrderSchema = new mongoose.Schema({
