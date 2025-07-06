@@ -62,6 +62,9 @@ export default function Detail({ product }) {
     }
   }, [product]);
 
+  // Detectar si es producto de encargo (sin stock real, entrega 20 días)
+  const isEncargo = !product.tallas || product.tallas.length === 0 || product.entrega === '20 días' || product.descripcion?.toLowerCase().includes('20 días');
+
   const handleCompraClick = () => {
     if (selectedTalla) {
       addToCart({
@@ -72,7 +75,7 @@ export default function Detail({ product }) {
         precio: selectedTalla.precioTalla,
         precioARS: (selectedTalla.precioTalla * dolarBlue),
         talle: selectedTalla.talla,
-        encargo: !!product.encargo
+        encargo: isEncargo
       });
       toast.success('Producto añadido al carrito');
       return;
