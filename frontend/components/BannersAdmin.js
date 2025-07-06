@@ -76,7 +76,7 @@ const BannersAdmin = () => {
     try {
       await updateBanner(banner._id, { ...banner, active: !banner.active });
     } catch (error) {
-      console.error('Error al cambiar estado del banner:', error);
+      console.error('Error al cambiar estado del banner: ', error);
     }
   };
 
