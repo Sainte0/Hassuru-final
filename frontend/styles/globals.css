@@ -1,16 +1,13 @@
 html, body, #__next {
   height: 100%;
-  min-height: 100%;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-/* stylelint-disable */
-/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
-/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
-/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
 /* Estilos básicos para el layout */
@@ -25,12 +22,12 @@ html {
 }
 
 #__next {
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 /* Footer siempre al final */
 footer {
-  margin-top: auto;
+  margin-top: 0;
 }
 
 /* Contenedor principal sin overflow */
