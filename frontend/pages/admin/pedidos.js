@@ -107,11 +107,11 @@ export default function PedidosAdmin() {
         if (!nombre.includes(search) && !email.includes(search)) return false;
       }
       if (filtros.fechaDesde) {
-        const fecha = new Date(order.createdAt);
+        const fecha = new Date(order.fechaCreacion);
         if (fecha < new Date(filtros.fechaDesde)) return false;
       }
       if (filtros.fechaHasta) {
-        const fecha = new Date(order.createdAt);
+        const fecha = new Date(order.fechaCreacion);
         if (fecha > new Date(filtros.fechaHasta + 'T23:59:59')) return false;
       }
       if (filtros.pago && order.pago !== filtros.pago) return false;
@@ -270,7 +270,7 @@ export default function PedidosAdmin() {
                         </td>
                         <td className="p-3 align-top min-w-[100px] text-gray-900 dark:text-white">
                           {(() => {
-                            const fecha = new Date(order.createdAt);
+                            const fecha = new Date(order.fechaCreacion);
                             const ahora = new Date();
                             const diffMs = ahora - fecha;
                             const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
