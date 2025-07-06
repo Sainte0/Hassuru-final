@@ -256,7 +256,8 @@ export default function Checkout() {
         cantidad: item.cantidad,
         precio: item.precio,
         imagen: item.imagen,
-        ...(item.talle && { talle: item.talle })
+        ...(item.talle && { talle: item.talle }),
+        ...(item.encargo && { encargo: true })
       }));
       console.log('Checkout - productos en cart:', cart);
       console.log('Checkout - datos personales:', datos);

@@ -231,7 +231,7 @@ export default function PedidosAdmin() {
                             >
                               <FaRegCopy size={14} />
                             </button>
-                            <div className="space-y-0.5 pr-5">
+                            <div className="space-y-0.5 pr-5 text-gray-900 dark:text-white">
                               <div><span className="font-semibold">Nombre y apellido:</span> {order.datosPersonales?.nombre || ''}</div>
                               <div><span className="font-semibold">Domicilio (calle y número):</span> {order.envio?.direccion?.split(',')[0] || ''}</div>
                               <div><span className="font-semibold">Casa o Departamento:</span> {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
@@ -249,7 +249,12 @@ export default function PedidosAdmin() {
                             <div key={p.productoId + (p.talle || '')} className="flex items-center mb-1 gap-2">
                               <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
                               <div>
-                                <div className="font-medium text-gray-900 dark:text-white">{p.nombre}</div>
+                                <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                                  {p.nombre}
+                                  {p.encargo && (
+                                    <span className="ml-1 px-2 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
+                                  )}
+                                </div>
                                 {p.talle && <div className="text-xs text-gray-500 dark:text-gray-300">Talle: <span className="font-semibold">{p.talle}</span></div>}
                                 <div className="text-xs text-gray-700 dark:text-gray-200">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
                                 <div className="text-xs text-gray-500 dark:text-gray-300">${p.precio} USD</div>

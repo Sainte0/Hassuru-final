@@ -6,7 +6,8 @@ const ProductoPedidoSchema = new mongoose.Schema({
   cantidad: Number,
   precio: Number,
   imagen: String,
-  talle: String
+  talle: String,
+  encargo: { type: Boolean, default: false }
 });
 
 const OrderSchema = new mongoose.Schema({
