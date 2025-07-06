@@ -358,6 +358,9 @@ export default function Checkout() {
                 <div key={item.productoId + '-' + item.talle} className="flex items-center border border-gray-200 dark:border-gray-600 rounded-lg p-2 sm:p-3 bg-gray-50 dark:bg-gray-700 shadow-sm min-w-[260px] sm:min-w-0">
                   <img src={item.imagen} alt={item.nombre} className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg mr-2 sm:mr-3 border border-gray-200 dark:border-gray-600" />
                   <div className="flex-1 min-w-0">
+                    {item.encargo && (
+                      <span className="inline-block mb-1 px-2 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
+                    )}
                     <div className="font-semibold text-gray-900 dark:text-white break-words text-xs sm:text-base">{item.nombre}</div>
                     <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 break-words">Talle: {item.talle}</div>
                     <div className="flex items-center gap-1 sm:gap-2 mt-1">
