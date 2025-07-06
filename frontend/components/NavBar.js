@@ -122,13 +122,17 @@ export default function Navbar() {
               <Link href="/" className="py-2 hover:text-gray-300">
                 Inicio
               </Link>
-
-              {/* Enlaces directos a categorías */}
               <Link href="/productos/talla/zapatillas" className="py-2 hover:text-gray-300">
                 Zapatillas
               </Link>
               <Link href="/productos/talla/ropa" className="py-2 hover:text-gray-300">
                 Ropa
+              </Link>
+              <Link href="/productos/categoria/accesorios" className="py-2 hover:text-gray-300">
+                Tecnología
+              </Link>
+              <Link href="/encargos" className="py-2 hover:text-gray-300">
+                Encargos
               </Link>
 
               {/* Stock Dropdown */}
@@ -197,10 +201,6 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
-
-              <Link href="/encargos" className="py-2 hover:text-gray-300">
-                Encargos
-              </Link>
             </div>
 
             {/* Mobile Navigation */}
