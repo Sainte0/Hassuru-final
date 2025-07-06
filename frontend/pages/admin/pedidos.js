@@ -218,10 +218,17 @@ export default function PedidosAdmin() {
                     {currentOrders.map(order => (
                       <tr key={order._id} className="border-t border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg">
                         <td className="p-3 align-top min-w-[140px]">
-                          <div className="font-semibold text-gray-900 dark:text-white">{order.datosPersonales?.nombre}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-300">{order.datosPersonales?.email}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-300">{order.datosPersonales?.telefono}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-300">DNI: {order.datosPersonales?.dni}</div>
+                          <pre className="text-xs text-gray-900 dark:text-white whitespace-pre-wrap break-words bg-gray-50 dark:bg-gray-800 rounded p-2 select-all cursor-pointer" style={{fontFamily:'inherit'}}>
+                            - Nombre y apellido: {order.datosPersonales?.nombre || ''}
+                            - Domicilio (calle y número): {order.envio?.direccion?.split(',')[0] || ''}
+                            - Casa o Departamento: {order.envio?.direccion?.split(',')[1]?.trim() || ''}
+                            - Localidad: {order.envio?.direccion?.split(',')[2]?.trim() || ''}
+                            - Código postal: {order.envio?.direccion?.split(',')[3]?.trim() || ''}
+                            - Provincia: {order.envio?.direccion?.split(',')[4]?.trim() || ''}
+                            - Teléfono: {order.datosPersonales?.telefono || ''}
+                            - DNI: {order.datosPersonales?.dni || ''}
+                            - Mail: {order.datosPersonales?.email || ''}
+                          </pre>
                         </td>
                         <td className="p-3 align-top min-w-[220px]">
                           {order.productos.map(p => (
