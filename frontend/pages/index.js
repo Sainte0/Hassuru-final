@@ -37,7 +37,7 @@ export default function Home() {
           await fetchBanners();
         }
       } catch (error) {
-        console.error("Error detallado al inicializar datos:", {
+        console.error("Error detallado al inicializar datos: ", {
           mensaje: error.message,
           stack: error.stack,
           tipo: error.name
