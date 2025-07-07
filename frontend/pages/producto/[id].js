@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Detail from "../../components/Detail";
+import SEOHead from "../../components/SEOHead";
 import { useRouter } from "next/router";
 import useStore from "../../store/store";
 import { BounceLoader } from 'react-spinners';
@@ -37,8 +38,20 @@ export default function DetailPage() {
   if (loading) return <div className="flex items-center justify-center mt-[5%] bg-white dark:bg-gray-900"><BounceLoader color="#BE1A1D" /></div>;
 
   return (
-    <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
-      {product ? <Detail product={product} /> : <div className="text-gray-900 dark:text-white">No se encontró el producto.</div>}
-    </div>
+    <>
+      {product && (
+        <SEOHead 
+          title={`${product.nombre} - ${product.marca} | Hassuru`}
+          description={`${product.nombre} de ${product.marca}. ${product.descripcion || 'Producto de calidad disponible en Hassuru. Envío gratis en Argentina.'}`}
+          keywords={`${product.nombre}, ${product.marca}, ${product.categoria}, ropa, zapatillas, sneakers, marca, Argentina, online, tienda`}
+          url={`https://hassuru.ar/producto/${id}`}
+          image={product.imagen}
+          type="product"
+        />
+      )}
+      <div className="bg-white dark:bg-gray-900 transition-colors duration-300">
+        {product ? <Detail product={product} /> : <div className="text-gray-900 dark:text-white">No se encontró el producto.</div>}
+      </div>
+    </>
   );
 }

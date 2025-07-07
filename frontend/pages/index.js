@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Carousell from "../../frontend/components/Carousell";
 import BannerCarousel from "../../frontend/components/BannerCarousel";
 import TikTokEmbed from "../../frontend/components/TikTokEmbed";
+import SEOHead from "../../frontend/components/SEOHead";
 import Image from "next/image";
 import Link from "next/link";
 import Newsletter from "../../frontend/components/Newsletter";
@@ -56,59 +57,67 @@ export default function Home() {
   }
 
   return (
-    <main className="bg-white dark:bg-gray-900 transition-colors duration-300">
-      {/* Banner Carousel */}
-      <div className="container px-4 mx-auto mt-4">
-        <BannerCarousel banners={banners} />
-      </div>
+    <>
+      <SEOHead 
+        title="Hassuru - Ropa y Zapatillas de Marca | Tienda Online Argentina"
+        description="Descubre las mejores ofertas en ropa y zapatillas de marca en Hassuru. Sneakers, ropa deportiva y accesorios con envío gratis en Argentina. ¡Compra online con confianza!"
+        keywords="ropa, zapatillas, sneakers, marca, deportes, moda, Argentina, online, tienda, Nike, Adidas, Puma, Reebok"
+        url="https://hassuru.ar"
+      />
+      <main className="bg-white dark:bg-gray-900 transition-colors duration-300">
+        {/* Banner Carousel */}
+        <div className="container px-4 mx-auto mt-4">
+          <BannerCarousel banners={banners} />
+        </div>
 
-      <div className="container p-4 mx-auto">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
-            <img
-              src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482098933-Sneackers-min.png"
-              alt="Catalogo"
-              width={600}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
-              className="dark:bg-gray-800"
-            />
-          </Link>
-          <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
-            <img
-              src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482100110-Ropa-min.png"
-              alt="Encargo"
-              width={620}
-              height={500}
-              style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
-              className="dark:bg-gray-800"
-            />
+        <div className="container p-4 mx-auto">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
+              <img
+                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482098933-Sneackers-min.png"
+                alt="Catalogo"
+                width={600}
+                height={500}
+                style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+                className="dark:bg-gray-800"
+              />
+            </Link>
+            <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
+              <img
+                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482100110-Ropa-min.png"
+                alt="Encargo"
+                width={620}
+                height={500}
+                style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
+                className="dark:bg-gray-800"
+              />
+            </Link>
+          </div>
+        </div>
+
+        {/* Últimos productos por categoría */}
+        <div className="mt-8">
+          <Link href="/productos/categoria/ropa">
+            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Últimos en Ropa"} />
           </Link>
         </div>
-      </div>
+        <div className="mt-2">
+          <Link href="/productos/categoria/zapatillas">
+            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Últimos en Zapatillas"} />
+          </Link>
+        </div>
 
-      {/* Últimos productos por categoría */}
-      <div className="mt-8">
-        <Link href="/productos/categoria/ropa">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Últimos en Ropa"} />
-        </Link>
-      </div>
-      <div className="mt-2">
-        <Link href="/productos/categoria/zapatillas">
-          <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Últimos en Zapatillas"} />
-        </Link>
-      </div>
+        {/* TikToks en horizontal */}
+        <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
+          {tiktokLinks.slice(0, 3).map((linkObj, index) => (
+            <TikTokEmbed key={index} link={linkObj.link} index={index} />
+          ))}
+        </div>
 
-      {/* TikToks en horizontal */}
-      <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
-        {tiktokLinks.slice(0, 3).map((linkObj, index) => (
-          <TikTokEmbed key={index} link={linkObj.link} index={index} />
-        ))}
-      </div>
-
-      <div className="mb-4">
-        <Newsletter />
-      </div>
-    </main>
+        <div className="mb-4">
+          <Newsletter />
+        </div>
+      </main>
+    </>
   );
 }
