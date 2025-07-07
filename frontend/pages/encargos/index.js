@@ -1,6 +1,30 @@
 import React, { useState } from "react";
 import Link from "next/link";
 
+const LATAM_PREFIXES = [
+  { code: '+54', country: 'Argentina' },
+  { code: '+55', country: 'Brasil' },
+  { code: '+56', country: 'Chile' },
+  { code: '+57', country: 'Colombia' },
+  { code: '+52', country: 'México' },
+  { code: '+51', country: 'Perú' },
+  { code: '+58', country: 'Venezuela' },
+  { code: '+53', country: 'Cuba' },
+  { code: '+507', country: 'Panamá' },
+  { code: '+598', country: 'Uruguay' },
+  { code: '+593', country: 'Ecuador' },
+  { code: '+595', country: 'Paraguay' },
+  { code: '+502', country: 'Guatemala' },
+  { code: '+504', country: 'Honduras' },
+  { code: '+505', country: 'Nicaragua' },
+  { code: '+506', country: 'Costa Rica' },
+  { code: '+503', country: 'El Salvador' },
+  { code: '+592', country: 'Guyana' },
+  { code: '+592', country: 'Surinam' },
+  { code: '+509', country: 'Haití' },
+  { code: '+1', country: 'Rep. Dominicana' }
+];
+
 const pasos = ['Productos', 'Datos personales', 'Envío o retiro', 'Pago'];
 
 const tiposEnvio = [
@@ -48,9 +72,9 @@ export default function Encargos() {
     nombre: '', 
     apellido: '',
     email: '', 
-    telefono: '', 
     dni: ''
   });
+  const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
   const [envio, setEnvio] = useState({ 
     tipo: 'envio', 
     domicilio: '', 
@@ -64,6 +88,10 @@ export default function Encargos() {
   const [exito, setExito] = useState(false);
   const [error, setError] = useState('');
   const [currentImage, setCurrentImage] = useState(0);
+  
+  // Estados para validaciones
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
   const nextImage = () => {
     setCurrentImage((prev) => (prev + 1) % images.length);
@@ -83,8 +111,85 @@ export default function Encargos() {
     setProductos(productos.filter((_, i) => i !== idx));
   };
 
+  // Función de validación
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'nombre':
+        if (!value.trim()) return 'El nombre es obligatorio';
+        if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres';
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) return 'El nombre solo puede contener letras';
+        return '';
+      
+      case 'apellido':
+        if (!value.trim()) return 'El apellido es obligatorio';
+        if (value.trim().length < 2) return 'El apellido debe tener al menos 2 caracteres';
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value.trim())) return 'El apellido solo puede contener letras';
+        return '';
+      
+      case 'email':
+        if (!value.trim()) return 'El email es obligatorio';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())) return 'Ingresa un email válido';
+        return '';
+      
+      case 'dni':
+        if (!value.trim()) return 'El DNI es obligatorio';
+        if (!/^\d{8}$/.test(value.replace(/\D/g, ''))) return 'El DNI debe tener exactamente 8 números';
+        return '';
+      
+      case 'telefono':
+        if (!value.trim()) return 'El teléfono es obligatorio';
+        const cleanPhone = value.replace(/\D/g, '');
+        if (cleanPhone.length < 8) return 'El teléfono debe tener al menos 8 dígitos';
+        if (cleanPhone.length > 15) return 'El teléfono no puede tener más de 15 dígitos';
+        return '';
+      
+      default:
+        return '';
+    }
+  };
+
+  // Función para manejar cambios en los campos
+  const handleFieldChange = (name, value) => {
+    let processedValue = value;
+    
+    // Procesamiento específico por campo
+    switch (name) {
+      case 'dni':
+        // Solo permitir números y limitar a 8 dígitos
+        processedValue = value.replace(/\D/g, '').slice(0, 8);
+        break;
+      
+      case 'telefono':
+        // Limpiar formato y solo permitir números
+        processedValue = value.replace(/\D/g, '');
+        break;
+      
+      case 'nombre':
+      case 'apellido':
+        // Capitalizar primera letra
+        processedValue = value.charAt(0).toUpperCase() + value.slice(1);
+        break;
+    }
+
+    // Actualizar el estado
+    if (name === 'telefono') {
+      setTelefono(prev => ({ ...prev, numero: processedValue }));
+    } else {
+      setDatos(prev => ({ ...prev, [name]: processedValue }));
+    }
+
+    // Validar el campo
+    const fieldError = validateField(name, processedValue);
+    setErrors(prev => ({ ...prev, [name]: fieldError }));
+  };
+
+  // Función para manejar el blur (cuando el usuario sale del campo)
+  const handleFieldBlur = (name) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+  };
+
   const handleChangeDatos = e => {
-    setDatos({ ...datos, [e.target.name]: e.target.value });
+    handleFieldChange(e.target.name, e.target.value);
   };
 
   const handleChangeProducto = e => {
@@ -105,8 +210,28 @@ export default function Encargos() {
       return;
     }
     if (step === 1) {
-      if (!datos.nombre || !datos.apellido || !datos.email || !datos.telefono || !datos.dni) {
-        setError('Completa todos los campos obligatorios');
+      // Validar todos los campos de datos personales
+      const newErrors = {};
+      newErrors.nombre = validateField('nombre', datos.nombre);
+      newErrors.apellido = validateField('apellido', datos.apellido);
+      newErrors.email = validateField('email', datos.email);
+      newErrors.dni = validateField('dni', datos.dni);
+      newErrors.telefono = validateField('telefono', telefono.numero);
+      
+      setErrors(newErrors);
+      
+      // Marcar todos los campos como tocados
+      setTouched({
+        nombre: true,
+        apellido: true,
+        email: true,
+        dni: true,
+        telefono: true
+      });
+      
+      // Verificar si hay errores
+      if (Object.values(newErrors).some(error => error !== '')) {
+        setError('Completa todos los campos obligatorios correctamente');
         return;
       }
     }
@@ -148,7 +273,7 @@ export default function Encargos() {
           datosPersonales: {
             nombre: `${datos.nombre} ${datos.apellido}`,
             email: datos.email,
-            telefono: datos.telefono,
+            telefono: telefono.prefijo + telefono.numero,
             dni: datos.dni
           },
           envio: { 
@@ -161,10 +286,13 @@ export default function Encargos() {
       if (!res.ok) throw new Error('Error al enviar el encargo');
       setExito(true);
       setProductos([]);
-      setDatos({ nombre: '', apellido: '', email: '', telefono: '', dni: '' });
+      setDatos({ nombre: '', apellido: '', email: '', dni: '' });
+      setTelefono({ prefijo: '+54', numero: '' });
       setEnvio({ tipo: 'envio', domicilio: '', casaDepto: '', localidad: '', codigoPostal: '', provincia: '' });
       setPago('usdt');
       setStep(0);
+      setErrors({});
+      setTouched({});
     } catch (e) {
       setError('Error al enviar el encargo. Intenta de nuevo.');
     } finally {
@@ -291,11 +419,114 @@ export default function Encargos() {
         {/* Paso 1: Datos personales */}
         {step === 1 && (
           <div className="space-y-4">
-            <input name="nombre" value={datos.nombre} onChange={handleChangeDatos} placeholder="Nombre*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-            <input name="apellido" value={datos.apellido} onChange={handleChangeDatos} placeholder="Apellido*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-            <input name="email" value={datos.email} onChange={handleChangeDatos} placeholder="Email*" type="email" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-            <input name="telefono" value={datos.telefono} onChange={handleChangeDatos} placeholder="Teléfono*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-            <input name="dni" value={datos.dni} onChange={handleChangeDatos} placeholder="DNI*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
+            <div className="space-y-1">
+              <input 
+                name="nombre" 
+                value={datos.nombre} 
+                onChange={handleChangeDatos} 
+                onBlur={() => handleFieldBlur('nombre')}
+                placeholder="Nombre*" 
+                className={`w-full border rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white transition-colors ${
+                  errors.nombre && touched.nombre
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                }`}
+                required 
+              />
+              {errors.nombre && touched.nombre && (
+                <p className="text-red-500 text-sm">{errors.nombre}</p>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <input 
+                name="apellido" 
+                value={datos.apellido} 
+                onChange={handleChangeDatos} 
+                onBlur={() => handleFieldBlur('apellido')}
+                placeholder="Apellido*" 
+                className={`w-full border rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white transition-colors ${
+                  errors.apellido && touched.apellido
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                }`}
+                required 
+              />
+              {errors.apellido && touched.apellido && (
+                <p className="text-red-500 text-sm">{errors.apellido}</p>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <input 
+                name="email" 
+                value={datos.email} 
+                onChange={handleChangeDatos} 
+                onBlur={() => handleFieldBlur('email')}
+                placeholder="Email*" 
+                type="email" 
+                className={`w-full border rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white transition-colors ${
+                  errors.email && touched.email
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                }`}
+                required 
+              />
+              {errors.email && touched.email && (
+                <p className="text-red-500 text-sm">{errors.email}</p>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <div className="flex">
+                <select 
+                  className={`border rounded-lg p-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-white transition-colors ${
+                    errors.telefono && touched.telefono
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
+                  value={telefono.prefijo} 
+                  onChange={e => setTelefono(t => ({ ...t, prefijo: e.target.value }))}
+                >
+                  {LATAM_PREFIXES.map(p => <option key={p.code} value={p.code}>{p.country} ({p.code})</option>)}
+                </select>
+                <input 
+                  type="tel"
+                  name="telefono"
+                  className={`flex-1 border rounded-lg p-3 bg-white dark:bg-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${
+                    errors.telefono && touched.telefono
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                  }`}
+                  placeholder="Teléfono (ej: 3513341366)" 
+                  value={telefono.numero} 
+                  onChange={e => handleFieldChange('telefono', e.target.value)}
+                  onBlur={() => handleFieldBlur('telefono')}
+                />
+              </div>
+              {errors.telefono && touched.telefono && (
+                <p className="text-red-500 text-sm">{errors.telefono}</p>
+              )}
+            </div>
+            
+            <div className="space-y-1">
+              <input 
+                name="dni" 
+                value={datos.dni} 
+                onChange={handleChangeDatos} 
+                onBlur={() => handleFieldBlur('dni')}
+                placeholder="DNI (8 números)*" 
+                className={`w-full border rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white transition-colors ${
+                  errors.dni && touched.dni
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                    : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
+                }`}
+                required 
+              />
+              {errors.dni && touched.dni && (
+                <p className="text-red-500 text-sm">{errors.dni}</p>
+              )}
+            </div>
           </div>
         )}
 
