@@ -34,6 +34,9 @@ export default function Navbar() {
     const fetchMarcas = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const productos = await response.json();
         
         const marcasPorCat = {
@@ -63,7 +66,13 @@ export default function Navbar() {
           accesorios: Array.from(marcasPorCat.accesorios).sort()
         });
       } catch (error) {
-        console.error('Error al cargar las marcas: ', error);
+        console.warn('No se pudieron cargar las marcas:', error.message);
+        // Set default empty arrays to prevent errors
+        setMarcasPorCategoria({
+          zapatillas: [],
+          ropa: [],
+          accesorios: []
+        });
       }
     };
 

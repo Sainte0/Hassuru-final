@@ -19,6 +19,22 @@ export default function Document() {
             `,
           }}
         />
+        {/* Fallback for missing insights script */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Prevent 404 errors for missing insights script
+              if (typeof window !== 'undefined') {
+                window.addEventListener('error', function(e) {
+                  if (e.target && e.target.src && e.target.src.includes('insights/script.js')) {
+                    e.preventDefault();
+                    console.warn('Insights script not found, skipping...');
+                  }
+                }, true);
+              }
+            `,
+          }}
+        />
       </Head>
       <body className="antialiased">
         <Main />

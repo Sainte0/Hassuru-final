@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import Carousell from "../../frontend/components/Carousell";
 import BannerCarousel from "../../frontend/components/BannerCarousel";
+import TikTokEmbed from "../../frontend/components/TikTokEmbed";
 import Image from "next/image";
 import Link from "next/link";
 import Newsletter from "../../frontend/components/Newsletter";
@@ -101,23 +102,7 @@ export default function Home() {
       {/* TikToks en horizontal */}
       <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
         {tiktokLinks.slice(0, 3).map((linkObj, index) => (
-          <div key={index} className="w-full aspect-[9/16] bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden flex">
-            <iframe
-              src={linkObj.link}
-              width="100%"
-              height="100%"
-              style={{
-                border: "none",
-                backgroundColor: "transparent",
-                width: '100%',
-                height: '100%',
-                display: 'block',
-              }}
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; accelerometer; gyroscope;"
-              allowFullScreen
-              className="bg-transparent w-full h-full"
-            ></iframe>
-          </div>
+          <TikTokEmbed key={index} link={linkObj.link} index={index} />
         ))}
       </div>
 
