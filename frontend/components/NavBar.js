@@ -63,7 +63,7 @@ export default function Navbar() {
           accesorios: Array.from(marcasPorCat.accesorios).sort()
         });
       } catch (error) {
-        console.error('Error al cargar las marcas:', error);
+        console.error('Error al cargar las marcas: ', error);
       }
     };
 
