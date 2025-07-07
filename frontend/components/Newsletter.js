@@ -44,7 +44,8 @@ export default function Newsletter() {
             />
             <button
               type="submit"
-              className="px-4 py-2 font-semibold text-white transition duration-300 bg-red-500 dark:bg-red-600 rounded-b-lg md:rounded-r-lg md:rounded-b-none hover:bg-red-600 dark:hover:bg-red-700"
+              className="px-4 py-2 font-semibold text-white transition duration-300 bg-red-600 dark:bg-red-700 rounded-b-lg md:rounded-r-lg md:rounded-b-none hover:bg-red-700 dark:hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              aria-label="Suscribirse al newsletter"
             >
               Suscribirse
             </button>

@@ -146,7 +146,12 @@ export default function Navbar() {
 
               {/* Stock Dropdown */}
               <div className="relative group">
-                <button className="py-2 hover:text-gray-300">
+                <button 
+                  className="py-2 hover:text-gray-300"
+                  aria-label="Ver stock por categorías"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
                   Stock
                 </button>
                 <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-gray-800 dark:bg-gray-900 bg-opacity-90 dark:bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
@@ -222,6 +227,9 @@ export default function Navbar() {
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-md hover:bg-gray-700 focus:outline-none z-50"
+                aria-label={isOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+                aria-expanded={isOpen}
+                aria-controls="mobile-menu"
               >
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'transform rotate-45 translate-y-1.5' : ''}`}></span>
                 <span className={`block w-6 h-0.5 bg-white mb-1 ${isOpen ? 'opacity-0' : ''}`}></span>
@@ -233,6 +241,7 @@ export default function Navbar() {
               <button
                 className="ml-4 bg-black dark:bg-gray-700 text-white rounded-full w-10 h-10 flex items-center justify-center relative"
                 onClick={() => setOpen(true)}
+                aria-label={`Ver carrito de compras (${cartCount} items)`}
               >
                 🛒
                 {cartCount > 0 && (
@@ -243,7 +252,7 @@ export default function Navbar() {
           </div>
           {/* Mobile menu content con acordeón de categorías/marcas */}
           {isOpen && (
-            <div className="md:hidden py-4">
+            <div id="mobile-menu" className="md:hidden py-4" role="navigation" aria-label="Menú de navegación móvil">
               <Link href="/" className="block py-2 px-4 hover:bg-gray-700" onClick={() => setIsOpen(false)}>Inicio</Link>
               {/* Categorías con acordeón */}
               {['zapatillas', 'ropa', 'accesorios'].map(cat => (
@@ -251,16 +260,20 @@ export default function Navbar() {
                   <button
                     className="block w-full py-2 px-4 text-left font-bold hover:bg-gray-700"
                     onClick={() => setExpandedCat(expandedCat === cat ? null : cat)}
+                    aria-expanded={expandedCat === cat}
+                    aria-controls={`${cat}-submenu`}
+                    aria-label={`${cat.charAt(0).toUpperCase() + cat.slice(1)} - ${expandedCat === cat ? 'contraer' : 'expandir'} submenú`}
                   >
                     {cat.charAt(0).toUpperCase() + cat.slice(1)}
                   </button>
                   {expandedCat === cat && (
-                    <div className="pl-4">
+                    <div id={`${cat}-submenu`} className="pl-4" role="region" aria-label={`Marcas de ${cat}`}>
                       {marcasPorCategoria[cat].map((marca, index) => (
                         <button
                           key={index}
                           onClick={() => handleMarcaClick(cat, marca)}
                           className="block w-full py-2 px-4 text-sm text-left hover:bg-gray-700"
+                          aria-label={`Ver productos de ${marca}`}
                         >
                           {marca}
                         </button>

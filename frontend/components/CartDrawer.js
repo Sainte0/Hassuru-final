@@ -34,6 +34,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                   type="button"
                   className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors"
                   onClick={onClose}
+                  aria-label="Cerrar carrito de compras"
                 >
                   <span className="sr-only">Cerrar panel</span>
                   <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

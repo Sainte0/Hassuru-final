@@ -325,12 +325,14 @@ export default function Encargos() {
           <button 
             onClick={prevImage}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
+            aria-label="Imagen anterior"
           >
             ‹
           </button>
           <button 
             onClick={nextImage}
             className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
+            aria-label="Siguiente imagen"
           >
             ›
           </button>
@@ -342,6 +344,8 @@ export default function Encargos() {
                 className={`w-4 h-4 rounded-full transition-all ${
                   index === currentImage ? 'bg-blue-600 scale-110' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                 }`}
+                aria-label={`Ir a imagen ${index + 1}`}
+                aria-current={index === currentImage ? 'true' : 'false'}
               />
             ))}
           </div>

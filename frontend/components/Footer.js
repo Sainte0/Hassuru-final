@@ -21,7 +21,13 @@ export default function Footer() {
         </div>
         <div className="text-sm text-center md:text-right">
           <p className='text-gray-900 dark:text-gray-300'>Email: hassuru.ar@gmail.com</p>
-          <button className='text-green-700 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors' onClick={handleSubmit}>Tel: 351 259 5858</button>
+          <button 
+            className='text-green-700 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 transition-colors' 
+            onClick={handleSubmit}
+            aria-label="Contactar por WhatsApp"
+          >
+            Tel: 351 259 5858
+          </button>
         </div>
       </div>
       <div className="text-sm text-center text-gray-700 dark:text-gray-400 pb-4">

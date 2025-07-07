@@ -689,6 +689,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                         ? "bg-gray-600 dark:bg-gray-500 text-white"
                         : "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
                     } hover:bg-green-500 dark:hover:bg-green-600 mb-1`}
+                    aria-label="Filtrar por entrega inmediata"
                   >
                     Entrega inmediata
                   </button>
@@ -700,6 +701,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                         ? "bg-gray-600 dark:bg-gray-500 text-white"
                         : "bg-gray-300 dark:bg-gray-600 text-black dark:text-white"
                     } hover:bg-yellow-500 dark:hover:bg-yellow-600 mb-1`}
+                    aria-label="Filtrar por disponibilidad en 5 días"
                   >
                     Disponible en 5 días
                   </button>

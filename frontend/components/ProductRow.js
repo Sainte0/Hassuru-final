@@ -712,12 +712,14 @@ const ProductRow = ({
             <button
               onClick={() => handleProductUpdate(producto)}
               className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
+              aria-label="Guardar cambios del producto"
             >
               Guardar
             </button>
             <button
               onClick={() => setSelectedProduct(null)}
               className="px-1 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
+              aria-label="Cancelar edición"
             >
               Cancelar
             </button>
@@ -726,6 +728,7 @@ const ProductRow = ({
           <button
             onClick={() => handleProductSelect(producto._id)}
             className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors"
+            aria-label="Editar producto"
           >
             Editar
           </button>
@@ -733,6 +736,7 @@ const ProductRow = ({
         <button
           onClick={handleProductDelete}
           className="px-2 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
+          aria-label="Eliminar producto"
         >
           Eliminar
         </button>

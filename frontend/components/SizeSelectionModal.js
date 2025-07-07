@@ -46,6 +46,7 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, 
                         <button
                             onClick={onClose}
                             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                            aria-label="Cerrar modal"
                         >
                             ✕
                         </button>
@@ -82,12 +83,14 @@ const SizeSelectionModal = ({ isOpen, onClose, selectedSizes, setSelectedSizes, 
                         <button 
                             onClick={onClose} 
                             className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200"
+                            aria-label="Cancelar selección"
                         >
                             Cancelar
                         </button>
                         <button 
                             onClick={handleConfirm} 
                             className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition-colors duration-200"
+                            aria-label="Confirmar selección"
                         >
                             Confirmar
                         </button>

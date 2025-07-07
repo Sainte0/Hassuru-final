@@ -120,7 +120,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
                 </div>
-                <h3 className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</h3>
+                <div className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</div>
                 <div className="flex flex-col mt-2">
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
@@ -165,7 +165,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
                 </div>
-                <h3 className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</h3>
+                <div className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</div>
                 <div className="flex flex-col mt-2">
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">

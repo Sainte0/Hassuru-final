@@ -39,14 +39,14 @@ const TikTokEmbed = ({ link, index }) => {
     return (
       <div className="w-full aspect-[9/16] bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
         <div className="text-center p-4">
-          <div className="text-gray-500 dark:text-gray-400 text-sm mb-2">
+          <div className="text-gray-700 dark:text-gray-200 text-sm mb-2">
             No se pudo cargar el contenido
           </div>
           <a 
             href={link} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600 text-xs underline"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-xs underline"
           >
             Ver en TikTok
           </a>
@@ -62,7 +62,7 @@ const TikTokEmbed = ({ link, index }) => {
     >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700 z-10">
-          <div className="text-gray-500 dark:text-gray-400 text-sm">Cargando...</div>
+          <div className="text-gray-700 dark:text-gray-200 text-sm">Cargando...</div>
         </div>
       )}
       

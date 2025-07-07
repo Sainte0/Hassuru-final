@@ -216,6 +216,7 @@ const BannersAdmin = () => {
                   onClick={() => handleToggleActive(banner)}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                   title={banner.active ? 'Desactivar' : 'Activar'}
+                  aria-label={banner.active ? 'Desactivar banner' : 'Activar banner'}
                 >
                   {banner.active ? (
                     <EyeSlashIcon className="w-5 h-5" />
@@ -227,6 +228,7 @@ const BannersAdmin = () => {
                   onClick={() => handleEdit(banner)}
                   className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
                   title="Editar"
+                  aria-label="Editar banner"
                 >
                   <PencilIcon className="w-5 h-5" />
                 </button>
@@ -234,6 +236,7 @@ const BannersAdmin = () => {
                   onClick={() => handleDelete(banner._id)}
                   className="p-2 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-colors"
                   title="Eliminar"
+                  aria-label="Eliminar banner"
                 >
                   <TrashIcon className="w-5 h-5" />
                 </button>
@@ -258,6 +261,7 @@ const BannersAdmin = () => {
                     resetForm();
                   }}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  aria-label="Cerrar modal"
                 >
                   ✕
                 </button>

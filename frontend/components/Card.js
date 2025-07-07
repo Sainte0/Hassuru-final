@@ -127,10 +127,10 @@ export default function Card({ currentProducts }) {
                   )}
                 </div>
                 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{product.nombre}</h3>
-                <h5 className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">{product.nombre}</div>
+                <div className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                   {product.description}
-                </h5>
+                </div>
                 <div className="flex flex-col">
                   <p className="text-lg font-bold text-gray-800 dark:text-white">${product.precio} USD</p>
                   <p className="text-lg font-bold text-gray-800 dark:text-white">
