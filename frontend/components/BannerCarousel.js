@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const BannerCarousel = ({ banners }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,17 +51,21 @@ const BannerCarousel = ({ banners }) => {
           >
             {banner.link ? (
               <a href={banner.link} target="_blank" rel="noopener noreferrer">
-                <img
+                <Image
                   src={banner.imageUrl}
                   alt={banner.title}
+                  fill
                   className="w-full h-full object-cover"
+                  priority={index === 0}
                 />
               </a>
             ) : (
-              <img
+              <Image
                 src={banner.imageUrl}
                 alt={banner.title}
+                fill
                 className="w-full h-full object-cover"
+                priority={index === 0}
               />
             )}
           </div>

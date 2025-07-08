@@ -73,23 +73,25 @@ export default function Home() {
         <div className="container p-4 mx-auto">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
-              <img
+              <Image
                 src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482098933-Sneackers-min.png"
                 alt="Catalogo"
                 width={600}
                 height={500}
                 style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
                 className="dark:bg-gray-800"
+                priority
               />
             </Link>
             <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
-              <img
+              <Image
                 src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482100110-Ropa-min.png"
                 alt="Encargo"
                 width={620}
                 height={500}
                 style={{ objectFit: 'cover', width: '100%', height: '500px', background: '#f3f3f3', borderRadius: '12px' }}
                 className="dark:bg-gray-800"
+                priority
               />
             </Link>
           </div>

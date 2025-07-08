@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function Carousell({ title, products, dolarBlue }) {
@@ -101,7 +102,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                       <div className="w-full h-full bg-gray-200 rounded-lg"></div>
                     </div>
                   )}
-                  <img
+                  <Image
                     width={300}
                     height={300}
                     src={getImageUrl(product)}
@@ -146,7 +147,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                       <div className="w-full h-full bg-gray-200 rounded-lg"></div>
                     </div>
                   )}
-                  <img
+                  <Image
                     width={300}
                     height={300}
                     src={getImageUrl(product)}
