@@ -4,6 +4,7 @@ import Card from "./Card";
 import Filter from "./Filtro";
 import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
+import { useGA4 } from '../hooks/useGA4';
 
 export default function Catalogo() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Catalogo() {
   const [productsPerPage] = useState(20);
   const [currentFilters, setCurrentFilters] = useState({});
   const [pagination, setPagination] = useState(null);
+  const { viewItemList } = useGA4();
   
   // Cache para evitar llamadas repetitivas
   const cacheRef = useRef(new Map());
@@ -161,6 +163,14 @@ export default function Catalogo() {
       
       setProducts(data.productos);
       setFilteredProducts(data.productos);
+      
+      // Evento GA4: Ver lista de productos
+      if (data.productos && data.productos.length > 0) {
+        const listName = filters.q ? `Búsqueda: ${filters.q}` : 
+                        filters.categoria ? `Categoría: ${filters.categoria}` :
+                        filters.marca ? `Marca: ${filters.marca}` : 'Catálogo general';
+        viewItemList(data.productos, listName);
+      }
       
       // Actualizar paginación
       if (data.pagination) {

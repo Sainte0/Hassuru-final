@@ -3,6 +3,7 @@ import { useCartStore } from '../store/cartStore';
 import { useRouter } from 'next/router';
 import useStore from '../store/store';
 import SEOHead from '../components/SEOHead';
+import { useGA4 } from '../hooks/useGA4';
 
 const pasos = ['Datos personales', 'Envío o retiro', 'Método de pago', 'Confirmar pedido'];
 
@@ -47,6 +48,7 @@ export default function Checkout() {
   const router = useRouter();
   const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
   const { dolarBlue, fetchDolarBlue } = useStore();
+  const { beginCheckout, purchase } = useGA4();
   
   // Estados para validaciones
   const [errors, setErrors] = useState({});
@@ -62,6 +64,14 @@ export default function Checkout() {
     
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
+
+  // Evento GA4: Iniciar checkout
+  useEffect(() => {
+    if (cart.length > 0) {
+      const totalUSD = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+      beginCheckout(cart, totalUSD);
+    }
+  }, [cart, beginCheckout]);
 
   // Función de validación
   const validateField = (name, value, envioTipo, envioObj) => {
@@ -303,6 +313,17 @@ export default function Checkout() {
         })
       });
       if (!res.ok) throw new Error('Error al crear el pedido');
+      
+      // Evento GA4: Completar compra
+      const orderData = {
+        transactionId: `order_${Date.now()}`,
+        value: totalUSD,
+        currency: 'USD',
+        tax: 0,
+        shipping: 0
+      };
+      purchase(orderData, productosToSend, totalUSD);
+      
       localStorage.setItem('lastCart', JSON.stringify(cart));
       clearCart();
       router.push('/pedido-exitoso');

@@ -5,6 +5,7 @@ import ProductList from "../../components/ProductList";
 import TiktokLinksAdmin from "../../components/TiktokLinksAdmin";
 import BannersAdmin from "../../components/BannersAdmin";
 import AdminLayout from "../../components/AdminLayout";
+import GA4Metrics from "../../components/GA4Metrics";
 import { BounceLoader } from 'react-spinners';
 import useStore from "../../store/store";
 
@@ -143,6 +144,7 @@ export default function AdminDashboard() {
           </p>
         </div>
 
+        <GA4Metrics />
         <TiktokLinksAdmin />
         <BannersAdmin />
         

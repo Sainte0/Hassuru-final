@@ -2,10 +2,12 @@ import React from 'react';
 import { useCartStore } from '../store/cartStore';
 import useStore from '../store/store';
 import Link from 'next/link';
+import { useGA4 } from '../hooks/useGA4';
 
 export default function CartDrawer({ open, onClose, cart, onProceed }) {
   const { removeFromCart, addToCart } = useCartStore();
   const { dolarBlue } = useStore();
+  const { removeFromCart: ga4RemoveFromCart } = useGA4();
 
   // Calcular totales
   const totalUSD = cart.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
@@ -89,7 +91,11 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                                 </svg>
                               </button>
                               <button
-                                onClick={() => removeFromCart(item.productoId, item.talle)}
+                                onClick={() => {
+                                  removeFromCart(item.productoId, item.talle);
+                                  // Evento GA4: Quitar del carrito
+                                  ga4RemoveFromCart(item);
+                                }}
                                 className="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                 title="Eliminar"
                               >

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { useCartStore } from '../store/cartStore';
+import { useGA4 } from '../hooks/useGA4';
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
@@ -14,6 +15,7 @@ export default function Detail({ product }) {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
   const addToCart = useCartStore(state => state.addToCart);
+  const { viewItem, addToCart: ga4AddToCart } = useGA4();
 
   useEffect(() => {
     fetchDolarBlue();
@@ -25,6 +27,19 @@ export default function Detail({ product }) {
     
     return () => clearInterval(interval);
   }, [fetchDolarBlue]);
+
+  // Evento GA4: Ver producto
+  useEffect(() => {
+    if (product) {
+      viewItem({
+        productoId: product._id,
+        nombre: product.nombre,
+        precio: product.precio,
+        categoria: product.categoria,
+        marca: product.marca
+      });
+    }
+  }, [product, viewItem]);
 
   useEffect(() => {
     const fetchRelatedProducts = async () => {
@@ -67,7 +82,7 @@ export default function Detail({ product }) {
 
   const handleCompraClick = () => {
     if (selectedTalla) {
-      addToCart({
+      const cartItem = {
         productoId: product._id,
         nombre: product.nombre,
         cantidad: 1,
@@ -75,14 +90,22 @@ export default function Detail({ product }) {
         precio: selectedTalla.precioTalla,
         precioARS: (selectedTalla.precioTalla * dolarBlue),
         talle: selectedTalla.talla,
-        encargo: isEncargo
-      });
+        encargo: isEncargo,
+        categoria: product.categoria,
+        marca: product.marca
+      };
+      
+      addToCart(cartItem);
+      
+      // Evento GA4: Agregar al carrito
+      ga4AddToCart(cartItem);
+      
       toast.success('Producto añadido al carrito');
       return;
     }
     if (customTalla) {
       // Si es encargo personalizado, añadir al carrito como encargo
-      addToCart({
+      const cartItem = {
         productoId: product._id,
         nombre: product.nombre,
         cantidad: 1,
@@ -90,8 +113,16 @@ export default function Detail({ product }) {
         precio: product.precio,
         precioARS: (product.precio * dolarBlue),
         talle: customTalla,
-        encargo: true
-      });
+        encargo: true,
+        categoria: product.categoria,
+        marca: product.marca
+      };
+      
+      addToCart(cartItem);
+      
+      // Evento GA4: Agregar al carrito
+      ga4AddToCart(cartItem);
+      
       toast.success('Encargo añadido al carrito');
       return;
     }

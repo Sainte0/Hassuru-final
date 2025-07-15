@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { useGA4 } from '../hooks/useGA4';
 
 export default function SearchBar() {
   const [query, setQuery] = useState("");
@@ -10,6 +11,7 @@ export default function SearchBar() {
   const [showResults, setShowResults] = useState(false);
   const router = useRouter();
   const searchRef = useRef(null);
+  const { search } = useGA4();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -51,6 +53,9 @@ export default function SearchBar() {
 
   const handleSearch = () => {
     if (query.trim()) {
+      // Evento GA4: Buscar
+      search(query.trim());
+      
       router.push({
         pathname: '/catalogo',
         query: { q: query.trim() }
