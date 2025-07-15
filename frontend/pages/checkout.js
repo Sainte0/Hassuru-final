@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useStore from '../store/store';
 import SEOHead from '../components/SEOHead';
 
-const pasos = ['Datos personales', 'Envío o retiro', 'Pago'];
+const pasos = ['Datos personales', 'Envío o retiro', 'Método de pago', 'Confirmar pedido'];
 
 const LATAM_PREFIXES = [
   { code: '+54', country: 'Argentina' },
@@ -43,6 +43,7 @@ export default function Checkout() {
   const [pago, setPago] = useState('usdt');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const router = useRouter();
   const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
   const { dolarBlue, fetchDolarBlue } = useStore();
@@ -222,12 +223,24 @@ export default function Checkout() {
         return;
       }
     }
+    if (step === 2) {
+      // En el paso de método de pago, solo avanzar si se seleccionó un método
+      if (!pago) {
+        setError('Por favor selecciona un método de pago');
+        return;
+      }
+    }
     setStep(s => s + 1);
   };
 
   const handleBack = () => setStep(s => s - 1);
 
+  const handleConfirmOrder = () => {
+    setShowConfirmModal(true);
+  };
+
   const handleSubmit = async () => {
+    setShowConfirmModal(false);
     setLoading(true);
     setError('');
     if (!validateForm()) {
@@ -548,6 +561,19 @@ export default function Checkout() {
         {step === 2 && (
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Método de pago</h3>
+            
+            {/* Advertencia sobre cuotas */}
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <div className="flex items-center">
+                <svg className="h-5 w-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <p className="ml-2 text-sm text-yellow-700 dark:text-yellow-300 font-medium">
+                  <strong>Importante:</strong> No se ofrecen cuotas. Todos los pagos son en una sola cuota.
+                </p>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 gap-4">
               <div className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${pago === 'usdt' ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}`} onClick={() => setPago('usdt')}>
                 <div className="flex items-center justify-between">
@@ -567,6 +593,7 @@ export default function Checkout() {
                     <p>• Aceptamos USDT en las redes TRC20 y BEP20</p>
                     <p>• También aceptamos otras criptomonedas principales</p>
                     <p>• El precio se fija al momento del pago</p>
+                    <p>• <strong>Pago en una sola cuota</strong></p>
                   </div>
                 )}
               </div>
@@ -589,6 +616,7 @@ export default function Checkout() {
                     <p>• Transferencia en USD desde cuentas internacionales</p>
                     <p>• Transferencia en pesos argentinos</p>
                     <p>• Zelle y Cashapp disponibles</p>
+                    <p>• <strong>Pago en una sola cuota</strong></p>
                   </div>
                 )}
               </div>
@@ -611,6 +639,7 @@ export default function Checkout() {
                     <p>• Disponible en Córdoba Capital</p>
                     <p>• Disponible en Buenos Aires</p>
                     <p>• Coordinamos punto de encuentro seguro</p>
+                    <p>• <strong>Pago en una sola cuota</strong></p>
                   </div>
                 )}
               </div>
@@ -631,26 +660,123 @@ export default function Checkout() {
                   <span className="text-green-500 mr-2">✓</span>
                   <span>Envíos gratis a todo el país</span>
                 </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-2">⚠</span>
+                  <span><strong>No se ofrecen cuotas</strong> - Todos los pagos son en una sola cuota</span>
+                </li>
               </ul>
             </div>
           </div>
         )}
+
+        {step === 3 && (
+          <div className="space-y-6">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Confirmar pedido</h3>
+            
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <div className="flex items-center">
+                <svg className="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="ml-2 text-sm text-blue-700 dark:text-blue-300">
+                  <strong>Revisa tu pedido:</strong> Una vez confirmado, te contactaremos para coordinar el pago y la entrega.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Datos personales</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {datos.nombre} {datos.apellido}<br />
+                  {datos.email}<br />
+                  DNI: {datos.dni}<br />
+                  Teléfono: {telefono.prefijo} {telefono.numero}
+                </p>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Envío</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {envio.tipo === 'envio' 
+                    ? `Envío a domicilio: ${envio.calle} ${envio.numero}${envio.piso ? ', ' + envio.piso : ''}, ${envio.ciudad}, ${envio.provincia}, ${envio.codigoPostal}, ${envio.pais}`
+                    : 'Retiro en persona'
+                  }
+                </p>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Método de pago</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {pago === 'usdt' && 'USDT / Crypto'}
+                  {pago === 'transferencia' && 'Transferencia Bancaria'}
+                  {pago === 'efectivo' && 'Efectivo'}
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  <strong>Pago en una sola cuota</strong>
+                </p>
+              </div>
+
+              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Total a pagar</h4>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">
+                  ${totalUSD.toFixed(2)} USD
+                </p>
+                {dolarBlue && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    ${totalARS.toFixed(2)} ARS
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {error && <div className="text-red-500 dark:text-red-400 mt-2">{error}</div>}
         <div className="flex justify-between mt-6">
           {step > 0 && <button className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" onClick={handleBack}>Atrás</button>}
-          {step < 2 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
-          {step === 2 && pago && (
+          {step < 3 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
+          {step === 3 && (
             <button 
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors" 
-              onClick={handleSubmit} 
+              onClick={handleConfirmOrder} 
               disabled={loading}
             >
-              {loading ? 'Enviando...' : 'Realizar pedido'}
+              Confirmar y realizar pedido
             </button>
           )}
         </div>
       </div>
     </div>
+
+    {/* Modal de confirmación */}
+    {showConfirmModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+            ¿Confirmar pedido?
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            Al confirmar, tu pedido será enviado y te contactaremos para coordinar el pago y la entrega.
+          </p>
+          <div className="flex space-x-3">
+            <button 
+              className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
+              onClick={() => setShowConfirmModal(false)}
+            >
+              Cancelar
+            </button>
+            <button 
+              className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? 'Enviando...' : 'Confirmar'}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </>
   );
 } 
