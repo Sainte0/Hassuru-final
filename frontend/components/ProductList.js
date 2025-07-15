@@ -255,7 +255,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                   </th>
                   <th className="px-1 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-8">#</th>
                   <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-1/6">Nombre</th>
-                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-1/6">Descripción</th>
+                  <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-1/6 max-w-0">Descripción</th>
                   <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-16">Marca</th>
                   <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-20">Cat.</th>
                   <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-24">Precios</th>
