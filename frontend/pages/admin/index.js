@@ -144,7 +144,6 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <GA4Metrics />
         <TiktokLinksAdmin />
         <BannersAdmin />
         
@@ -168,6 +167,8 @@ export default function AdminDashboard() {
             />
           </div>
         )}
+
+        <GA4Metrics />
       </div>
     </AdminLayout>
   );
