@@ -60,6 +60,23 @@ button[aria-label*="Ver carrito de compras"] {
   flex-shrink: 0;
 }
 
+/* Contenedor del navbar para evitar overflow */
+nav {
+  overflow: visible;
+  position: relative;
+}
+
+/* Asegurar que el layout principal no tenga overflow */
+.flex.flex-col.min-h-screen {
+  overflow: hidden;
+}
+
+/* Permitir scroll solo en el contenido principal */
+main.flex-1 {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 /* Scrollbar personalizada */
 ::-webkit-scrollbar {
   width: 8px;

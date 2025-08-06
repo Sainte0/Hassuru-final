@@ -157,7 +157,7 @@ export default function Detail({ product }) {
   };
 
   return (
-    <>
+    <div className="flex-1 overflow-y-auto">
       <div className="container py-10 mx-auto bg-white dark:bg-gray-900 transition-colors duration-300">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
@@ -376,8 +376,8 @@ export default function Detail({ product }) {
                   );
                 })}
           </div>
-        </div>
-      )}
-    </>
-  );
-}
+                 </div>
+       )}
+     </div>
+   );
+ }
