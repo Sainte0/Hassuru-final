@@ -24,18 +24,40 @@ html {
 
 /* Footer siempre al final */
 footer {
-  margin-top: 0;
+  margin-top: auto;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
 }
 
 /* Contenedor principal sin overflow */
 .flex.flex-col.min-h-screen {
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Asegurar que el main ocupe todo el espacio disponible */
+main.flex-1 {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 /* Main sin márgenes extra */
 main.flex-1 {
   margin: 0;
   padding: 0;
+}
+
+/* Botón del carrito en navbar */
+button[aria-label*="Ver carrito de compras"] {
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
 }
 
 /* Scrollbar personalizada */
