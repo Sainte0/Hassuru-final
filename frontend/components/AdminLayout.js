@@ -32,7 +32,7 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
               {/* Mobile menu button */}
               <button
                 onClick={() => setSidebarOpen(!isSidebarOpen)}
-                className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
               >
                 {isSidebarOpen ? <FaTimes className="h-6 w-6" /> : <FaBars className="h-6 w-6" />}
               </button>
@@ -58,7 +58,7 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
       <div className="flex">
         {/* Sidebar */}
         <aside className={`
-          fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-dark-card shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
+          fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-dark-card shadow-lg transform transition-transform duration-300 ease-in-out
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           {/* Overlay for mobile */}
@@ -109,7 +109,7 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full lg:w-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full">
           <div className="w-full">
             {children}
           </div>
