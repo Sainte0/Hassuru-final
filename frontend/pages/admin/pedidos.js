@@ -419,11 +419,11 @@ export default function PedidosAdmin() {
                               <div className="text-gray-600 dark:text-gray-400 truncate">{order.datosPersonales?.email || 'Sin email'}</div>
                               <div className="text-gray-600 dark:text-gray-400 truncate">Tel: {order.datosPersonales?.telefono || 'Sin teléfono'}</div>
                               <div className="text-gray-600 dark:text-gray-400 truncate">DNI: {order.datosPersonales?.dni || 'Sin DNI'}</div>
-                              <div className="text-gray-600 dark:text-gray-400 truncate">Domicilio (calle y número):</> {order.envio?.direccion?.split(',')[0] || ''}</div>
-                              <div className="text-gray-600 dark:text-gray-400 truncate">Casa o Departamento:</> {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-gray-400 truncate">Localidad:</> {order.envio?.direccion?.split(',')[2]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-gray-400 truncate">Código postal:</> {order.envio?.direccion?.split(',')[3]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-gray-400 truncate">Provincia:</> {order.envio?.direccion?.split(',')[4]?.trim() || ''}</div>                         
+                              <div className="text-gray-600 dark:text-gray-400 truncate">Domicilio: {order.envio?.direccion?.split(',')[0] || ''}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">Casa/Depto: {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">Localidad: {order.envio?.direccion?.split(',')[2]?.trim() || ''}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">CP: {order.envio?.direccion?.split(',')[3]?.trim() || ''}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">Provincia: {order.envio?.direccion?.split(',')[4]?.trim() || ''}</div>
                             </div>
                           </div>
                         </td>
