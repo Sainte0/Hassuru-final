@@ -69,8 +69,19 @@ const AdminLayout = ({ children, title = 'Admin Panel' }) => {
             />
           )}
           
-          <nav className="mt-8 h-full overflow-y-auto">
-            <div className="px-4 space-y-2">
+          {/* Sidebar Header with close button */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-dark-border">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-dark-text">Menú</h2>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+            >
+              <FaTimes className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <nav className="h-full overflow-y-auto">
+            <div className="px-4 py-4 space-y-2">
               {menuItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = router.pathname === item.href;
