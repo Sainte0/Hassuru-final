@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import AdminLayout from '../../components/AdminLayout';
-import { FaRegCopy } from 'react-icons/fa';
+import { FaRegCopy, FaFilter, FaTimes } from 'react-icons/fa';
 
 const estados = ['pendiente', 'pagado', 'enviado', 'recibido', 'cancelado'];
 const pagos = ['usdt', 'transferencia', 'efectivo'];
@@ -14,6 +14,7 @@ export default function PedidosAdmin() {
   const [error, setError] = useState('');
   const [changing, setChanging] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showFilters, setShowFilters] = useState(false);
   const ordersPerPage = 10;
 
   // Filtros
@@ -138,37 +139,111 @@ export default function PedidosAdmin() {
 
   // Panel de filtros
   const renderFiltros = () => (
-    <div className="mb-6 flex flex-wrap gap-4 items-end bg-gray-50 dark:bg-dark-bg p-4 rounded-lg border border-gray-200 dark:border-dark-border">
-      <div>
-        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Estado</label>
-        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.estado} onChange={e => setFiltros(f => ({ ...f, estado: e.target.value }))}>
-          <option value="">Todos</option>
-          {estados.map(e => <option key={e} value={e}>{e}</option>)}
-        </select>
+    <div className="mb-6 bg-gray-50 dark:bg-dark-bg p-4 rounded-lg border border-gray-200 dark:border-dark-border">
+      {/* Mobile filter toggle */}
+      <div className="lg:hidden flex items-center justify-between mb-4">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium"
+        >
+          <FaFilter className="mr-2" />
+          {showFilters ? 'Ocultar filtros' : 'Mostrar filtros'}
+        </button>
+        {Object.values(filtros).some(f => f !== '') && (
+          <button
+            onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}
+            className="flex items-center px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md text-sm font-medium"
+          >
+            <FaTimes className="mr-2" />
+            Limpiar
+          </button>
+        )}
       </div>
-      <div>
-        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Nombre/Email</label>
-        <input className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.search} onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} placeholder="Buscar..." />
+
+      {/* Desktop filters always visible, mobile filters conditional */}
+      <div className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div>
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Estado</label>
+            <select 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.estado} 
+              onChange={e => setFiltros(f => ({ ...f, estado: e.target.value }))}
+            >
+              <option value="">Todos</option>
+              {estados.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Nombre/Email</label>
+            <input 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.search} 
+              onChange={e => setFiltros(f => ({ ...f, search: e.target.value }))} 
+              placeholder="Buscar..." 
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Pago</label>
+            <select 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.pago} 
+              onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}
+            >
+              <option value="">Todos</option>
+              {pagos.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Envío</label>
+            <select 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.envio} 
+              onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))}
+            >
+              <option value="">Todos</option>
+              {tiposEnvio.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">DNI</label>
+            <input 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.dni} 
+              onChange={e => setFiltros(f => ({ ...f, dni: e.target.value.replace(/\D/g, '').slice(0, 12) }))} 
+              placeholder="DNI..." 
+            />
+          </div>
+          <div className="sm:col-span-2 lg:col-span-1">
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Fecha desde</label>
+            <input 
+              type="date" 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.fechaDesde} 
+              onChange={e => setFiltros(f => ({ ...f, fechaDesde: e.target.value }))} 
+            />
+          </div>
+          <div className="sm:col-span-2 lg:col-span-1">
+            <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Fecha hasta</label>
+            <input 
+              type="date" 
+              className="w-full border rounded p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm" 
+              value={filtros.fechaHasta} 
+              onChange={e => setFiltros(f => ({ ...f, fechaHasta: e.target.value }))} 
+            />
+          </div>
+        </div>
+        
+        {/* Desktop clear button */}
+        <div className="hidden lg:flex justify-end mt-4">
+          <button 
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white text-sm font-medium" 
+            onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}
+          >
+            Limpiar filtros
+          </button>
+        </div>
       </div>
-      <div>
-        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Pago</label>
-        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.pago} onChange={e => setFiltros(f => ({ ...f, pago: e.target.value }))}>
-          <option value="">Todos</option>
-          {pagos.map(p => <option key={p} value={p}>{p}</option>)}
-        </select>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">Envío</label>
-        <select className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.envio} onChange={e => setFiltros(f => ({ ...f, envio: e.target.value }))}>
-          <option value="">Todos</option>
-          {tiposEnvio.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold mb-1 text-gray-700 dark:text-gray-200">DNI</label>
-        <input className="border rounded p-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white" value={filtros.dni} onChange={e => setFiltros(f => ({ ...f, dni: e.target.value.replace(/\D/g, '').slice(0, 12) }))} placeholder="DNI..." />
-      </div>
-      <button className="ml-auto px-3 py-1 bg-gray-200 dark:bg-dark-card rounded hover:bg-gray-300 dark:hover:bg-dark-border text-gray-900 dark:text-white" onClick={() => setFiltros({ estado: '', search: '', fechaDesde: '', fechaHasta: '', pago: '', envio: '', dni: '' })}>Limpiar</button>
     </div>
   );
 
@@ -192,18 +267,125 @@ export default function PedidosAdmin() {
     <AdminLayout title="Pedidos">
       <div className="space-y-6">
         {renderFiltros()}
-        <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-6">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-dark-text">Gestión de Pedidos</h1>
+        
+        <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-dark-text">Gestión de Pedidos</h1>
             <div className="text-sm text-gray-600 dark:text-dark-text-secondary">
               Mostrando {indexOfFirstOrder + 1}-{Math.min(indexOfLastOrder, filteredOrders.length)} de {filteredOrders.length} pedidos
             </div>
           </div>
+          
           {filteredOrders.length === 0 ? (
-            <div className="text-gray-600 dark:text-dark-text-secondary">No hay pedidos.</div>
+            <div className="text-gray-600 dark:text-dark-text-secondary text-center py-8">No hay pedidos.</div>
           ) : (
             <>
-              <div className="overflow-x-auto">
+              {/* Mobile card view */}
+              <div className="lg:hidden space-y-4">
+                {currentOrders.map(order => (
+                  <div key={order._id} className="border border-gray-200 dark:border-dark-border rounded-lg p-4 bg-white dark:bg-dark-card">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
+                          {order.datosPersonales?.nombre || 'Sin nombre'}
+                        </h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {order.datosPersonales?.email || 'Sin email'}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                          order.estado === 'pendiente' ? 'bg-yellow-200 text-yellow-800' : 
+                          order.estado === 'pagado' ? 'bg-green-200 text-green-800' : 
+                          order.estado === 'enviado' ? 'bg-blue-200 text-blue-800' : 
+                          order.estado === 'recibido' ? 'bg-gray-200 text-gray-800' : 
+                          'bg-red-200 text-red-800'
+                        }`}>
+                          {order.estado}
+                        </span>
+                        <button
+                          className="text-xs p-1 text-gray-500 hover:text-blue-600"
+                          title="Copiar info"
+                          onClick={() => {
+                            const info = `Nombre y apellido: ${order.datosPersonales?.nombre || ''}\nDomicilio (calle y número): ${order.envio?.direccion?.split(',')[0] || ''}\nCasa o Departamento: ${order.envio?.direccion?.split(',')[1]?.trim() || ''}\nLocalidad: ${order.envio?.direccion?.split(',')[2]?.trim() || ''}\nCódigo postal: ${order.envio?.direccion?.split(',')[3]?.trim() || ''}\nProvincia: ${order.envio?.direccion?.split(',')[4]?.trim() || ''}\nTeléfono: ${order.datosPersonales?.telefono || ''}\nDNI: ${order.datosPersonales?.dni || ''}\nMail: ${order.datosPersonales?.email || ''}`;
+                            navigator.clipboard.writeText(info);
+                          }}
+                        >
+                          <FaRegCopy size={12} />
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2 mb-3">
+                      <div className="text-xs">
+                        <span className="font-semibold">Pago:</span> {order.pago}
+                      </div>
+                      <div className="text-xs">
+                        <span className="font-semibold">Envío:</span> {order.envio?.tipo}
+                      </div>
+                      <div className="text-xs">
+                        <span className="font-semibold">Fecha:</span> {new Date(order.fechaCreacion).toLocaleDateString('es-AR')}
+                      </div>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <h4 className="text-xs font-semibold mb-2">Productos:</h4>
+                      <div className="space-y-2">
+                        {order.productos.map(p => (
+                          <div key={p.productoId + (p.talle || '')} className="flex items-start gap-2 text-xs">
+                            {p.imagen ? (
+                              <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded" />
+                            ) : (
+                              <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+                                <span className="text-xs">📦</span>
+                              </div>
+                            )}
+                            <div className="flex-1">
+                              <div className="font-medium">{p.nombre}</div>
+                              {p.talle && <div>Talle: {p.talle}</div>}
+                              <div>Cantidad: {p.cantidad} - ${p.precio} USD</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <select
+                        value={order.estado}
+                        onChange={e => cambiarEstado(order._id, e.target.value)}
+                        className="w-full border border-gray-300 dark:border-dark-border rounded px-2 py-1 bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text text-xs"
+                        disabled={changing === order._id}
+                      >
+                        {estados.map(e => <option key={e} value={e}>{e}</option>)}
+                      </select>
+                      
+                      {order.estado === 'enviado' && (
+                        <div className="space-y-2">
+                          <input
+                            type="text"
+                            className="w-full border rounded px-2 py-1 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                            placeholder="Link o número de trackeo"
+                            value={trackingInputs[order._id] !== undefined ? trackingInputs[order._id] : (order.tracking || '')}
+                            onChange={e => setTrackingInputs(inputs => ({ ...inputs, [order._id]: e.target.value }))}
+                            disabled={savingTracking === order._id}
+                          />
+                          <button
+                            className="w-full px-2 py-1 bg-blue-600 text-white rounded text-xs disabled:opacity-50"
+                            onClick={() => guardarTracking(order._id)}
+                            disabled={savingTracking === order._id || !trackingInputs[order._id]}
+                          >
+                            {savingTracking === order._id ? 'Guardando...' : 'Guardar tracking'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop table view */}
+              <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full border border-gray-200 dark:border-dark-border text-sm bg-white dark:bg-dark-card shadow rounded">
                   <thead className="bg-gray-50 dark:bg-dark-bg">
                     <tr>
@@ -349,7 +531,7 @@ export default function PedidosAdmin() {
 
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center space-x-2 mt-6">
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-2 sm:space-y-0 sm:space-x-2 mt-6">
                   <button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
@@ -358,19 +540,21 @@ export default function PedidosAdmin() {
                     Anterior
                   </button>
                   
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
-                    <button
-                      key={pageNumber}
-                      onClick={() => goToPage(pageNumber)}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        currentPage === pageNumber
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-dark-card dark:border-dark-border dark:text-dark-text-secondary dark:hover:bg-dark-bg'
-                      }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  ))}
+                  <div className="flex flex-wrap justify-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNumber => (
+                      <button
+                        key={pageNumber}
+                        onClick={() => goToPage(pageNumber)}
+                        className={`px-3 py-2 text-sm font-medium rounded-md ${
+                          currentPage === pageNumber
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-dark-card dark:border-dark-border dark:text-dark-text-secondary dark:hover:bg-dark-bg'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    ))}
+                  </div>
                   
                   <button
                     onClick={goToNextPage}
