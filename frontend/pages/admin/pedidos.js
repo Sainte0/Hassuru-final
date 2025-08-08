@@ -385,23 +385,23 @@ export default function PedidosAdmin() {
               </div>
 
               {/* Desktop table view */}
-              <div className="hidden lg:block overflow-x-auto">
+              <div className="hidden lg:block">
                 <table className="w-full border border-gray-200 dark:border-dark-border text-sm bg-white dark:bg-dark-card shadow rounded">
                   <thead className="bg-gray-50 dark:bg-dark-bg">
                     <tr>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Cliente</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Productos</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Pago</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Envío</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Fecha</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Estado</th>
-                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold">Acción</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[15%]">Cliente</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[25%]">Productos</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[8%]">Pago</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[12%]">Envío</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[10%]">Fecha</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[8%]">Estado</th>
+                      <th className="p-3 text-left text-gray-900 dark:text-dark-text font-semibold w-[12%]">Acción</th>
                     </tr>
                   </thead>
                   <tbody>
                     {currentOrders.map(order => (
                       <tr key={order._id} className="border-t border-gray-200 dark:border-dark-border hover:bg-gray-50 dark:hover:bg-dark-bg">
-                        <td className="p-3 align-top min-w-[140px]">
+                        <td className="p-3 align-top">
                           <div className="relative group">
                             <button
                               className="absolute right-0 top-0 text-xs p-1 text-gray-500 hover:text-blue-600 focus:outline-none"
@@ -414,59 +414,55 @@ export default function PedidosAdmin() {
                             >
                               <FaRegCopy size={14} />
                             </button>
-                            <div className="space-y-0.5 pr-5 text-gray-900 dark:text-white">
-                              <div><span className="font-semibold">Nombre y apellido:</span> {order.datosPersonales?.nombre || ''}</div>
-                              <div><span className="font-semibold">Domicilio (calle y número):</span> {order.envio?.direccion?.split(',')[0] || ''}</div>
-                              <div><span className="font-semibold">Casa o Departamento:</span> {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
-                              <div><span className="font-semibold">Localidad:</span> {order.envio?.direccion?.split(',')[2]?.trim() || ''}</div>
-                              <div><span className="font-semibold">Código postal:</span> {order.envio?.direccion?.split(',')[3]?.trim() || ''}</div>
-                              <div><span className="font-semibold">Provincia:</span> {order.envio?.direccion?.split(',')[4]?.trim() || ''}</div>
-                              <div><span className="font-semibold">Teléfono:</span> {order.datosPersonales?.telefono || ''}</div>
-                              <div><span className="font-semibold">DNI:</span> {order.datosPersonales?.dni || ''}</div>
-                              <div><span className="font-semibold">Mail:</span> {order.datosPersonales?.email || ''}</div>
+                            <div className="space-y-0.5 pr-5 text-gray-900 dark:text-white text-xs">
+                              <div className="font-semibold truncate">{order.datosPersonales?.nombre || 'Sin nombre'}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">{order.datosPersonales?.email || 'Sin email'}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">Tel: {order.datosPersonales?.telefono || 'Sin teléfono'}</div>
+                              <div className="text-gray-600 dark:text-gray-400 truncate">DNI: {order.datosPersonales?.dni || 'Sin DNI'}</div>
                             </div>
                           </div>
                         </td>
-                        <td className="p-3 align-top min-w-[220px]">
-                          {order.productos.map(p => (
-                            <div key={p.productoId + (p.talle || '')} className="flex items-start mb-2 gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-b-0">
-                              {p.imagen ? (
-                                <img src={p.imagen} alt={p.nombre} className="w-8 h-8 object-cover rounded" />
-                              ) : (
-                                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">📦</span>
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
-                                  {p.nombre}
-                                  {p.encargo && (
-                                    <span className="ml-1 px-2 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
-                                  )}
-                                </div>
-                                {p.talle && <div className="text-xs text-gray-500 dark:text-gray-300">Talle: <span className="font-semibold">{p.talle}</span></div>}
-                                {p.color && <div className="text-xs text-gray-500 dark:text-gray-300">Color: <span className="font-semibold">{p.color}</span></div>}
-                                {p.tipoProducto && <div className="text-xs text-gray-500 dark:text-gray-300">Tipo: <span className="font-semibold capitalize">{p.tipoProducto}</span></div>}
-                                {p.detalles && <div className="text-xs text-gray-600 dark:text-gray-400 mt-1 italic">"{p.detalles}"</div>}
-                                {p.link && (
-                                  <div className="text-xs mt-1">
-                                    <a href={p.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline break-all">
-                                      🔗 Ver referencia
-                                    </a>
+                        <td className="p-3 align-top">
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {order.productos.map(p => (
+                              <div key={p.productoId + (p.talle || '')} className="flex items-start gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-b-0">
+                                {p.imagen ? (
+                                  <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded flex-shrink-0" />
+                                ) : (
+                                  <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">📦</span>
                                   </div>
                                 )}
-                                <div className="text-xs text-gray-700 dark:text-gray-200">Cantidad: <span className="font-semibold">{p.cantidad}</span></div>
-                                <div className="text-xs text-gray-500 dark:text-gray-300">${p.precio} USD</div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-medium text-gray-900 dark:text-white text-xs truncate">
+                                    {p.nombre}
+                                    {p.encargo && (
+                                      <span className="ml-1 px-1 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-500 dark:text-gray-300">
+                                    {p.talle && <span>Talle: {p.talle} </span>}
+                                    {p.color && <span>Color: {p.color} </span>}
+                                    <span>Cant: {p.cantidad} - ${p.precio} USD</span>
+                                  </div>
+                                  {p.detalles && <div className="text-xs text-gray-600 dark:text-gray-400 italic truncate">"{p.detalles}"</div>}
+                                </div>
                               </div>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="p-3 align-top text-gray-900 dark:text-dark-text text-xs capitalize">
+                          {order.pago}
+                        </td>
+                        <td className="p-3 align-top">
+                          <div className="capitalize font-medium text-gray-900 dark:text-dark-text text-xs">{order.envio?.tipo}</div>
+                          {order.envio?.direccion && (
+                            <div className="text-xs text-gray-500 dark:text-dark-text-secondary truncate mt-1">
+                              {order.envio.direccion.split(',')[0]}
                             </div>
-                          ))}
+                          )}
                         </td>
-                        <td className="p-3 align-top min-w-[80px] text-gray-900 dark:text-dark-text">{order.pago}</td>
-                        <td className="p-3 align-top min-w-[120px]">
-                          <div className="capitalize font-medium text-gray-900 dark:text-dark-text">{order.envio?.tipo}</div>
-                          {order.envio?.direccion && <div className="text-xs text-gray-500 dark:text-dark-text-secondary break-words">{order.envio.direccion}</div>}
-                        </td>
-                        <td className="p-3 align-top min-w-[100px] text-gray-900 dark:text-white">
+                        <td className="p-3 align-top text-gray-900 dark:text-white text-xs">
                           {(() => {
                             const fecha = new Date(order.fechaCreacion);
                             const ahora = new Date();
@@ -476,12 +472,12 @@ export default function PedidosAdmin() {
                             return (
                               <div>
                                 <div>{fechaStr}</div>
-                                <div className="text-xs text-gray-500 dark:text-gray-300">Hace {diffDias} día{diffDias !== 1 ? 's' : ''}</div>
+                                <div className="text-gray-500 dark:text-gray-300">Hace {diffDias} día{diffDias !== 1 ? 's' : ''}</div>
                               </div>
                             );
                           })()}
                         </td>
-                        <td className="p-3 align-top min-w-[100px]">
+                        <td className="p-3 align-top">
                           <span className={`px-2 py-1 rounded text-xs font-semibold ${
                             order.estado === 'pendiente' ? 'bg-yellow-200 text-yellow-800' : 
                             order.estado === 'pagado' ? 'bg-green-200 text-green-800' : 
@@ -492,36 +488,38 @@ export default function PedidosAdmin() {
                             {order.estado}
                           </span>
                         </td>
-                        <td className="p-3 align-top min-w-[120px]">
-                          <select
-                            value={order.estado}
-                            onChange={e => cambiarEstado(order._id, e.target.value)}
-                            className="border border-gray-300 dark:border-dark-border rounded px-2 py-1 bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text"
-                            disabled={changing === order._id}
-                          >
-                            {estados.map(e => <option key={e} value={e}>{e}</option>)}
-                          </select>
-                          {changing === order._id && <div className="text-xs text-blue-500 mt-1">Actualizando...</div>}
-                          {/* Tracking input si estado es enviado */}
-                          {order.estado === 'enviado' && (
-                            <div className="mt-2">
-                              <input
-                                type="text"
-                                className="border rounded px-2 py-1 w-full text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-                                placeholder="Pega aquí el link o número de trackeo"
-                                value={trackingInputs[order._id] !== undefined ? trackingInputs[order._id] : (order.tracking || '')}
-                                onChange={e => setTrackingInputs(inputs => ({ ...inputs, [order._id]: e.target.value }))}
-                                disabled={savingTracking === order._id}
-                              />
-                              <button
-                                className="mt-1 px-2 py-1 bg-blue-600 text-white rounded text-xs disabled:opacity-50"
-                                onClick={() => guardarTracking(order._id)}
-                                disabled={savingTracking === order._id || !trackingInputs[order._id]}
-                              >
-                                {savingTracking === order._id ? 'Guardando...' : 'Guardar tracking y enviar email'}
-                              </button>
-                            </div>
-                          )}
+                        <td className="p-3 align-top">
+                          <div className="space-y-2">
+                            <select
+                              value={order.estado}
+                              onChange={e => cambiarEstado(order._id, e.target.value)}
+                              className="w-full border border-gray-300 dark:border-dark-border rounded px-2 py-1 bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text text-xs"
+                              disabled={changing === order._id}
+                            >
+                              {estados.map(e => <option key={e} value={e}>{e}</option>)}
+                            </select>
+                            {changing === order._id && <div className="text-xs text-blue-500">Actualizando...</div>}
+                            {/* Tracking input si estado es enviado */}
+                            {order.estado === 'enviado' && (
+                              <div className="space-y-1">
+                                <input
+                                  type="text"
+                                  className="w-full border rounded px-2 py-1 text-xs bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                                  placeholder="Tracking"
+                                  value={trackingInputs[order._id] !== undefined ? trackingInputs[order._id] : (order.tracking || '')}
+                                  onChange={e => setTrackingInputs(inputs => ({ ...inputs, [order._id]: e.target.value }))}
+                                  disabled={savingTracking === order._id}
+                                />
+                                <button
+                                  className="w-full px-2 py-1 bg-blue-600 text-white rounded text-xs disabled:opacity-50"
+                                  onClick={() => guardarTracking(order._id)}
+                                  disabled={savingTracking === order._id || !trackingInputs[order._id]}
+                                >
+                                  {savingTracking === order._id ? 'Guardando...' : 'Guardar'}
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
