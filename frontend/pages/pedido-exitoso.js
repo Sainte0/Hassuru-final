@@ -12,7 +12,7 @@ export default function PedidoExitoso() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center py-8 bg-white dark:bg-gray-900 transition-colors">
+    <div className="flex flex-col items-center justify-center py-8 bg-white dark:bg-dark-bg transition-colors">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 max-w-lg w-full">
         <div className="flex flex-col items-center">
           <div className="bg-green-500 rounded-full p-4 mb-4">

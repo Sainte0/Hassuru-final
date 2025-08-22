@@ -10,7 +10,7 @@ module.exports = {
     extend: {
       colors: {
         dark: {
-          bg: '#1a1a1a',
+          bg: '#0f091b',
           card: '#2d2d2d',
           border: '#404040',
           text: '#e5e5e5',

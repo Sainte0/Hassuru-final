@@ -49,11 +49,11 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center mt-[15%] bg-white dark:bg-gray-900"><BounceLoader color="#BE1A1D" /></div>;
+    return <div className="flex items-center justify-center mt-[15%] bg-white dark:bg-dark-bg"><BounceLoader color="#BE1A1D" /></div>;
   }
   
   if (error) {
-    return <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">Error: {error}</div>;
+    return <div className="bg-white dark:bg-dark-bg text-gray-900 dark:text-white">Error: {error}</div>;
   }
 
   return (
@@ -64,7 +64,7 @@ export default function Home() {
         keywords="ropa, zapatillas, sneakers, marca, deportes, moda, Argentina, online, tienda, Nike, Adidas, Puma, Reebok"
         url="https://hassuru.ar"
       />
-      <main className="bg-white dark:bg-gray-900 transition-colors duration-300">
+      <main className="bg-white dark:bg-dark-bg transition-colors duration-300">
         {/* Banner Carousel */}
         <div className="container px-4 mx-auto mt-4">
           <BannerCarousel banners={banners} />
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <Link className="w-full md:w-[49.51%] h-auto block" href="/productos/talla/zapatillas">
               <Image
-                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482098933-Sneackers-min.png"
+                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images/banner-2160x2160-sneakers.jpg"
                 alt="Catalogo"
                 width={600}
                 height={500}
@@ -85,7 +85,7 @@ export default function Home() {
             </Link>
             <Link className="w-full md:w-[50.49%] h-auto block" href="/productos/talla/ropa">
               <Image
-                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images//static-1750482100110-Ropa-min.png"
+                src="https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/product-images/banner-2160x2160-clothing%20(1).jpg"
                 alt="Encargo"
                 width={620}
                 height={500}
@@ -110,7 +110,7 @@ export default function Home() {
         </div>
 
         {/* TikToks en horizontal */}
-        <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
+        <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-dark-bg p-4 rounded-lg">
           {tiktokLinks.slice(0, 3).map((linkObj, index) => (
             <TikTokEmbed key={index} link={linkObj.link} index={index} />
           ))}

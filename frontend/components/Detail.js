@@ -158,7 +158,7 @@ export default function Detail({ product }) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <div className="container py-10 mx-auto bg-white dark:bg-gray-900 transition-colors duration-300">
+      <div className="container py-10 mx-auto bg-white dark:bg-dark-bg transition-colors duration-300">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
@@ -309,7 +309,7 @@ export default function Detail({ product }) {
       </div>
       {/* Sección de productos relacionados más cerca del detalle */}
       {(loadingRelated || relatedProducts.length > 0) && (
-        <div className="container mt-8 mx-auto bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="container mt-8 mx-auto bg-white dark:bg-dark-bg transition-colors duration-300">
           <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Productos relacionados</h2>
           <div className="flex gap-6 overflow-x-auto pb-2">
             {loadingRelated

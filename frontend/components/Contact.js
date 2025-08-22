@@ -59,7 +59,7 @@ export default function Contact() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="flex flex-col items-center justify-center px-4 py-12 bg-gray-50 dark:bg-dark-bg transition-colors duration-300">
             <h1 className="mb-8 text-3xl font-bold text-center text-gray-800 dark:text-white">Servicio de Encargos</h1>
             <p className="mb-8 text-center text-gray-600 dark:text-gray-300 max-w-2xl">
                 Traemos productos originales desde EEUU y Europa. Solo productos originales, garantizados.

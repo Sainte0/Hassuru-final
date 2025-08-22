@@ -239,7 +239,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       )}
 
       {/* Table Section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-dark-bg rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm">
         <div className="w-full">
           <div className="min-w-full">
             <table className="w-full text-left">
@@ -268,7 +268,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
                   <th className="px-2 py-3 text-xs font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 w-20">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-900">
+              <tbody className="bg-white dark:bg-dark-bg">
                 {currentProducts.map((producto, index) => (
                   <ProductRow
                     key={producto._id}

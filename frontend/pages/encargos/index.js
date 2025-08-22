@@ -309,7 +309,7 @@ export default function Encargos() {
         keywords="encargos, personalizado, pedido, ropa, zapatillas, sneakers, marca, Argentina, online, tienda"
         url="https://hassuru.ar/encargos"
       />
-      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-dark-bg py-8 transition-colors duration-300">
       <div className="w-full max-w-4xl bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100 dark:border-gray-700">
         <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 dark:text-white tracking-tight">Encarga lo que quieras</h1>
         

@@ -15,7 +15,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-dark-bg transition-colors duration-300">
       <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md w-96 border border-gray-200 dark:border-gray-700">
         <h1 className="mb-4 text-2xl font-semibold text-center text-black dark:text-white">Iniciar Sesión</h1>
         <form onSubmit={handleSubmit}>
