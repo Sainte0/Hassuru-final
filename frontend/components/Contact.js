@@ -115,7 +115,7 @@ export default function Contact() {
             </div>
             
             {/* Formulario de contacto */}
-            <div className="w-full max-w-2xl p-8 rounded-lg shadow-xl bg-white dark:bg-gray-800 transition-colors duration-300">
+            <div className="w-full max-w-2xl p-8 rounded-lg shadow-xl bg-white dark:bg-dark-bg transition-colors duration-300">
                 <h2 className="mb-6 text-2xl font-bold text-center text-gray-800 dark:text-white">Solicita tu Encargo</h2>
                 <p className="mb-6 text-center text-gray-600 dark:text-gray-300">
                     Completa el formulario y nos pondremos en contacto contigo para coordinar tu pedido.
@@ -186,7 +186,7 @@ export default function Contact() {
             </div>
             
             {/* Información adicional */}
-            <div className="w-full max-w-4xl mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md transition-colors duration-300">
+            <div className="w-full max-w-4xl mt-12 p-6 bg-white dark:bg-dark-bg rounded-lg shadow-md transition-colors duration-300">
                 <h3 className="mb-4 text-xl font-semibold text-center text-gray-800 dark:text-white">Beneficios de Nuestro Servicio</h3>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                     <div className="p-4 text-center">

@@ -169,7 +169,7 @@ export default function Detail({ product }) {
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full rounded-xl bg-white dark:bg-gray-800"
+                className="object-contain w-full h-full rounded-xl bg-white dark:bg-dark-bg"
               />
             </div>
           </div>
@@ -263,10 +263,10 @@ export default function Detail({ product }) {
               </div>
             )}
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 transition-colors">
+              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-dark-bg transition-colors">
                 Envíos gratis a todo el país.
               </div>
-              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 transition-colors">
+              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-dark-bg transition-colors">
                 Entrega en Córdoba Capital
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function Detail({ product }) {
               </button>
             </div>
             {/* Medios de pago */}
-            <div className="p-4 mt-6 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-md transition-colors">
+            <div className="p-4 mt-6 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-md shadow-md transition-colors">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Medios de pago disponibles:</h3>
               <ul className="mt-2 space-y-2 text-gray-700 dark:text-gray-300">
                 <li className="flex items-center">
@@ -314,7 +314,7 @@ export default function Detail({ product }) {
           <div className="flex gap-6 overflow-x-auto pb-2">
             {loadingRelated
               ? Array.from({ length: 4 }).map((_, idx) => (
-                  <div key={idx} className="min-w-[240px] max-w-[240px] p-4 border border-gray-300 dark:border-gray-600 rounded-lg flex-shrink-0 bg-gray-200 dark:bg-gray-700 animate-pulse">
+                  <div key={idx} className="min-w-[240px] max-w-[240px] p-4 border border-gray-300 dark:border-gray-600 rounded-lg flex-shrink-0 bg-gray-200 dark:bg-dark-bg animate-pulse">
                     <div className="w-full h-64 mb-4 bg-gray-300 dark:bg-gray-600 rounded-lg" />
                     <div className="h-5 w-3/4 mb-2 bg-gray-300 dark:bg-gray-600 rounded" />
                     <div className="h-4 w-1/2 mb-1 bg-gray-300 dark:bg-gray-600 rounded" />
@@ -351,7 +351,7 @@ export default function Detail({ product }) {
                   return (
                     <div
                       key={relatedProduct._id}
-                      className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-lg flex-shrink-0 bg-white dark:bg-gray-800 cursor-pointer"
+                      className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-lg flex-shrink-0 bg-white dark:bg-dark-bg cursor-pointer"
                       onClick={() => router.push(`/producto/${relatedProduct._id}`)}
                       tabIndex={0}
                       role="button"

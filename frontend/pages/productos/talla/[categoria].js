@@ -261,7 +261,7 @@ export default function TallaSelector() {
                 className={`p-2 text-lg font-medium border rounded-lg w-full min-h-[80px] flex items-center justify-center transition-all duration-200 hover:bg-red-500 hover:text-white hover:border-red-600 ${
                   selectedTalla === talla
                     ? "bg-red-500 text-white border-red-600 shadow-md"
-                    : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
+                    : "bg-white dark:bg-dark-bg text-gray-800 dark:text-white border-gray-300 dark:border-gray-600"
                 }`}
               >
                 {formattedTalla}

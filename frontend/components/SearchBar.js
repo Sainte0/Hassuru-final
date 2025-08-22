@@ -91,7 +91,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="w-full bg-white dark:bg-gray-800 transition-colors duration-300" ref={searchRef}>
+    <div className="w-full bg-white dark:bg-dark-bg transition-colors duration-300" ref={searchRef}>
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="relative">
           <div className="flex items-center">
