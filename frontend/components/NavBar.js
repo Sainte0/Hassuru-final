@@ -118,7 +118,7 @@ export default function Navbar() {
           </Link>
         </div>
       </nav>
-      <nav className="relative bg-gray-800 dark:bg-dark-bg text-white">
+      <nav className="relative bg-dark-bg text-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Theme Toggle - Left side (solo desktop) */}
@@ -154,7 +154,7 @@ export default function Navbar() {
                 >
                   Stock
                 </button>
-                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-gray-800 dark:bg-dark-bg bg-opacity-90 dark:bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-[800px] bg-dark-bg bg-opacity-90 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                   <div className="py-6 px-8 grid grid-cols-3 gap-8">
                     {/* Zapatillas Column */}
                     <div>
