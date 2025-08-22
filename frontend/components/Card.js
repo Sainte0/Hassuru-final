@@ -98,7 +98,7 @@ export default function Card({ currentProducts }) {
           return (
             <Link href={getProductUrl(product)} key={product._id}>
               <div 
-                className="flex flex-col h-[500px] transition-transform transform hover:scale-105 product-container bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 p-4 transition-all duration-300"
+                className="flex flex-col h-[500px] transition-transform transform hover:scale-105 product-container bg-white dark:bg-dark-bg rounded-lg shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 p-4 transition-all duration-300"
                 data-product-id={product._id}
               >
                 <div className="relative w-full h-[300px]">

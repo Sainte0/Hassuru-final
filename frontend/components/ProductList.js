@@ -163,7 +163,7 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
       </div>
 
       {/* Filters Section */}
-      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="mb-6 p-4 bg-gray-50 dark:bg-dark-bg rounded-lg border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Filtros y Búsqueda
         </h3>

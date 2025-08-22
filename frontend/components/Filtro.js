@@ -389,7 +389,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   };
 
   return (
-    <main className="px-4 font-semibold md:px-12 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
+    <main className="px-4 font-semibold md:px-12 bg-white dark:bg-dark-bg rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-6 transition-colors duration-300">
       <form onSubmit={handleFormSubmit}>
         <div className="mb-4">
           <h3 className="mb-3 text-xl font-semibold text-gray-800 dark:text-white">Filtros</h3>

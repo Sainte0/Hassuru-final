@@ -28,7 +28,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
     <div className={`fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
       <div className={`fixed inset-y-0 right-0 max-w-full flex transform transition-transform duration-300 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="w-screen max-w-md">
-          <div className="h-full flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-colors duration-300">
+          <div className="h-full flex flex-col bg-white dark:bg-dark-bg shadow-xl transition-colors duration-300">
             <div className="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
               <div className="flex items-start justify-between">
                 <h2 className="text-lg font-medium text-gray-900 dark:text-white">Carrito de compras</h2>

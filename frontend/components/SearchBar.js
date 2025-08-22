@@ -114,7 +114,7 @@ export default function SearchBar() {
 
           {/* Resultados de búsqueda */}
           {showResults && filteredProducts.length > 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg transition-colors duration-300">
+            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-dark-bg border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg transition-colors duration-300">
               <div className="py-2">
                 {filteredProducts.map((product) => (
                   <div

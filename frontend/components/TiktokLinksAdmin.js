@@ -66,7 +66,7 @@ const TiktokLinksAdmin = () => {
   };
 
   return (
-    <div className="p-6 bg-white dark:bg-dark-card rounded-lg shadow-md border border-gray-200 dark:border-dark-border">
+    <div className="p-6 bg-white dark:bg-dark-bg rounded-lg shadow-md border border-gray-200 dark:border-dark-border">
       <h2 className="mb-6 text-xl font-semibold text-black dark:text-dark-text">Enlaces de TikTok</h2>
       {loading ? (
         <p className="text-gray-600 dark:text-gray-400">Cargando enlaces...</p>

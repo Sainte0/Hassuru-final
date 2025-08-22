@@ -9,7 +9,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="text-black dark:text-white bg-white dark:bg-gray-800 border-t-2 border-black dark:border-gray-700 shadow-md transition-colors duration-300">
+    <footer className="text-black dark:text-white bg-white dark:bg-dark-bg border-t-2 border-black dark:border-gray-700 shadow-md transition-colors duration-300">
       <div className="container flex flex-col items-center justify-between mx-auto space-y-4 rounded-sm md:flex-row md:space-y-0 p-4">
         <div className="flex space-x-6">
           <a href="https://www.instagram.com/hassuru.ar/?hl=es" aria-label="Instagram" target="_blank" rel="noopener noreferrer">

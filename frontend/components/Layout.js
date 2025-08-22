@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
     <div className='flex flex-col min-h-screen bg-white dark:bg-dark-bg transition-colors duration-300'>
       {showLayout && <Navbar />}
       {showLayout && (
-        <div className="w-full bg-white dark:bg-gray-800 shadow-sm px-2 py-4 flex justify-center border-b border-gray-200 dark:border-gray-700">
+        <div className="w-full bg-white dark:bg-dark-bg shadow-sm px-2 py-4 flex justify-center border-b border-gray-200 dark:border-gray-700">
           <div className="w-full max-w-2xl">
             <SearchBar isHamburgerOpen={false} />
           </div>

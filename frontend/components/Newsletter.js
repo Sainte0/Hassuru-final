@@ -27,7 +27,7 @@ export default function Newsletter() {
   };
 
   return (
-    <div className="container p-6 mx-auto mt-10 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+    <div className="container p-6 mx-auto mt-10 bg-white dark:bg-dark-bg rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors duration-300">
       <div className="flex flex-col items-center md:flex-row md:justify-between md:items-center md:space-y-0">
         <div className="w-full md:w-1/2">
           <h1 className="mb-4 text-lg font-bold text-left text-gray-900 dark:text-white">

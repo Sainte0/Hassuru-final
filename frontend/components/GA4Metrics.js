@@ -27,7 +27,7 @@ export default function GA4Metrics() {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-dark-bg rounded-lg shadow p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         Métricas de GA4
       </h3>
