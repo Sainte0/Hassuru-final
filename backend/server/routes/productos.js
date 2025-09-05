@@ -145,7 +145,7 @@ router.get('/catalogo', async (req, res) => {
       const aPrice = parseFloat(a.precio) || 0;
       const bPrice = parseFloat(b.precio) || 0;
       
-      return bPrice - aPrice; // Ordenar de mayor a menor precio
+      return aPrice - bPrice; // Ordenar de menor a mayor precio
     });
 
     // Calcular skip para paginación
@@ -395,7 +395,7 @@ router.get('/categoria/:categoria', async (req, res) => {
         const aPrice = parseFloat(a.precio) || 0;
         const bPrice = parseFloat(b.precio) || 0;
         
-        return bPrice - aPrice; // Ordenar de mayor a menor precio
+        return aPrice - bPrice; // Ordenar de menor a mayor precio
       });
 
       // Calcular skip para paginación

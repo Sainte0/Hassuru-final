@@ -25,11 +25,11 @@ export const sortProductsByAvailability = (products) => {
     const aPrice = parseFloat(a.precio);
     const bPrice = parseFloat(b.precio);
     
-    return bPrice - aPrice; // Ordenar de mayor a menor precio
+    return aPrice - bPrice; // Ordenar de menor a mayor precio
   });
 };
 
-// Función para ordenar productos solo por precio (mayor a menor)
+// Función para ordenar productos solo por precio (menor a mayor)
 export const sortProductsByPrice = (products) => {
   if (!products || !Array.isArray(products)) return [];
   
@@ -37,6 +37,6 @@ export const sortProductsByPrice = (products) => {
     const aPrice = parseFloat(a.precio);
     const bPrice = parseFloat(b.precio);
     
-    return bPrice - aPrice; // Ordenar de mayor a menor precio
+    return aPrice - bPrice; // Ordenar de menor a mayor precio
   });
 };
