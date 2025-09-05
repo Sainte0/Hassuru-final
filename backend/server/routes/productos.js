@@ -206,9 +206,24 @@ router.get('/catalogo/filtros', async (req, res) => {
       }
     });
 
-    // Ordenar tallas
+    // Ordenar tallas de mayor a menor
     const ordenarTallas = (tallas) => {
       return Array.from(tallas).sort((a, b) => {
+        // Orden específico para tallas de ropa (de mayor a menor)
+        const tallaOrder = ["XXL", "XL", "L", "M", "S", "XS", "OS"];
+        const aIndex = tallaOrder.indexOf(a);
+        const bIndex = tallaOrder.indexOf(b);
+        
+        // Si ambas tallas están en el orden específico, usar ese orden
+        if (aIndex !== -1 && bIndex !== -1) {
+          return aIndex - bIndex;
+        }
+        
+        // Si solo una está en el orden específico, priorizarla
+        if (aIndex !== -1) return -1;
+        if (bIndex !== -1) return 1;
+        
+        // Para tallas numéricas (zapatillas), ordenar de mayor a menor
         const parseTalla = (talla) => {
           const match = talla.match(/(\d+)/);
           return match ? parseInt(match[1]) : 0;
@@ -218,10 +233,10 @@ router.get('/catalogo/filtros', async (req, res) => {
         const bNum = parseTalla(b);
 
         if (aNum !== bNum) {
-          return aNum - bNum;
+          return bNum - aNum; // Cambiado de aNum - bNum a bNum - aNum para mayor a menor
         }
 
-        return a.localeCompare(b);
+        return b.localeCompare(a); // Cambiado para orden descendente
       });
     };
 
@@ -421,9 +436,23 @@ router.get('/categoria/:categoria/tallas', async (req, res) => {
       }
     });
 
-    // Convertir a array y ordenar
+    // Convertir a array y ordenar de mayor a menor
     const tallasArray = Array.from(tallasSet).sort((a, b) => {
-      // Función para extraer números de las tallas
+      // Orden específico para tallas de ropa (de mayor a menor)
+      const tallaOrder = ["XXL", "XL", "L", "M", "S", "XS", "OS"];
+      const aIndex = tallaOrder.indexOf(a);
+      const bIndex = tallaOrder.indexOf(b);
+      
+      // Si ambas tallas están en el orden específico, usar ese orden
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      
+      // Si solo una está en el orden específico, priorizarla
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      
+      // Para tallas numéricas (zapatillas), ordenar de mayor a menor
       const parseTalla = (talla) => {
         const match = talla.match(/(\d+)/);
         return match ? parseInt(match[1]) : 0;
@@ -433,11 +462,11 @@ router.get('/categoria/:categoria/tallas', async (req, res) => {
       const bNum = parseTalla(b);
 
       if (aNum !== bNum) {
-        return aNum - bNum;
+        return bNum - aNum; // Cambiado para mayor a menor
       }
 
-      // Si los números son iguales, ordenar alfabéticamente
-      return a.localeCompare(b);
+      // Si los números son iguales, ordenar alfabéticamente descendente
+      return b.localeCompare(a);
     });
 
     res.status(200).json(tallasArray);
@@ -490,8 +519,23 @@ router.get('/categoria/:categoria/filtros', async (req, res) => {
       }
     });
 
-    // Ordenar tallas
+    // Ordenar tallas de mayor a menor
     const tallasArray = Array.from(tallasSet).sort((a, b) => {
+      // Orden específico para tallas de ropa (de mayor a menor)
+      const tallaOrder = ["XXL", "XL", "L", "M", "S", "XS", "OS"];
+      const aIndex = tallaOrder.indexOf(a);
+      const bIndex = tallaOrder.indexOf(b);
+      
+      // Si ambas tallas están en el orden específico, usar ese orden
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      
+      // Si solo una está en el orden específico, priorizarla
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+      
+      // Para tallas numéricas (zapatillas), ordenar de mayor a menor
       const parseTalla = (talla) => {
         const match = talla.match(/(\d+)/);
         return match ? parseInt(match[1]) : 0;
@@ -501,10 +545,10 @@ router.get('/categoria/:categoria/filtros', async (req, res) => {
       const bNum = parseTalla(b);
 
       if (aNum !== bNum) {
-        return aNum - bNum;
+        return bNum - aNum; // Cambiado para mayor a menor
       }
 
-      return a.localeCompare(b);
+      return b.localeCompare(a); // Cambiado para orden descendente
     });
 
     const response = {

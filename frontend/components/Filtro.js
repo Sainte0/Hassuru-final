@@ -512,7 +512,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                       <div className="overflow-auto max-h-32">
                         {Array.from(new Set(tallasRopa))
                           .sort((a, b) => {
-                            const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
+                            const tallaOrder = ["XXL", "XL", "L", "M", "S", "XS", "OS"];
                             return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
                           })
                           .map((talla, index) => (
@@ -547,7 +547,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                               const numericPart = parseFloat(parts[0].replace(",", "."));
                               return numericPart;
                             };
-                            return parseTalla(a) - parseTalla(b);
+                            return parseTalla(b) - parseTalla(a); // Cambiado para mayor a menor
                           })
                           .map((talla, index) => (
                             <div key={index} className="flex items-center mb-2">
@@ -603,7 +603,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   <div className="overflow-auto max-h-32">
                     {Array.from(new Set(tallasRopa))
                       .sort((a, b) => {
-                        const tallaOrder = ["XS", "S", "M", "L", "XL", "XXL", "OS"];
+                        const tallaOrder = ["XXL", "XL", "L", "M", "S", "XS", "OS"];
                         return tallaOrder.indexOf(a) - tallaOrder.indexOf(b);
                       })
                       .map((talla, index) => (
@@ -638,7 +638,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           const numericPart = parseFloat(parts[0].replace(",", "."));
                           return numericPart;
                         };
-                        return parseTalla(a) - parseTalla(b);
+                        return parseTalla(b) - parseTalla(a); // Cambiado para mayor a menor
                       })
                       .map((talla, index) => (
                         <div key={index} className="flex items-center mb-2">
