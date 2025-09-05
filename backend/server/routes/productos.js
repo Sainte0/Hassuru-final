@@ -134,7 +134,7 @@ router.get('/catalogo', async (req, res) => {
       const aPrice = parseFloat(a.precio) || 0;
       const bPrice = parseFloat(b.precio) || 0;
       
-      return aPrice - bPrice; // Ordenar de menor a mayor precio
+      return bPrice - aPrice; // Ordenar de mayor a menor precio
     });
 
     // Calcular skip para paginación
@@ -194,7 +194,10 @@ router.get('/catalogo/filtros', async (req, res) => {
             if (producto.categoria === 'zapatillas') {
               tallasPorCategoria.zapatillas.add(talla.talla);
             } else if (producto.categoria === 'ropa') {
-              tallasPorCategoria.ropa.add(talla.talla);
+              // Excluir "accesorios" de las tallas de ropa ya que no es una talla válida
+              if (talla.talla.toLowerCase() !== 'accesorios') {
+                tallasPorCategoria.ropa.add(talla.talla);
+              }
             } else if (producto.categoria === 'accesorios') {
               tallasPorCategoria.accesorios.add(talla.talla);
             }
@@ -352,7 +355,7 @@ router.get('/categoria/:categoria', async (req, res) => {
         const aPrice = parseFloat(a.precio) || 0;
         const bPrice = parseFloat(b.precio) || 0;
         
-        return aPrice - bPrice; // Ordenar de menor a mayor precio
+        return bPrice - aPrice; // Ordenar de mayor a menor precio
       });
 
       // Calcular skip para paginación

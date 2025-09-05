@@ -121,7 +121,11 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         
         if (isCatalogo) {
           // Para el catálogo, cargar todas las opciones
-          setTallasRopa(data.tallas?.ropa || []);
+          // Filtrar "accesorios" de las tallas de ropa ya que no es una talla válida
+          const tallasRopaFiltradas = (data.tallas?.ropa || []).filter(talla => 
+            talla.toLowerCase() !== 'accesorios'
+          );
+          setTallasRopa(tallasRopaFiltradas);
           setTallasZapatilla(data.tallas?.zapatillas || []);
           setAccesorios(data.tallas?.accesorios || []);
           setMarcas(prev => ({ 
@@ -133,7 +137,11 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
         } else if (categoria) {
           // Para categorías específicas, cargar solo las opciones relevantes
           if (categoria === 'ropa') {
-            setTallasRopa(data.tallas || []);
+            // Filtrar "accesorios" de las tallas de ropa ya que no es una talla válida
+            const tallasRopaFiltradas = (data.tallas || []).filter(talla => 
+              talla.toLowerCase() !== 'accesorios'
+            );
+            setTallasRopa(tallasRopaFiltradas);
             setMarcas(prev => ({ ...prev, ropa: data.marcas || [] }));
           } else if (categoria === 'zapatillas') {
             setTallasZapatilla(data.tallas || []);
