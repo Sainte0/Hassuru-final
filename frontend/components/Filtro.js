@@ -207,8 +207,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (selectedMarca && selectedMarca.trim() !== '') queryParams.marca = selectedMarca;
       if (query && query.trim() !== '') queryParams.q = query;
       
-      // Preserve the category parameter if it exists
-      if (router.query.categoria) {
+      // Preserve the category parameter if it exists and is not being overridden by selectedCategoriaAccesorio
+      if (router.query.categoria && !selectedCategoriaAccesorio) {
         queryParams.categoria = router.query.categoria;
       }
 
@@ -353,6 +353,14 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       setSelectedCategoriaAccesorio("");
       // Al eliminar la categoría de accesorios, también limpiar accesorios específicos
       setSelectedAccesorio("");
+      
+      // Actualizar la URL para remover el parámetro categoria
+      const newQuery = { ...router.query };
+      delete newQuery.categoria;
+      router.replace({
+        pathname: router.pathname,
+        query: newQuery,
+      }, undefined, { shallow: true });
     } else {
       setSelectedCategoriaAccesorio("accesorios");
       setSelectedTallaRopa("");
@@ -623,7 +631,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   )}
 
                   {/* Filtro de Tecnología (Accesorios) */}
-                  {accesorios.length > 0 && (selectedCategoriaAccesorio || categoria === 'accesorios') && (
+                  {accesorios.length > 0 && !categoria && (
                     <div className="mb-4">
                       <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tecnología</label>
                       <div className="overflow-auto max-h-32">
