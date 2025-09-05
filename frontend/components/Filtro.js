@@ -617,7 +617,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                   )}
 
                   {/* Filtro de Tecnología (Accesorios) */}
-                  {accesorios.length > 0 && (
+                  {accesorios.length > 0 && (selectedCategoriaAccesorio || categoria === 'accesorios') && (
                     <div className="mb-4">
                       <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Tecnología</label>
                       <div className="overflow-auto max-h-32">

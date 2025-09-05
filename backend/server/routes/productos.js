@@ -45,7 +45,18 @@ router.get('/catalogo', async (req, res) => {
 
     // Filtro por categoría
     if (categoria) {
-      filterQuery.categoria = { $regex: new RegExp(categoria, 'i') };
+      if (categoria.toLowerCase() === 'accesorios') {
+        // Para accesorios, incluir tanto productos de categoría accesorios como productos de ropa con talla "accesorios"
+        filterQuery.$or = [
+          { categoria: { $regex: new RegExp(categoria, 'i') } },
+          { 
+            categoria: 'ropa',
+            'tallas.talla': { $regex: /accesorios/i }
+          }
+        ];
+      } else {
+        filterQuery.categoria = { $regex: new RegExp(categoria, 'i') };
+      }
     }
 
     // Filtro por marca
@@ -197,6 +208,9 @@ router.get('/catalogo/filtros', async (req, res) => {
               // Excluir "accesorios" de las tallas de ropa ya que no es una talla válida
               if (talla.talla.toLowerCase() !== 'accesorios') {
                 tallasPorCategoria.ropa.add(talla.talla);
+              } else {
+                // Agregar "accesorios" a la categoría de accesorios
+                tallasPorCategoria.accesorios.add(talla.talla);
               }
             } else if (producto.categoria === 'accesorios') {
               tallasPorCategoria.accesorios.add(talla.talla);
@@ -280,9 +294,20 @@ router.get('/categoria/:categoria', async (req, res) => {
     
     if (categoriaLower && categoriasValidas.includes(categoriaLower)) {
       // Construir filtros
-      let filterQuery = {
-        categoria: { $regex: new RegExp(categoria, 'i') }
-      };
+      let filterQuery = {};
+      
+      if (categoriaLower === 'accesorios') {
+        // Para accesorios, incluir tanto productos de categoría accesorios como productos de ropa con talla "accesorios"
+        filterQuery.$or = [
+          { categoria: { $regex: new RegExp(categoria, 'i') } },
+          { 
+            categoria: 'ropa',
+            'tallas.talla': { $regex: /accesorios/i }
+          }
+        ];
+      } else {
+        filterQuery.categoria = { $regex: new RegExp(categoria, 'i') };
+      }
 
       // Filtro por marca
       if (marca) {
