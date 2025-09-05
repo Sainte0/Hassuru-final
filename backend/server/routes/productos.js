@@ -82,7 +82,7 @@ router.get('/catalogo', async (req, res) => {
           filterQuery.tallas = { $exists: true, $ne: [] };
           break;
         case 'Disponible en 20 días':
-          filterQuery.tallas = { $exists: false };
+          filterQuery.tallas = { $size: 0 };
           break;
       }
     }
@@ -332,7 +332,7 @@ router.get('/categoria/:categoria', async (req, res) => {
             filterQuery.tallas = { $exists: true, $ne: [] };
             break;
           case 'Disponible en 20 días':
-            filterQuery.tallas = { $exists: false };
+            filterQuery.tallas = { $size: 0 };
             break;
         }
       }
