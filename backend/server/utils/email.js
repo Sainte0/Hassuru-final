@@ -75,7 +75,7 @@ async function sendOrderReceiptEmail({ to, order }) {
     <h4>Datos personales</h4>
     <p>Nombre: ${order.datosPersonales.nombre}</p>
     <p>Email: ${order.datosPersonales.email}</p>
-    <p>Teléfono: ${order.datosPersonales.telefono}</p>
+    <p>Teléfono: <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none;">${order.datosPersonales.telefono}</a> | <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none;">WhatsApp</a></p>
     <p>DNI: ${order.datosPersonales.dni}</p>
     <p>Gracias por confiar en Hassuru. Te contactaremos pronto para coordinar el pago y la entrega.</p>
   `;
@@ -113,7 +113,7 @@ async function sendNewOrderNotification({ order }) {
     <h3>📋 Detalles del naziii</h3>
     <p><strong>Nombre:</strong> ${order.datosPersonales.nombre}</p>
     <p><strong>Email:</strong> ${order.datosPersonales.email}</p>
-    <p><strong>Teléfono:</strong> ${order.datosPersonales.telefono}</p>
+    <p><strong>Teléfono:</strong> <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none;">${order.datosPersonales.telefono}</a> | <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none;">WhatsApp</a></p>
     <p><strong>DNI:</strong> ${order.datosPersonales.dni}</p>
     
     <h3>📦 Información de Envío</h3>
@@ -194,7 +194,7 @@ async function sendOrderShippedEmail({ to, order }) {
     <h4>Datos personales</h4>
     <p>Nombre: ${order.datosPersonales.nombre}</p>
     <p>Email: ${order.datosPersonales.email}</p>
-    <p>Teléfono: ${order.datosPersonales.telefono}</p>
+    <p>Teléfono: <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none;">${order.datosPersonales.telefono}</a> | <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none;">WhatsApp</a></p>
     <p>DNI: ${order.datosPersonales.dni}</p>
     <p>Si tienes dudas, responde a este email o contáctanos.</p>
     <hr />
@@ -250,7 +250,7 @@ async function sendOrderCancelledEmail({ to, order }) {
     <h4>Datos personales</h4>
     <p>Nombre: ${order.datosPersonales.nombre}</p>
     <p>Email: ${order.datosPersonales.email}</p>
-    <p>Teléfono: ${order.datosPersonales.telefono}</p>
+    <p>Teléfono: <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none;">${order.datosPersonales.telefono}</a> | <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none;">WhatsApp</a></p>
     <p>DNI: ${order.datosPersonales.dni}</p>
     
     <h4>Información del pedido</h4>
