@@ -8,6 +8,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
   const [selectedTallaRopa, setSelectedTallaRopa] = useState("");
   const [selectedTallaZapatilla, setSelectedTallaZapatilla] = useState("");
   const [selectedAccesorio, setSelectedAccesorio] = useState("");
+  const [selectedCategoriaAccesorio, setSelectedCategoriaAccesorio] = useState("");
   const [selectedDisponibilidad, setSelectedDisponibilidad] = useState("");
   const [tallasRopa, setTallasRopa] = useState([]);
   const [tallasZapatilla, setTallasZapatilla] = useState([]);
@@ -57,6 +58,11 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (accesorio && !selectedAccesorio) {
         setSelectedAccesorio(accesorio);
         filtersToApply.accesorio = accesorio;
+        filtersApplied = true;
+      }
+      if (categoria && !selectedCategoriaAccesorio && categoria === 'accesorios') {
+        setSelectedCategoriaAccesorio(categoria);
+        filtersToApply.categoria = categoria;
         filtersApplied = true;
       }
       if (disponibilidad && !selectedDisponibilidad) {
@@ -176,11 +182,12 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       const matchesTallaRopa = !selectedTallaRopa || product.tallaRopa === selectedTallaRopa;
       const matchesTallaZapatilla = !selectedTallaZapatilla || product.tallaZapatilla === selectedTallaZapatilla;
       const matchesAccesorio = !selectedAccesorio || product.accesorio === selectedAccesorio;
+      const matchesCategoriaAccesorio = !selectedCategoriaAccesorio || product.categoria === selectedCategoriaAccesorio;
       const matchesDisponibilidad = !selectedDisponibilidad || product.disponibilidad === selectedDisponibilidad;
       const matchesQuery = !query || product.nombre.toLowerCase().includes(query.toLowerCase());
       const matchesPrecio = (!precioMin || product.precio >= Number(precioMin)) && (!precioMax || product.precio <= Number(precioMax));
 
-      return matchesMarca && matchesTallaRopa && matchesTallaZapatilla && matchesAccesorio && matchesDisponibilidad && matchesQuery && matchesPrecio;
+      return matchesMarca && matchesTallaRopa && matchesTallaZapatilla && matchesAccesorio && matchesCategoriaAccesorio && matchesDisponibilidad && matchesQuery && matchesPrecio;
     });
   };
 
@@ -193,6 +200,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
       if (selectedTallaRopa && selectedTallaRopa.trim() !== '') queryParams.tallaRopa = selectedTallaRopa;
       if (selectedTallaZapatilla && selectedTallaZapatilla.trim() !== '') queryParams.tallaZapatilla = selectedTallaZapatilla;
       if (selectedAccesorio && selectedAccesorio.trim() !== '') queryParams.accesorio = selectedAccesorio;
+      if (selectedCategoriaAccesorio && selectedCategoriaAccesorio.trim() !== '') queryParams.categoria = selectedCategoriaAccesorio;
       if (precioMin && precioMin.trim() !== '') queryParams.min = precioMin;
       if (precioMax && precioMax.trim() !== '') queryParams.max = precioMax;
       if (selectedDisponibilidad && selectedDisponibilidad.trim() !== '') queryParams.disponibilidad = selectedDisponibilidad;
@@ -220,6 +228,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
           tallaRopa: selectedTallaRopa || '',
           tallaZapatilla: selectedTallaZapatilla || '',
           accesorio: selectedAccesorio || '',
+          categoria: selectedCategoriaAccesorio || '',
           precioMin: precioMin || '',
           precioMax: precioMax || '',
           disponibilidad: selectedDisponibilidad || '',
@@ -238,6 +247,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     selectedTallaRopa,
     selectedTallaZapatilla,
     selectedAccesorio,
+    selectedCategoriaAccesorio,
     precioMin,
     precioMax,
     selectedDisponibilidad,
@@ -333,6 +343,18 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     }
   };
 
+  const handleSelectCategoriaAccesorio = () => {
+    if (selectedCategoriaAccesorio === "accesorios") {
+      ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
+      setSelectedCategoriaAccesorio("");
+    } else {
+      setSelectedCategoriaAccesorio("accesorios");
+      setSelectedTallaRopa("");
+      setSelectedTallaZapatilla("");
+      setSelectedAccesorio("");
+    }
+  };
+
   const handleSelectDisponibilidad = (opcion) => {
     if (selectedDisponibilidad === opcion) {
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
@@ -352,6 +374,7 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     setSelectedTallaRopa("");
     setSelectedTallaZapatilla("");
     setSelectedAccesorio("");
+    setSelectedCategoriaAccesorio("");
     setSelectedMarca("");
     setSelectedDisponibilidad("");
     setQuery("");
@@ -418,6 +441,12 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
               <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
                 <span className="mr-2 text-gray-600 dark:text-gray-300">Tecnología: {selectedAccesorio}</span>
                 <button type="button" onClick={() => handleSelectAccesorio(selectedAccesorio)} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
+              </div>
+            )}
+            {selectedCategoriaAccesorio && (
+              <div className="flex items-center mb-2 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                <span className="mr-2 text-gray-600 dark:text-gray-300">Categoría: Accesorios</span>
+                <button type="button" onClick={() => handleSelectCategoriaAccesorio()} className="text-red-500 hover:text-red-700 dark:hover:text-red-400">X</button>
               </div>
             )}
             {selectedDisponibilidad && (
@@ -566,6 +595,24 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                             </div>
                           ))}
                       </div>
+                    </div>
+                  )}
+
+                  {/* Botón de Categoría Accesorios */}
+                  {!categoria && (
+                    <div className="mb-4">
+                      <label className="block mb-1 font-medium text-gray-700 dark:text-gray-300">Categorías</label>
+                      <button
+                        type="button"
+                        onClick={handleSelectCategoriaAccesorio}
+                        className={`w-full px-4 py-2 rounded-lg border transition-all duration-200 ${
+                          selectedCategoriaAccesorio === "accesorios"
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                        }`}
+                      >
+                        Accesorios
+                      </button>
                     </div>
                   )}
 
