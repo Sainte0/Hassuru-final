@@ -86,7 +86,8 @@ const ProductList = ({ editableProducts, setEditableProducts, selectedProduct, s
 
   // Filtrar productos
   let filteredProducts = editableProducts.filter((producto) => {
-    const nameMatch = producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
+    // Si el producto está siendo editado, no aplicar el filtro de nombre
+    const nameMatch = producto._id === selectedProduct ? true : producto.nombre.toLowerCase().includes(nameFilter.toLowerCase());
     const categoryMatch = categoriaFilter ? producto.categoria === categoriaFilter : true;
     const encargoMatch = encargoFilter ? producto.encargo === true : true;
     
