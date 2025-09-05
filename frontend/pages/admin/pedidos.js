@@ -100,6 +100,9 @@ export default function PedidosAdmin() {
   // Filtrado frontend
   const filteredOrders = orders
     .filter(order => {
+      // Si no hay filtro de estado, ocultar cancelados por defecto
+      if (!filtros.estado && order.estado === 'cancelado') return false;
+      
       if (filtros.estado && order.estado !== filtros.estado) return false;
       if (filtros.search) {
         const search = filtros.search.toLowerCase();

@@ -34,10 +34,20 @@ const ProductRow = ({
   const router = useRouter();
   const hasFetchedRef = useRef(false);
   const [newMarca, setNewMarca] = useState("");
+  const [originalProduct, setOriginalProduct] = useState(null);
 
   useEffect(() => {
     fetchDolarBlue();
   }, [fetchDolarBlue]);
+
+  // Guardar el producto original cuando se inicia la edición
+  useEffect(() => {
+    if (selectedProduct === producto._id && !originalProduct) {
+      setOriginalProduct({ ...producto });
+    } else if (selectedProduct !== producto._id && originalProduct) {
+      setOriginalProduct(null);
+    }
+  }, [selectedProduct, producto._id, originalProduct]);
 
   useEffect(() => {
     if (producto && producto.image) {
@@ -187,6 +197,7 @@ const ProductRow = ({
       );
       fetchProducts();
       setSelectedProduct(null);
+      setOriginalProduct(null);
       toast.dismiss();
       toast.success("Producto actualizado con éxito");
     } catch (error) {
@@ -232,6 +243,19 @@ const ProductRow = ({
         prod._id === producto._id ? updatedProduct : prod
       )
     );
+  };
+
+  const handleCancelEdit = () => {
+    if (originalProduct) {
+      // Restaurar el producto a su estado original
+      setEditableProducts((prevProducts) =>
+        prevProducts.map((prod) =>
+          prod._id === producto._id ? { ...originalProduct } : prod
+        )
+      );
+    }
+    setSelectedProduct(null);
+    setOriginalProduct(null);
   };
 
 
@@ -721,7 +745,7 @@ const ProductRow = ({
               Guardar
             </button>
             <button
-              onClick={() => setSelectedProduct(null)}
+              onClick={handleCancelEdit}
               className="px-1 py-1 text-xs text-white bg-red-500 rounded hover:bg-red-600 transition-colors"
               aria-label="Cancelar edición"
             >
