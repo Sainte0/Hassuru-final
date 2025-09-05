@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <>
       <SEOHead 
-        title="Hassuru - Ropa y Zapatillas de Marca | Tienda Online Argentina"
+        title="Hassuru® | Sneakers Exclusivos y Streetwear de Marca en Argentina"
         description="Descubre las mejores ofertas en ropa y zapatillas de marca en Hassuru. Sneakers, ropa deportiva y accesorios con envío gratis en Argentina. ¡Compra online con confianza!"
         keywords="ropa, zapatillas, sneakers, marca, deportes, moda, Argentina, online, tienda, Nike, Adidas, Puma, Reebok"
         url="https://hassuru.ar"
@@ -100,12 +100,12 @@ export default function Home() {
         {/* Últimos productos por categoría */}
         <div className="mt-8">
           <Link href="/productos/categoria/ropa">
-            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Últimos en Ropa"} />
+            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosRopa} title={"Nuevos ingresos"} />
           </Link>
         </div>
         <div className="mt-2">
           <Link href="/productos/categoria/zapatillas">
-            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Últimos en Zapatillas"} />
+            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Nuevos ingresos en zapatillas"} />
           </Link>
         </div>
 

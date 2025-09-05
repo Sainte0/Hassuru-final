@@ -33,6 +33,13 @@ export default function Carousell({ title, products, dolarBlue }) {
     return "/placeholder.jpg";
   };
 
+  // Función para determinar si un producto es clickeable
+  const isProductClickable = (product) => {
+    const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
+    // Solo los productos con tallas disponibles son clickeables
+    return hasTallas;
+  };
+
   // Función para manejar el scroll en móvil
   const handleScroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -93,9 +100,15 @@ export default function Carousell({ title, products, dolarBlue }) {
         
         {/* Grid para pantallas grandes, carrusel para móvil */}
         <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {products.map((product, index) => (
-            <Link href={`/producto/${product._id}`} key={product._id}>
-              <div className="flex flex-col justify-between h-full transition-transform transform hover:scale-105">
+          {products.map((product, index) => {
+            const clickable = isProductClickable(product);
+            
+            const productCard = (
+              <div className={`flex flex-col justify-between h-full ${
+                clickable 
+                  ? 'transition-transform transform hover:scale-105 cursor-pointer' 
+                  : 'opacity-75 cursor-not-allowed'
+              }`}>
                 <div className="relative w-full h-[15rem]">
                   {!loadedImages[product._id] && (
                     <div className="absolute inset-0 animate-pulse">
@@ -120,6 +133,11 @@ export default function Carousell({ title, products, dolarBlue }) {
                     }}
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
+                  {!clickable && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+                      <span className="text-white font-bold text-sm">Próximamente</span>
+                    </div>
+                  )}
                 </div>
                 <div className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</div>
                 <div className="flex flex-col mt-2">
@@ -129,8 +147,18 @@ export default function Carousell({ title, products, dolarBlue }) {
                   </p>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+
+            return clickable ? (
+              <Link href={`/producto/${product._id}`} key={product._id}>
+                {productCard}
+              </Link>
+            ) : (
+              <div key={product._id}>
+                {productCard}
+              </div>
+            );
+          })}
         </div>
 
         {/* Carrusel para móvil */}
@@ -138,9 +166,15 @@ export default function Carousell({ title, products, dolarBlue }) {
           className="flex overflow-x-auto md:hidden scrollbar-hide snap-x snap-mandatory" 
           ref={scrollContainerRef}
         >
-          {products.map((product, index) => (
-            <Link href={`/producto/${product._id}`} key={product._id}>
-              <div className="flex flex-col justify-between h-full min-w-[200px] mx-2 transition-transform transform hover:scale-105 snap-center">
+          {products.map((product, index) => {
+            const clickable = isProductClickable(product);
+            
+            const productCard = (
+              <div className={`flex flex-col justify-between h-full min-w-[200px] mx-2 snap-center ${
+                clickable 
+                  ? 'transition-transform transform hover:scale-105 cursor-pointer' 
+                  : 'opacity-75 cursor-not-allowed'
+              }`}>
                 <div className="relative w-full h-[15rem]">
                   {!loadedImages[product._id] && (
                     <div className="absolute inset-0 animate-pulse">
@@ -165,6 +199,11 @@ export default function Carousell({ title, products, dolarBlue }) {
                     }}
                     onLoad={() => setLoadedImages(prev => ({ ...prev, [product._id]: true }))}
                   />
+                  {!clickable && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
+                      <span className="text-white font-bold text-xs">Próximamente</span>
+                    </div>
+                  )}
                 </div>
                 <div className="text-sm font-semibold line-clamp-2 text-gray-900 dark:text-white">{product.nombre}</div>
                 <div className="flex flex-col mt-2">
@@ -174,8 +213,18 @@ export default function Carousell({ title, products, dolarBlue }) {
                   </p>
                 </div>
               </div>
-            </Link>
-          ))}
+            );
+
+            return clickable ? (
+              <Link href={`/producto/${product._id}`} key={product._id}>
+                {productCard}
+              </Link>
+            ) : (
+              <div key={product._id}>
+                {productCard}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
