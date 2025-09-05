@@ -137,9 +137,7 @@ export default function Navbar() {
               <Link href="/productos/talla/ropa" className="py-2 hover:text-gray-300">
                 Ropa
               </Link>
-              <Link href="/productos/categoria/accesorios" className="py-2 hover:text-gray-300">
-                Tecnología
-              </Link>
+           
               <Link href="/encargos" className="py-2 hover:text-gray-300">
                 Encargos
               </Link>

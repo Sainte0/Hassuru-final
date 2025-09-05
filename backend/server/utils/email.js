@@ -75,7 +75,7 @@ async function sendOrderReceiptEmail({ to, order }) {
     <h4>Datos personales</h4>
     <p>Nombre: ${order.datosPersonales.nombre}</p>
     <p>Email: ${order.datosPersonales.email}</p>
-    <p>Teléfono: <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none; font-size: 16px; font-weight: bold; padding: 8px 12px; background-color: #eff6ff; border-radius: 6px; margin-right: 10px;">📞 ${order.datosPersonales.telefono}</a> <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none; font-size: 16px; font-weight: bold; padding: 8px 12px; background-color: #f0fdf4; border-radius: 6px;">💬 WhatsApp</a></p>
+    <p>Teléfono: <a href="tel:${order.datosPersonales.telefono}" style="color: #2563eb; text-decoration: none;">${order.datosPersonales.telefono}</a> | <a href="https://wa.me/${order.datosPersonales.telefono.replace(/[^0-9]/g, '')}" style="color: #25d366; text-decoration: none;">WhatsApp</a></p>
     <p>DNI: ${order.datosPersonales.dni}</p>
     <p>Gracias por confiar en Hassuru. Te contactaremos pronto para coordinar el pago y la entrega.</p>
   `;
