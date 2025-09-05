@@ -336,10 +336,14 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     if (selectedAccesorio === accesorio) {
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedAccesorio("");
+      // Si se elimina el último accesorio específico, también limpiar la categoría de accesorios
+      setSelectedCategoriaAccesorio("");
     } else {
       setSelectedAccesorio(accesorio);
       setSelectedTallaRopa("");
       setSelectedTallaZapatilla("");
+      // Al seleccionar un accesorio específico, activar también la categoría de accesorios
+      setSelectedCategoriaAccesorio("accesorios");
     }
   };
 
@@ -347,6 +351,8 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
     if (selectedCategoriaAccesorio === "accesorios") {
       ignoreUrlInitRef.current = true; // Activar flag para ignorar inicialización
       setSelectedCategoriaAccesorio("");
+      // Al eliminar la categoría de accesorios, también limpiar accesorios específicos
+      setSelectedAccesorio("");
     } else {
       setSelectedCategoriaAccesorio("accesorios");
       setSelectedTallaRopa("");
