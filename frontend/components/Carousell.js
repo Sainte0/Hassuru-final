@@ -33,6 +33,20 @@ export default function Carousell({ title, products, dolarBlue }) {
     return "/placeholder.jpg";
   };
 
+  // Función para obtener el mensaje de disponibilidad
+  const getDisponibilidad = (product) => {
+    const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
+    
+    if (hasTallas && product.encargo) {
+      return { message: "Disponible en 5 días", color: "text-yellow-500" };
+    } else if (hasTallas) {
+      return { message: "Entrega inmediata", color: "text-green-500" };
+    } else {
+      // Para todos los productos con entrega en 20 días, mostrar "Dormiste"
+      return { message: "Dormiste", color: "text-red-500" };
+    }
+  };
+
   // Función para determinar si un producto es clickeable
   const isProductClickable = (product) => {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
@@ -135,7 +149,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                   />
                   {!clickable && (
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-                      <span className="text-white font-bold text-sm">Próximamente</span>
+                      <span className="text-white font-bold text-sm">Dormiste</span>
                     </div>
                   )}
                 </div>
@@ -201,7 +215,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                   />
                   {!clickable && (
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-                      <span className="text-white font-bold text-xs">Próximamente</span>
+                      <span className="text-white font-bold text-xs">Dormiste</span>
                     </div>
                   )}
                 </div>

@@ -60,12 +60,8 @@ export default function Card({ currentProducts }) {
     } else if (hasTallas) {
       return { message: "Entrega inmediata", color: "text-green-500" };
     } else {
-      // Si es zapatilla con entrega en 20 días, mostrar "Dormiste"
-      if (product.categoria === 'zapatillas') {
-        return { message: "Dormiste", color: "text-red-500" };
-      } else {
-        return { message: "Disponible en 20 días", color: "text-red-500" };
-      }
+      // Para todos los productos con entrega en 20 días, mostrar "Dormiste"
+      return { message: "Dormiste", color: "text-red-500" };
     }
   };
 
