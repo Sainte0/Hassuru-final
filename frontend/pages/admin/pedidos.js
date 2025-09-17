@@ -324,7 +324,16 @@ export default function PedidosAdmin() {
                         <span className="font-semibold">Pago:</span> {order.pago}
                       </div>
                       <div className="text-xs">
-                        <span className="font-semibold">Envío:</span> {order.envio?.tipo}
+                        <span className="font-semibold">Envío:</span> 
+                        <span 
+                          className="cursor-help" 
+                          title={order.envio?.tipo || ''}
+                        >
+                          {order.envio?.tipo ? 
+                            (order.envio.tipo.length > 8 ? `${order.envio.tipo.substring(0, 8)}...` : order.envio.tipo) 
+                            : 'Sin envío'
+                          }
+                        </span>
                       </div>
                       <div className="text-xs">
                         <span className="font-semibold">Fecha:</span> {new Date(order.fechaCreacion).toLocaleDateString('es-AR')}
@@ -463,10 +472,24 @@ export default function PedidosAdmin() {
                           {order.pago}
                         </td>
                         <td className="p-3 align-top">
-                          <div className="capitalize font-medium text-gray-900 dark:text-dark-text text-xs">{order.envio?.tipo}</div>
+                          <div 
+                            className="capitalize font-medium text-gray-900 dark:text-dark-text text-xs cursor-help" 
+                            title={order.envio?.tipo || ''}
+                          >
+                            {order.envio?.tipo ? 
+                              (order.envio.tipo.length > 8 ? `${order.envio.tipo.substring(0, 8)}...` : order.envio.tipo) 
+                              : 'Sin envío'
+                            }
+                          </div>
                           {order.envio?.direccion && (
-                            <div className="text-xs text-gray-500 dark:text-dark-text-secondary truncate mt-1">
-                              {order.envio.direccion.split(',')[0]}
+                            <div 
+                              className="text-xs text-gray-500 dark:text-dark-text-secondary truncate mt-1 cursor-help" 
+                              title={order.envio.direccion}
+                            >
+                              {order.envio.direccion.split(',')[0].length > 12 ? 
+                                `${order.envio.direccion.split(',')[0].substring(0, 12)}...` : 
+                                order.envio.direccion.split(',')[0]
+                              }
                             </div>
                           )}
                         </td>
