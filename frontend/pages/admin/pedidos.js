@@ -427,15 +427,84 @@ export default function PedidosAdmin() {
                               <FaRegCopy size={14} />
                             </button>
                             <div className="space-y-0.5 pr-5 text-gray-900 dark:text-white text-xs">
-                              <div className="font-semibold truncate">{order.datosPersonales?.nombre || 'Sin nombre'}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Tel: {order.datosPersonales?.telefono || 'Sin teléfono'}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Email: {order.datosPersonales?.email || 'Sin email'}</div>
-                              <div className="text-gray-600 dark:text-white truncate">DNI: {order.datosPersonales?.dni || 'Sin DNI'}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Domicilio: {order.envio?.direccion?.split(',')[0] || ''}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Casa/Depto: {order.envio?.direccion?.split(',')[1]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Localidad: {order.envio?.direccion?.split(',')[2]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-white truncate">CP: {order.envio?.direccion?.split(',')[3]?.trim() || ''}</div>
-                              <div className="text-gray-600 dark:text-white truncate">Provincia: {order.envio?.direccion?.split(',')[4]?.trim() || ''}</div>
+                              <div 
+                                className="font-semibold cursor-help" 
+                                title={order.datosPersonales?.nombre || 'Sin nombre'}
+                              >
+                                {order.datosPersonales?.nombre ? 
+                                  (order.datosPersonales.nombre.length > 20 ? `${order.datosPersonales.nombre.substring(0, 20)}...` : order.datosPersonales.nombre) 
+                                  : 'Sin nombre'
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Tel: ${order.datosPersonales?.telefono || 'Sin teléfono'}`}
+                              >
+                                Tel: {order.datosPersonales?.telefono ? 
+                                  (order.datosPersonales.telefono.length > 15 ? `${order.datosPersonales.telefono.substring(0, 15)}...` : order.datosPersonales.telefono) 
+                                  : 'Sin teléfono'
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Email: ${order.datosPersonales?.email || 'Sin email'}`}
+                              >
+                                Email: {order.datosPersonales?.email ? 
+                                  (order.datosPersonales.email.length > 20 ? `${order.datosPersonales.email.substring(0, 20)}...` : order.datosPersonales.email) 
+                                  : 'Sin email'
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`DNI: ${order.datosPersonales?.dni || 'Sin DNI'}`}
+                              >
+                                DNI: {order.datosPersonales?.dni || 'Sin DNI'}
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Domicilio: ${order.envio?.direccion?.split(',')[0] || ''}`}
+                              >
+                                Domicilio: {order.envio?.direccion?.split(',')[0] ? 
+                                  (order.envio.direccion.split(',')[0].length > 18 ? `${order.envio.direccion.split(',')[0].substring(0, 18)}...` : order.envio.direccion.split(',')[0]) 
+                                  : ''
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Casa/Depto: ${order.envio?.direccion?.split(',')[1]?.trim() || ''}`}
+                              >
+                                Casa/Depto: {order.envio?.direccion?.split(',')[1]?.trim() ? 
+                                  (order.envio.direccion.split(',')[1].trim().length > 15 ? `${order.envio.direccion.split(',')[1].trim().substring(0, 15)}...` : order.envio.direccion.split(',')[1].trim()) 
+                                  : ''
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Localidad: ${order.envio?.direccion?.split(',')[2]?.trim() || ''}`}
+                              >
+                                Localidad: {order.envio?.direccion?.split(',')[2]?.trim() ? 
+                                  (order.envio.direccion.split(',')[2].trim().length > 15 ? `${order.envio.direccion.split(',')[2].trim().substring(0, 15)}...` : order.envio.direccion.split(',')[2].trim()) 
+                                  : ''
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`CP: ${order.envio?.direccion?.split(',')[3]?.trim() || ''}`}
+                              >
+                                CP: {order.envio?.direccion?.split(',')[3]?.trim() ? 
+                                  (order.envio.direccion.split(',')[3].trim().length > 12 ? `${order.envio.direccion.split(',')[3].trim().substring(0, 12)}...` : order.envio.direccion.split(',')[3].trim()) 
+                                  : ''
+                                }
+                              </div>
+                              <div 
+                                className="text-gray-600 dark:text-white cursor-help" 
+                                title={`Provincia: ${order.envio?.direccion?.split(',')[4]?.trim() || ''}`}
+                              >
+                                Provincia: {order.envio?.direccion?.split(',')[4]?.trim() ? 
+                                  (order.envio.direccion.split(',')[4].trim().length > 12 ? `${order.envio.direccion.split(',')[4].trim().substring(0, 12)}...` : order.envio.direccion.split(',')[4].trim()) 
+                                  : ''
+                                }
+                              </div>
                             </div>
                           </div>
                         </td>
@@ -451,8 +520,11 @@ export default function PedidosAdmin() {
                                   </div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <div className="font-medium text-gray-900 dark:text-white text-xs truncate">
-                                    {p.nombre}
+                                  <div 
+                                    className="font-medium text-gray-900 dark:text-white text-xs cursor-help" 
+                                    title={p.nombre}
+                                  >
+                                    {p.nombre.length > 25 ? `${p.nombre.substring(0, 25)}...` : p.nombre}
                                     {p.encargo && (
                                       <span className="ml-1 px-1 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
                                     )}
@@ -462,7 +534,14 @@ export default function PedidosAdmin() {
                                     {p.color && <span>Color: {p.color} </span>}
                                     <span>Cant: {p.cantidad} - ${p.precio} USD</span>
                                   </div>
-                                  {p.detalles && <div className="text-xs text-gray-600 dark:text-gray-400 italic truncate">"{p.detalles}"</div>}
+                                  {p.detalles && (
+                                    <div 
+                                      className="text-xs text-gray-600 dark:text-gray-400 italic cursor-help" 
+                                      title={`"${p.detalles}"`}
+                                    >
+                                      "{p.detalles.length > 30 ? `${p.detalles.substring(0, 30)}...` : p.detalles}"
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             ))}
