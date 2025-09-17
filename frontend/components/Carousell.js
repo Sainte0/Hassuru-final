@@ -38,7 +38,7 @@ export default function Carousell({ title, products, dolarBlue }) {
     const hasTallas = product.tallas && Object.keys(product.tallas).length > 0;
     
     if (hasTallas && product.encargo) {
-      return { message: "Disponible en 5 días", color: "text-yellow-500" };
+      return { message: "Entrega garantizada en 5 días hábiles", color: "text-yellow-500" };
     } else if (hasTallas) {
       return { message: "Entrega inmediata", color: "text-green-500" };
     } else {
