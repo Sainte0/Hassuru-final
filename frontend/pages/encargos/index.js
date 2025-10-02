@@ -26,12 +26,8 @@ const LATAM_PREFIXES = [
   { code: '+1', country: 'Rep. Dominicana' }
 ];
 
-const pasos = ['Productos', 'Datos personales', 'Envío o retiro', 'Pago'];
+const pasos = ['Productos', 'Datos personales', 'Pago'];
 
-const tiposEnvio = [
-  { value: 'envio', label: 'Envío a domicilio' },
-  { value: 'retiro', label: 'Retiro en persona' }
-];
 const tiposPago = [
   { value: 'usdt', label: 'USDT/Crypto' },
   { value: 'transferencia', label: 'Transferencia' },
@@ -77,12 +73,8 @@ export default function Encargos() {
   });
   const [telefono, setTelefono] = useState({ prefijo: '+54', numero: '' });
   const [envio, setEnvio] = useState({ 
-    tipo: 'envio', 
-    domicilio: '', 
-    casaDepto: '', 
-    localidad: '', 
-    codigoPostal: '', 
-    provincia: '' 
+    tipo: 'retiro', 
+    direccion: 'Córdoba Capital'
   });
   const [pago, setPago] = useState('usdt');
   const [enviando, setEnviando] = useState(false);
@@ -201,9 +193,6 @@ export default function Encargos() {
     }
   };
 
-  const handleChangeEnvio = e => {
-    setEnvio({ ...envio, [e.target.name]: e.target.value });
-  };
 
   const handleNext = () => {
     if (step === 0 && productos.length === 0) {
@@ -233,12 +222,6 @@ export default function Encargos() {
       // Verificar si hay errores
       if (Object.values(newErrors).some(error => error !== '')) {
         setError('Completa todos los campos obligatorios correctamente');
-        return;
-      }
-    }
-    if (step === 2 && envio.tipo === 'envio') {
-      if (!envio.domicilio || !envio.localidad || !envio.codigoPostal || !envio.provincia) {
-        setError('Completa todos los campos de dirección');
         return;
       }
     }
@@ -278,8 +261,8 @@ export default function Encargos() {
             dni: datos.dni
           },
           envio: { 
-            tipo: envio.tipo, 
-            direccion: envio.tipo === 'envio' ? `${envio.domicilio}${envio.casaDepto ? ', ' + envio.casaDepto : ''}, ${envio.localidad}, ${envio.provincia}, ${envio.codigoPostal}` : ''
+            tipo: 'retiro', 
+            direccion: 'Córdoba Capital'
           },
           pago: pago,
         })
@@ -289,7 +272,7 @@ export default function Encargos() {
       setProductos([]);
       setDatos({ nombre: '', apellido: '', email: '', dni: '' });
       setTelefono({ prefijo: '+54', numero: '' });
-      setEnvio({ tipo: 'envio', domicilio: '', casaDepto: '', localidad: '', codigoPostal: '', provincia: '' });
+      setEnvio({ tipo: 'retiro', direccion: 'Córdoba Capital' });
       setPago('usdt');
       setStep(0);
       setErrors({});
@@ -542,34 +525,9 @@ export default function Encargos() {
           </div>
         )}
 
-        {/* Paso 2: Envío */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <div className="text-gray-900 dark:text-white">
-              <label className="flex items-center">
-                <input type="radio" checked={envio.tipo === 'envio'} onChange={() => setEnvio({ ...envio, tipo: 'envio' })} className="mr-2" /> Envío a domicilio
-              </label>
-              <label className="flex items-center ml-4">
-                <input type="radio" checked={envio.tipo === 'retiro'} onChange={() => setEnvio({ ...envio, tipo: 'retiro' })} className="mr-2" /> Retiro en persona
-              </label>
-            </div>
-            
-            {envio.tipo === 'envio' && (
-              <div className="space-y-4">
-                <input name="domicilio" value={envio.domicilio} onChange={handleChangeEnvio} placeholder="Domicilio (calle y número)*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-                <input name="casaDepto" value={envio.casaDepto} onChange={handleChangeEnvio} placeholder="Casa o Departamento" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input name="localidad" value={envio.localidad} onChange={handleChangeEnvio} placeholder="Localidad*" className="border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-                  <input name="codigoPostal" value={envio.codigoPostal} onChange={handleChangeEnvio} placeholder="Código postal*" className="border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-                </div>
-                <input name="provincia" value={envio.provincia} onChange={handleChangeEnvio} placeholder="Provincia*" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required />
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Paso 3: Pago */}
-        {step === 3 && (
+        {/* Paso 2: Pago */}
+        {step === 2 && (
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Método de pago</h3>
             <div className="grid grid-cols-1 gap-4">
@@ -649,8 +607,8 @@ export default function Encargos() {
 
         <div className="flex justify-between mt-6">
           {step > 0 && <button className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" onClick={handleBack}>Atrás</button>}
-          {step < 3 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
-          {step === 3 && pago && (
+          {step < 2 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
+          {step === 2 && pago && (
             <button 
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors" 
               onClick={handleSubmit} 

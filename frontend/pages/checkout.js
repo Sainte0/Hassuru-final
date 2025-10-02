@@ -5,7 +5,7 @@ import useStore from '../store/store';
 import SEOHead from '../components/SEOHead';
 import { useGA4 } from '../hooks/useGA4';
 
-const pasos = ['Datos personales', 'Envío o retiro', 'Método de pago', 'Confirmar pedido'];
+const pasos = ['Datos personales', 'Método de pago', 'Confirmar pedido'];
 
 const LATAM_PREFIXES = [
   { code: '+54', country: 'Argentina' },
@@ -40,7 +40,7 @@ export default function Checkout() {
     email: '', 
     dni: '' 
   });
-  const [envio, setEnvio] = useState({ tipo: 'envio', direccion: '', calle: '', numero: '', piso: '', ciudad: '', provincia: '', codigoPostal: '', pais: '' });
+  const [envio, setEnvio] = useState({ tipo: 'retiro', direccion: 'Córdoba Capital' });
   const [pago, setPago] = useState('usdt');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -105,24 +105,6 @@ export default function Checkout() {
         if (cleanPhone.length > 15) return 'El teléfono no puede tener más de 15 dígitos';
         return '';
       
-      case 'calle':
-        if (envioTipo === 'envio' && !value.trim()) return 'La calle es obligatoria';
-        return '';
-      case 'numero':
-        if (envioTipo === 'envio' && !value.trim()) return 'El número es obligatorio';
-        return '';
-      case 'ciudad':
-        if (envioTipo === 'envio' && !value.trim()) return 'La ciudad es obligatoria';
-        return '';
-      case 'provincia':
-        if (envioTipo === 'envio' && !value.trim()) return 'La provincia es obligatoria';
-        return '';
-      case 'codigoPostal':
-        if (envioTipo === 'envio' && !value.trim()) return 'El código postal es obligatorio';
-        return '';
-      case 'pais':
-        if (envioTipo === 'envio' && !value.trim()) return 'El país es obligatorio';
-        return '';
       
       default:
         return '';
@@ -186,32 +168,6 @@ export default function Checkout() {
     return !Object.values(newErrors).some(error => error !== '');
   };
 
-  // Modificar handleFieldChange para campos de envío
-  const handleEnvioFieldChange = (name, value) => {
-    setEnvio(prev => ({ ...prev, [name]: value }));
-    const fieldError = validateField(name, value, envio.tipo, { ...envio, [name]: value });
-    setErrors(prev => ({ ...prev, [name]: fieldError }));
-  };
-
-  // Modificar handleFieldBlur para campos de envío
-  const handleEnvioFieldBlur = (name) => {
-    setTouched(prev => ({ ...prev, [name]: true }));
-  };
-
-  // Validar todos los campos de envío si es tipo 'envio'
-  const validateEnvioFields = () => {
-    if (envio.tipo !== 'envio') return true;
-    const requiredFields = ['calle', 'numero', 'ciudad', 'provincia', 'codigoPostal', 'pais'];
-    let valid = true;
-    const newErrors = {};
-    requiredFields.forEach(field => {
-      const error = validateField(field, envio[field], envio.tipo, envio);
-      newErrors[field] = error;
-      if (error) valid = false;
-    });
-    setErrors(prev => ({ ...prev, ...newErrors }));
-    return valid;
-  };
 
   // Modificar handleNext y handleSubmit para validar envío
   const handleNext = () => {
@@ -227,13 +183,7 @@ export default function Checkout() {
         return;
       }
     }
-    if (step === 1 && envio.tipo === 'envio') {
-      if (!validateEnvioFields()) {
-        setTouched(prev => ({ ...prev, calle: true, numero: true, ciudad: true, provincia: true, codigoPostal: true, pais: true }));
-        return;
-      }
-    }
-    if (step === 2) {
+    if (step === 1) {
       // En el paso de método de pago, solo avanzar si se seleccionó un método
       if (!pago) {
         setError('Por favor selecciona un método de pago');
@@ -258,22 +208,9 @@ export default function Checkout() {
       setLoading(false);
       return;
     }
-    if (envio.tipo === 'envio' && !validateEnvioFields()) {
-      setError('Por favor, completa todos los campos de envío.');
-      setLoading(false);
-      return;
-    }
     
     try {
-      let envioData;
-      if (envio.tipo === 'envio') {
-        envioData = {
-          tipo: 'envio',
-          direccion: `${envio.calle} ${envio.numero}${envio.piso ? ', ' + envio.piso : ''}, ${envio.ciudad}, ${envio.provincia}, ${envio.codigoPostal}, ${envio.pais}`
-        };
-      } else {
-        envioData = { tipo: 'retiro', direccion: '' };
-      }
+      const envioData = { tipo: 'retiro', direccion: 'Córdoba Capital' };
       const productosToSend = cart.map(item => ({
         productoId: item.productoId,
         nombre: item.nombre,
@@ -387,7 +324,7 @@ export default function Checkout() {
             <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
-            <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">¡Envío gratis a todo Argentina!</p>
+            <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">Retira en Córdoba Capital</p>
           </div>
         </div>
         {cart.some(item => item.encargo) && (
@@ -496,90 +433,6 @@ export default function Checkout() {
           </div>
         )}
         {step === 1 && (
-          <div className="space-y-2">
-            <div className="text-gray-900 dark:text-white">
-              <label className="flex items-center">
-                <input type="radio" checked={envio.tipo === 'envio'} onChange={() => setEnvio({ ...envio, tipo: 'envio' })} className="mr-2" /> Envío
-              </label>
-              <label className="flex items-center ml-4">
-                <input type="radio" checked={envio.tipo === 'retiro'} onChange={() => setEnvio({ ...envio, tipo: 'retiro' })} className="mr-2" /> Retiro en persona
-              </label>
-            </div>
-            {envio.tipo === 'envio' && (
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.calle && touched.calle ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="Calle"
-                    value={envio.calle}
-                    onChange={e => handleEnvioFieldChange('calle', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('calle')}
-                  />
-                  {errors.calle && touched.calle && <p className="text-red-500 text-sm">{errors.calle}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.numero && touched.numero ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="Número"
-                    value={envio.numero}
-                    onChange={e => handleEnvioFieldChange('numero', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('numero')}
-                  />
-                  {errors.numero && touched.numero && <p className="text-red-500 text-sm">{errors.numero}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.ciudad && touched.ciudad ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="Ciudad"
-                    value={envio.ciudad}
-                    onChange={e => handleEnvioFieldChange('ciudad', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('ciudad')}
-                  />
-                  {errors.ciudad && touched.ciudad && <p className="text-red-500 text-sm">{errors.ciudad}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.provincia && touched.provincia ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="Provincia/Estado"
-                    value={envio.provincia}
-                    onChange={e => handleEnvioFieldChange('provincia', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('provincia')}
-                  />
-                  {errors.provincia && touched.provincia && <p className="text-red-500 text-sm">{errors.provincia}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.codigoPostal && touched.codigoPostal ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="Código Postal"
-                    value={envio.codigoPostal}
-                    onChange={e => handleEnvioFieldChange('codigoPostal', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('codigoPostal')}
-                  />
-                  {errors.codigoPostal && touched.codigoPostal && <p className="text-red-500 text-sm">{errors.codigoPostal}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors ${errors.pais && touched.pais ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'}`}
-                    placeholder="País"
-                    value={envio.pais}
-                    onChange={e => handleEnvioFieldChange('pais', e.target.value)}
-                    onBlur={() => handleEnvioFieldBlur('pais')}
-                  />
-                  {errors.pais && touched.pais && <p className="text-red-500 text-sm">{errors.pais}</p>}
-                </div>
-                <div className="space-y-1">
-                  <input 
-                    className={`w-full border p-2 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors`}
-                    placeholder="Piso/Depto (opcional)"
-                    value={envio.piso}
-                    onChange={e => handleEnvioFieldChange('piso', e.target.value)}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-        {step === 2 && (
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Método de pago</h3>
             
@@ -690,7 +543,7 @@ export default function Checkout() {
           </div>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <div className="space-y-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Confirmar pedido</h3>
             
@@ -719,10 +572,7 @@ export default function Checkout() {
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Envío</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {envio.tipo === 'envio' 
-                    ? `Envío a domicilio: ${envio.calle} ${envio.numero}${envio.piso ? ', ' + envio.piso : ''}, ${envio.ciudad}, ${envio.provincia}, ${envio.codigoPostal}, ${envio.pais}`
-                    : 'Retiro en persona'
-                  }
+                  Retiro en Córdoba Capital
                 </p>
               </div>
 
@@ -756,8 +606,8 @@ export default function Checkout() {
         {error && <div className="text-red-500 dark:text-red-400 mt-2">{error}</div>}
         <div className="flex justify-between mt-6">
           {step > 0 && <button className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" onClick={handleBack}>Atrás</button>}
-          {step < 3 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
-          {step === 3 && (
+          {step < 2 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
+          {step === 2 && (
             <button 
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors" 
               onClick={handleConfirmOrder} 
