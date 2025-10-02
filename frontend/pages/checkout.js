@@ -223,7 +223,7 @@ export default function Checkout() {
       mensaje += ` ($${formatARS(totalARS)} ARS)`;
     }
     
-    mensaje += `\n\n📦 *Retiro en Córdoba Capital*`;
+    mensaje += `\n\n📦 *Envíos gratis a todo el país o retiro por showroom en Córdoba Capital*`;
     mensaje += `\n💳 *Método de pago: ${pago === 'usdt' ? 'USDT/Crypto' : pago === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo'}*`;
     
     return encodeURIComponent(mensaje);
@@ -366,7 +366,7 @@ export default function Checkout() {
             <svg className="h-5 w-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
-            <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">Retira en Córdoba Capital</p>
+            <p className="ml-2 text-sm text-green-700 dark:text-green-300 font-medium">Envíos gratis a todo el país o retiro por showroom en Córdoba Capital</p>
           </div>
         </div>
         {cart.some(item => item.encargo) && (
@@ -552,7 +552,7 @@ export default function Checkout() {
                 </div>
                 {pago === 'efectivo' && (
                   <div className="mt-3 text-sm text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600">
-                    <p>• Disponible en Córdoba Capital</p>
+                    <p>• Envíos gratis a todo el país o retiro por showroom en Córdoba Capital</p>
                     <p>• Disponible en Buenos Aires</p>
                     <p>• Coordinamos punto de encuentro seguro</p>
                     <p>• <strong>Pago en un solo pago</strong></p>
@@ -574,7 +574,7 @@ export default function Checkout() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Retiro disponible en Córdoba Capital</span>
+                  <span>Envíos gratis a todo el país o retiro por showroom en Córdoba Capital</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-500 mr-2">⚠</span>
