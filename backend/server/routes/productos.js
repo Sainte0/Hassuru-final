@@ -674,6 +674,23 @@ router.get('/ultimos/zapatillas', async (req, res) => {
   }
 });
 
+// Get últimos en accesorios (limit 6) - solo entrega inmediata
+router.get('/ultimos/accesorios', async (req, res) => {
+  try {
+    const productos = await Producto.find({ 
+      categoria: 'accesorios',
+      encargo: false,
+      tallas: { $exists: true, $ne: [] }
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
+    res.json(productos);
+  } catch (error) {
+    console.error('Error al obtener últimos productos de accesorios:', error);
+    res.status(500).json({ error: 'Error al obtener últimos productos de accesorios' });
+  }
+});
+
 // Rutas generales después
 router.get('/', async (req, res) => {
   try {
