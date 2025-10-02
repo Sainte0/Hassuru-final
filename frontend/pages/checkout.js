@@ -563,11 +563,11 @@ export default function Checkout() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Te contactaremos para coordinar el pago y la entrega</span>
+                  <span>Te contactaremos para coordinar el pago y el retiro</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-500 mr-2">✓</span>
-                  <span>Envíos gratis a todo el país</span>
+                  <span>Retiro disponible en Córdoba Capital</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-500 mr-2">⚠</span>
@@ -588,7 +588,7 @@ export default function Checkout() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <p className="ml-2 text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Revisa tu pedido:</strong> Una vez confirmado, te contactaremos para coordinar el pago y la entrega.
+                  <strong>Revisa tu pedido:</strong> Una vez confirmado, te contactaremos para coordinar el pago y el retiro.
                 </p>
               </div>
             </div>
@@ -604,12 +604,6 @@ export default function Checkout() {
                 </p>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Envío</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Retiro en Córdoba Capital
-                </p>
-              </div>
 
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Método de pago</h4>
