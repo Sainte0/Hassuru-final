@@ -229,15 +229,7 @@ export default function Detail({ product }) {
                   product.encargo ? (
                     <span className="text-yellow-500 dark:text-yellow-400">Disponible en 5 días</span>
                   ) : (
-                    <div className="flex flex-col gap-2">
-                      <span className="text-green-500 dark:text-green-400">Entrega inmediata</span>
-                      <button
-                        onClick={handleAddToCart}
-                        className="w-full bg-black dark:bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors font-medium"
-                      >
-                        Añadir al carrito
-                      </button>
-                    </div>
+                    <span className="text-green-500 dark:text-green-400">Entrega inmediata</span>
                   )
                 ) : (
                   <span className="text-red-500 dark:text-red-400">Disponible en 20 días</span>
