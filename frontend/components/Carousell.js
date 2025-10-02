@@ -157,7 +157,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                 <div className="flex flex-col mt-2">
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
-                    {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
+                    {dolarBlue ? `$${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS` : "Cargando precio en ARS..."}
                   </p>
                 </div>
               </div>
@@ -223,7 +223,7 @@ export default function Carousell({ title, products, dolarBlue }) {
                 <div className="flex flex-col mt-2">
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">${product.precio} USD</p>
                   <p className="text-sm font-bold text-gray-800 dark:text-gray-200">
-                    {dolarBlue ? `$${(product.precio * dolarBlue).toFixed(2)} ARS` : "Cargando precio en ARS..."}
+                    {dolarBlue ? `$${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS` : "Cargando precio en ARS..."}
                   </p>
                 </div>
               </div>

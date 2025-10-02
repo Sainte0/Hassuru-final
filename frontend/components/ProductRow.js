@@ -535,7 +535,7 @@ const ProductRow = ({
         ) : (
           <div className="text-xs text-gray-900 dark:text-gray-100">
             <p>${producto.precio}</p>
-            <p className="text-gray-600 dark:text-gray-400">${(producto.precio * dolarBlue).toFixed(0)}</p>
+            <p className="text-gray-600 dark:text-gray-400">${Math.round(producto.precio * dolarBlue).toLocaleString('es-AR')} ARS</p>
           </div>
         )}
       </td>

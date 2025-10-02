@@ -107,7 +107,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                             <div className="flex flex-col items-end space-y-1">
                               <p className="text-gray-900 dark:text-white font-medium">${(item.precio * item.cantidad).toFixed(2)} USD</p>
                               {dolarBlue && (
-                                <p className="text-gray-500 dark:text-gray-400 text-xs">${(item.precio * item.cantidad * dolarBlue).toFixed(2)} ARS</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs">${Math.round(item.precio * item.cantidad * dolarBlue).toLocaleString('es-AR')} ARS</p>
                               )}
                             </div>
                           </div>
@@ -125,7 +125,7 @@ export default function CartDrawer({ open, onClose, cart, onProceed }) {
                 <div className="flex flex-col items-end">
                   <p>${cart.reduce((acc, item) => acc + (item.precio * item.cantidad), 0).toFixed(2)} USD</p>
                   {dolarBlue && (
-                    <p>${totalARS.toFixed(2)} ARS</p>
+                    <p>${Math.round(totalARS).toLocaleString('es-AR')} ARS</p>
                   )}
                 </div>
               </div>

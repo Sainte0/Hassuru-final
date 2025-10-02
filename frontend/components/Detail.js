@@ -184,7 +184,7 @@ export default function Detail({ product }) {
             <div className="space-y-2 text-gray-800 dark:text-white">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{product.descripcion}</p>
               <p className="text-4xl font-bold">${product.precio} USD</p>
-              <p className="text-lg text-gray-400 dark:text-gray-500">${(product.precio * dolarBlue).toFixed(2)} ARS</p>
+              <p className="text-lg text-gray-400 dark:text-gray-500">${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS</p>
             </div>
             <div className="mt-4">
               <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white">Tallas disponibles:</h3>
@@ -203,7 +203,7 @@ export default function Detail({ product }) {
                       <div className="flex flex-col items-center">
                         <span className="font-medium">{talla.talla}</span>
                         <span className="text-sm">${talla.precioTalla} USD</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">${(talla.precioTalla * dolarBlue).toFixed(2)} ARS</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">${Math.round(talla.precioTalla * dolarBlue).toLocaleString('es-AR')} ARS</span>
                       </div>
                     </button>
                   ))}
@@ -369,7 +369,7 @@ export default function Detail({ product }) {
                       <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white truncate">{relatedProduct.nombre}</h3>
                       <p className="mb-1 text-gray-600 dark:text-gray-400">USD ${relatedProduct.precio}</p>
                       {precioPesos && (
-                        <p className="mb-2 text-gray-600 dark:text-gray-400">${precioPesos.toLocaleString("es-AR")} ARS</p>
+                        <p className="mb-2 text-gray-600 dark:text-gray-400">${Math.round(precioPesos).toLocaleString("es-AR")} ARS</p>
                       )}
                       <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
                     </div>

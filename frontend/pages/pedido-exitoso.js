@@ -38,7 +38,7 @@ export default function PedidoExitoso() {
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-gray-900 dark:text-white !text-gray-900 dark:!text-white">${item.precio} USD</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-300 !text-gray-500 dark:!text-gray-300">${item.precioARS?.toFixed(2)} ARS</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-300 !text-gray-500 dark:!text-gray-300">${Math.round(item.precioARS).toLocaleString('es-AR')} ARS</div>
                     </div>
                   </div>
                 ))}

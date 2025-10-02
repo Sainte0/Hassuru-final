@@ -231,6 +231,13 @@ export default function Encargos() {
 
   const handleBack = () => setStep(s => s - 1);
 
+  // Función para formatear precios en ARS sin decimales innecesarios
+  const formatARS = (price) => {
+    if (!price) return null;
+    const rounded = Math.round(price);
+    return rounded.toLocaleString('es-AR');
+  };
+
   // Función para generar mensaje de WhatsApp para encargos
   const generateWhatsAppMessage = () => {
     const telefonoCompleto = telefono.prefijo + telefono.numero;

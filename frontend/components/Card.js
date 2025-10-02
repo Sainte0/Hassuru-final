@@ -151,7 +151,7 @@ export default function Card({ currentProducts }) {
               <div className="flex flex-col">
                 <p className="text-lg font-bold text-gray-800 dark:text-white">${product.precio} USD</p>
                 <p className="text-lg font-bold text-gray-800 dark:text-white">
-                  ${(product.precio * dolarBlue).toFixed(2)} ARS
+                  ${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS
                 </p>
                 <span className={disponibilidad.color}>{disponibilidad.message}</span>
               </div>
