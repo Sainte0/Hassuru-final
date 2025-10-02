@@ -238,6 +238,18 @@ export default function Detail({ product }) {
                 <span className="text-yellow-500 dark:text-yellow-400">Encargo desde Estados Unidos (20-30 días)</span>
               )}
             </div>
+            <div className="mt-4">
+              <button
+                className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 dark:bg-green-600 border border-gray-400 dark:border-gray-600 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition-colors`}
+                onClick={handleCompraClick}
+              >
+                {product.tallas && product.tallas.length > 0 ? (
+                  selectedTalla ? "Añadir al carrito" : "Seleccionar talla"
+                ) : (
+                  customTalla ? "Comprar" : "Encargar ahora"
+                )}
+              </button>
+            </div>
 
             <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
               <span>✓</span>
@@ -270,18 +282,7 @@ export default function Detail({ product }) {
                 Entrega en Córdoba Capital
               </div>
             </div>
-            <div className="mt-4">
-              <button
-                className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 dark:bg-green-600 border border-gray-400 dark:border-gray-600 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition-colors`}
-                onClick={handleCompraClick}
-              >
-                {product.tallas && product.tallas.length > 0 ? (
-                  selectedTalla ? "Añadir al carrito" : "Seleccionar talla"
-                ) : (
-                  customTalla ? "Comprar" : "Encargar ahora"
-                )}
-              </button>
-            </div>
+           
             {/* Medios de pago */}
             <div className="p-4 mt-6 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-md shadow-md transition-colors">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Medios de pago disponibles:</h3>
