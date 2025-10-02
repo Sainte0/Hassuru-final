@@ -108,6 +108,11 @@ export default function Home() {
             <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosZapatillas} title={"Nuevos ingresos en zapatillas"} />
           </Link>
         </div>
+        <div className="mt-2">
+          <Link href="/productos/categoria/accesorios">
+            <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosAccesorios} title={"Últimos Accesorios - Entrega Inmediata"} />
+          </Link>
+        </div>
 
         {/* TikToks en horizontal */}
         <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-dark-bg p-4 rounded-lg">

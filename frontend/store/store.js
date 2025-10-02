@@ -16,7 +16,8 @@ const useStore = create((set) => ({
   banners: [],
   homeProducts: {
     ultimosRopa: [],
-    ultimosZapatillas: []
+    ultimosZapatillas: [],
+    ultimosAccesorios: []
   },
 
   fetchProducts: async () => {
@@ -255,10 +256,16 @@ const useStore = create((set) => ({
       if (!ultimosZapatillasResponse.ok) throw new Error('Error al cargar últimos en zapatillas');
       const ultimosZapatillas = await ultimosZapatillasResponse.json();
 
+      // Fetch últimos en accesorios
+      const ultimosAccesoriosResponse = await fetch(`${URL}/api/productos/ultimos/accesorios`);
+      if (!ultimosAccesoriosResponse.ok) throw new Error('Error al cargar últimos en accesorios');
+      const ultimosAccesorios = await ultimosAccesoriosResponse.json();
+
       set({ 
         homeProducts: {
           ultimosRopa,
-          ultimosZapatillas
+          ultimosZapatillas,
+          ultimosAccesorios
         }
       });
     } catch (error) {
