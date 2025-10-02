@@ -462,7 +462,7 @@ export default function Checkout() {
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
                       : 'border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500'
                   }`}
-                  placeholder="Teléfono (ej: 3513341366)" 
+                  placeholder="Teléfono (ej: 3512595858)" 
                   value={telefono.numero} 
                   onChange={e => handleFieldChange('telefono', e.target.value)}
                   onBlur={() => handleFieldBlur('telefono')}
