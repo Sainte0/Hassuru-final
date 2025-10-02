@@ -199,6 +199,36 @@ export default function Checkout() {
     setShowConfirmModal(true);
   };
 
+  // Función para generar mensaje de WhatsApp
+  const generateWhatsAppMessage = () => {
+    const telefonoCompleto = telefono.prefijo + telefono.numero;
+    const nombreCompleto = `${datos.nombre} ${datos.apellido}`;
+    
+    let mensaje = `¡Hola! Hice este pedido en Hassuru:\n\n`;
+    mensaje += `👤 *Datos del cliente:*\n`;
+    mensaje += `• Nombre: ${nombreCompleto}\n`;
+    mensaje += `• Email: ${datos.email}\n`;
+    mensaje += `• Teléfono: ${telefonoCompleto}\n`;
+    mensaje += `• DNI: ${datos.dni}\n\n`;
+    
+    mensaje += `🛍️ *Resumen del pedido:*\n`;
+    cart.forEach((item, index) => {
+      mensaje += `${index + 1}. ${item.nombre}`;
+      if (item.talle) mensaje += ` (Talle: ${item.talle})`;
+      mensaje += ` - Cantidad: ${item.cantidad} - $${item.precio} USD\n`;
+    });
+    
+    mensaje += `\n💰 *Total: $${totalUSD.toFixed(2)} USD`;
+    if (dolarBlue) {
+      mensaje += ` ($${totalARS.toFixed(2)} ARS)`;
+    }
+    
+    mensaje += `\n\n📦 *Retiro en Córdoba Capital*`;
+    mensaje += `\n💳 *Método de pago: ${pago === 'usdt' ? 'USDT/Crypto' : pago === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo'}*`;
+    
+    return encodeURIComponent(mensaje);
+  };
+
   const handleSubmit = async () => {
     setShowConfirmModal(false);
     setLoading(true);
@@ -260,6 +290,11 @@ export default function Checkout() {
         shipping: 0
       };
       purchase(orderData, productosToSend, totalUSD);
+      
+      // Abrir WhatsApp con el mensaje del pedido
+      const whatsappMessage = generateWhatsAppMessage();
+      const whatsappUrl = `https://wa.me/543512595858?text=${whatsappMessage}`;
+      window.open(whatsappUrl, '_blank');
       
       localStorage.setItem('lastCart', JSON.stringify(cart));
       clearCart();

@@ -231,6 +231,36 @@ export default function Encargos() {
 
   const handleBack = () => setStep(s => s - 1);
 
+  // Función para generar mensaje de WhatsApp para encargos
+  const generateWhatsAppMessage = () => {
+    const telefonoCompleto = telefono.prefijo + telefono.numero;
+    const nombreCompleto = `${datos.nombre} ${datos.apellido}`;
+    
+    let mensaje = `¡Hola! Hice este encargo en Hassuru:\n\n`;
+    mensaje += `👤 *Datos del cliente:*\n`;
+    mensaje += `• Nombre: ${nombreCompleto}\n`;
+    mensaje += `• Email: ${datos.email}\n`;
+    mensaje += `• Teléfono: ${telefonoCompleto}\n`;
+    mensaje += `• DNI: ${datos.dni}\n\n`;
+    
+    mensaje += `🛍️ *Productos a encargar:*\n`;
+    productos.forEach((producto, index) => {
+      mensaje += `${index + 1}. ${producto.nombre}`;
+      if (producto.talle) mensaje += ` (Talle: ${producto.talle})`;
+      if (producto.color) mensaje += ` (Color: ${producto.color})`;
+      mensaje += ` - ${producto.tipoProducto}`;
+      if (producto.detalles) mensaje += `\n   Detalles: ${producto.detalles}`;
+      if (producto.link) mensaje += `\n   Link: ${producto.link}`;
+      mensaje += `\n`;
+    });
+    
+    mensaje += `\n📦 *Retiro en Córdoba Capital*`;
+    mensaje += `\n💳 *Método de pago: ${pago === 'usdt' ? 'USDT/Crypto' : pago === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo'}*`;
+    mensaje += `\n⏰ *Tiempo estimado: 20 días*`;
+    
+    return encodeURIComponent(mensaje);
+  };
+
   const handleSubmit = async () => {
     setEnviando(true);
     setError('');
@@ -268,6 +298,12 @@ export default function Encargos() {
         })
       });
       if (!res.ok) throw new Error('Error al enviar el encargo');
+      
+      // Abrir WhatsApp con el mensaje del encargo
+      const whatsappMessage = generateWhatsAppMessage();
+      const whatsappUrl = `https://wa.me/543512595858?text=${whatsappMessage}`;
+      window.open(whatsappUrl, '_blank');
+      
       setExito(true);
       setProductos([]);
       setDatos({ nombre: '', apellido: '', email: '', dni: '' });
