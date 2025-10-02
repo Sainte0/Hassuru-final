@@ -478,7 +478,7 @@ export default function Checkout() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
                 <p className="ml-2 text-sm text-yellow-700 dark:text-yellow-300 font-medium">
-                  <strong>Importante:</strong> No se ofrecen cuotas. Todos los pagos son en una sola cuota.
+                  <strong>Importante:</strong> No se ofrecen cuotas. Todos los pagos son un solo pago.
                 </p>
               </div>
             </div>
@@ -502,7 +502,7 @@ export default function Checkout() {
                     <p>• Aceptamos USDT en las redes TRC20 y BEP20</p>
                     <p>• También aceptamos otras criptomonedas principales</p>
                     <p>• El precio se fija al momento del pago</p>
-                    <p>• <strong>Pago en una sola cuota</strong></p>
+                    <p>• <strong>Pago en un solo pago</strong></p>
                   </div>
                 )}
               </div>
@@ -525,7 +525,7 @@ export default function Checkout() {
                     <p>• Transferencia en USD desde cuentas internacionales</p>
                     <p>• Transferencia en pesos argentinos</p>
                     <p>• Zelle y Cashapp disponibles</p>
-                    <p>• <strong>Pago en una sola cuota</strong></p>
+                    <p>• <strong>Pago en un solo pago</strong></p>
                   </div>
                 )}
               </div>
@@ -548,7 +548,7 @@ export default function Checkout() {
                     <p>• Disponible en Córdoba Capital</p>
                     <p>• Disponible en Buenos Aires</p>
                     <p>• Coordinamos punto de encuentro seguro</p>
-                    <p>• <strong>Pago en una sola cuota</strong></p>
+                    <p>• <strong>Pago en un solo pago</strong></p>
                   </div>
                 )}
               </div>
@@ -571,7 +571,7 @@ export default function Checkout() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-500 mr-2">⚠</span>
-                  <span><strong>No se ofrecen cuotas</strong> - Todos los pagos son en una sola cuota</span>
+                  <span><strong>No se ofrecen cuotas</strong> - Todos los pagos son un solo pago</span>
                 </li>
               </ul>
             </div>
@@ -613,7 +613,7 @@ export default function Checkout() {
                   {pago === 'efectivo' && 'Efectivo'}
                 </p>
                 <p className="text-xs text-red-600 dark:text-red-400 mt-1">
-                  <strong>Pago en una sola cuota</strong>
+                  <strong>Pago en un solo pago</strong>
                 </p>
               </div>
 
