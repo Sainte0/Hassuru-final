@@ -201,15 +201,7 @@ export default function Checkout() {
 
   // Función para generar mensaje de WhatsApp
   const generateWhatsAppMessage = () => {
-    const telefonoCompleto = telefono.prefijo + telefono.numero;
-    const nombreCompleto = `${datos.nombre} ${datos.apellido}`;
-    
     let mensaje = `¡Hola! Hice este pedido en Hassuru:\n\n`;
-    mensaje += `👤 *Datos del cliente:*\n`;
-    mensaje += `• Nombre: ${nombreCompleto}\n`;
-    mensaje += `• Email: ${datos.email}\n`;
-    mensaje += `• Teléfono: ${telefonoCompleto}\n`;
-    mensaje += `• DNI: ${datos.dni}\n\n`;
     
     mensaje += `🛍️ *Resumen del pedido:*\n`;
     cart.forEach((item, index) => {
@@ -222,9 +214,6 @@ export default function Checkout() {
     if (dolarBlue) {
       mensaje += ` ($${formatARS(totalARS)} ARS)`;
     }
-    
-    mensaje += `\n\n📦 *Envíos gratis a todo el país o retiro por showroom en Córdoba Capital*`;
-    mensaje += `\n💳 *Método de pago: ${pago === 'usdt' ? 'USDT/Crypto' : pago === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo'}*`;
     
     return encodeURIComponent(mensaje);
   };

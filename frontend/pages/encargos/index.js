@@ -225,15 +225,7 @@ export default function Encargos() {
 
   // Función para generar mensaje de WhatsApp para encargos
   const generateWhatsAppMessage = () => {
-    const telefonoCompleto = telefono.prefijo + telefono.numero;
-    const nombreCompleto = `${datos.nombre} ${datos.apellido}`;
-    
     let mensaje = `¡Hola! Hice este encargo en Hassuru:\n\n`;
-    mensaje += `👤 *Datos del cliente:*\n`;
-    mensaje += `• Nombre: ${nombreCompleto}\n`;
-    mensaje += `• Email: ${datos.email}\n`;
-    mensaje += `• Teléfono: ${telefonoCompleto}\n`;
-    mensaje += `• DNI: ${datos.dni}\n\n`;
     
     mensaje += `🛍️ *Productos a encargar:*\n`;
     productos.forEach((producto, index) => {
@@ -245,10 +237,6 @@ export default function Encargos() {
       if (producto.link) mensaje += `\n   Link: ${producto.link}`;
       mensaje += `\n`;
     });
-    
-    mensaje += `\n📦 *Retiro en Córdoba Capital*`;
-    mensaje += `\n💳 *Método de pago: ${pago === 'usdt' ? 'USDT/Crypto' : pago === 'transferencia' ? 'Transferencia Bancaria' : 'Efectivo'}*`;
-    mensaje += `\n⏰ *Tiempo estimado: 20 días*`;
     
     return encodeURIComponent(mensaje);
   };
