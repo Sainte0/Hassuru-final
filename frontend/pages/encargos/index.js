@@ -322,15 +322,13 @@ export default function Encargos() {
       />
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-dark-bg py-8 transition-colors duration-300">
       <div className="w-full max-w-4xl bg-white dark:bg-dark-bg rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100 dark:border-gray-700">
-        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 dark:text-white tracking-tight">Encargos Personalizados</h1>
-        
         {/* Banner */}
         <div className="mb-6 relative">
           <div className="overflow-hidden rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800">
             <img 
               src={bannerImage} 
               alt="Encargos Personalizados" 
-              className="w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] object-cover transition-transform duration-500"
+              className="w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] object-contain transition-transform duration-500"
             />
           </div>
         </div>
