@@ -294,7 +294,21 @@ export default function Encargos() {
       // Abrir WhatsApp con el mensaje del encargo
       const whatsappMessage = generateWhatsAppMessage();
       const whatsappUrl = `https://wa.me/543512595858?text=${whatsappMessage}`;
-      window.open(whatsappUrl, '_blank');
+      
+      // Intentar abrir WhatsApp con diferentes métodos para mobile
+      try {
+        // Método 1: Intentar abrir en nueva ventana
+        const newWindow = window.open(whatsappUrl, '_blank');
+        
+        // Si no se abre (mobile), intentar método alternativo
+        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+          // Método 2: Usar location.href para mobile
+          window.location.href = whatsappUrl;
+        }
+      } catch (error) {
+        // Método 3: Fallback - redirigir directamente
+        window.location.href = whatsappUrl;
+      }
       
       setExito(true);
       setProductos([]);
