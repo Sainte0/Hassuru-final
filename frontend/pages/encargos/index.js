@@ -45,14 +45,7 @@ const tallesZapatillas = [
   { us: '12.5', ar: '45.5' }, { us: '13', ar: '46.5' }
 ];
 
-const images = [
-  '/images/encargos/1.jpeg',
-  '/images/encargos/2.jpeg',
-  '/images/encargos/3.jpeg',
-  '/images/encargos/4.jpeg',
-  '/images/encargos/5.jpeg',
-  '/images/encargos/6.jpeg'
-];
+const bannerImage = 'https://tzjkxidzrhbyypvqbtdb.supabase.co/storage/v1/object/public/banners/encargos.png';
 
 export default function Encargos() {
   const [step, setStep] = useState(0);
@@ -80,19 +73,11 @@ export default function Encargos() {
   const [enviando, setEnviando] = useState(false);
   const [exito, setExito] = useState(false);
   const [error, setError] = useState('');
-  const [currentImage, setCurrentImage] = useState(0);
   
   // Estados para validaciones
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 
-  const nextImage = () => {
-    setCurrentImage((prev) => (prev + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImage((prev) => (prev - 1 + images.length) % images.length);
-  };
 
   const handleAddProducto = () => {
     if (!nuevoProducto.nombre) return;
@@ -337,43 +322,16 @@ export default function Encargos() {
       />
       <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-dark-bg py-8 transition-colors duration-300">
       <div className="w-full max-w-4xl bg-white dark:bg-dark-bg rounded-2xl shadow-2xl p-4 sm:p-8 border border-gray-100 dark:border-gray-700">
-        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 dark:text-white tracking-tight">Encarga lo que quieras</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-4 sm:mb-6 text-center text-gray-900 dark:text-white tracking-tight">Encargos Personalizados</h1>
         
-        {/* Carousel */}
+        {/* Banner */}
         <div className="mb-6 relative">
           <div className="overflow-hidden rounded-lg shadow-lg bg-gray-100 dark:bg-gray-800">
             <img 
-              src={images[currentImage]} 
-              alt={`Encargo ${currentImage + 1}`} 
-              className="w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] object-contain transition-transform duration-500"
+              src={bannerImage} 
+              alt="Encargos Personalizados" 
+              className="w-full h-80 sm:h-96 md:h-[500px] lg:h-[600px] object-cover transition-transform duration-500"
             />
-          </div>
-          <button 
-            onClick={prevImage}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
-            aria-label="Imagen anterior"
-          >
-            ‹
-          </button>
-          <button 
-            onClick={nextImage}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all text-xl font-bold shadow-lg"
-            aria-label="Siguiente imagen"
-          >
-            ›
-          </button>
-          <div className="flex justify-center mt-6 space-x-3">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImage(index)}
-                className={`w-4 h-4 rounded-full transition-all ${
-                  index === currentImage ? 'bg-blue-600 scale-110' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                }`}
-                aria-label={`Ir a imagen ${index + 1}`}
-                aria-current={index === currentImage ? 'true' : 'false'}
-              />
-            ))}
           </div>
         </div>
 
