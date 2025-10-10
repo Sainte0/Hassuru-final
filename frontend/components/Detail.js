@@ -14,6 +14,29 @@ const talleToCm = {
   '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31'
 };
 
+// Tabla completa de guía de tallas
+const sizeGuide = [
+  { us: '4', ar: '35', cm: '23' },
+  { us: '4.5', ar: '35.5', cm: '23.5' },
+  { us: '5', ar: '36', cm: '23.5' },
+  { us: '5.5', ar: '37', cm: '24' },
+  { us: '6', ar: '37.5', cm: '24' },
+  { us: '6.5', ar: '38', cm: '24.5' },
+  { us: '7', ar: '39', cm: '25' },
+  { us: '7.5', ar: '39.5', cm: '25.5' },
+  { us: '8', ar: '40', cm: '26' },
+  { us: '8.5', ar: '41', cm: '26.5' },
+  { us: '9', ar: '41.5', cm: '27' },
+  { us: '9.5', ar: '42', cm: '27.5' },
+  { us: '10', ar: '43', cm: '28' },
+  { us: '10.5', ar: '43.5', cm: '28.5' },
+  { us: '11', ar: '44', cm: '29' },
+  { us: '11.5', ar: '44.5', cm: '29.5' },
+  { us: '12', ar: '45', cm: '30' },
+  { us: '12.5', ar: '45.5', cm: '30.5' },
+  { us: '13', ar: '46', cm: '31' }
+];
+
 // Función para obtener CM de una talla
 const getCmFromTalla = (tallaStr) => {
   if (!tallaStr) return null;
@@ -29,6 +52,7 @@ export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [customTalla, setCustomTalla] = useState("");
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
   const { dolarBlue, fetchDolarBlue, loadViewedProducts, viewedProducts } = useStore();
   const router = useRouter();
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -241,6 +265,36 @@ export default function Detail({ product }) {
 
   return (
     <div className="flex-1 overflow-y-auto">
+      {/* Breadcrumb */}
+      <div className="container mx-auto px-4 py-4 bg-white dark:bg-dark-bg transition-colors duration-300">
+        <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+          <button 
+            onClick={() => router.push('/')}
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            Inicio
+          </button>
+          <span>/</span>
+          <button 
+            onClick={() => router.push('/catalogo')}
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            Catálogo
+          </button>
+          <span>/</span>
+          <button 
+            onClick={() => router.push(`/productos/categoria/${product.categoria}`)}
+            className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors capitalize"
+          >
+            {product.categoria}
+          </button>
+          <span>/</span>
+          <span className="text-gray-800 dark:text-white font-medium truncate max-w-xs">
+            {product.nombre}
+          </span>
+        </nav>
+      </div>
+
       <div className="container py-10 mx-auto bg-white dark:bg-dark-bg transition-colors duration-300">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
@@ -254,45 +308,68 @@ export default function Detail({ product }) {
                 loading="eager"
                 className="object-contain w-full h-full rounded-xl bg-white dark:bg-dark-bg"
               />
+              {/* Badge de verificado */}
+              <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                VERIFICADO 100% ORIGINAL
+              </div>
             </div>
           </div>
           {/* Info a la derecha */}
           <div className="flex flex-col w-full lg:w-1/2 p-2 space-y-4 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-gray-800 dark:text-white lg:text-4xl mb-2">{product.nombre}</h2>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white lg:text-4xl mb-2">{product.nombre}</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{product.descripcion}</p>
+            </div>
             {isEncargo && (
               <div className="mb-2 p-3 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-sm font-semibold text-center">
                 Ingresá tu talle y agregá la prenda al carrito como encargo.<br/>¡Ahora podés pedir prendas de encargo directamente desde la web!
               </div>
             )}
-            <div className="space-y-2 text-gray-800 dark:text-white">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{product.descripcion}</p>
-              <p className="text-4xl font-bold">${product.precio} USD</p>
-              <p className="text-lg text-gray-400 dark:text-gray-500">${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS</p>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-4">
+                <p className="text-4xl font-bold text-gray-800 dark:text-white">${product.precio} USD</p>
+                {dolarBlue && (
+                  <p className="text-lg text-gray-400 dark:text-gray-500">6 x ${Math.round((product.precio * dolarBlue) / 6).toLocaleString('es-AR')} sin interés</p>
+                )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full text-sm font-medium">
+                  En stock
+                </span>
+                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full text-sm font-medium">
+                  Entrega inmediata
+                </span>
+                <span className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 py-1 rounded-full text-sm font-medium">
+                  Pocas unidades
+                </span>
+              </div>
             </div>
-            <div className="mt-4">
-              <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white">Tallas disponibles:</h3>
+            <div className="mt-6">
               {product.tallas && product.tallas.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {product.tallas.map((talla) => (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-3">
+                    {product.tallas.map((talla) => (
                     <button
                       key={talla._id}
                       onClick={() => handleTallaSelect(talla)}
-                      className={`px-4 py-2 border rounded-md transition-colors ${
+                        className={`px-6 py-3 border-2 rounded-lg transition-all duration-200 font-medium ${
                         selectedTalla?._id === talla._id
-                          ? "bg-red-600 text-white border-red-600"
-                          : "border-gray-300 dark:border-gray-600 hover:border-red-600 dark:hover:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      }`}
+                            ? "bg-black text-white border-black dark:bg-blue-600 dark:border-blue-600"
+                            : "border-gray-300 dark:border-gray-600 hover:border-black dark:hover:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        }`}
+                      >
+                        {talla.talla}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                    <button 
+                      onClick={() => setShowSizeGuide(true)}
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
                     >
-                      <div className="flex flex-col items-center">
-                        <span className="font-medium">{talla.talla}</span>
-                        {getCmFromTalla(talla.talla) && (
-                          <span className="text-xs text-gray-600 dark:text-gray-400">{getCmFromTalla(talla.talla)} cm</span>
-                        )}
-                        <span className="text-sm">${talla.precioTalla} USD</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">${Math.round(talla.precioTalla * dolarBlue).toLocaleString('es-AR')} ARS</span>
-                      </div>
+                      ¿No sabes tu talle? Ver guía completa
                     </button>
-                  ))}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -309,57 +386,42 @@ export default function Detail({ product }) {
                 </div>
               )}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              {product.tallas && product.tallas.length > 0 ? (
-                product.tallas.some((tallaObj) => tallaObj.precioTalla > 0) ? (
-                  product.encargo ? (
-                    <span className="text-yellow-500 dark:text-yellow-400">Disponible en 5 días</span>
-                  ) : (
-                    <span className="text-green-500 dark:text-green-400">Entrega inmediata</span>
-                  )
-                ) : (
-                  <span className="text-red-500 dark:text-red-400">Disponible en 20 días</span>
-                )
-              ) : (
-                <span className="text-yellow-500 dark:text-yellow-400">Encargo desde Estados Unidos (20-30 días)</span>
-              )}
-            </div>
-            <div className="mt-4">
+            <div className="mt-8 space-y-4">
               <button
-                className={`flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 dark:bg-green-600 border border-gray-400 dark:border-gray-600 rounded-md hover:bg-green-600 dark:hover:bg-green-700 transition-colors`}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 text-lg"
                 onClick={handleCompraClick}
               >
                 {product.tallas && product.tallas.length > 0 ? (
-                  selectedTalla ? "Añadir al carrito" : "Seleccionar talla"
+                  selectedTalla ? "AGREGAR AL CARRITO" : "SELECCIONAR TALLA"
                 ) : (
-                  customTalla ? "Comprar" : "Encargar ahora"
+                  customTalla ? "COMPRAR AHORA" : "ENCARGAR AHORA"
                 )}
               </button>
+              
+              <button
+                className="w-full bg-black hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 text-lg"
+                onClick={handleCompraClick}
+              >
+                COMPRAR AHORA
+              </button>
+              
+              {selectedTalla && (
+                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Seleccionaste: <span className="font-bold text-gray-800 dark:text-white">Talle {selectedTalla.talla}</span>
+                  </p>
+                  <p className="text-lg font-bold text-gray-800 dark:text-white mt-2">
+                    ${selectedTalla.precioTalla} USD
+                    {dolarBlue && (
+                      <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                        (${Math.round(selectedTalla.precioTalla * dolarBlue).toLocaleString('es-AR')} ARS)
+                      </span>
+                    )}
+                  </p>
             </div>
-
-            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <span>✓</span>
-              <p>Artículo verificado, 100% original.</p>
-            </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              <span>📦</span>
-              {Object.entries(product.tallas).some(([_, stock]) => stock > 0) ? (
-                <p>Quedan {Object.values(product.tallas).reduce((acc, stock) => acc + stock, 0)} en stock. Ordena pronto.</p>
-              ) : (
-                <p>Stock Disponible. Pide tu talle.</p>
               )}
             </div>
-            {selectedTalla && (
-              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Has seleccionado la talla: <span className="font-bold">{selectedTalla.talla}</span>
-                <button
-                  onClick={() => setSelectedTalla(null)}
-                  className="ml-2 text-sm text-red-500 hover:underline dark:hover:text-red-400 transition-colors"
-                >
-                  Deseleccionar
-                </button>
-              </div>
-            )}
+
             <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
               <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-dark-bg transition-colors">
                 Envíos gratis a todo el país.
@@ -586,6 +648,78 @@ export default function Detail({ product }) {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Pop-up de Guía de Tallas */}
+      {showSizeGuide && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-dark-bg rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Guía de Tallas</h2>
+                <button
+                  onClick={() => setShowSizeGuide(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse border border-gray-300 dark:border-gray-600">
+                  <thead>
+                    <tr className="bg-gray-100 dark:bg-gray-700">
+                      <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-semibold text-gray-800 dark:text-white">
+                        Talla US
+                      </th>
+                      <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-semibold text-gray-800 dark:text-white">
+                        Talla AR
+                      </th>
+                      <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left font-semibold text-gray-800 dark:text-white">
+                        Centímetros
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sizeGuide.map((size, index) => (
+                      <tr key={index} className={index % 2 === 0 ? "bg-white dark:bg-dark-bg" : "bg-gray-50 dark:bg-gray-800"}>
+                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-800 dark:text-white font-medium">
+                          {size.us}
+                        </td>
+                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-800 dark:text-white">
+                          {size.ar}
+                        </td>
+                        <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-gray-800 dark:text-white">
+                          {size.cm} cm
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Cómo medir tu pie:</h3>
+                <ol className="list-decimal list-inside text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                  <li>Coloca una hoja de papel en el suelo contra una pared</li>
+                  <li>Párate sobre el papel con el talón contra la pared</li>
+                  <li>Marca el punto más largo de tu pie</li>
+                  <li>Mide la distancia en centímetros</li>
+                  <li>Usa la tabla para encontrar tu talle correspondiente</li>
+                </ol>
+              </div>
+              
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowSizeGuide(false)}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
