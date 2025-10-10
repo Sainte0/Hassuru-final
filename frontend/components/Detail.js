@@ -350,14 +350,14 @@ export default function Detail({ product }) {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] rounded-xl">
+            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] overflow-hidden rounded-xl">
               <img
                 src={getImageUrl()}
                 alt={product.nombre}
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full bg-white dark:bg-dark-bg rounded-xl"
+                className="object-contain w-full h-full bg-white dark:bg-dark-bg"
               />
               {/* Badge de verificado */}
               <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
@@ -501,38 +501,69 @@ export default function Detail({ product }) {
             </div>
 
             {/* Información de envío y entrega */}
-            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">📦</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Envíos gratis a todo el país</span>
+            <div className="mt-6 p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
+              {/* Envíos y entrega */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 dark:text-green-400 text-lg">📦</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">Envíos gratis</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">a todo el país</p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-green-500">🏠</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Entrega en Córdoba en 24 hs</span>
+                
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 dark:text-blue-400 text-lg">🏠</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">Entrega en Córdoba</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">en 24 hs</p>
+                  </div>
                 </div>
               </div>
               
             {/* Medios de pago */}
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-green-500">💰</span>
-                <span className="text-sm text-gray-600 dark:text-gray-400">Medios pago:</span>
-                <span className="text-sm font-medium text-gray-800 dark:text-white">Zelle CashApp USDT Tarjeta</span>
+              <div className="mb-6">
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                    <span className="text-yellow-600 dark:text-yellow-400 text-lg">💰</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mb-1">Medios de pago</p>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">Zelle</span>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">CashApp</span>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">USDT</span>
+                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-medium">Tarjeta</span>
+                    </div>
+                  </div>
+                </div>
               </div>
               
               {/* Información de confianza */}
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Compra protegida Hassuru</span>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 dark:text-green-400 text-sm">✓</span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">Compra protegida Hassuru</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Soporte directo por WhatsApp</span>
+                
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <span className="text-blue-600 dark:text-blue-400 text-sm">💬</span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">Soporte directo por WhatsApp</span>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">4.9/5 valoraciones reales</span>
+                
+                <div className="flex items-center space-x-3 p-3 bg-white dark:bg-gray-700 rounded-lg shadow-sm">
+                  <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+                    <span className="text-yellow-600 dark:text-yellow-400 text-sm">⭐</span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">4.9/5 valoraciones reales</span>
                 </div>
               </div>
             </div>
