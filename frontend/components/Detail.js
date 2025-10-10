@@ -236,6 +236,57 @@ export default function Detail({ product }) {
     setShowTallas(true);
   };
 
+  const handleComprarAhora = () => {
+    if (selectedTalla) {
+      const cartItem = {
+        productoId: product._id,
+        nombre: product.nombre,
+        cantidad: 1,
+        imagen: product.image?.url || product.image || '/placeholder.jpg',
+        precio: selectedTalla.precioTalla,
+        precioARS: (selectedTalla.precioTalla * dolarBlue),
+        talle: selectedTalla.talla,
+        encargo: isEncargo,
+        categoria: product.categoria,
+        marca: product.marca
+      };
+      
+      addToCart(cartItem);
+      
+      // Evento GA4: Agregar al carrito
+      ga4AddToCart(cartItem);
+      
+      // Redirigir al checkout
+      router.push('/checkout');
+      return;
+    }
+    if (customTalla) {
+      // Si es encargo personalizado, añadir al carrito como encargo
+      const cartItem = {
+        productoId: product._id,
+        nombre: product.nombre,
+        cantidad: 1,
+        imagen: product.image?.url || product.image || '/placeholder.jpg',
+        precio: product.precio,
+        precioARS: (product.precio * dolarBlue),
+        talle: customTalla,
+        encargo: true,
+        categoria: product.categoria,
+        marca: product.marca
+      };
+      
+      addToCart(cartItem);
+      
+      // Evento GA4: Agregar al carrito
+      ga4AddToCart(cartItem);
+      
+      // Redirigir al checkout
+      router.push('/checkout');
+      return;
+    }
+    setShowTallas(true);
+  };
+
   const handleTallaSelect = (talla) => {
     if (selectedTalla === talla) {
       setSelectedTalla(null);
@@ -299,17 +350,17 @@ export default function Detail({ product }) {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px]">
+            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] overflow-hidden rounded-xl">
               <img
                 src={getImageUrl()}
                 alt={product.nombre}
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full rounded-xl bg-white dark:bg-dark-bg"
+                className="object-cover w-full h-full bg-white dark:bg-dark-bg"
               />
               {/* Badge de verificado */}
-              <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
                 VERIFICADO 100% ORIGINAL
               </div>
             </div>
@@ -329,7 +380,7 @@ export default function Detail({ product }) {
               <div className="flex items-center space-x-4">
                 <p className="text-4xl font-bold text-gray-800 dark:text-white">${product.precio} USD</p>
                 {dolarBlue && (
-                  <p className="text-lg text-gray-400 dark:text-gray-500">6 x ${Math.round((product.precio * dolarBlue) / 6).toLocaleString('es-AR')} sin interés</p>
+                  <p className="text-lg text-gray-400 dark:text-gray-500">${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS</p>
                 )}
               </div>
               <div className="flex items-center space-x-2">
@@ -400,7 +451,7 @@ export default function Detail({ product }) {
               
               <button
                 className="w-full bg-black hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-lg transition-colors duration-200 text-lg"
-                onClick={handleCompraClick}
+                onClick={handleComprarAhora}
               >
                 COMPRAR AHORA
               </button>
@@ -422,36 +473,41 @@ export default function Detail({ product }) {
               )}
             </div>
 
-            <div className="grid grid-cols-1 gap-4 mt-4 lg:grid-cols-2">
-              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-dark-bg transition-colors">
-                Envíos gratis a todo el país.
+            {/* Información de envío y entrega */}
+            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">📦</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Envíos gratis a todo el país</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-500">🏠</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Entrega en Córdoba en 24 hs</span>
+                </div>
               </div>
-              <div className="p-4 text-sm text-center text-gray-600 dark:text-gray-400 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-dark-bg transition-colors">
-                Entrega en Córdoba Capital
+              
+              {/* Medios de pago */}
+              <div className="flex items-center space-x-2 mb-4">
+                <span className="text-green-500">💰</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">Medios pago:</span>
+                <span className="text-sm font-medium text-gray-800 dark:text-white">Zelle CashApp USDT Tarjeta</span>
               </div>
-            </div>
-           
-            {/* Medios de pago */}
-            <div className="p-4 mt-6 bg-white dark:bg-dark-bg border border-gray-300 dark:border-gray-600 rounded-md shadow-md transition-colors">
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Medios de pago disponibles:</h3>
-              <ul className="mt-2 space-y-2 text-gray-700 dark:text-gray-300">
-                <li className="flex items-center">
-                  <span className="text-green-500">✔️</span>
-                  <span className="ml-2">Zelle, Cashapp, USDT/CRYPTO</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500">✔️</span>
-                  <span className="ml-2">Transferencia en pesos</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500">✔️</span>
-                  <span className="ml-2">Transferencia en U$D (solo desde cuentas internacionales)</span>
-                </li>
-                <li className="flex items-center">
-                  <span className="text-green-500">✔️</span>
-                  <span className="ml-2">Efectivo (Córdoba & Buenos Aires)</span>
-                </li>
-              </ul>
+              
+              {/* Información de confianza */}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Compra protegida Hassuru</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Soporte directo por WhatsApp</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">4.9/5 valoraciones reales</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
