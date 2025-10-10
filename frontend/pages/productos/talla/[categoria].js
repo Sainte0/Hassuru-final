@@ -8,6 +8,25 @@ import { BounceLoader } from 'react-spinners';
 const US_FLAG = "https://flagcdn.com/w20/us.png";
 const AR_FLAG = "https://flagcdn.com/w20/ar.png";
 
+// Tabla de conversión de tallas a centímetros
+const talleToCm = {
+  '4': '23', '4.5': '23.5', '5': '23.5', '5.5': '24', '6': '24',
+  '6.5': '24.5', '7': '25', '7.5': '25.5', '8': '26', '8.5': '26.5',
+  '9': '27', '9.5': '27.5', '10': '28', '10.5': '28.5', '11': '29',
+  '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31', '3.5': '22.5',
+  '13.5': '31.5', '14': '32'
+};
+
+// Función para obtener CM de una talla
+const getCmFromTalla = (tallaStr) => {
+  if (!tallaStr) return null;
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
+  if (usMatch) {
+    return talleToCm[usMatch[1]] || null;
+  }
+  return null;
+};
+
 export default function TallaSelector() {
   const router = useRouter();
   const { categoria } = router.query;
@@ -236,19 +255,28 @@ export default function TallaSelector() {
             let formattedTalla = talla;
             if (categoria === "zapatillas" && talla.includes("|")) {
               const parts = talla.split("|");
-              if (parts.length === 2) {
-                const usPart = parts[0].trim().split(" ")[0]; // Solo tomar el número
-                const arPart = parts[1].trim().split(" ")[0]; // Solo tomar el número
+              if (parts.length >= 2) {
+                const usPart = parts[0]?.trim().split(" ")[0]; // Número US
+                const wPart = parts[1]?.trim().includes('W') ? parts[1].trim().split(" ")[0] : null; // Número W
+                const arPart = parts[wPart ? 2 : 1]?.trim().split(" ")[0]; // Número AR
+                const cmPart = parts[wPart ? 3 : 2]?.trim().split(" ")[0]; // Centímetros
+                
+                const cm = getCmFromTalla(talla);
                 formattedTalla = (
-                  <div className="flex flex-col items-center w-full gap-2 py-2">
+                  <div className="flex flex-col items-center w-full gap-1 py-2">
                     <div className="flex items-center gap-1">
-                      <span className="text-lg font-bold">{usPart}</span>
+                      <span className="text-base font-bold">{usPart}</span>
                       <Image src={US_FLAG} alt="US" width={16} height={12} className="inline-block" />
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-lg font-bold">{arPart}</span>
+                      <span className="text-base font-bold">{arPart}</span>
                       <Image src={AR_FLAG} alt="AR" width={16} height={12} className="inline-block" />
                     </div>
+                    {cm && (
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        {cm} cm
+                      </div>
+                    )}
                   </div>
                 );
               }

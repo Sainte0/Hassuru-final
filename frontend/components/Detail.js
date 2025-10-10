@@ -6,6 +6,25 @@ import { toast } from "react-hot-toast";
 import { useCartStore } from '../store/cartStore';
 import { useGA4 } from '../hooks/useGA4';
 
+// Tabla de conversión de tallas a centímetros
+const talleToCm = {
+  '4': '23', '4.5': '23.5', '5': '23.5', '5.5': '24', '6': '24',
+  '6.5': '24.5', '7': '25', '7.5': '25.5', '8': '26', '8.5': '26.5',
+  '9': '27', '9.5': '27.5', '10': '28', '10.5': '28.5', '11': '29',
+  '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31'
+};
+
+// Función para obtener CM de una talla
+const getCmFromTalla = (tallaStr) => {
+  if (!tallaStr) return null;
+  // Extraer el número US de la talla
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
+  if (usMatch) {
+    return talleToCm[usMatch[1]] || null;
+  }
+  return null;
+};
+
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
@@ -266,6 +285,9 @@ export default function Detail({ product }) {
                     >
                       <div className="flex flex-col items-center">
                         <span className="font-medium">{talla.talla}</span>
+                        {getCmFromTalla(talla.talla) && (
+                          <span className="text-xs text-gray-600 dark:text-gray-400">{getCmFromTalla(talla.talla)} cm</span>
+                        )}
                         <span className="text-sm">${talla.precioTalla} USD</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">${Math.round(talla.precioTalla * dolarBlue).toLocaleString('es-AR')} ARS</span>
                       </div>

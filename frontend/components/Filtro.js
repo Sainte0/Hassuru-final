@@ -2,6 +2,24 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { sortProductsByAvailability } from '../utils/sortProducts';
 
+// Tabla de conversión de tallas a centímetros
+const talleToCm = {
+  '4': '23', '4.5': '23.5', '5': '23.5', '5.5': '24', '6': '24',
+  '6.5': '24.5', '7': '25', '7.5': '25.5', '8': '26', '8.5': '26.5',
+  '9': '27', '9.5': '27.5', '10': '28', '10.5': '28.5', '11': '29',
+  '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31'
+};
+
+// Función para obtener CM de una talla
+const getCmFromTalla = (tallaStr) => {
+  if (!tallaStr) return null;
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
+  if (usMatch) {
+    return talleToCm[usMatch[1]] || null;
+  }
+  return null;
+};
+
 export default function Filter({ products, setFilteredProducts, onFiltersChange }) {
   const router = useRouter();
   const { categoria } = router.query;
@@ -700,6 +718,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           />
                           <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
+                            {getCmFromTalla(talla) && (
+                              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
+                            )}
                           </label>
                         </div>
                       ))}

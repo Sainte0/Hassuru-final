@@ -34,6 +34,24 @@ const tiposPago = [
   { value: 'efectivo', label: 'Efectivo' }
 ];
 
+// Tabla de conversión de tallas a centímetros
+const talleToCm = {
+  '3.5': '22.5', '4': '23', '4.5': '23.5', '5': '23.5', '5.5': '24', '6': '24',
+  '6.5': '24.5', '7': '25', '7.5': '25.5', '8': '26', '8.5': '26.5',
+  '9': '27', '9.5': '27.5', '10': '28', '10.5': '28.5', '11': '29',
+  '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31', '13.5': '31.5', '14': '32'
+};
+
+// Función para obtener CM de una talla
+const getCmFromTalla = (tallaStr) => {
+  if (!tallaStr) return null;
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
+  if (usMatch) {
+    return talleToCm[usMatch[1]] || null;
+  }
+  return null;
+};
+
 const tallesRopa = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 const tallesZapatillas = [
   { us: '3.5', ar: '34.5' }, { us: '4', ar: '35' }, { us: '4.5', ar: '35.5' },
@@ -436,11 +454,14 @@ export default function Encargos() {
                         <option key={talle} value={talle}>{talle}</option>
                       ))
                     ) : (
-                      tallesZapatillas.map(talle => (
-                        <option key={talle.us} value={`${talle.us} US / ${talle.ar} AR`}>
-                          {talle.us} US / {talle.ar} AR
-                        </option>
-                      ))
+                      tallesZapatillas.map(talle => {
+                        const cm = talleToCm[talle.us];
+                        return (
+                          <option key={talle.us} value={`${talle.us} US / ${talle.ar} AR${cm ? ' / ' + cm + ' CM' : ''}`}>
+                            {talle.us} US / {talle.ar} AR{cm ? ` / ${cm} CM` : ''}
+                          </option>
+                        );
+                      })
                     )}
                   </select>
                 )}
