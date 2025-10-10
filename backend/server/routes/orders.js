@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
                 const imageUrl = await uploadToSupabase(
                   imageBuffer, 
                   `order-${Date.now()}-${foto.name || 'image.jpg'}`,
-                  'order-images',  // Bucket específico para imágenes de órdenes
+                  'product-images',  // Usando el mismo bucket que productos por ahora
                   { maxWidth: 800, maxHeight: 800, quality: 70 }
                 );
                 
