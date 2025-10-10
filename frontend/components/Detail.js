@@ -383,16 +383,20 @@ export default function Detail({ product }) {
                   <p className="text-lg text-gray-400 dark:text-gray-500">${Math.round(product.precio * dolarBlue).toLocaleString('es-AR')} ARS</p>
                 )}
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full text-sm font-medium">
-                  En stock
-                </span>
-                <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full text-sm font-medium">
-                  Entrega inmediata
-                </span>
-                <span className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 px-2 py-1 rounded-full text-sm font-medium">
-                  Pocas unidades
-                </span>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {product.tallas && product.tallas.length > 0 ? (
+                  product.tallas.some((tallaObj) => tallaObj.precioTalla > 0) ? (
+                    product.encargo ? (
+                      <span className="text-yellow-500 dark:text-yellow-400">Disponible en 5 días</span>
+                    ) : (
+                      <span className="text-green-500 dark:text-green-400">Entrega inmediata</span>
+                    )
+                  ) : (
+                    <span className="text-red-500 dark:text-red-400">Disponible en 20 días</span>
+                  )
+                ) : (
+                  <span className="text-yellow-500 dark:text-yellow-400">Encargo desde Estados Unidos (20-30 días)</span>
+                )}
               </div>
             </div>
             <div className="mt-6">
