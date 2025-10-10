@@ -610,6 +610,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                               />
                               <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                                 {talla}
+                                {getCmFromTalla(talla) && (
+                                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
+                                )}
                               </label>
                             </div>
                           ))}
@@ -719,11 +722,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           />
                           <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
-                            {(() => {
-                              const cm = getCmFromTalla(talla);
-                              if (index === 0) console.log('Debug talla:', { talla, cm, match: talla.match(/(\d+\.?\d*)\s*(usa?|US)/i) });
-                              return cm ? <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({cm} cm)</span> : null;
-                            })()}
+                            {getCmFromTalla(talla) && (
+                              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
+                            )}
                           </label>
                         </div>
                       ))}
