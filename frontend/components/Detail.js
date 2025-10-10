@@ -39,12 +39,20 @@ export default function Detail({ product }) {
         marca: product.marca
       });
       
-      // Guardar producto visto en localStorage
+      // Guardar producto visto en localStorage con expiración de 1 semana
       try {
         const viewedProducts = JSON.parse(localStorage.getItem('viewedProducts') || '[]');
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        // Filtrar productos expirados (más de 1 semana)
+        const validProducts = viewedProducts.filter(p => {
+          const viewedDate = new Date(p.viewedAt);
+          return viewedDate > oneWeekAgo;
+        });
         
         // Remover el producto si ya existe para evitar duplicados
-        const filteredProducts = viewedProducts.filter(p => p._id !== product._id);
+        const filteredProducts = validProducts.filter(p => p._id !== product._id);
         
         // Agregar el producto al inicio del array
         const updatedProducts = [
@@ -54,14 +62,14 @@ export default function Detail({ product }) {
             precio: product.precio,
             categoria: product.categoria,
             marca: product.marca,
-            imagen: product.imagen,
+            image: product.image,
             tallas: product.tallas,
             encargo: product.encargo,
             slug: product.slug,
-            viewedAt: new Date().toISOString()
+            viewedAt: now.toISOString()
           },
           ...filteredProducts
-        ].slice(0, 12); // Mantener solo los últimos 12 productos
+        ].slice(0, 6); // Mantener solo los últimos 6 productos
         
         localStorage.setItem('viewedProducts', JSON.stringify(updatedProducts));
       } catch (error) {

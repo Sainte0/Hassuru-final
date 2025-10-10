@@ -277,12 +277,26 @@ const useStore = create((set) => ({
     }
   },
 
-  // Cargar productos vistos desde localStorage
+  // Cargar productos vistos desde localStorage y filtrar expirados
   loadViewedProducts: () => {
     try {
       if (typeof window !== 'undefined') {
         const viewedProducts = JSON.parse(localStorage.getItem('viewedProducts') || '[]');
-        set({ viewedProducts });
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        // Filtrar productos expirados (más de 1 semana)
+        const validProducts = viewedProducts.filter(p => {
+          const viewedDate = new Date(p.viewedAt);
+          return viewedDate > oneWeekAgo;
+        });
+        
+        // Actualizar localStorage con solo productos válidos
+        if (validProducts.length !== viewedProducts.length) {
+          localStorage.setItem('viewedProducts', JSON.stringify(validProducts));
+        }
+        
+        set({ viewedProducts: validProducts });
       }
     } catch (error) {
       console.error('Error al cargar productos vistos:', error);
