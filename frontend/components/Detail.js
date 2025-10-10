@@ -350,14 +350,14 @@ export default function Detail({ product }) {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] rounded-xl bg-white dark:bg-dark-bg">
+            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] rounded-xl bg-white dark:bg-dark-bg overflow-hidden">
               <img
                 src={getImageUrl()}
                 alt={product.nombre}
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-contain w-full h-full"
+                className="object-cover w-full h-full"
               />
               {/* Badge de verificado */}
               <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
