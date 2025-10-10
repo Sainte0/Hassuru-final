@@ -357,7 +357,7 @@ export default function Detail({ product }) {
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-cover w-full h-full"
+                className="object-contain w-full h-full"
               />
               {/* Badge de verificado */}
               <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
