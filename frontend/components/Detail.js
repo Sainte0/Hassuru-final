@@ -233,7 +233,7 @@ export default function Detail({ product }) {
       toast.success('Encargo añadido al carrito');
       return;
     }
-    setShowTallas(true);
+      setShowTallas(true);
   };
 
   const handleComprarAhora = () => {
@@ -350,14 +350,14 @@ export default function Detail({ product }) {
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Imagen a la izquierda */}
           <div className="w-full lg:w-1/2 mb-6 lg:mb-0">
-            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] overflow-hidden rounded-xl">
+            <div className="relative w-full h-[420px] sm:h-[520px] md:h-[600px] lg:h-[700px] rounded-xl">
               <img
                 src={getImageUrl()}
                 alt={product.nombre}
                 width={1200}
                 height={800}
                 loading="eager"
-                className="object-cover w-full h-full bg-white dark:bg-dark-bg"
+                className="object-contain w-full h-full bg-white dark:bg-dark-bg rounded-xl"
               />
               {/* Badge de verificado */}
               <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
@@ -399,7 +399,7 @@ export default function Detail({ product }) {
               {product.tallas && product.tallas.length > 0 ? (
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-3">
-                    {product.tallas.map((talla) => (
+                  {product.tallas.map((talla) => (
                     <button
                       key={talla._id}
                       onClick={() => handleTallaSelect(talla)}
@@ -486,7 +486,7 @@ export default function Detail({ product }) {
                 </div>
               </div>
               
-              {/* Medios de pago */}
+            {/* Medios de pago */}
               <div className="flex items-center space-x-2 mb-4">
                 <span className="text-green-500">💰</span>
                 <span className="text-sm text-gray-600 dark:text-gray-400">Medios pago:</span>
