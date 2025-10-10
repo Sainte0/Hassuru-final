@@ -133,11 +133,6 @@ async function sendNewOrderNotification({ order }) {
     <h3>💰 Total del Pedido</h3>
     <p><strong>Total:</strong> $${total.toFixed(2)} USD</p>
 
-      <h3>📦 Información de Envío</h3>
-    <p><strong>Tipo:</strong> ${order.envio.tipo === 'envio' ? 'Envío a domicilio' : 'Retiro en persona'}</p>
-    ${order.envio.direccion ? `<p><strong>Dirección:</strong> ${order.envio.direccion}</p>` : ''}
-    
-    
     <h3>📅 Información del Pedido</h3>
     <p><strong>ID del pedido:</strong> ${order._id}</p>
     <p><strong>Fecha:</strong> ${new Date(order.fechaCreacion).toLocaleString('es-AR')}</p>

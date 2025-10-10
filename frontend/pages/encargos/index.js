@@ -305,7 +305,8 @@ export default function Encargos() {
             detalles: p.detalles,
             link: p.link,
             color: p.color,
-            tipoProducto: p.tipoProducto
+            tipoProducto: p.tipoProducto,
+            fotos: p.fotos || []  // Incluir las fotos del producto
           })),
           datosPersonales: {
             nombre: `${datos.nombre} ${datos.apellido}`,

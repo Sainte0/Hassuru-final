@@ -19,45 +19,64 @@ router.post('/', async (req, res) => {
     }
     
     // Procesar imágenes de productos si existen
+    console.log('🔍 Verificando productos con fotos...');
     if (req.body.productos && Array.isArray(req.body.productos)) {
+      console.log(`📦 Total productos: ${req.body.productos.length}`);
+      
       for (let i = 0; i < req.body.productos.length; i++) {
         const producto = req.body.productos[i];
+        console.log(`📝 Producto ${i + 1}: ${producto.nombre}`);
+        console.log(`   Tiene fotos: ${producto.fotos ? 'Sí' : 'No'}`);
         
         // Si el producto tiene fotos en base64, subirlas a Supabase
         if (producto.fotos && Array.isArray(producto.fotos) && producto.fotos.length > 0) {
+          console.log(`   📸 Cantidad de fotos: ${producto.fotos.length}`);
           const uploadedFotos = [];
           
-          for (const foto of producto.fotos) {
+          for (let j = 0; j < producto.fotos.length; j++) {
+            const foto = producto.fotos[j];
+            console.log(`   🖼️  Procesando foto ${j + 1}...`);
+            
             try {
               // Convertir base64 a buffer
               if (foto.data && foto.data.startsWith('data:image')) {
                 const base64Data = foto.data.split(',')[1];
                 const imageBuffer = Buffer.from(base64Data, 'base64');
+                console.log(`      Tamaño: ${imageBuffer.length} bytes`);
                 
                 // Subir a Supabase con optimización
+                console.log(`      Subiendo a Supabase...`);
                 const imageUrl = await uploadToSupabase(
                   imageBuffer, 
-                  `order-${Date.now()}-${foto.name || 'image.jpg'}`,
+                  `order-${Date.now()}-${j}-${foto.name || 'image.jpg'}`,
                   'order-images',  // Bucket específico para imágenes de órdenes
                   { maxWidth: 800, maxHeight: 800, quality: 70 }
                 );
                 
+                console.log(`      ✅ Subida exitosa: ${imageUrl}`);
                 uploadedFotos.push({
                   url: imageUrl,
                   size: imageBuffer.length,
                   uploadedAt: new Date()
                 });
+              } else {
+                console.log(`      ⚠️  Foto no tiene formato base64 válido`);
               }
             } catch (uploadError) {
-              console.error('Error al subir foto del producto:', uploadError);
+              console.error(`      ❌ Error al subir foto ${j + 1}:`, uploadError.message);
               // Continuar con las demás fotos aunque una falle
             }
           }
           
+          console.log(`   ✅ Total fotos subidas: ${uploadedFotos.length}`);
           // Reemplazar las fotos base64 con las URLs de Supabase
           req.body.productos[i].fotos = uploadedFotos;
+        } else {
+          console.log(`   ℹ️  No hay fotos para este producto`);
         }
       }
+    } else {
+      console.log('⚠️  No hay productos en el pedido');
     }
     
     const order = new Order(req.body);
