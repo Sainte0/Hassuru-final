@@ -344,19 +344,48 @@ export default function PedidosAdmin() {
                       <h4 className="text-xs font-semibold mb-2">Productos:</h4>
                       <div className="space-y-2">
                         {order.productos.map(p => (
-                          <div key={p.productoId + (p.talle || '')} className="flex items-start gap-2 text-xs">
-                            {p.imagen ? (
-                              <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded" />
-                            ) : (
-                              <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
-                                <span className="text-xs">📦</span>
+                          <div key={p.productoId + (p.talle || '')} className="flex flex-col gap-2 text-xs">
+                            <div className="flex items-start gap-2">
+                              {p.imagen ? (
+                                <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded" />
+                              ) : (
+                                <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center">
+                                  <span className="text-xs">📦</span>
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <div className="font-medium">{p.nombre}</div>
+                                {p.talle && <div>Talle: {p.talle}</div>}
+                                {p.color && <div>Color: {p.color}</div>}
+                                <div>Cantidad: {p.cantidad} - ${p.precio} USD</div>
+                                {p.link && (
+                                  <a href={p.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    Ver link
+                                  </a>
+                                )}
+                                {p.detalles && <div className="italic text-gray-600 dark:text-gray-400">"{p.detalles}"</div>}
+                              </div>
+                            </div>
+                            {/* Fotos del producto */}
+                            {p.fotos && p.fotos.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {p.fotos.map((foto, idx) => (
+                                  <a 
+                                    key={idx} 
+                                    href={foto.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="block"
+                                  >
+                                    <img 
+                                      src={foto.url} 
+                                      alt={`Foto ${idx + 1}`} 
+                                      className="w-16 h-16 object-cover rounded border border-gray-300 hover:border-blue-500 transition-colors cursor-pointer"
+                                    />
+                                  </a>
+                                ))}
                               </div>
                             )}
-                            <div className="flex-1">
-                              <div className="font-medium">{p.nombre}</div>
-                              {p.talle && <div>Talle: {p.talle}</div>}
-                              <div>Cantidad: {p.cantidad} - ${p.precio} USD</div>
-                            </div>
                           </div>
                         ))}
                       </div>
@@ -511,38 +540,72 @@ export default function PedidosAdmin() {
                         <td className="p-3 align-top">
                           <div className="space-y-2 max-h-32 overflow-y-auto">
                             {order.productos.map(p => (
-                              <div key={p.productoId + (p.talle || '')} className="flex items-start gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-b-0">
-                                {p.imagen ? (
-                                  <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded flex-shrink-0" />
-                                ) : (
-                                  <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">📦</span>
-                                  </div>
-                                )}
-                                <div className="flex-1 min-w-0">
-                                  <div 
-                                    className="font-medium text-gray-900 dark:text-white text-xs cursor-help" 
-                                    title={p.nombre}
-                                  >
-                                    {p.nombre.length > 25 ? `${p.nombre.substring(0, 25)}...` : p.nombre}
-                                    {p.encargo && (
-                                      <span className="ml-1 px-1 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
-                                    )}
-                                  </div>
-                                  <div className="text-xs text-gray-500 dark:text-gray-300">
-                                    {p.talle && <span>Talle: {p.talle} </span>}
-                                    {p.color && <span>Color: {p.color} </span>}
-                                    <span>Cant: {p.cantidad} - ${p.precio} USD</span>
-                                  </div>
-                                  {p.detalles && (
-                                    <div 
-                                      className="text-xs text-gray-600 dark:text-gray-400 italic cursor-help" 
-                                      title={`"${p.detalles}"`}
-                                    >
-                                      "{p.detalles.length > 30 ? `${p.detalles.substring(0, 30)}...` : p.detalles}"
+                              <div key={p.productoId + (p.talle || '')} className="flex flex-col gap-2 border-b border-gray-100 dark:border-gray-700 pb-2 last:border-b-0">
+                                <div className="flex items-start gap-2">
+                                  {p.imagen ? (
+                                    <img src={p.imagen} alt={p.nombre} className="w-6 h-6 object-cover rounded flex-shrink-0" />
+                                  ) : (
+                                    <div className="w-6 h-6 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
+                                      <span className="text-xs text-gray-500 dark:text-gray-400">📦</span>
                                     </div>
                                   )}
+                                  <div className="flex-1 min-w-0">
+                                    <div 
+                                      className="font-medium text-gray-900 dark:text-white text-xs cursor-help" 
+                                      title={p.nombre}
+                                    >
+                                      {p.nombre.length > 25 ? `${p.nombre.substring(0, 25)}...` : p.nombre}
+                                      {p.encargo && (
+                                        <span className="ml-1 px-1 py-0.5 rounded bg-blue-200 text-blue-800 text-xs font-semibold">Encargo</span>
+                                      )}
+                                    </div>
+                                    <div className="text-xs text-gray-500 dark:text-gray-300">
+                                      {p.talle && <span>Talle: {p.talle} </span>}
+                                      {p.color && <span>Color: {p.color} </span>}
+                                      <span>Cant: {p.cantidad} - ${p.precio} USD</span>
+                                    </div>
+                                    {p.link && (
+                                      <a 
+                                        href={p.link} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                                        title={p.link}
+                                      >
+                                        {p.link.length > 25 ? `${p.link.substring(0, 25)}...` : p.link}
+                                      </a>
+                                    )}
+                                    {p.detalles && (
+                                      <div 
+                                        className="text-xs text-gray-600 dark:text-gray-400 italic cursor-help" 
+                                        title={`"${p.detalles}"`}
+                                      >
+                                        "{p.detalles.length > 30 ? `${p.detalles.substring(0, 30)}...` : p.detalles}"
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
+                                {/* Fotos del producto */}
+                                {p.fotos && p.fotos.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 ml-8">
+                                    {p.fotos.map((foto, idx) => (
+                                      <a 
+                                        key={idx} 
+                                        href={foto.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="block"
+                                        title={`Click para ver imagen completa`}
+                                      >
+                                        <img 
+                                          src={foto.url} 
+                                          alt={`Foto ${idx + 1} de ${p.nombre}`} 
+                                          className="w-12 h-12 object-cover rounded border border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors cursor-pointer hover:scale-110 transform"
+                                        />
+                                      </a>
+                                    ))}
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>

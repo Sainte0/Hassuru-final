@@ -56,7 +56,8 @@ export default function Encargos() {
     detalles: '', 
     talle: '', 
     color: '',
-    tipoProducto: 'ropa'
+    tipoProducto: 'ropa',
+    fotos: []
   });
   const [datos, setDatos] = useState({ 
     nombre: '', 
@@ -80,9 +81,17 @@ export default function Encargos() {
 
 
   const handleAddProducto = () => {
-    if (!nuevoProducto.nombre) return;
+    if (!nuevoProducto.nombre) {
+      setError('El nombre del producto es obligatorio');
+      return;
+    }
+    if (!nuevoProducto.talle && nuevoProducto.tipoProducto !== 'tecnologia') {
+      setError('Debes seleccionar un talle');
+      return;
+    }
+    setError('');
     setProductos([...productos, nuevoProducto]);
-    setNuevoProducto({ nombre: '', link: '', detalles: '', talle: '', color: '', tipoProducto: 'ropa' });
+    setNuevoProducto({ nombre: '', link: '', detalles: '', talle: '', color: '', tipoProducto: 'ropa', fotos: [] });
   };
 
   const handleRemoveProducto = idx => {
@@ -176,6 +185,40 @@ export default function Encargos() {
     if (name === 'tipoProducto') {
       setNuevoProducto(prev => ({ ...prev, [name]: value, talle: '' }));
     }
+  };
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    const maxFiles = 3;
+    
+    if (files.length + nuevoProducto.fotos.length > maxFiles) {
+      setError(`Máximo ${maxFiles} fotos por producto`);
+      return;
+    }
+    
+    // Convertir archivos a base64 para preview y envío
+    const filePromises = files.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: file.name, data: reader.result });
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    });
+    
+    Promise.all(filePromises).then(newFiles => {
+      setNuevoProducto(prev => ({ ...prev, fotos: [...prev.fotos, ...newFiles] }));
+      setError('');
+    }).catch(() => {
+      setError('Error al cargar las fotos');
+    });
+  };
+
+  const handleRemoveFoto = (index) => {
+    setNuevoProducto(prev => ({
+      ...prev,
+      fotos: prev.fotos.filter((_, i) => i !== index)
+    }));
   };
 
 
@@ -385,8 +428,8 @@ export default function Encargos() {
                 </select>
                 
                 {nuevoProducto.tipoProducto !== 'accesorios' && nuevoProducto.tipoProducto !== 'tecnologia' && (
-                  <select name="talle" value={nuevoProducto.talle} onChange={handleChangeProducto} className="border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white">
-                    <option value="">Seleccionar talle</option>
+                  <select name="talle" value={nuevoProducto.talle} onChange={handleChangeProducto} className="border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" required>
+                    <option value="">Seleccionar talle*</option>
                     {nuevoProducto.tipoProducto === 'ropa' ? (
                       tallesRopa.map(talle => (
                         <option key={talle} value={talle}>{talle}</option>
@@ -405,7 +448,38 @@ export default function Encargos() {
               <input name="color" value={nuevoProducto.color} onChange={handleChangeProducto} placeholder="Color (opcional)" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
               <input name="link" value={nuevoProducto.link} onChange={handleChangeProducto} placeholder="Link (opcional)" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
               <textarea name="detalles" value={nuevoProducto.detalles} onChange={handleChangeProducto} placeholder="Detalles adicionales (opcional)" className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-3 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white" />
-              <button type="button" onClick={handleAddProducto} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all text-base mt-2">
+              
+              {/* Subir fotos */}
+              <div className="w-full">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Fotos del producto (máximo 3)
+                </label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  onChange={handleFileChange}
+                  className="w-full border border-gray-300 focus:border-blue-500 rounded-lg p-2 text-base bg-white dark:bg-gray-600 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                />
+                {nuevoProducto.fotos.length > 0 && (
+                  <div className="mt-3 grid grid-cols-3 gap-2">
+                    {nuevoProducto.fotos.map((foto, index) => (
+                      <div key={index} className="relative">
+                        <img src={foto.data} alt={foto.name} className="w-full h-24 object-cover rounded-lg" />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFoto(index)}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <button type="button" onClick={handleAddProducto} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-all text-base mt-2">
                 Agregar producto
               </button>
             </div>
@@ -606,12 +680,12 @@ export default function Encargos() {
           </div>
         )}
 
-        <div className="flex justify-between mt-6">
-          {step > 0 && <button className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors" onClick={handleBack}>Atrás</button>}
-          {step < 2 && <button className="px-4 py-2 bg-black dark:bg-blue-600 text-white rounded hover:bg-gray-800 dark:hover:bg-blue-700 transition-colors" onClick={handleNext}>Siguiente</button>}
+        <div className="flex justify-between gap-4 mt-6">
+          {step > 0 && <button className="px-6 py-3 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors font-semibold text-lg" onClick={handleBack}>Atrás</button>}
+          {step < 2 && <button className="flex-1 px-6 py-4 bg-blue-600 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors font-bold text-xl shadow-lg" onClick={handleNext}>Siguiente</button>}
           {step === 2 && pago && (
             <button 
-              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors" 
+              className="flex-1 px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-bold text-xl shadow-lg" 
               onClick={handleSubmit} 
               disabled={enviando}
             >

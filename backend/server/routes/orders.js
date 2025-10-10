@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const authMiddleware = require('../middlewares/authMiddleware');
 const mongoose = require('mongoose');
 const { sendOrderReceiptEmail, sendNewOrderNotification, sendOrderShippedEmail, sendOrderCancelledEmail } = require('../utils/email');
+const { uploadToSupabase } = require('../utils/supabase');
 const router = express.Router();
 
 // Ultra simple: guardar pedido tal cual llega
@@ -14,6 +15,48 @@ router.post('/', async (req, res) => {
         req.body = JSON.parse(req.body);
       } catch (e) {
         return res.status(400).json({ error: 'Body malformado' });
+      }
+    }
+    
+    // Procesar imágenes de productos si existen
+    if (req.body.productos && Array.isArray(req.body.productos)) {
+      for (let i = 0; i < req.body.productos.length; i++) {
+        const producto = req.body.productos[i];
+        
+        // Si el producto tiene fotos en base64, subirlas a Supabase
+        if (producto.fotos && Array.isArray(producto.fotos) && producto.fotos.length > 0) {
+          const uploadedFotos = [];
+          
+          for (const foto of producto.fotos) {
+            try {
+              // Convertir base64 a buffer
+              if (foto.data && foto.data.startsWith('data:image')) {
+                const base64Data = foto.data.split(',')[1];
+                const imageBuffer = Buffer.from(base64Data, 'base64');
+                
+                // Subir a Supabase con optimización
+                const imageUrl = await uploadToSupabase(
+                  imageBuffer, 
+                  `order-${Date.now()}-${foto.name || 'image.jpg'}`,
+                  'order-images',  // Bucket específico para imágenes de órdenes
+                  { maxWidth: 800, maxHeight: 800, quality: 70 }
+                );
+                
+                uploadedFotos.push({
+                  url: imageUrl,
+                  size: imageBuffer.length,
+                  uploadedAt: new Date()
+                });
+              }
+            } catch (uploadError) {
+              console.error('Error al subir foto del producto:', uploadError);
+              // Continuar con las demás fotos aunque una falle
+            }
+          }
+          
+          // Reemplazar las fotos base64 con las URLs de Supabase
+          req.body.productos[i].fotos = uploadedFotos;
+        }
       }
     }
     
@@ -36,6 +79,7 @@ router.post('/', async (req, res) => {
     
     res.status(201).json(order);
   } catch (error) {
+    console.error('Error al crear orden:', error);
     res.status(400).json({ error: error.message, stack: error.stack });
   }
 });

@@ -11,7 +11,12 @@ const ProductoPedidoSchema = new mongoose.Schema({
   detalles: String,
   link: String,
   color: String,
-  tipoProducto: String
+  tipoProducto: String,
+  fotos: [{ 
+    url: String,
+    size: Number,
+    uploadedAt: { type: Date, default: Date.now }
+  }]
 });
 
 const OrderSchema = new mongoose.Schema({
