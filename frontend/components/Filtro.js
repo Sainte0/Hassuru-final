@@ -13,8 +13,9 @@ const talleToCm = {
 // Función para obtener CM de una talla
 const getCmFromTalla = (tallaStr) => {
   if (!tallaStr) return null;
-  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
-  if (usMatch) {
+  // Buscar número seguido de "usa" o "us" (case insensitive) o simplemente el primer número
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*(usa?|US)/i) || tallaStr.match(/^(\d+\.?\d*)/);
+  if (usMatch && usMatch[1]) {
     return talleToCm[usMatch[1]] || null;
   }
   return null;
@@ -718,10 +719,9 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           />
                           <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
-                            {(() => {
-                              const cm = getCmFromTalla(talla);
-                              return cm ? <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({cm} cm)</span> : null;
-                            })()}
+                            {getCmFromTalla(talla) && (
+                              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
+                            )}
                           </label>
                         </div>
                       ))}

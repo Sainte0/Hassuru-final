@@ -17,9 +17,9 @@ const talleToCm = {
 // Función para obtener CM de una talla
 const getCmFromTalla = (tallaStr) => {
   if (!tallaStr) return null;
-  // Extraer el número US de la talla
-  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
-  if (usMatch) {
+  // Buscar número seguido de "usa" o "us" (case insensitive) o simplemente el primer número
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*(usa?|US)/i) || tallaStr.match(/^(\d+\.?\d*)/);
+  if (usMatch && usMatch[1]) {
     return talleToCm[usMatch[1]] || null;
   }
   return null;
