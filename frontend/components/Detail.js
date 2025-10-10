@@ -5,14 +5,16 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { useCartStore } from '../store/cartStore';
 import { useGA4 } from '../hooks/useGA4';
+import Carousell from './Carousell';
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
   const [selectedTalla, setSelectedTalla] = useState(null);
   const [customTalla, setCustomTalla] = useState("");
-  const { dolarBlue, fetchDolarBlue } = useStore();
+  const { dolarBlue, fetchDolarBlue, loadViewedProducts, viewedProducts } = useStore();
   const router = useRouter();
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [complementaryProducts, setComplementaryProducts] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(true);
   const addToCart = useCartStore(state => state.addToCart);
   const { viewItem, addToCart: ga4AddToCart } = useGA4();
@@ -85,6 +87,7 @@ export default function Detail({ product }) {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/productos`);
         const allProducts = await response.json();
         const marcas = Array.isArray(product.marca) ? product.marca : [product.marca];
+        
         // Productos de la misma marca con entrega disponible
         const related = allProducts.filter(p => 
           p._id !== product._id && 
@@ -102,6 +105,30 @@ export default function Detail({ product }) {
           );
           setRelatedProducts(otrosDisponibles.slice(0, 6));
         }
+
+        // Productos complementarios - que combinan bien con el producto actual
+        const complementary = allProducts.filter(p => {
+          if (p._id === product._id) return false;
+          if (!Array.isArray(p.tallas) || p.tallas.length === 0 || p.encargo) return false;
+          
+          // Lógica de complementariedad según categoría
+          if (product.categoria === 'zapatillas') {
+            // Si es zapatilla, mostrar ropa y accesorios
+            return p.categoria === 'ropa' || p.categoria === 'accesorios';
+          } else if (product.categoria === 'ropa') {
+            // Si es ropa, mostrar zapatillas y accesorios
+            return p.categoria === 'zapatillas' || p.categoria === 'accesorios';
+          } else if (product.categoria === 'accesorios') {
+            // Si es accesorio, mostrar ropa y zapatillas
+            return p.categoria === 'ropa' || p.categoria === 'zapatillas';
+          }
+          return false;
+        });
+        
+        // Mezclar aleatoriamente y tomar 6
+        const shuffled = complementary.sort(() => 0.5 - Math.random());
+        setComplementaryProducts(shuffled.slice(0, 6));
+        
       } catch (error) {
         console.error("Error al cargar productos relacionados:", error);
       } finally {
@@ -111,8 +138,9 @@ export default function Detail({ product }) {
 
     if (product) {
       fetchRelatedProducts();
+      loadViewedProducts(); // Cargar productos vistos
     }
-  }, [product]);
+  }, [product, loadViewedProducts]);
 
   // Detectar si es producto de encargo (sin stock real, entrega 20 días)
   const isEncargo = !product.tallas || product.tallas.length === 0 || product.entrega === '20 días' || product.descripcion?.toLowerCase().includes('20 días');
@@ -414,8 +442,30 @@ export default function Detail({ product }) {
                   );
                 })}
           </div>
-                 </div>
-       )}
-     </div>
-   );
- }
+        </div>
+      )}
+
+      {/* Productos que combinan */}
+      {complementaryProducts && complementaryProducts.length > 0 && (
+        <div className="mt-8">
+          <Carousell 
+            dolarBlue={dolarBlue} 
+            products={complementaryProducts} 
+            title={"Productos que combinan"} 
+          />
+        </div>
+      )}
+
+      {/* Productos vistos recientemente */}
+      {viewedProducts && viewedProducts.length > 0 && viewedProducts.filter(p => p._id !== product._id).length > 0 && (
+        <div className="mt-8">
+          <Carousell 
+            dolarBlue={dolarBlue} 
+            products={viewedProducts.filter(p => p._id !== product._id)} 
+            title={"Vistos recientemente"} 
+          />
+        </div>
+      )}
+    </div>
+  );
+}

@@ -75,12 +75,19 @@ export default function Carousell({ title, products, dolarBlue }) {
     const preloadImages = async () => {
       const imagePromises = products.slice(0, isMobile ? 2 : 6).map((product) => {
         return new Promise((resolve) => {
-          const img = new Image();
-          img.src = getImageUrl(product);
-          img.onload = () => {
-            setLoadedImages(prev => ({ ...prev, [product._id]: true }));
+          if (typeof window !== 'undefined') {
+            const img = window.Image ? new window.Image() : document.createElement('img');
+            img.src = getImageUrl(product);
+            img.onload = () => {
+              setLoadedImages(prev => ({ ...prev, [product._id]: true }));
+              resolve();
+            };
+            img.onerror = () => {
+              resolve(); // Resolver incluso si hay error para no bloquear
+            };
+          } else {
             resolve();
-          };
+          }
         });
       });
       await Promise.all(imagePromises);
