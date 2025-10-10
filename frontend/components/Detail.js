@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import { useCartStore } from '../store/cartStore';
 import { useGA4 } from '../hooks/useGA4';
-import Carousell from './Carousell';
 
 export default function Detail({ product }) {
   const [showTallas, setShowTallas] = useState(false);
@@ -447,23 +446,125 @@ export default function Detail({ product }) {
 
       {/* Productos que combinan */}
       {complementaryProducts && complementaryProducts.length > 0 && (
-        <div className="mt-8">
-          <Carousell 
-            dolarBlue={dolarBlue} 
-            products={complementaryProducts} 
-            title={"Productos que combinan"} 
-          />
+        <div className="container mt-8 mx-auto bg-white dark:bg-dark-bg transition-colors duration-300">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Productos que combinan</h2>
+          <div className="flex gap-6 overflow-x-auto pb-2">
+            {complementaryProducts.slice(0, 6).map((complementaryProduct) => {
+              const precioPesos = dolarBlue ? Math.round(complementaryProduct.precio * dolarBlue) : null;
+              let disponibilidad = complementaryProduct.disponibilidad || "Sin info";
+              let disponibilidadLabel = disponibilidad;
+              let disponibilidadClass = "bg-gray-300 dark:bg-gray-600 text-black dark:text-white";
+              
+              if (
+                disponibilidad === "Entrega inmediata" ||
+                (!complementaryProduct.encargo && Array.isArray(complementaryProduct.tallas) && complementaryProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Entrega inmediata";
+                disponibilidadClass = "bg-green-500 text-white";
+              } else if (
+                disponibilidad === "Disponible en 5 días" ||
+                (complementaryProduct.encargo && Array.isArray(complementaryProduct.tallas) && complementaryProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Disponible en 5 días";
+                disponibilidadClass = "bg-yellow-400 text-gray-900";
+              } else if (
+                disponibilidad === "Disponible en 20 días" ||
+                (!Array.isArray(complementaryProduct.tallas) || complementaryProduct.tallas.length === 0)
+              ) {
+                disponibilidadLabel = "Disponible en 20 días";
+                disponibilidadClass = "bg-red-500 text-white";
+              }
+              
+              return (
+                <div
+                  key={complementaryProduct._id}
+                  className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-lg flex-shrink-0 bg-white dark:bg-dark-bg cursor-pointer"
+                  onClick={() => router.push(`/producto/${complementaryProduct._id}`)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyPress={e => { if (e.key === 'Enter') router.push(`/producto/${complementaryProduct._id}`); }}
+                >
+                  <div className="relative w-full h-64 mb-4">
+                    <Image
+                      src={complementaryProduct.image?.url || "/placeholder.jpg"}
+                      alt={complementaryProduct.nombre}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white truncate">{complementaryProduct.nombre}</h3>
+                  <p className="mb-1 text-gray-600 dark:text-gray-400">USD ${complementaryProduct.precio}</p>
+                  {precioPesos && (
+                    <p className="mb-2 text-gray-600 dark:text-gray-400">${Math.round(precioPesos).toLocaleString("es-AR")} ARS</p>
+                  )}
+                  <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 
       {/* Productos vistos recientemente */}
       {viewedProducts && viewedProducts.length > 0 && viewedProducts.filter(p => p._id !== product._id).length > 0 && (
-        <div className="mt-8">
-          <Carousell 
-            dolarBlue={dolarBlue} 
-            products={viewedProducts.filter(p => p._id !== product._id)} 
-            title={"Vistos recientemente"} 
-          />
+        <div className="container mt-8 mx-auto bg-white dark:bg-dark-bg transition-colors duration-300">
+          <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-white">Vistos recientemente</h2>
+          <div className="flex gap-6 overflow-x-auto pb-2">
+            {viewedProducts.filter(p => p._id !== product._id).slice(0, 6).map((viewedProduct) => {
+              const precioPesos = dolarBlue ? Math.round(viewedProduct.precio * dolarBlue) : null;
+              let disponibilidad = viewedProduct.disponibilidad || "Sin info";
+              let disponibilidadLabel = disponibilidad;
+              let disponibilidadClass = "bg-gray-300 dark:bg-gray-600 text-black dark:text-white";
+              
+              if (
+                disponibilidad === "Entrega inmediata" ||
+                (!viewedProduct.encargo && Array.isArray(viewedProduct.tallas) && viewedProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Entrega inmediata";
+                disponibilidadClass = "bg-green-500 text-white";
+              } else if (
+                disponibilidad === "Disponible en 5 días" ||
+                (viewedProduct.encargo && Array.isArray(viewedProduct.tallas) && viewedProduct.tallas.length > 0)
+              ) {
+                disponibilidadLabel = "Disponible en 5 días";
+                disponibilidadClass = "bg-yellow-400 text-gray-900";
+              } else if (
+                disponibilidad === "Disponible en 20 días" ||
+                (!Array.isArray(viewedProduct.tallas) || viewedProduct.tallas.length === 0)
+              ) {
+                disponibilidadLabel = "Disponible en 20 días";
+                disponibilidadClass = "bg-red-500 text-white";
+              }
+              
+              return (
+                <div
+                  key={viewedProduct._id}
+                  className="min-w-[240px] max-w-[240px] p-4 transition duration-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-lg flex-shrink-0 bg-white dark:bg-dark-bg cursor-pointer"
+                  onClick={() => router.push(`/producto/${viewedProduct._id}`)}
+                  tabIndex={0}
+                  role="button"
+                  onKeyPress={e => { if (e.key === 'Enter') router.push(`/producto/${viewedProduct._id}`); }}
+                >
+                  <div className="relative w-full h-64 mb-4">
+                    <Image
+                      src={viewedProduct.image?.url || "/placeholder.jpg"}
+                      alt={viewedProduct.nombre}
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                  </div>
+                  <h3 className="mb-2 text-lg font-semibold text-gray-800 dark:text-white truncate">{viewedProduct.nombre}</h3>
+                  <p className="mb-1 text-gray-600 dark:text-gray-400">USD ${viewedProduct.precio}</p>
+                  {precioPesos && (
+                    <p className="mb-2 text-gray-600 dark:text-gray-400">${Math.round(precioPesos).toLocaleString("es-AR")} ARS</p>
+                  )}
+                  <div className={`w-full px-4 py-2 text-center text-sm font-medium rounded ${disponibilidadClass}`}>{disponibilidadLabel}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
