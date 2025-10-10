@@ -19,6 +19,7 @@ const useStore = create((set) => ({
     ultimosZapatillas: [],
     ultimosAccesorios: []
   },
+  viewedProducts: [],
 
   fetchProducts: async () => {
     set({ loading: true });
@@ -273,6 +274,19 @@ const useStore = create((set) => ({
       console.error('Error al cargar productos de la home:', error);
     } finally {
       set({ loading: false });
+    }
+  },
+
+  // Cargar productos vistos desde localStorage
+  loadViewedProducts: () => {
+    try {
+      if (typeof window !== 'undefined') {
+        const viewedProducts = JSON.parse(localStorage.getItem('viewedProducts') || '[]');
+        set({ viewedProducts });
+      }
+    } catch (error) {
+      console.error('Error al cargar productos vistos:', error);
+      set({ viewedProducts: [] });
     }
   },
 

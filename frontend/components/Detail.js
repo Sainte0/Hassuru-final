@@ -38,6 +38,35 @@ export default function Detail({ product }) {
         categoria: product.categoria,
         marca: product.marca
       });
+      
+      // Guardar producto visto en localStorage
+      try {
+        const viewedProducts = JSON.parse(localStorage.getItem('viewedProducts') || '[]');
+        
+        // Remover el producto si ya existe para evitar duplicados
+        const filteredProducts = viewedProducts.filter(p => p._id !== product._id);
+        
+        // Agregar el producto al inicio del array
+        const updatedProducts = [
+          {
+            _id: product._id,
+            nombre: product.nombre,
+            precio: product.precio,
+            categoria: product.categoria,
+            marca: product.marca,
+            imagen: product.imagen,
+            tallas: product.tallas,
+            encargo: product.encargo,
+            slug: product.slug,
+            viewedAt: new Date().toISOString()
+          },
+          ...filteredProducts
+        ].slice(0, 12); // Mantener solo los últimos 12 productos
+        
+        localStorage.setItem('viewedProducts', JSON.stringify(updatedProducts));
+      } catch (error) {
+        console.error('Error al guardar producto visto:', error);
+      }
     }
   }, [product, viewItem]);
 

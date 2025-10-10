@@ -10,7 +10,7 @@ import useStore from "../store/store";
 import { BounceLoader } from 'react-spinners';
 
 export default function Home() {
-  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks, banners, fetchBanners } = useStore();
+  const { loading, error, homeProducts, fetchHomeProducts, dolarBlue, fetchDolarBlue, fetchTikTokLinks, tiktokLinks, banners, fetchBanners, viewedProducts, loadViewedProducts } = useStore();
 
   useEffect(() => {
     // Función para inicializar los datos
@@ -18,6 +18,9 @@ export default function Home() {
       try {
         // Obtener productos de la home
         await fetchHomeProducts();
+        
+        // Cargar productos vistos desde localStorage
+        loadViewedProducts();
         
         // Obtener valor del dólar blue
         const lastUpdate = localStorage.getItem('dolarBlueLastUpdate');
@@ -113,6 +116,13 @@ export default function Home() {
             <Carousell dolarBlue={dolarBlue} products={homeProducts.ultimosAccesorios} title={"Últimos Accesorios - Entrega Inmediata"} />
           </Link>
         </div>
+
+        {/* Productos vistos recientemente */}
+        {viewedProducts && viewedProducts.length > 0 && (
+          <div className="mt-8">
+            <Carousell dolarBlue={dolarBlue} products={viewedProducts} title={"Vistos recientemente"} />
+          </div>
+        )}
 
         {/* TikToks en horizontal */}
         <div className="container grid grid-cols-1 gap-4 px-4 mx-auto mt-8 md:grid-cols-3 bg-white dark:bg-dark-bg p-4 rounded-lg">
