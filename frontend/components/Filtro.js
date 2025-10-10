@@ -608,10 +608,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                                 onChange={() => handleSelectTallaZapatilla(talla)}
                                 className="mr-2 text-blue-600 focus:ring-blue-500"
                               />
-                              <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
+                              <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors text-sm leading-tight">
                                 {talla}
                                 {getCmFromTalla(talla) && (
-                                  <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
+                                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)}cm)</span>
                                 )}
                               </label>
                             </div>
