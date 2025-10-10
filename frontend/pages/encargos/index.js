@@ -400,6 +400,23 @@ export default function Encargos() {
 
         <p className="text-gray-600 dark:text-gray-300 text-center mb-6">Desde zapatillas y ropa hasta tecnología y accesorios.</p>
 
+        {/* Cartel informativo sobre pago */}
+        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
+              <span className="text-yellow-600 dark:text-yellow-400 text-lg">💰</span>
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+                Importante: Pago del encargo
+              </h3>
+              <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                Para realizar tu encargo, se debe abonar el <strong>precio completo del producto</strong> al momento de confirmar el pedido.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Pasos */}
         <div className="mb-6 sm:mb-8 flex space-x-2">
           {pasos.map((p, i) => (
