@@ -718,9 +718,10 @@ export default function Filter({ products, setFilteredProducts, onFiltersChange 
                           />
                           <label htmlFor={`talla-zapatilla-${talla}`} className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-800 dark:hover:text-white transition-colors">
                             {talla}
-                            {getCmFromTalla(talla) && (
-                              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({getCmFromTalla(talla)} cm)</span>
-                            )}
+                            {(() => {
+                              const cm = getCmFromTalla(talla);
+                              return cm ? <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">({cm} cm)</span> : null;
+                            })()}
                           </label>
                         </div>
                       ))}

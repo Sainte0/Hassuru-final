@@ -6,6 +6,24 @@ import Pagination from "./Pagination";
 import { BounceLoader } from 'react-spinners';
 import { useGA4 } from '../hooks/useGA4';
 
+// Tabla de conversión de tallas a centímetros
+const talleToCm = {
+  '3.5': '22.5', '4': '23', '4.5': '23.5', '5': '23.5', '5.5': '24', '6': '24',
+  '6.5': '24.5', '7': '25', '7.5': '25.5', '8': '26', '8.5': '26.5',
+  '9': '27', '9.5': '27.5', '10': '28', '10.5': '28.5', '11': '29',
+  '11.5': '29.5', '12': '30', '12.5': '30.5', '13': '31', '13.5': '31.5', '14': '32'
+};
+
+// Función para obtener CM de una talla
+const getCmFromTalla = (tallaStr) => {
+  if (!tallaStr) return null;
+  const usMatch = tallaStr.match(/(\d+\.?\d*)\s*usa?/i);
+  if (usMatch) {
+    return talleToCm[usMatch[1]] || null;
+  }
+  return null;
+};
+
 export default function Catalogo() {
   const router = useRouter();
   const [products, setProducts] = useState([]);

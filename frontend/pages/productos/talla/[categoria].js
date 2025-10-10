@@ -176,7 +176,7 @@ export default function TallaSelector() {
 
   const getTitle = () => {
     if (categoria === "ropa") return "¿Qué talla de ropa usas?";
-    if (categoria === "zapatillas") return "¿Qué número de calzado usas?";
+    if (categoria === "zapatillas") return "¿Qué talles de zapatillas usas?";
     if (categoria === "accesorios") return "Selecciona una opción";
     return "Selecciona tu talla";
   };
